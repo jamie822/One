@@ -2,9 +2,8 @@
 import Layout from '../layouts/Layout.astro';
 import Icon from '../components/Icon.astro';
 import CtaBand from '../components/CtaBand.astro';
-import { site, services } from '../data/site.js';
+import { site, services, process } from '../data/site.js';
 
-// ItemList schema helps these services show richer in search.
 const servicesSchema = {
   '@context': 'https://schema.org',
   '@type': 'ItemList',
@@ -29,12 +28,12 @@ const servicesSchema = {
   <section class="hero">
     <div class="container">
       <div class="hero__inner">
-        <span class="eyebrow" style="color:var(--amber)">Our services</span>
+        <span class="eyebrow">Our services</span>
         <h1>Electrical services in {site.address.locality}</h1>
-        <p>Whatever your electrical needs — at home or in business — we've got it covered. Every job is fully certified and guaranteed.</p>
+        <p>Whatever you need — at home or in business — we've got it covered. Every job is carried out by experienced electricians, fully certified and guaranteed.</p>
         <div class="hero__actions">
-          <a class="btn btn--primary" href={`tel:${site.phoneHref}`}><Icon name="phone" /> Call {site.phone}</a>
-          <a class="btn btn--ghost" href="/contact">Request a quote</a>
+          <a class="btn btn--primary btn--lg" href={`tel:${site.phoneHref}`}><Icon name="phone" /> Call {site.phone}</a>
+          <a class="btn btn--ghost btn--lg" href="/contact">Request a quote</a>
         </div>
       </div>
     </div>
@@ -43,19 +42,40 @@ const servicesSchema = {
   <section class="section">
     <div class="container">
       <div class="grid grid--2">
-        {services.map((s) => (
-          <article class="card" id={s.slug}>
+        {services.map((s, i) => (
+          <article class="card reveal" data-delay={String(i % 2)} id={s.slug}>
             <div class="card__icon"><Icon name={s.icon} /></div>
             <h3>{s.title}</h3>
             <p>{s.long}</p>
+            <a class="card__link" href={`/contact?service=${encodeURIComponent(s.title)}`}>Get a quote <Icon name="arrow" /></a>
           </article>
         ))}
       </div>
     </div>
   </section>
 
+  <!-- PROCESS -->
   <section class="section section--soft">
-    <div class="container section__head">
+    <div class="container">
+      <div class="section__head reveal">
+        <span class="eyebrow">How it works</span>
+        <h2>From first call to certified finish</h2>
+        <p>A straightforward process designed to make your life easier.</p>
+      </div>
+      <div class="steps">
+        {process.map((p, i) => (
+          <div class="step reveal" data-delay={String(i % 4)}>
+            <div class="step__n">{p.n}</div>
+            <h3>{p.title}</h3>
+            <p>{p.text}</p>
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="container section__head reveal">
       <span class="eyebrow">Don't see what you need?</span>
       <h2>If it's electrical, we can help</h2>
       <p>This is just a selection of what we do. Get in touch to talk through your project — domestic, commercial or industrial — and we'll give you honest advice and a free quote.</p>

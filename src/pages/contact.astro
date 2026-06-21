@@ -12,9 +12,9 @@ const hasStreet = site.address.street && site.address.street.length > 0;
   <section class="hero">
     <div class="container">
       <div class="hero__inner">
-        <span class="eyebrow" style="color:var(--amber)">Get in touch</span>
-        <h1>Contact {site.name}</h1>
-        <p>Ready to book a job or just want some advice? Call us, drop us an email, or send a message and we'll get straight back to you with a free quote.</p>
+        <span class="eyebrow">Get in touch</span>
+        <h1>Let's talk about your project</h1>
+        <p>Ready to book a job or just want some advice? Call us, drop us an email, or send a message and we'll get straight back to you with a free, no-obligation quote.</p>
       </div>
     </div>
   </section>
@@ -22,7 +22,7 @@ const hasStreet = site.address.street && site.address.street.length > 0;
   <section class="section">
     <div class="container contact-grid">
       <!-- Details -->
-      <div>
+      <div class="reveal">
         <h2>Talk to us</h2>
         <ul class="info-list">
           <li>
@@ -46,7 +46,7 @@ const hasStreet = site.address.street && site.address.street.length > 0;
           </li>
         </ul>
 
-        <h3 style="margin-top:34px">Opening hours</h3>
+        <h3 style="margin-top:36px">Opening hours</h3>
         <ul class="info-list">
           {site.hours.map((h) => (
             <li>
@@ -58,7 +58,7 @@ const hasStreet = site.address.street && site.address.street.length > 0;
       </div>
 
       <!-- Form -->
-      <div>
+      <div class="reveal" data-delay="1">
         <h2>Request a quote</h2>
         <!--
           TODO: This form needs a backend to actually send messages.
@@ -94,10 +94,23 @@ const hasStreet = site.address.street && site.address.street.length > 0;
             <label for="message">Details</label>
             <textarea id="message" name="message" rows="5" placeholder="Tell us a bit about the job…"></textarea>
           </div>
-          <button class="btn btn--primary" type="submit" style="justify-content:center"><Icon name="mail" /> Send enquiry</button>
+          <button class="btn btn--primary btn--lg" type="submit" style="justify-content:center"><Icon name="mail" /> Send enquiry</button>
           <p class="form__note">We aim to reply the same working day. Prefer to talk? Call {site.phone}.</p>
         </form>
       </div>
     </div>
   </section>
+
+  <script>
+    // Pre-select the service if arriving from a "Get a quote" link (?service=…)
+    const params = new URLSearchParams(window.location.search);
+    const svc = params.get('service');
+    if (svc) {
+      const sel = document.getElementById('service');
+      if (sel) {
+        const match = Array.from(sel.options).find((o) => o.value === svc);
+        sel.value = match ? svc : 'Other';
+      }
+    }
+  </script>
 </Layout>

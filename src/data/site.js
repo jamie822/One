@@ -13,10 +13,12 @@ export const site = {
   // --- Brand -----------------------------------------------------------------
   name: 'H H Electrical',
   legalName: 'H H Electrical',            // TODO: full registered/trading name
-  tagline: 'Trusted Local Electricians',
+  tagline: 'Your source for all things electrical',  // from their Instagram bio
+  // A short brand statement (from their Instagram): used in the hero.
+  brandStatement: 'Experienced electricians — from installations to maintenance.',
   // The live domain (used for canonical URLs + sitemap). No trailing slash.
   url: 'https://www.hhelectrical.co.uk', // TODO: confirm real domain
-  logoText: 'H H',                        // shown in the header lockup
+  logoText: 'HH',                         // shown in the header lockup
 
   // --- Contact ---------------------------------------------------------------
   phone: '01234 567 890',                 // TODO: real number
@@ -133,5 +135,62 @@ export const services = [
     long:
       'Planned maintenance, emergency lighting, periodic testing and full fit-outs for offices, shops and rental properties — reliable contractors you can build a long-term relationship with.',
     icon: 'commercial',
+  },
+];
+
+// =============================================================================
+//  HOW WE WORK  (process steps shown on the homepage)
+// =============================================================================
+export const process = [
+  { n: '01', title: 'Get in touch', text: 'Call or message us with what you need. We listen and offer honest, jargon-free advice.' },
+  { n: '02', title: 'Free quote', text: 'We assess the job and give you a clear, fixed quote with no hidden extras.' },
+  { n: '03', title: 'Expert work', text: 'We carry out the work safely, cleanly and to the latest wiring regulations.' },
+  { n: '04', title: 'Certified & done', text: 'Everything is tested, certified and tidied up — leaving you completely happy.' },
+];
+
+// =============================================================================
+//  TESTIMONIALS
+//  TODO: replace with real reviews (Google, Facebook, Instagram comments).
+// =============================================================================
+export const testimonials = [
+  {
+    quote:
+      'Turned up on time, did a brilliant clean job on our rewire and left the place spotless. Couldn’t recommend them more highly.',
+    author: 'Placeholder review',
+    location: 'Add real reviews in src/data/site.js',
+  },
+  {
+    quote:
+      'Sorted our fuse board and added EV charger in a day. Friendly, professional and fairly priced — exactly what you want from an electrician.',
+    author: 'Placeholder review',
+    location: 'Add real reviews in src/data/site.js',
+  },
+  {
+    quote:
+      'Quick to respond, explained everything clearly and the work was faultless. Our go-to electricians from now on.',
+    author: 'Placeholder review',
+    location: 'Add real reviews in src/data/site.js',
+  },
+];
+
+// =============================================================================
+//  FAQs  (great for SEO — rendered with FAQPage schema)
+// =============================================================================
+export const faqs = [
+  {
+    q: 'Are you qualified and insured?',
+    a: 'Yes. We’re fully qualified, accredited and insured, and all work is carried out to the latest 18th Edition wiring regulations and certified on completion.',
+  },
+  {
+    q: 'Do you offer free quotes?',
+    a: 'Absolutely — we provide free, no-obligation quotes with clear, fixed pricing and no hidden extras.',
+  },
+  {
+    q: 'Do you cover both domestic and commercial work?',
+    a: 'We do. From a single socket in your home to full commercial fit-outs and landlord testing, we handle jobs of every size.',
+  },
+  {
+    q: 'How quickly can you come out?',
+    a: 'We aim to respond the same working day and can usually arrange a visit quickly. For urgent issues, get in touch and we’ll do our best to help straight away.',
   },
 ];

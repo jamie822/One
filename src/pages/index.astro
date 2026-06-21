@@ -3,33 +3,41 @@ import Layout from '../layouts/Layout.astro';
 import Icon from '../components/Icon.astro';
 import Placeholder from '../components/Placeholder.astro';
 import CtaBand from '../components/CtaBand.astro';
-import { site, services } from '../data/site.js';
+import { site, services, process, testimonials, faqs } from '../data/site.js';
 
 const featured = services.slice(0, 6);
 const reasons = [
-  { t: 'Qualified & accredited', d: `${site.accreditations.join(', ')} — work that meets the latest regulations.` },
-  { t: 'Upfront, fair pricing', d: 'Clear quotes with no hidden extras and no surprises on the invoice.' },
-  { t: 'Clean & tidy', d: 'We respect your home or premises and leave every job spotless.' },
+  { t: 'Qualified & accredited', d: `${site.accreditations.join(', ')} — work that meets the latest 18th Edition regulations.` },
+  { t: 'Upfront, fair pricing', d: 'Clear, fixed quotes with no hidden extras and no surprises on the invoice.' },
+  { t: 'Clean & respectful', d: 'We treat your home or premises with care and leave every job spotless.' },
   { t: 'Local & reliable', d: `Based near ${site.address.locality} — we turn up when we say we will.` },
 ];
+
+// FAQPage schema for rich results
+const faqSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'FAQPage',
+  mainEntity: faqs.map((f) => ({
+    '@type': 'Question',
+    name: f.q,
+    acceptedAnswer: { '@type': 'Answer', text: f.a },
+  })),
+};
 ---
 <Layout
   path="/"
-  description={`${site.name} — qualified local electricians in ${site.address.locality}. Rewires, fuse board upgrades, EV chargers, EICR testing and more. Free quotes — call ${site.phone}.`}
+  description={`${site.name} — experienced local electricians in ${site.address.locality}. Rewires, fuse board upgrades, EV chargers, EICR testing and more. Free quotes — call ${site.phone}.`}
 >
   <!-- HERO -->
   <section class="hero">
     <div class="container">
       <div class="hero__inner">
-        <span class="eyebrow" style="color:var(--amber)">{site.accreditations[0]} Electricians · {site.address.locality}</span>
-        <h1>Reliable electricians for your home &amp; business in {site.address.locality}</h1>
-        <p>
-          From extra sockets to full rewires, EV chargers and safety testing —
-          {site.name} delivers safe, certified electrical work with friendly service and fair, upfront pricing.
-        </p>
+        <span class="eyebrow">{site.accreditations[0]} · {site.address.locality}</span>
+        <h1>Your source for <span class="grad">all things electrical</span> in {site.address.locality}</h1>
+        <p>{site.brandStatement} From extra sockets to full rewires, EV chargers and safety testing — safe, certified work with friendly service and fair, upfront pricing.</p>
         <div class="hero__actions">
-          <a class="btn btn--primary" href={`tel:${site.phoneHref}`}><Icon name="phone" /> Call {site.phone}</a>
-          <a class="btn btn--ghost" href="/contact">Get a free quote</a>
+          <a class="btn btn--primary btn--lg" href={`tel:${site.phoneHref}`}><Icon name="phone" /> Call {site.phone}</a>
+          <a class="btn btn--ghost btn--lg" href="/contact">Get a free quote</a>
         </div>
         <div class="hero__badges">
           {site.accreditations.map((a) => (
@@ -41,68 +49,146 @@ const reasons = [
     </div>
   </section>
 
-  <!-- TRUST STATS -->
-  <section class="section">
-    <div class="container">
-      <div class="stats">
-        <div><div class="stat__num">{site.yearsExperience}</div><div class="stat__label">Years' experience</div></div>
-        <div><div class="stat__num">100%</div><div class="stat__label">Certified work</div></div>
-        <div><div class="stat__num">5★</div><div class="stat__label">Customer rated</div></div>
-        <div><div class="stat__num">Free</div><div class="stat__label">No-obligation quotes</div></div>
-      </div>
+  <!-- TRUST STRIP -->
+  <div class="trust-strip">
+    <div class="container trust-strip__inner">
+      <span class="trust-item"><Icon name="shield" /> Fully qualified &amp; insured</span>
+      <span class="trust-item"><Icon name="check" /> 18th Edition certified</span>
+      <span class="trust-item"><Icon name="star" /> 5-star rated service</span>
+      <span class="trust-item"><Icon name="clock" /> Same-day response</span>
+      <span class="trust-item"><Icon name="commercial" /> Domestic &amp; commercial</span>
     </div>
-  </section>
+  </div>
 
   <!-- SERVICES -->
   <section class="section section--soft">
     <div class="container">
-      <div class="section__head">
+      <div class="section__head reveal">
         <span class="eyebrow">What we do</span>
         <h2>Electrical services in {site.address.locality}</h2>
-        <p>A full range of domestic and commercial electrical work, all carried out to the 18th Edition wiring regulations and fully certified.</p>
+        <p>A full range of domestic and commercial work, carried out to the latest wiring regulations and fully certified on completion.</p>
       </div>
       <div class="grid grid--3">
-        {featured.map((s) => (
-          <article class="card">
+        {featured.map((s, i) => (
+          <article class="card reveal" data-delay={String(i % 3)}>
             <div class="card__icon"><Icon name={s.icon} /></div>
             <h3>{s.title}</h3>
             <p>{s.short}</p>
+            <a class="card__link" href={`/services#${s.slug}`}>Learn more <Icon name="arrow" /></a>
           </article>
         ))}
       </div>
-      <div class="text-center" style="margin-top:36px">
-        <a class="btn btn--dark" href="/services">View all services</a>
+      <div class="text-center" style="margin-top:40px">
+        <a class="btn btn--dark btn--lg" href="/services">View all services <Icon name="arrow" /></a>
       </div>
     </div>
   </section>
 
-  <!-- WHY US (split with owner/work photo) -->
+  <!-- WHY US -->
   <section class="section">
     <div class="container split">
-      <div class="media-frame">
-        <Placeholder label="Photo of the team / van / a finished job" hint="Drop a real image into /public/images and update the src" variant="ph--wide" />
+      <div class="split__media media-frame media-frame--float reveal">
+        <Placeholder label="Photo of the team / van / a finished job" hint="Drop a real image into /public/images and set the src" variant="ph--wide" />
+        <div class="media-badge">
+          <span class="ico"><Icon name="star" /></span>
+          <div><strong>{site.yearsExperience} years</strong><span>trusted in {site.address.locality}</span></div>
+        </div>
       </div>
-      <div>
+      <div class="reveal" data-delay="1">
         <span class="eyebrow">Why choose us</span>
         <h2>Local electricians you can trust</h2>
         <p class="lead">We treat every job — big or small — with the same care, leaving you with safe, reliable electrics and zero mess.</p>
         <ul class="checklist">
           {reasons.map((r) => (
-            <li><Icon name="check" /><span><strong>{r.t}.</strong> {r.d}</span></li>
+            <li><span class="tick"><Icon name="check" /></span><span><strong>{r.t}.</strong> {r.d}</span></li>
           ))}
         </ul>
       </div>
     </div>
   </section>
 
-  <!-- AREAS SERVED (local SEO content) -->
+  <!-- STATS -->
+  <section class="section--tight">
+    <div class="container">
+      <div class="stats">
+        <div class="stat reveal"><div class="stat__num">{site.yearsExperience}</div><div class="stat__label">Years' experience</div></div>
+        <div class="stat reveal" data-delay="1"><div class="stat__num">100<span class="u">%</span></div><div class="stat__label">Certified work</div></div>
+        <div class="stat reveal" data-delay="2"><div class="stat__num">5<span class="u">★</span></div><div class="stat__label">Customer rated</div></div>
+        <div class="stat reveal" data-delay="3"><div class="stat__num">3k<span class="u">+</span></div><div class="stat__label">Instagram followers</div></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- PROCESS -->
   <section class="section section--soft">
-    <div class="container section__head">
+    <div class="container">
+      <div class="section__head reveal">
+        <span class="eyebrow">How it works</span>
+        <h2>Simple, stress-free from start to finish</h2>
+        <p>Getting expert electrical work done shouldn't be complicated. Here's how we keep it easy.</p>
+      </div>
+      <div class="steps">
+        {process.map((p, i) => (
+          <div class="step reveal" data-delay={String(i % 4)}>
+            <div class="step__n">{p.n}</div>
+            <h3>{p.title}</h3>
+            <p>{p.text}</p>
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- TESTIMONIALS -->
+  <section class="section">
+    <div class="container">
+      <div class="section__head reveal">
+        <span class="eyebrow">Don't just take our word for it</span>
+        <h2>What our customers say</h2>
+      </div>
+      <div class="grid grid--3">
+        {testimonials.map((t, i) => (
+          <figure class="quote reveal" data-delay={String(i % 3)} style="margin:0">
+            <div class="quote__mark">“</div>
+            <div class="quote__stars">
+              <Icon name="star" /><Icon name="star" /><Icon name="star" /><Icon name="star" /><Icon name="star" />
+            </div>
+            <blockquote style="margin:0"><p>{t.quote}</p></blockquote>
+            <figcaption class="quote__author"><strong>{t.author}</strong>{t.location}</figcaption>
+          </figure>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- AREAS SERVED -->
+  <section class="section section--soft">
+    <div class="container section__head reveal">
       <span class="eyebrow">Where we work</span>
       <h2>Proudly serving {site.address.locality} &amp; nearby</h2>
       <p>Our electricians cover {site.areaServed.slice(0, -1).join(', ')} and {site.areaServed.slice(-1)}. Not sure if you're in our area? Just give us a call.</p>
     </div>
   </section>
 
+  <!-- FAQ -->
+  <section class="section">
+    <div class="container">
+      <div class="section__head reveal">
+        <span class="eyebrow">Good to know</span>
+        <h2>Frequently asked questions</h2>
+      </div>
+      <div class="faq">
+        {faqs.map((f) => (
+          <details class="reveal">
+            <summary>{f.q} <span class="plus"></span></summary>
+            <div class="faq__body"><p>{f.a}</p></div>
+          </details>
+        ))}
+      </div>
+    </div>
+  </section>
+
   <CtaBand />
+
+  <script type="application/ld+json" set:html={JSON.stringify(faqSchema)} />
 </Layout>

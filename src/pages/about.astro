@@ -6,20 +6,20 @@ import CtaBand from '../components/CtaBand.astro';
 import { site } from '../data/site.js';
 
 const values = [
-  { t: 'Honesty first', d: 'Straight answers, fair prices and no upselling work you don’t need.' },
-  { t: 'Quality workmanship', d: 'Neat, safe installations that are built to last and fully certified.' },
-  { t: 'Customer care', d: 'Friendly, punctual and respectful of your home or workplace.' },
+  { t: 'Honesty first', d: 'Straight answers, fair prices and no upselling work you don’t need.', icon: 'shield' },
+  { t: 'Quality workmanship', d: 'Neat, safe installations that are built to last and fully certified.', icon: 'check' },
+  { t: 'Customer care', d: 'Friendly, punctual and respectful of your home or workplace.', icon: 'star' },
 ];
 ---
 <Layout
   path="/about"
   title="About Us"
-  description={`Meet ${site.owner.name} and the team behind ${site.name} — qualified, ${site.accreditations[0]} electricians serving ${site.address.locality} with ${site.yearsExperience} years of experience.`}
+  description={`Meet the team behind ${site.name} — experienced, ${site.accreditations[0]} electricians serving ${site.address.locality}. Your source for all things electrical.`}
 >
   <section class="hero">
     <div class="container">
       <div class="hero__inner">
-        <span class="eyebrow" style="color:var(--amber)">About us</span>
+        <span class="eyebrow">About us</span>
         <h1>Your local electrician in {site.address.locality}</h1>
         <p>{site.name} is built on a simple idea: do great electrical work, treat people fairly, and turn up when you say you will.</p>
       </div>
@@ -29,7 +29,7 @@ const values = [
   <!-- OWNER -->
   <section class="section">
     <div class="container split">
-      <div class="media-frame">
+      <div class="split__media media-frame media-frame--float reveal">
         <Placeholder
           src={site.owner.photo}
           alt={`${site.owner.name}, ${site.owner.role} at ${site.name}`}
@@ -38,23 +38,24 @@ const values = [
           variant="ph--portrait"
         />
       </div>
-      <div>
-        <span class="eyebrow">Meet the owner</span>
-        <h2>{site.owner.name}</h2>
-        <p class="lead">{site.owner.role}</p>
+      <div class="reveal" data-delay="1">
+        <span class="eyebrow">Meet the team</span>
+        <h2>Experienced electricians who care</h2>
+        <p class="lead">{site.brandStatement}</p>
         <p>
-          With over {site.yearsExperience} years in the trade, {site.owner.name} founded {site.name} to offer
-          {site.address.locality} a more dependable kind of electrician — one that combines proper
-          qualifications and high standards with genuinely friendly, no-nonsense service.
+          With {site.yearsExperience} years in the trade, {site.name} offers {site.address.locality} a more
+          dependable kind of electrician — combining proper qualifications and high standards with
+          genuinely friendly, no-nonsense service.
         </p>
         <p>
-          {/* TODO: replace this with the owner's real story from his Instagram / your notes. */}
-          Every job, from a single socket to a full rewire, gets the same attention to detail and
-          the same commitment to leaving customers completely happy with the result.
+          {/* TODO: replace with the owner's real story / name from his Instagram or your notes. */}
+          Every job, from a single socket to a full rewire, gets the same attention to detail and the
+          same commitment to leaving customers completely happy with the result — which is exactly why
+          so many of our customers come back and recommend us.
         </p>
-        <div class="hero__badges" style="margin-top:18px">
+        <div class="hero__badges" style="margin-top:20px">
           {site.accreditations.map((a) => (
-            <span class="badge" style="background:rgba(14,42,71,.06);border-color:var(--line);color:var(--navy)">
+            <span class="badge" style="background:rgba(10,31,60,.05);border-color:var(--line);color:var(--navy)">
               <Icon name="shield" /> {a}
             </span>
           ))}
@@ -66,14 +67,14 @@ const values = [
   <!-- VALUES -->
   <section class="section section--soft">
     <div class="container">
-      <div class="section__head">
+      <div class="section__head reveal">
         <span class="eyebrow">What we stand for</span>
         <h2>How we work</h2>
       </div>
       <div class="grid grid--3">
-        {values.map((v) => (
-          <article class="card">
-            <div class="card__icon"><Icon name="check" /></div>
+        {values.map((v, i) => (
+          <article class="card reveal" data-delay={String(i % 3)}>
+            <div class="card__icon"><Icon name={v.icon} /></div>
             <h3>{v.t}</h3>
             <p>{v.d}</p>
           </article>
@@ -82,21 +83,23 @@ const values = [
     </div>
   </section>
 
-  <!-- WORK GALLERY PREVIEW -->
+  <!-- WORK GALLERY -->
   <section class="section">
     <div class="container">
-      <div class="section__head">
+      <div class="section__head reveal">
         <span class="eyebrow">Recent work</span>
         <h2>A look at our jobs</h2>
         <p>A few examples of completed work — swap these for real photos from Instagram.</p>
       </div>
       <div class="tiles">
-        <Placeholder label="Job photo 1" />
-        <Placeholder label="Job photo 2" />
-        <Placeholder label="Job photo 3" />
-        <Placeholder label="Job photo 4" />
-        <Placeholder label="Job photo 5" />
-        <Placeholder label="Job photo 6" />
+        {Array.from({ length: 6 }).map((_, i) => (
+          <div class="media-frame reveal" data-delay={String(i % 3)}>
+            <Placeholder label={`Job photo ${i + 1}`} variant="ph--square" />
+          </div>
+        ))}
+      </div>
+      <div class="text-center" style="margin-top:36px">
+        <a class="btn btn--dark" href={site.instagram} target="_blank" rel="noopener"><Icon name="instagram" /> See more on Instagram</a>
       </div>
     </div>
   </section>
