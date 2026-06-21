@@ -4,6 +4,7 @@ import Hero from '../components/Hero.astro';
 import Icon from '../components/Icon.astro';
 import Placeholder from '../components/Placeholder.astro';
 import CtaBand from '../components/CtaBand.astro';
+import { href } from '../lib/href.js';
 import { site, services, process, testimonials, faqs } from '../data/site.js';
 
 const featured = services.slice(0, 6);
@@ -34,7 +35,7 @@ const faqSchema = {
     <h1><span class="line-brand">Domestic &amp; Commercial</span> Electrical Services</h1>
     <p>{site.brandStatement} {site.address.locality}-based, {site.accreditations[0]} electricians carrying out rewires, fuse boards, EV chargers and safety testing — with clear pricing, no call-out fees and guaranteed workmanship.</p>
     <div class="hero__actions">
-      <a class="btn btn--brand btn--lg" href="/contact">Get a Quote <Icon name="arrow" /></a>
+      <a class="btn btn--brand btn--lg" href={href('/contact')}>Get a Quote <Icon name="arrow" /></a>
       <a class="hero__phone" href={`tel:${site.phoneHref}`}><Icon name="phone" /> {site.phone}</a>
     </div>
   </Hero>
@@ -64,12 +65,12 @@ const faqSchema = {
             <div class="svc__icon"><Icon name={s.icon} /></div>
             <h3>{s.title}</h3>
             <p>{s.short}</p>
-            <a class="svc__more" href={`/services#${s.slug}`}>Learn More <Icon name="arrow" /></a>
+            <a class="svc__more" href={href(`/services#${s.slug}`)}>Learn More <Icon name="arrow" /></a>
           </article>
         ))}
       </div>
       <div class="text-center" style="margin-top:42px">
-        <a class="btn btn--dark btn--lg" href="/services">View All Services <Icon name="arrow" /></a>
+        <a class="btn btn--dark btn--lg" href={href('/services')}>View All Services <Icon name="arrow" /></a>
       </div>
     </div>
   </section>
@@ -89,7 +90,7 @@ const faqSchema = {
             <li><span class="tick"><Icon name="check" /></span><span><strong>{r.t}.</strong> {r.d}</span></li>
           ))}
         </ul>
-        <div style="margin-top:26px"><a class="btn btn--brand" href="/about">More About Us <Icon name="arrow" /></a></div>
+        <div style="margin-top:26px"><a class="btn btn--brand" href={href('/about')}>More About Us <Icon name="arrow" /></a></div>
       </div>
     </div>
   </section>
@@ -173,7 +174,7 @@ const faqSchema = {
   <!-- OWNER + VAN BAND -->
   <section class="vanband">
     <div class={`vanband__bg${site.vanImage ? '' : ' is-placeholder'}`}>
-      {site.vanImage && <img src={site.vanImage} alt={`${site.name} branded van`} />}
+      {site.vanImage && <img src={href(site.vanImage)} alt={`${site.name} branded van`} />}
     </div>
     <div class="vanband__inner reveal">
       <span class="eyebrow" style="color:var(--brand)">Your Local Electricians</span>
@@ -181,7 +182,7 @@ const faqSchema = {
       <p>Friendly, fully-qualified and insured. Get a free, no-obligation quote for electrical work across {site.address.locality} and nearby.</p>
       <div class="cta-band__actions" style="margin-top:8px">
         <a class="btn btn--brand btn--lg" href={`tel:${site.phoneHref}`}><Icon name="phone" /> Call {site.phone}</a>
-        <a class="btn btn--outline-light btn--lg" href="/contact">Request a Quote</a>
+        <a class="btn btn--outline-light btn--lg" href={href('/contact')}>Request a Quote</a>
       </div>
     </div>
   </section>

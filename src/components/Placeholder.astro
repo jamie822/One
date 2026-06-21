@@ -1,11 +1,12 @@
 ---
 import Icon from './Icon.astro';
+import { href } from '../lib/href.js';
 // A clearly-marked image slot. Replace by dropping a real <img> in its place,
 // or set the `src` prop once you've added a file to /public/images/.
 const { label = 'Add photo here', hint = '', variant = '', src = '', alt = '' } = Astro.props;
 ---
 {src ? (
-  <img src={src} alt={alt} loading="lazy" decoding="async" class={`media-img ${variant}`} />
+  <img src={href(src)} alt={alt} loading="lazy" decoding="async" class={`media-img ${variant}`} />
 ) : (
   <div class={`ph ${variant}`} role="img" aria-label={`Placeholder: ${label}`}>
     <Icon name="image" />

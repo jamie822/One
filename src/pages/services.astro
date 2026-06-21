@@ -3,6 +3,7 @@ import Layout from '../layouts/Layout.astro';
 import Hero from '../components/Hero.astro';
 import Icon from '../components/Icon.astro';
 import CtaBand from '../components/CtaBand.astro';
+import { href } from '../lib/href.js';
 import { site, services, process } from '../data/site.js';
 
 const servicesSchema = {
@@ -25,7 +26,7 @@ const servicesSchema = {
     <h1>Electrical services in {site.address.locality}</h1>
     <p>Whatever you need — at home or in business — we've got it covered. Every job is carried out by experienced electricians, fully certified and guaranteed.</p>
     <div class="hero__actions">
-      <a class="btn btn--brand btn--lg" href="/contact">Get a Quote <Icon name="arrow" /></a>
+      <a class="btn btn--brand btn--lg" href={href('/contact')}>Get a Quote <Icon name="arrow" /></a>
       <a class="hero__phone" href={`tel:${site.phoneHref}`}><Icon name="phone" /> {site.phone}</a>
     </div>
   </Hero>
@@ -38,7 +39,7 @@ const servicesSchema = {
             <div class="svc__icon"><Icon name={s.icon} /></div>
             <h3>{s.title}</h3>
             <p>{s.long}</p>
-            <a class="svc__more" href={`/contact?service=${encodeURIComponent(s.title)}`}>Get a Quote <Icon name="arrow" /></a>
+            <a class="svc__more" href={href(`/contact?service=${encodeURIComponent(s.title)}`)}>Get a Quote <Icon name="arrow" /></a>
           </article>
         ))}
       </div>

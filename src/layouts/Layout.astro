@@ -1,5 +1,6 @@
 ---
 import { site, services } from '../data/site.js';
+import { href } from '../lib/href.js';
 import TopBar from '../components/TopBar.astro';
 import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
@@ -90,8 +91,8 @@ const businessSchema = {
     <meta name="twitter:description" content={metaDesc} />
     <meta name="twitter:image" content={`${site.url}/images/og-default.svg`} />
 
-    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-    <link rel="sitemap" href="/sitemap-index.xml" />
+    <link rel="icon" type="image/svg+xml" href={href('/favicon.svg')} />
+    <link rel="sitemap" href={href('/sitemap-index.xml')} />
 
     <!-- Typography (house style: Poppins headings + Inter body) -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />

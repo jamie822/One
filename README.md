@@ -4,6 +4,17 @@ A fast, SEO-optimised 4-page brochure website (Home, Services, About, Contact)
 built with [Astro](https://astro.build). Static output — cheap and easy to host
 on Netlify, Cloudflare Pages, GitHub Pages, Vercel or any static host.
 
+Built in the agency **house style** (layout modelled on wyelectrical.co.uk) and
+recoloured per client. To reuse this for another client, see **[TEMPLATE.md](TEMPLATE.md)**.
+
+## 🌐 Live deploy (GitHub Pages)
+
+Pushing to the working branch auto-builds and publishes via
+`.github/workflows/deploy.yml`. **One-time setup:** repo **Settings → Pages →
+Source: "GitHub Actions"**. The site then goes live at
+`https://<owner>.github.io/<repo>/`. (Links/assets are base-path aware, so it
+works at a sub-path *and* on a custom domain at the root.)
+
 ## ✏️ Edit business details in ONE place
 
 Open **`src/data/site.js`** — business name, phone, email, location, service

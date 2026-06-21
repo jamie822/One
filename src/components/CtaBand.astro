@@ -1,5 +1,6 @@
 ---
 import { site } from '../data/site.js';
+import { href } from '../lib/href.js';
 import Icon from './Icon.astro';
 const {
   title = 'Need an electrician you can rely on?',
@@ -13,7 +14,7 @@ const {
       <p>{text}</p>
       <div class="cta-band__actions">
         <a class="btn btn--brand btn--lg" href={`tel:${site.phoneHref}`}><Icon name="phone" /> Call {site.phone}</a>
-        <a class="btn btn--outline-light btn--lg" href="/contact">Request a Quote</a>
+        <a class="btn btn--outline-light btn--lg" href={href('/contact')}>Request a Quote</a>
       </div>
     </div>
   </div>

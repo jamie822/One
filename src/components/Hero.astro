@@ -1,10 +1,11 @@
 ---
 import { site } from '../data/site.js';
+import { href } from '../lib/href.js';
 const { image = site.heroImage, inner = false } = Astro.props;
 ---
 <section class={`hero${inner ? ' hero--inner' : ''}`}>
   <div class={`hero__bg${image ? '' : ' is-placeholder'}`}>
-    {image && <img src={image} alt="" />}
+    {image && <img src={href(image)} alt="" />}
   </div>
   <div class="container">
     <div class="hero__inner">
