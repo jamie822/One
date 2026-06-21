@@ -1,5 +1,6 @@
 ---
 import Layout from '../layouts/Layout.astro';
+import Hero from '../components/Hero.astro';
 import Icon from '../components/Icon.astro';
 import Placeholder from '../components/Placeholder.astro';
 import CtaBand from '../components/CtaBand.astro';
@@ -16,20 +17,16 @@ const values = [
   title="About Us"
   description={`Meet the team behind ${site.name} — experienced, ${site.accreditations[0]} electricians serving ${site.address.locality}. Your source for all things electrical.`}
 >
-  <section class="hero">
-    <div class="container">
-      <div class="hero__inner">
-        <span class="eyebrow">About us</span>
-        <h1>Your local electrician in {site.address.locality}</h1>
-        <p>{site.name} is built on a simple idea: do great electrical work, treat people fairly, and turn up when you say you will.</p>
-      </div>
-    </div>
-  </section>
+  <Hero inner={true}>
+    <span class="eyebrow" style="color:var(--brand)">About Us</span>
+    <h1>Your local electrician in {site.address.locality}</h1>
+    <p>{site.name} is built on a simple idea: do great electrical work, treat people fairly, and turn up when you say you will.</p>
+  </Hero>
 
   <!-- OWNER -->
   <section class="section">
     <div class="container split">
-      <div class="split__media media-frame media-frame--float reveal">
+      <div class="split__media media-frame reveal">
         <Placeholder
           src={site.owner.photo}
           alt={`${site.owner.name}, ${site.owner.role} at ${site.name}`}
@@ -39,25 +36,14 @@ const values = [
         />
       </div>
       <div class="reveal" data-delay="1">
-        <span class="eyebrow">Meet the team</span>
+        <span class="eyebrow">Meet The Team</span>
         <h2>Experienced electricians who care</h2>
         <p class="lead">{site.brandStatement}</p>
-        <p>
-          With {site.yearsExperience} years in the trade, {site.name} offers {site.address.locality} a more
-          dependable kind of electrician — combining proper qualifications and high standards with
-          genuinely friendly, no-nonsense service.
-        </p>
-        <p>
-          {/* TODO: replace with the owner's real story / name from his Instagram or your notes. */}
-          Every job, from a single socket to a full rewire, gets the same attention to detail and the
-          same commitment to leaving customers completely happy with the result — which is exactly why
-          so many of our customers come back and recommend us.
-        </p>
-        <div class="hero__badges" style="margin-top:20px">
+        <p>With {site.yearsExperience} years in the trade, {site.name} offers {site.address.locality} a more dependable kind of electrician — combining proper qualifications and high standards with genuinely friendly, no-nonsense service.</p>
+        <p>{/* TODO: replace with the owner's real story / name from his Instagram or your notes. */}Every job, from a single socket to a full rewire, gets the same attention to detail and the same commitment to leaving customers completely happy — which is exactly why so many come back and recommend us.</p>
+        <div style="display:flex;flex-wrap:wrap;gap:12px;margin-top:22px">
           {site.accreditations.map((a) => (
-            <span class="badge" style="background:rgba(10,31,60,.05);border-color:var(--line);color:var(--navy)">
-              <Icon name="shield" /> {a}
-            </span>
+            <span class="trustchip"><Icon name="shield" /> {a}</span>
           ))}
         </div>
       </div>
@@ -68,13 +54,13 @@ const values = [
   <section class="section section--soft">
     <div class="container">
       <div class="section__head reveal">
-        <span class="eyebrow">What we stand for</span>
+        <span class="eyebrow">What We Stand For</span>
         <h2>How we work</h2>
       </div>
       <div class="grid grid--3">
         {values.map((v, i) => (
-          <article class="card reveal" data-delay={String(i % 3)}>
-            <div class="card__icon"><Icon name={v.icon} /></div>
+          <article class="svc reveal" data-delay={String(i % 3)}>
+            <div class="svc__icon"><Icon name={v.icon} /></div>
             <h3>{v.t}</h3>
             <p>{v.d}</p>
           </article>
@@ -83,22 +69,20 @@ const values = [
     </div>
   </section>
 
-  <!-- WORK GALLERY -->
+  <!-- GALLERY -->
   <section class="section">
     <div class="container">
       <div class="section__head reveal">
-        <span class="eyebrow">Recent work</span>
+        <span class="eyebrow">Recent Work</span>
         <h2>A look at our jobs</h2>
         <p>A few examples of completed work — swap these for real photos from Instagram.</p>
       </div>
       <div class="tiles">
         {Array.from({ length: 6 }).map((_, i) => (
-          <div class="media-frame reveal" data-delay={String(i % 3)}>
-            <Placeholder label={`Job photo ${i + 1}`} variant="ph--square" />
-          </div>
+          <div class="media-frame reveal" data-delay={String(i % 3)}><Placeholder label={`Job photo ${i + 1}`} variant="ph--square" /></div>
         ))}
       </div>
-      <div class="text-center" style="margin-top:36px">
+      <div class="text-center" style="margin-top:38px">
         <a class="btn btn--dark" href={site.instagram} target="_blank" rel="noopener"><Icon name="instagram" /> See more on Instagram</a>
       </div>
     </div>

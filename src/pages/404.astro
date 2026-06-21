@@ -1,19 +1,17 @@
 ---
 import Layout from '../layouts/Layout.astro';
+import Hero from '../components/Hero.astro';
+import Icon from '../components/Icon.astro';
 import { site } from '../data/site.js';
 ---
 <Layout path="/404" title="Page not found">
-  <section class="hero">
-    <div class="container">
-      <div class="hero__inner text-center" style="margin:0 auto">
-        <span class="eyebrow" style="color:var(--amber)">404</span>
-        <h1>We couldn't find that page</h1>
-        <p>It may have moved. Let's get you back on track.</p>
-        <div class="hero__actions" style="justify-content:center">
-          <a class="btn btn--primary" href="/">Back to home</a>
-          <a class="btn btn--ghost" href="/contact">Contact {site.name}</a>
-        </div>
-      </div>
+  <Hero inner={true}>
+    <span class="eyebrow" style="color:var(--brand)">404</span>
+    <h1>We couldn't find that page</h1>
+    <p>It may have moved. Let's get you back on track.</p>
+    <div class="hero__actions">
+      <a class="btn btn--brand btn--lg" href="/">Back to Home</a>
+      <a class="hero__phone" href={`tel:${site.phoneHref}`}><Icon name="phone" /> {site.phone}</a>
     </div>
-  </section>
+  </Hero>
 </Layout>

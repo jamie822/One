@@ -7,6 +7,10 @@
 //  Values marked  // TODO  are PLACEHOLDERS — replace them with the real
 //  details. Local SEO depends heavily on the accuracy of `areaServed`,
 //  `address`, `phone` and `email`, so get those right.
+//
+//  HOUSE RULE: the LAYOUT/structure is the reusable template; the COLOUR is
+//  unique to each client. Never reuse one client's brand colour on another
+//  site — set `brandColor` below to the client's own colour every build.
 // =============================================================================
 
 export const site = {
@@ -20,11 +24,29 @@ export const site = {
   url: 'https://www.hhelectrical.co.uk', // TODO: confirm real domain
   logoText: 'HH',                         // shown in the header lockup
 
+  // --- Brand colour (the whole site recolours from these two values) --------
+  // The design/layout is the reusable house style; the COLOUR is per-client.
+  // Change these two values to rebrand the entire site instantly.
+  // (H H Electrical: electric blue — confident, trustworthy, fits "electrical".)
+  brandColor: '#1668ff',                  // primary accent (pills, highlights)
+  brandColorDark: '#0b4fd1',              // darker hover shade
+
+  // --- Social proof ----------------------------------------------------------
+  googleRating: '5.0',                    // TODO: real Google rating
+  reviewCount: '60+',                     // TODO: real review/follower count
+
   // --- Contact ---------------------------------------------------------------
   phone: '01234 567 890',                 // TODO: real number
   phoneHref: '+441234567890',             // TODO: same number, international format
   email: 'info@hhelectrical.co.uk',       // TODO: real email
+  hoursShort: 'Mon – Sat: 8:00 – 18:00',  // shown in the top bar
   instagram: 'https://www.instagram.com/hhelectrical',
+  facebook: '',                           // TODO: optional
+  whatsapp: '',                           // TODO: optional (full intl number, no +)
+
+  // --- Imagery (drop real files into /public/images and update these) --------
+  heroImage: '',                          // e.g. '/images/hero.jpg' (full-bleed)
+  vanImage: '',                           // e.g. '/images/van.jpg' (owner + van band)
 
   // --- Location / Service area (CRITICAL for local SEO) ----------------------
   // The town you're based in + the towns/areas you cover.

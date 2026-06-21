@@ -1,8 +1,12 @@
 ---
 import { site, services } from '../data/site.js';
+import TopBar from '../components/TopBar.astro';
 import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
 import '../styles/global.css';
+
+// Derive a soft tint of the brand colour for backgrounds.
+const brandSoft = site.brandColor + '18'; // hex + ~9% alpha
 
 const {
   title,
@@ -59,7 +63,7 @@ const businessSchema = {
 };
 ---
 <!doctype html>
-<html lang="en-GB">
+<html lang="en-GB" style={`--brand:${site.brandColor};--brand-dark:${site.brandColorDark};--brand-soft:${brandSoft};`}>
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -67,7 +71,7 @@ const businessSchema = {
     <meta name="description" content={metaDesc} />
     <link rel="canonical" href={canonical} />
     <meta name="robots" content="index, follow" />
-    <meta name="theme-color" content="#0e2a47" />
+    <meta name="theme-color" content={site.brandColor} />
     <meta name="geo.region" content="GB" />
     <meta name="geo.placename" content={site.address.locality} />
 
@@ -89,18 +93,22 @@ const businessSchema = {
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <link rel="sitemap" href="/sitemap-index.xml" />
 
-    <!-- Premium typography -->
+    <!-- Typography (house style: Poppins headings + Inter body) -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
       rel="stylesheet"
-      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Sora:wght@600;700;800&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Poppins:wght@500;600;700;800&display=swap"
     />
+
+    <!-- Brand colour is set as an inline style on <html> (see above) so it
+         reliably overrides the stylesheet default. Change it in src/data/site.js -->
 
     <script type="application/ld+json" set:html={JSON.stringify(businessSchema)} />
   </head>
   <body>
     <a class="skip-link" href="#main">Skip to content</a>
+    <TopBar />
     <Header path={path} />
     <main id="main">
       <slot />
