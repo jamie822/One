@@ -1,0 +1,102 @@
+---
+import { site, services } from '../data/site.js';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import '../styles/global.css';
+
+const {
+  title,
+  description,
+  // page-specific path, e.g. "/services" — used for the canonical URL
+  path = '',
+  ogType = 'website',
+} = Astro.props;
+
+const canonical = new URL(path, site.url).href;
+const fullTitle = title
+  ? `${title} | ${site.name}`
+  : `${site.name} — ${site.tagline} in ${site.address.locality}`;
+const metaDesc =
+  description ||
+  `${site.name} provide reliable electrical services across ${site.address.locality} and ${site.areaServed.slice(0, 3).join(', ')}. Rewires, EV chargers, EICR testing & more. Call ${site.phone}.`;
+
+// --- schema.org : Electrician / LocalBusiness ------------------------------
+const businessSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'Electrician',
+  '@id': `${site.url}/#business`,
+  name: site.name,
+  legalName: site.legalName,
+  description: metaDesc,
+  url: site.url,
+  telephone: site.phoneHref,
+  email: site.email,
+  image: `${site.url}/images/og-default.svg`,
+  priceRange: '££',
+  foundingDate: String(site.foundedYear),
+  address: {
+    '@type': 'PostalAddress',
+    streetAddress: site.address.street || undefined,
+    addressLocality: site.address.locality,
+    addressRegion: site.address.region,
+    postalCode: site.address.postcode,
+    addressCountry: site.address.countryCode,
+  },
+  areaServed: site.areaServed.map((a) => ({ '@type': 'Place', name: a })),
+  sameAs: [site.instagram],
+  openingHoursSpecification: site.hours.map((h) => ({
+    '@type': 'OpeningHoursSpecification',
+    description: `${h.days}: ${h.time}`,
+  })),
+  hasOfferCatalog: {
+    '@type': 'OfferCatalog',
+    name: 'Electrical Services',
+    itemListElement: services.map((s) => ({
+      '@type': 'Offer',
+      itemOffered: { '@type': 'Service', name: s.title, description: s.short },
+    })),
+  },
+};
+---
+<!doctype html>
+<html lang="en-GB">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>{fullTitle}</title>
+    <meta name="description" content={metaDesc} />
+    <link rel="canonical" href={canonical} />
+    <meta name="robots" content="index, follow" />
+    <meta name="theme-color" content="#0e2a47" />
+    <meta name="geo.region" content="GB" />
+    <meta name="geo.placename" content={site.address.locality} />
+
+    <!-- Open Graph -->
+    <meta property="og:type" content={ogType} />
+    <meta property="og:site_name" content={site.name} />
+    <meta property="og:title" content={fullTitle} />
+    <meta property="og:description" content={metaDesc} />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:image" content={`${site.url}/images/og-default.svg`} />
+    <meta property="og:locale" content="en_GB" />
+
+    <!-- Twitter -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={fullTitle} />
+    <meta name="twitter:description" content={metaDesc} />
+    <meta name="twitter:image" content={`${site.url}/images/og-default.svg`} />
+
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="sitemap" href="/sitemap-index.xml" />
+
+    <script type="application/ld+json" set:html={JSON.stringify(businessSchema)} />
+  </head>
+  <body>
+    <a class="skip-link" href="#main">Skip to content</a>
+    <Header path={path} />
+    <main id="main">
+      <slot />
+    </main>
+    <Footer />
+  </body>
+</html>

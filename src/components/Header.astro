@@ -1,0 +1,46 @@
+---
+import { site } from '../data/site.js';
+import Icon from './Icon.astro';
+const { path = '' } = Astro.props;
+const links = [
+  { href: '/', label: 'Home' },
+  { href: '/services', label: 'Services' },
+  { href: '/about', label: 'About' },
+  { href: '/contact', label: 'Contact' },
+];
+const isActive = (href) =>
+  href === '/' ? path === '/' || path === '' : path.startsWith(href);
+---
+<header class="site-header">
+  <div class="container site-header__inner">
+    <a class="brand" href="/" aria-label={`${site.name} home`}>
+      <span class="brand__mark">{site.logoText}</span>
+      <span class="brand__name">
+        {site.name}
+        <span>{site.tagline}</span>
+      </span>
+    </a>
+
+    <button class="nav-toggle" aria-label="Toggle menu" aria-expanded="false" data-nav-toggle>
+      <span></span><span></span><span></span>
+    </button>
+
+    <nav class="nav" data-nav>
+      {links.map((l) => (
+        <a href={l.href} class={isActive(l.href) ? 'is-active' : ''}>{l.label}</a>
+      ))}
+      <a class="btn btn--primary nav__cta" href={`tel:${site.phoneHref}`}>
+        <Icon name="phone" /> {site.phone}
+      </a>
+    </nav>
+  </div>
+</header>
+
+<script>
+  const toggle = document.querySelector('[data-nav-toggle]');
+  const nav = document.querySelector('[data-nav]');
+  toggle?.addEventListener('click', () => {
+    const open = nav?.classList.toggle('is-open');
+    toggle.setAttribute('aria-expanded', String(!!open));
+  });
+</script>

@@ -1,0 +1,103 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Icon from '../components/Icon.astro';
+import { site, services } from '../data/site.js';
+const hasStreet = site.address.street && site.address.street.length > 0;
+---
+<Layout
+  path="/contact"
+  title="Contact"
+  description={`Contact ${site.name} in ${site.address.locality}. Call ${site.phone} or email ${site.email} for a free, no-obligation electrical quote.`}
+>
+  <section class="hero">
+    <div class="container">
+      <div class="hero__inner">
+        <span class="eyebrow" style="color:var(--amber)">Get in touch</span>
+        <h1>Contact {site.name}</h1>
+        <p>Ready to book a job or just want some advice? Call us, drop us an email, or send a message and we'll get straight back to you with a free quote.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="container contact-grid">
+      <!-- Details -->
+      <div>
+        <h2>Talk to us</h2>
+        <ul class="info-list">
+          <li>
+            <span class="ico"><Icon name="phone" /></span>
+            <div><strong>Phone</strong><a href={`tel:${site.phoneHref}`}>{site.phone}</a></div>
+          </li>
+          <li>
+            <span class="ico"><Icon name="mail" /></span>
+            <div><strong>Email</strong><a href={`mailto:${site.email}`}>{site.email}</a></div>
+          </li>
+          <li>
+            <span class="ico"><Icon name="pin" /></span>
+            <div>
+              <strong>Area covered</strong>
+              <span>{hasStreet ? `${site.address.street}, ` : ''}{site.address.locality}, {site.address.region} {site.address.postcode}</span>
+            </div>
+          </li>
+          <li>
+            <span class="ico"><Icon name="instagram" /></span>
+            <div><strong>Instagram</strong><a href={site.instagram} target="_blank" rel="noopener">Follow our latest work</a></div>
+          </li>
+        </ul>
+
+        <h3 style="margin-top:34px">Opening hours</h3>
+        <ul class="info-list">
+          {site.hours.map((h) => (
+            <li>
+              <span class="ico"><Icon name="clock" /></span>
+              <div><strong>{h.days}</strong><span>{h.time}</span></div>
+            </li>
+          ))}
+        </ul>
+      </div>
+
+      <!-- Form -->
+      <div>
+        <h2>Request a quote</h2>
+        <!--
+          TODO: This form needs a backend to actually send messages.
+          Easiest options for a static site:
+            • Formspree  -> action="https://formspree.io/f/XXXXXXXX" (no code)
+            • Netlify Forms -> add  netlify  attribute if hosting on Netlify
+          Replace the action below, then remove this comment.
+        -->
+        <form class="form" action="https://formspree.io/f/your-form-id" method="POST">
+          <div class="field--row">
+            <div class="field">
+              <label for="name">Your name</label>
+              <input id="name" name="name" type="text" autocomplete="name" required />
+            </div>
+            <div class="field">
+              <label for="phone">Phone</label>
+              <input id="phone" name="phone" type="tel" autocomplete="tel" required />
+            </div>
+          </div>
+          <div class="field">
+            <label for="email">Email</label>
+            <input id="email" name="email" type="email" autocomplete="email" required />
+          </div>
+          <div class="field">
+            <label for="service">What do you need?</label>
+            <select id="service" name="service">
+              <option value="">Select a service…</option>
+              {services.map((s) => <option value={s.title}>{s.title}</option>)}
+              <option value="Other">Something else</option>
+            </select>
+          </div>
+          <div class="field">
+            <label for="message">Details</label>
+            <textarea id="message" name="message" rows="5" placeholder="Tell us a bit about the job…"></textarea>
+          </div>
+          <button class="btn btn--primary" type="submit" style="justify-content:center"><Icon name="mail" /> Send enquiry</button>
+          <p class="form__note">We aim to reply the same working day. Prefer to talk? Call {site.phone}.</p>
+        </form>
+      </div>
+    </div>
+  </section>
+</Layout>

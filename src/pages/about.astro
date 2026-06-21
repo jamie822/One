@@ -1,0 +1,105 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Icon from '../components/Icon.astro';
+import Placeholder from '../components/Placeholder.astro';
+import CtaBand from '../components/CtaBand.astro';
+import { site } from '../data/site.js';
+
+const values = [
+  { t: 'Honesty first', d: 'Straight answers, fair prices and no upselling work you don’t need.' },
+  { t: 'Quality workmanship', d: 'Neat, safe installations that are built to last and fully certified.' },
+  { t: 'Customer care', d: 'Friendly, punctual and respectful of your home or workplace.' },
+];
+---
+<Layout
+  path="/about"
+  title="About Us"
+  description={`Meet ${site.owner.name} and the team behind ${site.name} — qualified, ${site.accreditations[0]} electricians serving ${site.address.locality} with ${site.yearsExperience} years of experience.`}
+>
+  <section class="hero">
+    <div class="container">
+      <div class="hero__inner">
+        <span class="eyebrow" style="color:var(--amber)">About us</span>
+        <h1>Your local electrician in {site.address.locality}</h1>
+        <p>{site.name} is built on a simple idea: do great electrical work, treat people fairly, and turn up when you say you will.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- OWNER -->
+  <section class="section">
+    <div class="container split">
+      <div class="media-frame">
+        <Placeholder
+          src={site.owner.photo}
+          alt={`${site.owner.name}, ${site.owner.role} at ${site.name}`}
+          label="Photo of the owner"
+          hint="From Instagram — save it to /public/images/ and set owner.photo in src/data/site.js"
+          variant="ph--portrait"
+        />
+      </div>
+      <div>
+        <span class="eyebrow">Meet the owner</span>
+        <h2>{site.owner.name}</h2>
+        <p class="lead">{site.owner.role}</p>
+        <p>
+          With over {site.yearsExperience} years in the trade, {site.owner.name} founded {site.name} to offer
+          {site.address.locality} a more dependable kind of electrician — one that combines proper
+          qualifications and high standards with genuinely friendly, no-nonsense service.
+        </p>
+        <p>
+          {/* TODO: replace this with the owner's real story from his Instagram / your notes. */}
+          Every job, from a single socket to a full rewire, gets the same attention to detail and
+          the same commitment to leaving customers completely happy with the result.
+        </p>
+        <div class="hero__badges" style="margin-top:18px">
+          {site.accreditations.map((a) => (
+            <span class="badge" style="background:rgba(14,42,71,.06);border-color:var(--line);color:var(--navy)">
+              <Icon name="shield" /> {a}
+            </span>
+          ))}
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- VALUES -->
+  <section class="section section--soft">
+    <div class="container">
+      <div class="section__head">
+        <span class="eyebrow">What we stand for</span>
+        <h2>How we work</h2>
+      </div>
+      <div class="grid grid--3">
+        {values.map((v) => (
+          <article class="card">
+            <div class="card__icon"><Icon name="check" /></div>
+            <h3>{v.t}</h3>
+            <p>{v.d}</p>
+          </article>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- WORK GALLERY PREVIEW -->
+  <section class="section">
+    <div class="container">
+      <div class="section__head">
+        <span class="eyebrow">Recent work</span>
+        <h2>A look at our jobs</h2>
+        <p>A few examples of completed work — swap these for real photos from Instagram.</p>
+      </div>
+      <div class="tiles">
+        <Placeholder label="Job photo 1" />
+        <Placeholder label="Job photo 2" />
+        <Placeholder label="Job photo 3" />
+        <Placeholder label="Job photo 4" />
+        <Placeholder label="Job photo 5" />
+        <Placeholder label="Job photo 6" />
+      </div>
+    </div>
+  </section>
+
+  <CtaBand title={`Work with ${site.name}`} />
+</Layout>

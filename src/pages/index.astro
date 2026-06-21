@@ -1,0 +1,108 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Icon from '../components/Icon.astro';
+import Placeholder from '../components/Placeholder.astro';
+import CtaBand from '../components/CtaBand.astro';
+import { site, services } from '../data/site.js';
+
+const featured = services.slice(0, 6);
+const reasons = [
+  { t: 'Qualified & accredited', d: `${site.accreditations.join(', ')} — work that meets the latest regulations.` },
+  { t: 'Upfront, fair pricing', d: 'Clear quotes with no hidden extras and no surprises on the invoice.' },
+  { t: 'Clean & tidy', d: 'We respect your home or premises and leave every job spotless.' },
+  { t: 'Local & reliable', d: `Based near ${site.address.locality} — we turn up when we say we will.` },
+];
+---
+<Layout
+  path="/"
+  description={`${site.name} — qualified local electricians in ${site.address.locality}. Rewires, fuse board upgrades, EV chargers, EICR testing and more. Free quotes — call ${site.phone}.`}
+>
+  <!-- HERO -->
+  <section class="hero">
+    <div class="container">
+      <div class="hero__inner">
+        <span class="eyebrow" style="color:var(--amber)">{site.accreditations[0]} Electricians · {site.address.locality}</span>
+        <h1>Reliable electricians for your home &amp; business in {site.address.locality}</h1>
+        <p>
+          From extra sockets to full rewires, EV chargers and safety testing —
+          {site.name} delivers safe, certified electrical work with friendly service and fair, upfront pricing.
+        </p>
+        <div class="hero__actions">
+          <a class="btn btn--primary" href={`tel:${site.phoneHref}`}><Icon name="phone" /> Call {site.phone}</a>
+          <a class="btn btn--ghost" href="/contact">Get a free quote</a>
+        </div>
+        <div class="hero__badges">
+          {site.accreditations.map((a) => (
+            <span class="badge"><Icon name="shield" /> {a}</span>
+          ))}
+          <span class="badge"><Icon name="star" /> {site.yearsExperience} years' experience</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- TRUST STATS -->
+  <section class="section">
+    <div class="container">
+      <div class="stats">
+        <div><div class="stat__num">{site.yearsExperience}</div><div class="stat__label">Years' experience</div></div>
+        <div><div class="stat__num">100%</div><div class="stat__label">Certified work</div></div>
+        <div><div class="stat__num">5★</div><div class="stat__label">Customer rated</div></div>
+        <div><div class="stat__num">Free</div><div class="stat__label">No-obligation quotes</div></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SERVICES -->
+  <section class="section section--soft">
+    <div class="container">
+      <div class="section__head">
+        <span class="eyebrow">What we do</span>
+        <h2>Electrical services in {site.address.locality}</h2>
+        <p>A full range of domestic and commercial electrical work, all carried out to the 18th Edition wiring regulations and fully certified.</p>
+      </div>
+      <div class="grid grid--3">
+        {featured.map((s) => (
+          <article class="card">
+            <div class="card__icon"><Icon name={s.icon} /></div>
+            <h3>{s.title}</h3>
+            <p>{s.short}</p>
+          </article>
+        ))}
+      </div>
+      <div class="text-center" style="margin-top:36px">
+        <a class="btn btn--dark" href="/services">View all services</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- WHY US (split with owner/work photo) -->
+  <section class="section">
+    <div class="container split">
+      <div class="media-frame">
+        <Placeholder label="Photo of the team / van / a finished job" hint="Drop a real image into /public/images and update the src" variant="ph--wide" />
+      </div>
+      <div>
+        <span class="eyebrow">Why choose us</span>
+        <h2>Local electricians you can trust</h2>
+        <p class="lead">We treat every job — big or small — with the same care, leaving you with safe, reliable electrics and zero mess.</p>
+        <ul class="checklist">
+          {reasons.map((r) => (
+            <li><Icon name="check" /><span><strong>{r.t}.</strong> {r.d}</span></li>
+          ))}
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- AREAS SERVED (local SEO content) -->
+  <section class="section section--soft">
+    <div class="container section__head">
+      <span class="eyebrow">Where we work</span>
+      <h2>Proudly serving {site.address.locality} &amp; nearby</h2>
+      <p>Our electricians cover {site.areaServed.slice(0, -1).join(', ')} and {site.areaServed.slice(-1)}. Not sure if you're in our area? Just give us a call.</p>
+    </div>
+  </section>
+
+  <CtaBand />
+</Layout>

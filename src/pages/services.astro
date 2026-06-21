@@ -1,0 +1,68 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Icon from '../components/Icon.astro';
+import CtaBand from '../components/CtaBand.astro';
+import { site, services } from '../data/site.js';
+
+// ItemList schema helps these services show richer in search.
+const servicesSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'ItemList',
+  itemListElement: services.map((s, i) => ({
+    '@type': 'ListItem',
+    position: i + 1,
+    item: {
+      '@type': 'Service',
+      name: s.title,
+      description: s.short,
+      areaServed: site.address.locality,
+      provider: { '@type': 'Electrician', name: site.name },
+    },
+  })),
+};
+---
+<Layout
+  path="/services"
+  title="Electrical Services"
+  description={`Full list of electrical services from ${site.name} in ${site.address.locality}: rewires, fuse board upgrades, EV chargers, EICR testing, lighting, fault finding and commercial work.`}
+>
+  <section class="hero">
+    <div class="container">
+      <div class="hero__inner">
+        <span class="eyebrow" style="color:var(--amber)">Our services</span>
+        <h1>Electrical services in {site.address.locality}</h1>
+        <p>Whatever your electrical needs — at home or in business — we've got it covered. Every job is fully certified and guaranteed.</p>
+        <div class="hero__actions">
+          <a class="btn btn--primary" href={`tel:${site.phoneHref}`}><Icon name="phone" /> Call {site.phone}</a>
+          <a class="btn btn--ghost" href="/contact">Request a quote</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="container">
+      <div class="grid grid--2">
+        {services.map((s) => (
+          <article class="card" id={s.slug}>
+            <div class="card__icon"><Icon name={s.icon} /></div>
+            <h3>{s.title}</h3>
+            <p>{s.long}</p>
+          </article>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <section class="section section--soft">
+    <div class="container section__head">
+      <span class="eyebrow">Don't see what you need?</span>
+      <h2>If it's electrical, we can help</h2>
+      <p>This is just a selection of what we do. Get in touch to talk through your project — domestic, commercial or industrial — and we'll give you honest advice and a free quote.</p>
+    </div>
+  </section>
+
+  <CtaBand />
+
+  <script type="application/ld+json" set:html={JSON.stringify(servicesSchema)} />
+</Layout>
