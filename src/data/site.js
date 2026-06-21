@@ -14,6 +14,8 @@ export const site = {
   legalName: 'Off The Tools',             // TODO: registered trading name
   // The hook + the promise.
   tagline: 'Stop being the business. Start owning one.',
+  // Brand strapline (electrical pun — transformation + what we do).
+  strapline: 'Rewiring electricians’ businesses.',
   // One-line descriptor of who it's for.
   descriptor: 'Premium websites & online presence for electricians.',
   url: 'https://jamie822.github.io/One',  // live (GitHub Pages); swap for real domain

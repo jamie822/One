@@ -131,6 +131,16 @@ p { margin: 0 0 1rem; }
 .spark { position: absolute; bottom: -12px; width: 3px; height: 3px; border-radius: 50%; background: radial-gradient(circle, #f6e2ab, #c9a24b); box-shadow: 0 0 9px 1px rgba(201,162,75,.7); opacity: 0; animation: rise linear infinite; }
 @keyframes rise { 0% { transform: translateY(0) scale(.5); opacity: 0; } 12% { opacity: .9; } 88% { opacity: .75; } 100% { transform: translateY(-94vh) scale(1.1); opacity: 0; } }
 
+/* Lightning canvas (home hero) */
+.hero__lightning { position: absolute; inset: 0; z-index: 2; pointer-events: none; mix-blend-mode: screen; }
+.hero--home .container { position: relative; z-index: 3; }
+
+/* Clarity line + "what we do" chips */
+.hero__lead { font-size: clamp(1.15rem, 2.2vw, 1.4rem); color: var(--cream); margin-bottom: 22px; max-width: 52ch; line-height: 1.5; }
+.hero__lead strong { font-weight: 700; background: var(--gold-grad); -webkit-background-clip: text; background-clip: text; color: transparent; }
+.hero__chips { display: flex; flex-wrap: wrap; gap: 10px; margin: 0 0 34px; }
+.hero__chips span { font-family: var(--font-display); font-size: .82rem; font-weight: 600; letter-spacing: .03em; color: var(--cream); border: 1px solid var(--line-strong); border-radius: 999px; padding: 8px 17px; background: rgba(201,162,75,.07); }
+
 /* Rotating headline word */
 .rotator { display: inline-block; }
 .rotator__word { display: inline-block; transition: opacity .42s ease, transform .42s ease; will-change: opacity, transform; }

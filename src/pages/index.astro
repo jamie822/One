@@ -34,6 +34,7 @@ const faqSchema = {
   <section class="hero hero--home">
     <div class="hero__bg is-placeholder"></div>
     <div class="hero__glow"></div>
+    <canvas class="hero__lightning" data-lightning aria-hidden="true"></canvas>
     <div class="sparks" aria-hidden="true">
       {sparks.map((s) => (
         <span class="spark" style={`left:${s.left}%;width:${s.size}px;height:${s.size}px;animation-duration:${s.dur}s;animation-delay:${s.delay}s`}></span>
@@ -41,9 +42,12 @@ const faqSchema = {
     </div>
     <div class="container">
       <div class="hero__inner">
-        <span class="eyebrow">For electricians ready to scale</span>
+        <span class="eyebrow">Websites &amp; online presence for electricians</span>
         <h1>You didn't go self-employed to <span class="rotator" data-rotator data-words={JSON.stringify(rotateWords)}><span class="rotator__word serif gold">{rotateWords[0]}</span></span></h1>
-        <p>{site.descriptor} We build the website, online presence and systems that win you better work — so you can finally stop being the business and start owning one.</p>
+        <p class="hero__lead">We <strong>rewire your business</strong> — the website, lead generation &amp; systems that win you better work and get you off the tools.</p>
+        <div class="hero__chips">
+          <span>Websites</span><span>Branding</span><span>Lead Generation</span><span>Automation</span><span>Reviews</span>
+        </div>
         <div class="hero__actions">
           <a class="btn btn--gold btn--lg" href={href('/contact')}>Book a Call <Icon name="arrow" /></a>
           <a class="btn btn--ghost btn--lg" href={href('/packages')}>See Packages</a>
@@ -66,6 +70,74 @@ const faqSchema = {
           r.classList.remove('is-swapping');
         }, 420);
       }, 2600);
+    }
+  </script>
+
+  <script>
+    // Lightning strike effect on the hero background.
+    const canvas = document.querySelector('[data-lightning]');
+    const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (canvas && !reduce) {
+      const ctx = canvas.getContext('2d');
+      const hero = canvas.closest('.hero');
+      let W = 0, H = 0, dpr = Math.min(window.devicePixelRatio || 1, 2);
+      const resize = () => {
+        W = hero.clientWidth; H = hero.clientHeight;
+        canvas.width = W * dpr; canvas.height = H * dpr;
+        canvas.style.width = W + 'px'; canvas.style.height = H + 'px';
+        ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      };
+      resize();
+      window.addEventListener('resize', resize, { passive: true });
+
+      // Build a jagged bolt via midpoint displacement.
+      function build(x1, y1, x2, y2, disp, out) {
+        if (disp < 7) { out.push([x1, y1, x2, y2]); return; }
+        const mx = (x1 + x2) / 2 + (Math.random() - 0.5) * disp;
+        const my = (y1 + y2) / 2 + (Math.random() - 0.5) * disp * 0.4;
+        build(x1, y1, mx, my, disp / 2, out);
+        build(mx, my, x2, y2, disp / 2, out);
+        if (Math.random() < 0.32) { // branch
+          const bx = mx + (Math.random() - 0.5) * disp * 1.4;
+          const by = my + disp * (0.5 + Math.random());
+          build(mx, my, bx, by, disp / 2.2, out);
+        }
+      }
+      function drawSegs(segs, alpha, lw, color) {
+        ctx.strokeStyle = color; ctx.lineWidth = lw; ctx.globalAlpha = alpha;
+        ctx.shadowColor = '#e4c77b'; ctx.shadowBlur = 18; ctx.lineCap = 'round';
+        ctx.beginPath();
+        for (const s of segs) { ctx.moveTo(s[0], s[1]); ctx.lineTo(s[2], s[3]); }
+        ctx.stroke();
+      }
+      function strike() {
+        const startX = W * (0.45 + Math.random() * 0.5);
+        const endX = startX + (Math.random() - 0.5) * W * 0.3;
+        const segs = [];
+        build(startX, -10, endX, H * (0.72 + Math.random() * 0.28), W * 0.16, segs);
+        const frames = [1, 0.4, 0.95, 0.5, 0.8, 0.3, 0];
+        let f = 0;
+        const flicker = () => {
+          ctx.clearRect(0, 0, W, H);
+          const a = frames[f];
+          if (a > 0) {
+            if (f === 0) { // flash
+              const g = ctx.createRadialGradient(startX, 0, 0, startX, 0, H);
+              g.addColorStop(0, 'rgba(201,162,75,0.10)'); g.addColorStop(1, 'rgba(201,162,75,0)');
+              ctx.globalAlpha = 1; ctx.fillStyle = g; ctx.fillRect(0, 0, W, H);
+            }
+            drawSegs(segs, a, 3.4, '#e4c77b');         // gold glow body
+            drawSegs(segs, a * 0.95, 1.5, '#fff7e6');   // bright core
+            ctx.globalAlpha = 1; ctx.shadowBlur = 0;
+          }
+          f++;
+          if (f < frames.length) setTimeout(flicker, 42);
+          else { ctx.clearRect(0, 0, W, H); schedule(); }
+        };
+        flicker();
+      }
+      function schedule() { setTimeout(strike, 2600 + Math.random() * 4200); }
+      setTimeout(strike, 1200);
     }
   </script>
 
