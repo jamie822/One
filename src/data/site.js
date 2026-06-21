@@ -217,3 +217,58 @@ export const faqs = [
   { q: 'How quickly can I be live?', a: 'A premium website can typically be live within around 7 days once we have your details and photos. Lead generation and systems follow straight after.' },
   { q: 'Do I have to commit to coaching?', a: 'No. Most start with a website and online presence. Coaching and systems are there when you’re ready to genuinely step off the tools — never forced.' },
 ];
+
+// =============================================================================
+//  CASE STUDIES / RESULTS  (replace with real client results)
+// =============================================================================
+export const caseStudies = [
+  {
+    client: 'Domestic electrician · Leeds',           // TODO: real client
+    headline: 'From word-of-mouth to a booked-out diary',
+    problem: 'No website, leads dried up every winter, competing on price.',
+    result: 'A premium site + Google lead gen filled the diary 6 weeks ahead.',
+    metric: '+38',
+    metricLabel: 'qualified leads / month',
+  },
+  {
+    client: 'Electrical contractor · West Yorkshire',
+    headline: 'Charging premium prices without flinching',
+    problem: 'Brilliant work, cheap-looking brand, always undercharging.',
+    result: 'New brand & site repositioned them as the premium choice.',
+    metric: '+27%',
+    metricLabel: 'average job value',
+  },
+  {
+    client: 'Solo spark → small team',
+    headline: 'Finally off the tools two days a week',
+    problem: 'Was the business — quoting at night, drowning in admin.',
+    result: 'Automation + a first hire freed up real time off the tools.',
+    metric: '2 days',
+    metricLabel: 'a week off the tools',
+  },
+];
+
+// =============================================================================
+//  TESTIMONIALS  (replace with real reviews from electricians)
+// =============================================================================
+export const testimonials = [
+  { quote: 'Within a month the website was bringing in better jobs than I’d ever had. Wish I’d done it years ago.', author: 'Placeholder review', role: 'Electrician · add real reviews in site.js' },
+  { quote: 'Finally a marketer who actually gets the trade. No jargon, just leads and a brand I’m proud of.', author: 'Placeholder review', role: 'Electrical contractor' },
+  { quote: 'The systems alone gave me my evenings back. I’m running a business now, not chasing my tail.', author: 'Placeholder review', role: 'Director' },
+];
+
+// =============================================================================
+//  LEAD MAGNET  (free downloadable guide)
+// =============================================================================
+export const leadMagnet = {
+  title: '5 Reasons Electricians Stay Stuck On The Tools',
+  subtitle: 'The free guide — and exactly how to break free of each one.',
+  file: '/downloads/off-the-tools-guide.pdf',
+  bullets: [
+    'Why “just work harder” keeps you trapped',
+    'The brand mistake that caps your prices',
+    'The lead problem that causes feast & famine',
+    'The admin leak losing you jobs every week',
+    'The first system that buys back your time',
+  ],
+};

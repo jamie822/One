@@ -133,6 +133,10 @@ p { margin: 0 0 1rem; }
 
 /* Lightning canvas (home hero) */
 .hero__lightning { position: absolute; inset: 0; z-index: 2; pointer-events: none; mix-blend-mode: screen; }
+.hero__flash { position: absolute; inset: 0; z-index: 2; pointer-events: none; opacity: 0; mix-blend-mode: screen;
+  background: radial-gradient(60% 55% at 68% 18%, rgba(247,233,200,.22), rgba(201,162,75,.06) 45%, transparent 72%);
+  transition: opacity .55s ease; }
+.hero__flash.is-on { opacity: 1; transition: opacity .05s ease; }
 .hero--home .container { position: relative; z-index: 3; }
 
 /* Clarity line + "what we do" chips */

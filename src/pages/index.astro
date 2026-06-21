@@ -3,6 +3,7 @@ import Layout from '../layouts/Layout.astro';
 import Icon from '../components/Icon.astro';
 import Placeholder from '../components/Placeholder.astro';
 import CtaBand from '../components/CtaBand.astro';
+import LeadMagnet from '../components/LeadMagnet.astro';
 import { href } from '../lib/href.js';
 import { site, pains, services, packages, faqs } from '../data/site.js';
 const { stats } = site;
@@ -35,6 +36,7 @@ const faqSchema = {
     <div class="hero__bg is-placeholder"></div>
     <div class="hero__glow"></div>
     <canvas class="hero__lightning" data-lightning aria-hidden="true"></canvas>
+    <div class="hero__flash" data-flash aria-hidden="true"></div>
     <div class="sparks" aria-hidden="true">
       {sparks.map((s) => (
         <span class="spark" style={`left:${s.left}%;width:${s.size}px;height:${s.size}px;animation-duration:${s.dur}s;animation-delay:${s.delay}s`}></span>
@@ -57,26 +59,12 @@ const faqSchema = {
   </section>
 
   <script>
-    const r = document.querySelector('[data-rotator]');
-    if (r && !window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
-      const words = JSON.parse(r.getAttribute('data-words') || '[]');
-      const el = r.querySelector('.rotator__word');
-      let i = 0;
-      setInterval(() => {
-        r.classList.add('is-swapping');
-        setTimeout(() => {
-          i = (i + 1) % words.length;
-          el.textContent = words[i];
-          r.classList.remove('is-swapping');
-        }, 420);
-      }, 2600);
-    }
-  </script>
-
-  <script>
-    // Lightning strike effect on the hero background.
-    const canvas = document.querySelector('[data-lightning]');
     const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const flash = document.querySelector('[data-flash]');
+
+    // --- Lightning strike (exposed so the headline can trigger it) ----------
+    let strike = () => {};
+    const canvas = document.querySelector('[data-lightning]');
     if (canvas && !reduce) {
       const ctx = canvas.getContext('2d');
       const hero = canvas.closest('.hero');
@@ -90,14 +78,13 @@ const faqSchema = {
       resize();
       window.addEventListener('resize', resize, { passive: true });
 
-      // Build a jagged bolt via midpoint displacement.
       function build(x1, y1, x2, y2, disp, out) {
         if (disp < 7) { out.push([x1, y1, x2, y2]); return; }
         const mx = (x1 + x2) / 2 + (Math.random() - 0.5) * disp;
         const my = (y1 + y2) / 2 + (Math.random() - 0.5) * disp * 0.4;
         build(x1, y1, mx, my, disp / 2, out);
         build(mx, my, x2, y2, disp / 2, out);
-        if (Math.random() < 0.32) { // branch
+        if (Math.random() < 0.34) {
           const bx = mx + (Math.random() - 0.5) * disp * 1.4;
           const by = my + disp * (0.5 + Math.random());
           build(mx, my, bx, by, disp / 2.2, out);
@@ -110,34 +97,49 @@ const faqSchema = {
         for (const s of segs) { ctx.moveTo(s[0], s[1]); ctx.lineTo(s[2], s[3]); }
         ctx.stroke();
       }
-      function strike() {
-        const startX = W * (0.45 + Math.random() * 0.5);
+      let busy = false;
+      strike = function () {
+        if (busy) return; busy = true;
+        const startX = W * (0.42 + Math.random() * 0.5);
         const endX = startX + (Math.random() - 0.5) * W * 0.3;
         const segs = [];
-        build(startX, -10, endX, H * (0.72 + Math.random() * 0.28), W * 0.16, segs);
+        build(startX, -10, endX, H * (0.7 + Math.random() * 0.3), W * 0.16, segs);
+        // thunder flash
+        if (flash) { flash.classList.add('is-on'); setTimeout(() => flash.classList.remove('is-on'), 90); }
         const frames = [1, 0.4, 0.95, 0.5, 0.8, 0.3, 0];
         let f = 0;
         const flicker = () => {
           ctx.clearRect(0, 0, W, H);
           const a = frames[f];
           if (a > 0) {
-            if (f === 0) { // flash
-              const g = ctx.createRadialGradient(startX, 0, 0, startX, 0, H);
-              g.addColorStop(0, 'rgba(201,162,75,0.10)'); g.addColorStop(1, 'rgba(201,162,75,0)');
-              ctx.globalAlpha = 1; ctx.fillStyle = g; ctx.fillRect(0, 0, W, H);
-            }
-            drawSegs(segs, a, 3.4, '#e4c77b');         // gold glow body
-            drawSegs(segs, a * 0.95, 1.5, '#fff7e6');   // bright core
+            drawSegs(segs, a, 3.4, '#e4c77b');
+            drawSegs(segs, a * 0.95, 1.5, '#fff7e6');
             ctx.globalAlpha = 1; ctx.shadowBlur = 0;
           }
           f++;
           if (f < frames.length) setTimeout(flicker, 42);
-          else { ctx.clearRect(0, 0, W, H); schedule(); }
+          else { ctx.clearRect(0, 0, W, H); busy = false; }
         };
         flicker();
-      }
-      function schedule() { setTimeout(strike, 2600 + Math.random() * 4200); }
-      setTimeout(strike, 1200);
+      };
+    }
+
+    // --- Rotating headline (drives the lightning) ---------------------------
+    const r = document.querySelector('[data-rotator]');
+    if (r && !reduce) {
+      const words = JSON.parse(r.getAttribute('data-words') || '[]');
+      const el = r.querySelector('.rotator__word');
+      let i = 0;
+      setInterval(() => {
+        strike();                       // bolt fires as the pain word changes
+        r.classList.add('is-swapping');
+        setTimeout(() => {
+          i = (i + 1) % words.length;
+          el.textContent = words[i];
+          r.classList.remove('is-swapping');
+        }, 420);
+      }, 2800);
+      setTimeout(strike, 900);          // opening strike
     }
   </script>
 
@@ -263,6 +265,8 @@ const faqSchema = {
       </div>
     </div>
   </section>
+
+  <LeadMagnet />
 
   <CtaBand />
 

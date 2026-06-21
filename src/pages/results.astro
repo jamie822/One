@@ -1,0 +1,79 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Hero from '../components/Hero.astro';
+import Icon from '../components/Icon.astro';
+import LeadMagnet from '../components/LeadMagnet.astro';
+import CtaBand from '../components/CtaBand.astro';
+import { href } from '../lib/href.js';
+import { site, caseStudies, testimonials } from '../data/site.js';
+const { stats } = site;
+---
+<Layout path="/results" title="Results" description={`Real results from ${site.name} — how electricians have won better work, raised prices and stepped off the tools.`}>
+  <Hero inner={true}>
+    <span class="eyebrow">Results</span>
+    <h1>Proof, not <span class="serif gold">promises</span>.</h1>
+    <p>We're judged on one thing: more of the right work, more profit, and more time off the tools for the electricians we work with. Here's the kind of change that looks like.</p>
+    <div class="hero__actions">
+      <a class="btn btn--gold btn--lg" href={href('/contact')}>Book a Call <Icon name="arrow" /></a>
+      <a class="btn btn--ghost btn--lg" href={href('/packages')}>See Packages</a>
+    </div>
+  </Hero>
+
+  <!-- STATS -->
+  <section class="section--tight" style="padding-top:64px">
+    <div class="container">
+      <div class="stats">
+        {stats.map((s, i) => (
+          <div class="stat reveal" data-delay={String(i % 4)}><div class="stat__num gold">{s.num}</div><div class="stat__label">{s.label}</div></div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- CASE STUDIES -->
+  <section class="section">
+    <div class="container">
+      <div class="section__head reveal">
+        <span class="eyebrow" style="justify-content:center">Case studies</span>
+        <hr class="rule" />
+        <h2>From stuck on the tools to scaling</h2>
+        <p>Representative results — we'll swap these for your real, named client stories as they land.</p>
+      </div>
+      <div class="grid grid--3">
+        {caseStudies.map((c, i) => (
+          <article class="svc reveal" data-delay={String(i % 3)}>
+            <div class="stat__num gold" style="font-size:2.4rem">{c.metric}</div>
+            <div class="stat__label" style="margin-bottom:18px">{c.metricLabel}</div>
+            <h3>{c.headline}</h3>
+            <p style="margin-bottom:14px"><strong style="color:var(--cream)">Before:</strong> {c.problem}</p>
+            <p style="margin:0"><strong style="color:var(--brand)">After:</strong> {c.result}</p>
+            <div class="svc__more" style="margin-top:20px;cursor:default">{c.client}</div>
+          </article>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- TESTIMONIALS -->
+  <section class="section section--panel">
+    <div class="container">
+      <div class="section__head reveal">
+        <span class="eyebrow" style="justify-content:center">In their words</span>
+        <hr class="rule" />
+        <h2>What electricians say</h2>
+      </div>
+      <div class="grid grid--3">
+        {testimonials.map((t, i) => (
+          <figure class="pain reveal" data-delay={String(i % 3)} style="margin:0">
+            <Icon name="quote" class="" />
+            <p class="serif" style="font-size:1.2rem;color:var(--cream);margin:14px 0 18px">{t.quote}</p>
+            <figcaption style="color:var(--muted);font-size:.9rem"><strong style="display:block;color:var(--brand);font-family:var(--font-display)">{t.author}</strong>{t.role}</figcaption>
+          </figure>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <LeadMagnet />
+  <CtaBand title="Want results like these?" />
+</Layout>

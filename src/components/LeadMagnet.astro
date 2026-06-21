@@ -1,0 +1,44 @@
+---
+import { site, leadMagnet } from '../data/site.js';
+import { href } from '../lib/href.js';
+import Icon from './Icon.astro';
+---
+<section class="section section--panel">
+  <div class="container">
+    <div class="lm reveal">
+      <div class="lm__copy">
+        <span class="eyebrow">Free guide</span>
+        <h2>{leadMagnet.title}</h2>
+        <p class="lead">{leadMagnet.subtitle}</p>
+        <ul class="checklist" style="margin-top:18px">
+          {leadMagnet.bullets.map((b) => (<li><span class="tick"><Icon name="check" /></span><span>{b}</span></li>))}
+        </ul>
+      </div>
+      <div class="lm__form">
+        <div class="lm__cover">
+          <Icon name="spark" />
+          <span>FREE PDF GUIDE</span>
+          <strong>{leadMagnet.title}</strong>
+        </div>
+        <!-- TODO: connect to Formspree/GHL to capture the email, then deliver the PDF. -->
+        <form class="form" action="https://formspree.io/f/your-form-id" method="POST" style="padding:24px">
+          <div class="field"><label for="lm-name">First name</label><input id="lm-name" name="name" type="text" autocomplete="given-name" required /></div>
+          <div class="field"><label for="lm-email">Email</label><input id="lm-email" name="email" type="email" autocomplete="email" required /></div>
+          <input type="hidden" name="lead_magnet" value={leadMagnet.title} />
+          <a class="btn btn--gold" href={href(leadMagnet.file)} target="_blank" rel="noopener" style="justify-content:center"><Icon name="arrow" /> Send Me The Guide</a>
+          <p class="form__note">No spam. Unsubscribe anytime. (Download opens the PDF.)</p>
+        </form>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .lm { display: grid; grid-template-columns: 1.1fr .9fr; gap: 50px; align-items: center; }
+  @media (max-width: 880px) { .lm { grid-template-columns: 1fr; gap: 34px; } }
+  .lm__cover { position: relative; border: 1px solid var(--line-strong); border-radius: 14px 14px 0 0; padding: 34px; text-align: center; background: radial-gradient(120% 100% at 50% 0%, rgba(201,162,75,.14), transparent 70%), #0e0f12; display: grid; gap: 12px; place-items: center; }
+  .lm__cover svg { width: 40px; height: 40px; color: var(--brand); }
+  .lm__cover span { font-family: var(--font-display); font-size: .72rem; letter-spacing: .3em; color: var(--brand); }
+  .lm__cover strong { font-family: var(--font-display); font-size: 1.3rem; color: var(--cream); line-height: 1.2; max-width: 22ch; }
+  .lm__form .form { border-radius: 0 0 14px 14px; border-top: 0; }
+</style>
