@@ -8,13 +8,8 @@ import { href } from '../lib/href.js';
 import { site, pains, services, packages, faqs } from '../data/site.js';
 const { stats } = site;
 
-// Animated hero: rising gold "sparks" + a rotating headline word.
-const sparks = Array.from({ length: 18 }, (_, i) => ({
-  left: (i * 5.5 + (i % 3) * 4) % 100,
-  dur: 6 + ((i * 1.7) % 7),
-  delay: (i * 0.9) % 9,
-  size: 2 + ((i * 1.3) % 3),
-}));
+// Animated hero: left→right "current" flowing through circuit traces +
+// a rotating headline word that triggers an electrical surge on each swap.
 const rotateWords = [
   'work even harder.',
   'quote at 9pm.',
@@ -37,11 +32,6 @@ const faqSchema = {
     <div class="hero__glow"></div>
     <canvas class="hero__lightning" data-lightning aria-hidden="true"></canvas>
     <div class="hero__flash" data-flash aria-hidden="true"></div>
-    <div class="sparks" aria-hidden="true">
-      {sparks.map((s) => (
-        <span class="spark" style={`left:${s.left}%;width:${s.size}px;height:${s.size}px;animation-duration:${s.dur}s;animation-delay:${s.delay}s`}></span>
-      ))}
-    </div>
     <div class="container">
       <div class="hero__inner">
         <span class="eyebrow">Websites &amp; online presence for electricians</span>
@@ -62,76 +52,114 @@ const faqSchema = {
     const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     const flash = document.querySelector('[data-flash]');
 
-    // --- Lightning strike (exposed so the headline can trigger it) ----------
-    let strike = () => {};
+    // --- Circuit "current" flowing left -> right (exposed surge() trigger) ---
+    let surge = () => {};
     const canvas = document.querySelector('[data-lightning]');
     if (canvas && !reduce) {
       const ctx = canvas.getContext('2d');
       const hero = canvas.closest('.hero');
       let W = 0, H = 0, dpr = Math.min(window.devicePixelRatio || 1, 2);
+      let traces = [];
+
       const resize = () => {
         W = hero.clientWidth; H = hero.clientHeight;
         canvas.width = W * dpr; canvas.height = H * dpr;
         canvas.style.width = W + 'px'; canvas.style.height = H + 'px';
         ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
       };
-      resize();
-      window.addEventListener('resize', resize, { passive: true });
 
-      function build(x1, y1, x2, y2, disp, out) {
-        if (disp < 7) { out.push([x1, y1, x2, y2]); return; }
-        const mx = (x1 + x2) / 2 + (Math.random() - 0.5) * disp;
-        const my = (y1 + y2) / 2 + (Math.random() - 0.5) * disp * 0.4;
-        build(x1, y1, mx, my, disp / 2, out);
-        build(mx, my, x2, y2, disp / 2, out);
-        if (Math.random() < 0.34) {
-          const bx = mx + (Math.random() - 0.5) * disp * 1.4;
-          const by = my + disp * (0.5 + Math.random());
-          build(mx, my, bx, by, disp / 2.2, out);
+      // Build PCB-style traces that run left -> right with right-angle jogs.
+      function buildTraces() {
+        traces = [];
+        const rows = Math.max(4, Math.round(H / 115));
+        for (let i = 0; i < rows; i++) {
+          const baseY = (i + 0.5) * (H / rows) + (Math.random() - 0.5) * 22;
+          let x = -50, y = baseY;
+          const pts = [{ x, y }], nodes = [];
+          while (x < W + 70) {
+            x += 60 + Math.random() * 150; pts.push({ x, y });
+            if (Math.random() < 0.5) {
+              y = Math.max(18, Math.min(H - 18, y + (Math.random() < 0.5 ? -1 : 1) * (22 + Math.random() * 46)));
+              pts.push({ x, y });
+              if (Math.random() < 0.5) nodes.push({ x, y });
+            }
+          }
+          const segs = []; let total = 0;
+          for (let k = 0; k < pts.length - 1; k++) {
+            const a = pts[k], b = pts[k + 1], len = Math.hypot(b.x - a.x, b.y - a.y);
+            segs.push({ a, b, len, start: total }); total += len;
+          }
+          const pulses = [];
+          const n = 1 + (Math.random() < 0.5 ? 1 : 0);
+          for (let j = 0; j < n; j++) pulses.push({ head: Math.random() * total, speed: 70 + Math.random() * 120, len: 110 + Math.random() * 130 });
+          traces.push({ pts, segs, total, pulses, nodes });
         }
       }
-      function drawSegs(segs, alpha, lw, color) {
-        ctx.strokeStyle = color; ctx.lineWidth = lw; ctx.globalAlpha = alpha;
-        ctx.shadowColor = '#e4c77b'; ctx.shadowBlur = 18; ctx.lineCap = 'round';
-        ctx.beginPath();
-        for (const s of segs) { ctx.moveTo(s[0], s[1]); ctx.lineTo(s[2], s[3]); }
+
+      const pointAt = (t, d) => {
+        d = ((d % t.total) + t.total) % t.total;
+        for (const s of t.segs) if (d <= s.start + s.len) {
+          const f = (d - s.start) / (s.len || 1);
+          return { x: s.a.x + (s.b.x - s.a.x) * f, y: s.a.y + (s.b.y - s.a.y) * f };
+        }
+        const l = t.segs[t.segs.length - 1]; return { x: l.b.x, y: l.b.y };
+      };
+
+      function drawTrace(t, alpha) {
+        ctx.globalAlpha = alpha; ctx.strokeStyle = '#c9a24b'; ctx.lineWidth = 1; ctx.shadowBlur = 0;
+        ctx.beginPath(); ctx.moveTo(t.pts[0].x, t.pts[0].y);
+        for (let k = 1; k < t.pts.length; k++) ctx.lineTo(t.pts[k].x, t.pts[k].y);
         ctx.stroke();
+        ctx.fillStyle = '#c9a24b';
+        for (const nd of t.nodes) { ctx.globalAlpha = alpha * 1.6; ctx.beginPath(); ctx.arc(nd.x, nd.y, 1.8, 0, 6.3); ctx.fill(); }
       }
-      let busy = false;
-      strike = function () {
-        if (busy) return; busy = true;
-        const startX = W * (0.42 + Math.random() * 0.5);
-        const endX = startX + (Math.random() - 0.5) * W * 0.3;
-        const segs = [];
-        build(startX, -10, endX, H * (0.7 + Math.random() * 0.3), W * 0.16, segs);
-        // thunder flash
-        if (flash) { flash.classList.add('is-on'); setTimeout(() => flash.classList.remove('is-on'), 90); }
-        const frames = [1, 0.4, 0.95, 0.5, 0.8, 0.3, 0];
-        let f = 0;
-        const flicker = () => {
-          ctx.clearRect(0, 0, W, H);
-          const a = frames[f];
-          if (a > 0) {
-            drawSegs(segs, a, 3.4, '#e4c77b');
-            drawSegs(segs, a * 0.95, 1.5, '#fff7e6');
-            ctx.globalAlpha = 1; ctx.shadowBlur = 0;
-          }
-          f++;
-          if (f < frames.length) setTimeout(flicker, 42);
-          else { ctx.clearRect(0, 0, W, H); busy = false; }
-        };
-        flicker();
+      function drawPulse(t, p, bright) {
+        const steps = 12;
+        ctx.lineCap = 'round'; ctx.shadowColor = '#e4c77b'; ctx.shadowBlur = 12; ctx.strokeStyle = '#f6e8c2';
+        for (let s = 0; s < steps; s++) {
+          const a0 = pointAt(t, p.head - p.len * (s / steps));
+          const a1 = pointAt(t, p.head - p.len * ((s + 1) / steps));
+          ctx.globalAlpha = Math.min(1, (1 - s / steps) * 0.85 * bright);
+          ctx.lineWidth = 2.3;
+          ctx.beginPath(); ctx.moveTo(a1.x, a1.y); ctx.lineTo(a0.x, a0.y); ctx.stroke();
+        }
+        const h = pointAt(t, p.head);
+        ctx.globalAlpha = Math.min(1, bright); ctx.fillStyle = '#fff7e6'; ctx.shadowBlur = 16;
+        ctx.beginPath(); ctx.arc(h.x, h.y, 2.4, 0, 6.3); ctx.fill();
+      }
+
+      let speedMul = 1, bright = 1, last = performance.now();
+      function frame(now) {
+        const dt = Math.min(0.05, (now - last) / 1000); last = now;
+        speedMul += (1 - speedMul) * Math.min(1, dt * 2.6);
+        bright += (1 - bright) * Math.min(1, dt * 2.6);
+        ctx.clearRect(0, 0, W, H);
+        for (const t of traces) {
+          drawTrace(t, 0.05 * bright);
+          for (const p of t.pulses) { p.head += p.speed * speedMul * dt; drawPulse(t, p, bright); }
+        }
+        ctx.globalAlpha = 1; ctx.shadowBlur = 0;
+        requestAnimationFrame(frame);
+      }
+
+      resize(); buildTraces();
+      window.addEventListener('resize', () => { resize(); buildTraces(); }, { passive: true });
+      requestAnimationFrame(frame);
+
+      surge = () => {
+        speedMul = 5; bright = 2.4;
+        if (flash) { flash.classList.add('is-on'); setTimeout(() => flash.classList.remove('is-on'), 110); }
       };
     }
 
-    // --- Rotating headline (drives the lightning) ---------------------------
+    // --- Rotating headline (triggers an electrical surge on each swap) -------
     const r = document.querySelector('[data-rotator]');
     if (r && !reduce) {
       const words = JSON.parse(r.getAttribute('data-words') || '[]');
       const el = r.querySelector('.rotator__word');
       let i = 0;
       setInterval(() => {
-        strike();                       // bolt fires as the pain word changes
+        surge();
         r.classList.add('is-swapping');
         setTimeout(() => {
           i = (i + 1) % words.length;
@@ -139,7 +167,7 @@ const faqSchema = {
           r.classList.remove('is-swapping');
         }, 420);
       }, 2800);
-      setTimeout(strike, 900);          // opening strike
+      setTimeout(surge, 900);
     }
   </script>
 
