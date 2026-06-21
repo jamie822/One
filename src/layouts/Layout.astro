@@ -20,42 +20,30 @@ const {
 const canonical = new URL(path, site.url).href;
 const fullTitle = title
   ? `${title} | ${site.name}`
-  : `${site.name} — ${site.tagline} in ${site.address.locality}`;
+  : `${site.name} — ${site.tagline}`;
 const metaDesc =
   description ||
-  `${site.name} provide reliable electrical services across ${site.address.locality} and ${site.areaServed.slice(0, 3).join(', ')}. Rewires, EV chargers, EICR testing & more. Call ${site.phone}.`;
+  `${site.descriptor} ${site.name} builds premium websites, lead generation and systems for electricians who want to get off the tools and build a real business.`;
 
-// --- schema.org : Electrician / LocalBusiness ------------------------------
+// --- schema.org : ProfessionalService --------------------------------------
 const businessSchema = {
   '@context': 'https://schema.org',
-  '@type': 'Electrician',
+  '@type': 'ProfessionalService',
   '@id': `${site.url}/#business`,
   name: site.name,
   legalName: site.legalName,
+  slogan: site.tagline,
   description: metaDesc,
   url: site.url,
   telephone: site.phoneHref,
   email: site.email,
   image: `${site.url}/images/og-default.svg`,
-  priceRange: '££',
-  foundingDate: String(site.foundedYear),
-  address: {
-    '@type': 'PostalAddress',
-    streetAddress: site.address.street || undefined,
-    addressLocality: site.address.locality,
-    addressRegion: site.address.region,
-    postalCode: site.address.postcode,
-    addressCountry: site.address.countryCode,
-  },
-  areaServed: site.areaServed.map((a) => ({ '@type': 'Place', name: a })),
-  sameAs: [site.instagram],
-  openingHoursSpecification: site.hours.map((h) => ({
-    '@type': 'OpeningHoursSpecification',
-    description: `${h.days}: ${h.time}`,
-  })),
+  areaServed: { '@type': 'Country', name: 'United Kingdom' },
+  audience: { '@type': 'Audience', audienceType: 'Electricians' },
+  sameAs: [site.instagram, site.facebook, site.youtube, site.linkedin, site.tiktok].filter(Boolean),
   hasOfferCatalog: {
     '@type': 'OfferCatalog',
-    name: 'Electrical Services',
+    name: 'Services for Electricians',
     itemListElement: services.map((s) => ({
       '@type': 'Offer',
       itemOffered: { '@type': 'Service', name: s.title, description: s.short },
@@ -72,9 +60,7 @@ const businessSchema = {
     <meta name="description" content={metaDesc} />
     <link rel="canonical" href={canonical} />
     <meta name="robots" content="index, follow" />
-    <meta name="theme-color" content={site.brandColor} />
-    <meta name="geo.region" content="GB" />
-    <meta name="geo.placename" content={site.address.locality} />
+    <meta name="theme-color" content="#0b0b0c" />
 
     <!-- Open Graph -->
     <meta property="og:type" content={ogType} />
@@ -94,12 +80,12 @@ const businessSchema = {
     <link rel="icon" type="image/svg+xml" href={href('/favicon.svg')} />
     <link rel="sitemap" href={href('/sitemap-index.xml')} />
 
-    <!-- Typography (house style: Poppins headings + Inter body) -->
+    <!-- Typography (Dark Luxe: Sora display + Fraunces serif accents + Inter) -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
       rel="stylesheet"
-      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Poppins:wght@500;600;700;800&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@1,9..144,400;1,9..144,500&family=Inter:wght@400;500;600;700&family=Sora:wght@500;600;700;800&display=swap"
     />
 
     <!-- Brand colour is set as an inline style on <html> (see above) so it

@@ -1,218 +1,217 @@
 // =============================================================================
-//  H H ELECTRICAL  —  CENTRAL SITE CONFIG
+//  OFF THE TOOLS  —  BRAND + SITE CONFIG  (single source of truth)
 // -----------------------------------------------------------------------------
-//  ⚠️  THIS IS THE ONLY FILE YOU NEED TO EDIT FOR BUSINESS DETAILS.
-//  Every page, the SEO meta tags, and the schema.org data pull from here.
+//  Premium "Dark Luxe" brand for electricians who want to get OFF the tools.
+//  We sell premium websites + online presence (CRM/automation under the hood,
+//  never named publicly), then upsell coaching + systems/automation builds.
 //
-//  Values marked  // TODO  are PLACEHOLDERS — replace them with the real
-//  details. Local SEO depends heavily on the accuracy of `areaServed`,
-//  `address`, `phone` and `email`, so get those right.
-//
-//  HOUSE RULE: the LAYOUT/structure is the reusable template; the COLOUR is
-//  unique to each client. Never reuse one client's brand colour on another
-//  site — set `brandColor` below to the client's own colour every build.
+//  Edit business details here. Items marked  // TODO  need Jamie's real info.
 // =============================================================================
 
 export const site = {
   // --- Brand -----------------------------------------------------------------
-  name: 'H H Electrical',
-  legalName: 'H H Electrical',            // TODO: full registered/trading name
-  tagline: 'Your source for all things electrical',  // from their Instagram bio
-  // A short brand statement (from their Instagram): used in the hero.
-  brandStatement: 'Experienced electricians — from installations to maintenance.',
-  // The live domain (used for canonical URLs + sitemap). No trailing slash.
-  url: 'https://www.hhelectrical.co.uk', // TODO: confirm real domain
-  logoText: 'HH',                         // shown in the header lockup
+  name: 'Off The Tools',
+  legalName: 'Off The Tools',             // TODO: registered trading name
+  // The hook + the promise.
+  tagline: 'Stop being the business. Start owning one.',
+  // One-line descriptor of who it's for.
+  descriptor: 'Premium websites & online presence for electricians.',
+  url: 'https://jamie822.github.io/One',  // live (GitHub Pages); swap for real domain
+  logoText: 'OTT',                        // monogram
 
-  // --- Brand colour (the whole site recolours from these two values) --------
-  // The design/layout is the reusable house style; the COLOUR is per-client.
-  // Change these two values to rebrand the entire site instantly.
-  // (H H Electrical: electric blue — confident, trustworthy, fits "electrical".)
-  brandColor: '#1668ff',                  // primary accent (pills, highlights)
-  brandColorDark: '#0b4fd1',              // darker hover shade
+  // --- Brand colour (Dark Luxe: brushed gold on near-black) ------------------
+  brandColor: '#c9a24b',                  // brushed gold
+  brandColorDark: '#a8853a',              // deep gold (hover)
 
-  // --- Social proof ----------------------------------------------------------
-  googleRating: '5.0',                    // TODO: real Google rating
-  reviewCount: '60+',                     // TODO: real review/follower count
+  // --- Founder ---------------------------------------------------------------
+  founder: {
+    name: 'Jamie',                        // TODO: full name
+    role: 'Founder',
+    // Jamie's real-world credibility: he runs an electrical company himself.
+    background: 'Founder of a successful Leeds electrical company',
+    photo: '',                            // /images/jamie.jpg (cut-out headshot)
+  },
 
   // --- Contact ---------------------------------------------------------------
-  phone: '01234 567 890',                 // TODO: real number
-  phoneHref: '+441234567890',             // TODO: same number, international format
-  email: 'info@hhelectrical.co.uk',       // TODO: real email
-  hoursShort: 'Mon – Sat: 8:00 – 18:00',  // shown in the top bar
-  instagram: 'https://www.instagram.com/hhelectrical',
-  facebook: '',                           // TODO: optional
-  whatsapp: '',                           // TODO: optional (full intl number, no +)
+  phone: '07300 000 000',                 // TODO
+  phoneHref: '+447300000000',             // TODO
+  email: 'hello@offthetools.co.uk',       // TODO
+  bookingUrl: '/contact',                 // TODO: Calendly/booking link if you have one
+  hoursShort: 'Mon – Fri: 9:00 – 5:30',
 
-  // --- Imagery (drop real files into /public/images and update these) --------
-  heroImage: '',                          // e.g. '/images/hero.jpg' (full-bleed)
-  vanImage: '',                           // e.g. '/images/van.jpg' (owner + van band)
+  // --- Social ----------------------------------------------------------------
+  instagram: 'https://www.instagram.com/',   // TODO
+  facebook: '',                              // TODO
+  youtube: '',                               // TODO
+  linkedin: '',                              // TODO
+  tiktok: '',                                // TODO
 
-  // --- Location / Service area (CRITICAL for local SEO) ----------------------
-  // The town you're based in + the towns/areas you cover.
-  address: {
-    street: '',                           // TODO: optional street (leave '' to hide)
-    locality: 'Your Town',                // TODO: main town/city
-    region: 'Your County',                // TODO: county
-    postcode: 'AB1 2CD',                  // TODO: postcode (or postcode area)
-    country: 'United Kingdom',
-    countryCode: 'GB',
-  },
-  // Towns / areas you serve — these become real, indexable SEO content.
-  areaServed: [
-    'Your Town',                          // TODO: replace this whole list
-    'Neighbouring Town 1',
-    'Neighbouring Town 2',
-    'Neighbouring Town 3',
-    'the surrounding areas',
-  ],
+  // --- Imagery (drop files in /public/images and point here) -----------------
+  heroImage: '',                          // cinematic hero bg (you, on a job, graded dark)
+  storyImage: '',                         // you / your van / portrait for the story
+  ctaImage: '',                           // background for the closing CTA band
 
-  // --- Credentials / trust ---------------------------------------------------
-  // TODO: confirm real accreditations (NICEIC, NAPIT, Part P, etc.)
-  accreditations: ['NICEIC Approved', 'Part P Registered', 'Fully Insured'],
-  yearsExperience: '15+',                 // TODO
-  foundedYear: 2015,                      // TODO
-
-  // --- Owner (About page) ----------------------------------------------------
-  owner: {
-    name: 'The Owner',                    // TODO: owner's name
-    role: 'Founder & Lead Electrician',
-    // Photo: drop a file into /public/images/ and point to it here.
-    photo: '/images/owner-placeholder.svg',
-  },
-
-  // --- Opening hours (used in schema.org + Contact page) ---------------------
-  hours: [
-    { days: 'Monday – Friday', time: '8:00am – 6:00pm' },
-    { days: 'Saturday', time: '9:00am – 1:00pm' },
-    { days: 'Sunday', time: 'Emergency call-outs only' },
+  // --- Proof / numbers (use real ones) ---------------------------------------
+  stats: [
+    { num: '15+', label: 'Years in the trade' },          // TODO
+    { num: '£1m+', label: 'Turnover built, first-hand' },  // TODO
+    { num: '100%', label: 'Built by an electrician' },
+    { num: '7-day', label: 'Website turnaround' },         // TODO
   ],
 };
 
 // =============================================================================
-//  SERVICES
-//  Edit, add or remove freely. `slug` is used as an anchor id on /services.
+//  PAIN POINTS  (the heart of the marketing — what they're actually feeling)
+// =============================================================================
+export const pains = [
+  {
+    title: 'You ARE the business',
+    text: 'Quoting at 9pm, invoicing at the weekend, every job depends on you. Take a week off and the money stops.',
+  },
+  {
+    title: 'Your website is embarrassing',
+    text: 'A free builder you knocked up years ago — or nothing at all. Meanwhile worse sparks with slick sites are winning the work.',
+  },
+  {
+    title: 'Feast or famine leads',
+    text: 'Rushed off your feet one month, dead quiet the next. No predictable pipeline, just word of mouth and hope.',
+  },
+  {
+    title: 'You undercharge and overdeliver',
+    text: 'You know your work is top quality, but you compete on price because nothing about your brand says premium.',
+  },
+  {
+    title: 'Drowning in admin',
+    text: 'Missed calls, chasing reviews, forgotten follow-ups. Leads leak out of a system held together with notes and memory.',
+  },
+  {
+    title: 'No way out',
+    text: 'You started this for freedom and more money. Instead you bought yourself a job you can never clock off from.',
+  },
+];
+
+// =============================================================================
+//  SERVICES  (what we actually do)
 // =============================================================================
 export const services = [
   {
-    slug: 'rewires',
-    title: 'Full & Partial Rewires',
-    short: 'Safe, tidy rewiring for older properties and renovations.',
+    slug: 'websites',
+    title: 'Premium Websites',
+    short: 'A website that makes you look like the best spark in town — because you are.',
     long:
-      'Whether your property needs a complete rewire or just a few circuits brought up to standard, we deliver clean, code-compliant work with minimal disruption — and certify everything on completion.',
-    icon: 'rewire',
+      'A fast, premium website designed to win higher-value work and make you the obvious choice. Built to convert visitors into booked jobs, optimised to be found on Google, and a brand you’re finally proud to send people to.',
+    icon: 'globe',
   },
   {
-    slug: 'consumer-units',
-    title: 'Fuse Board / Consumer Unit Upgrades',
-    short: 'Modern RCD-protected boards that keep your home safe.',
+    slug: 'branding',
+    title: 'Branding & Identity',
+    short: 'Look established, trusted and premium across everything.',
     long:
-      'Old fuse boards are a common cause of nuisance trips and safety failures. We supply and fit modern consumer units with RCD/RCBO protection to the latest 18th Edition wiring regulations.',
-    icon: 'board',
+      'Logo, colours, van livery direction, social templates and a consistent identity that signals quality before you’ve said a word — so you can charge what you’re worth without flinching.',
+    icon: 'spark',
   },
   {
-    slug: 'ev-chargers',
-    title: 'EV Charger Installation',
-    short: 'Home and workplace electric vehicle charge points.',
+    slug: 'lead-generation',
+    title: 'Lead Generation',
+    short: 'A predictable flow of the right jobs — not price-shoppers.',
     long:
-      'Approved installation of smart EV charge points for home and business, including load management and full electrical sign-off. We help you pick the right charger for your vehicle and supply.',
-    icon: 'ev',
+      'Google and social campaigns plus local SEO that put you in front of homeowners and businesses actively looking to hire. We turn feast-or-famine into a steady, qualified pipeline.',
+    icon: 'target',
   },
   {
-    slug: 'eicr-testing',
-    title: 'EICR & Electrical Safety Testing',
-    short: 'Inspection reports for homeowners, landlords & businesses.',
+    slug: 'systems',
+    title: 'Systems & Automation',
+    short: 'Capture every lead and follow up automatically.',
     long:
-      'Electrical Installation Condition Reports (EICR), landlord safety certificates and periodic testing. We identify faults, document them clearly, and put together a no-nonsense plan to fix anything that fails.',
-    icon: 'test',
+      'A done-for-you system that catches missed calls, replies to enquiries instantly, books jobs, chases reviews and keeps your pipeline moving — without you touching your phone after 6pm.',
+    icon: 'gears',
   },
   {
-    slug: 'lighting',
-    title: 'Lighting Design & Installation',
-    short: 'Indoor, outdoor and energy-efficient LED lighting.',
+    slug: 'reviews',
+    title: 'Reputation Engine',
+    short: 'Turn happy customers into a stream of 5-star reviews.',
     long:
-      'From a single downlight to a full lighting design for a kitchen extension, garden or commercial space — energy-efficient LED solutions that look great and cut running costs.',
-    icon: 'light',
+      'Automated review requests at the perfect moment, so your Google profile fills with the social proof that wins the next ten jobs. Your reputation working for you on autopilot.',
+    icon: 'star',
   },
   {
-    slug: 'sockets-switches',
-    title: 'Sockets, Switches & Extra Power',
-    short: 'Additional points, USB sockets and outdoor power.',
+    slug: 'coaching',
+    title: 'Coaching & Mentorship',
+    short: 'The roadmap to actually step off the tools.',
     long:
-      'Extra sockets where you actually need them, USB and smart switches, outdoor weatherproof power for garden offices and hot tubs — all installed safely and neatly.',
-    icon: 'socket',
-  },
-  {
-    slug: 'fault-finding',
-    title: 'Fault Finding & Repairs',
-    short: 'Fast, methodical diagnosis when something stops working.',
-    long:
-      'Tripping circuits, dead sockets or flickering lights? We track down electrical faults methodically and fix them right the first time, explaining what went wrong in plain English.',
-    icon: 'fault',
-  },
-  {
-    slug: 'commercial',
-    title: 'Commercial & Landlord Services',
-    short: 'Maintenance, testing and fit-outs for businesses.',
-    long:
-      'Planned maintenance, emergency lighting, periodic testing and full fit-outs for offices, shops and rental properties — reliable contractors you can build a long-term relationship with.',
-    icon: 'commercial',
+      'Once the foundations are in, I help you price properly, hire your first (or next) electrician, build the systems and finally work ON the business — from someone who’s done it in the real world.',
+    icon: 'compass',
   },
 ];
 
 // =============================================================================
-//  HOW WE WORK  (process steps shown on the homepage)
+//  PACKAGES  (named tiers, NO public prices — "Book a call")
 // =============================================================================
-export const process = [
-  { n: '01', title: 'Get in touch', text: 'Call or message us with what you need. We listen and offer honest, jargon-free advice.' },
-  { n: '02', title: 'Free quote', text: 'We assess the job and give you a clear, fixed quote with no hidden extras.' },
-  { n: '03', title: 'Expert work', text: 'We carry out the work safely, cleanly and to the latest wiring regulations.' },
-  { n: '04', title: 'Certified & done', text: 'Everything is tested, certified and tidied up — leaving you completely happy.' },
+export const packages = [
+  {
+    name: 'The Foundation',
+    tagline: 'Look the part. Get found.',
+    best: false,
+    summary: 'For the spark who needs to look established and start winning better work.',
+    features: [
+      'Premium 4–5 page website',
+      'Brand & logo essentials',
+      'Google Business Profile setup',
+      'Local SEO foundations',
+      'Mobile-perfect & lightning fast',
+      'Click-to-call & enquiry forms',
+    ],
+    cta: 'Book a call',
+  },
+  {
+    name: 'The Lead Engine',
+    tagline: 'Look the part. Get the calls.',
+    best: true,
+    summary: 'Our core offer: everything you need to generate and capture a steady flow of jobs.',
+    features: [
+      'Everything in The Foundation',
+      'Lead generation (Google & social)',
+      'Missed-call text-back & instant reply',
+      'Booking & follow-up automation',
+      'Automated 5-star review engine',
+      'Lead dashboard & reporting',
+    ],
+    cta: 'Book a call',
+  },
+  {
+    name: 'Off The Tools',
+    tagline: 'Build a business that runs without you.',
+    best: false,
+    summary: 'The flagship: done-for-you online presence plus coaching and systems to step back.',
+    features: [
+      'Everything in The Lead Engine',
+      '1:1 coaching & mentorship',
+      'Pricing & profit overhaul',
+      'Hiring & team roadmap',
+      'Full back-office automation',
+      'Priority support & quarterly reviews',
+    ],
+    cta: 'Book a call',
+  },
 ];
 
 // =============================================================================
-//  TESTIMONIALS
-//  TODO: replace with real reviews (Google, Facebook, Instagram comments).
+//  STORY MILESTONES  (Jamie's journey — confirm/replace specifics)
 // =============================================================================
-export const testimonials = [
-  {
-    quote:
-      'Turned up on time, did a brilliant clean job on our rewire and left the place spotless. Couldn’t recommend them more highly.',
-    author: 'Placeholder review',
-    location: 'Add real reviews in src/data/site.js',
-  },
-  {
-    quote:
-      'Sorted our fuse board and added EV charger in a day. Friendly, professional and fairly priced — exactly what you want from an electrician.',
-    author: 'Placeholder review',
-    location: 'Add real reviews in src/data/site.js',
-  },
-  {
-    quote:
-      'Quick to respond, explained everything clearly and the work was faultless. Our go-to electricians from now on.',
-    author: 'Placeholder review',
-    location: 'Add real reviews in src/data/site.js',
-  },
+export const story = [
+  { year: 'Then', title: 'On the tools', text: 'Started as an apprentice, grafting long days and learning the trade inside out.' }, // TODO
+  { year: 'The grind', title: 'Built a real business', text: 'Grew a successful electrical company in Leeds — and felt every pain point on this page first-hand.' }, // TODO
+  { year: 'The shift', title: 'Cracked the systems', text: 'Learned marketing, websites and automation the hard (and expensive) way — and watched the business transform.' }, // TODO
+  { year: 'Now', title: 'Helping other sparks', text: 'Off The Tools exists to give other electricians the unfair advantage I had to build from scratch.' },
 ];
 
 // =============================================================================
-//  FAQs  (great for SEO — rendered with FAQPage schema)
+//  FAQ  (rendered with FAQPage schema)
 // =============================================================================
 export const faqs = [
-  {
-    q: 'Are you qualified and insured?',
-    a: 'Yes. We’re fully qualified, accredited and insured, and all work is carried out to the latest 18th Edition wiring regulations and certified on completion.',
-  },
-  {
-    q: 'Do you offer free quotes?',
-    a: 'Absolutely — we provide free, no-obligation quotes with clear, fixed pricing and no hidden extras.',
-  },
-  {
-    q: 'Do you cover both domestic and commercial work?',
-    a: 'We do. From a single socket in your home to full commercial fit-outs and landlord testing, we handle jobs of every size.',
-  },
-  {
-    q: 'How quickly can you come out?',
-    a: 'We aim to respond the same working day and can usually arrange a visit quickly. For urgent issues, get in touch and we’ll do our best to help straight away.',
-  },
+  { q: 'I’m an electrician, not a marketer — is this for me?', a: 'Exactly why it exists. Off The Tools is built by an electrician, for electricians. You stay on the tools (for now); we handle the website, online presence and systems.' },
+  { q: 'How is this different from a normal web designer?', a: 'A web designer hands you a pretty website and disappears. We build the whole engine — brand, site, lead generation, follow-up and reviews — and we actually understand the electrical trade.' },
+  { q: 'Why don’t you show prices?', a: 'Every electrician is at a different stage, so we tailor the package to where you are and where you want to be. Book a quick call and we’ll give you a straight, no-pressure number.' },
+  { q: 'How quickly can I be live?', a: 'A premium website can typically be live within around 7 days once we have your details and photos. Lead generation and systems follow straight after.' },
+  { q: 'Do I have to commit to coaching?', a: 'No. Most start with a website and online presence. Coaching and systems are there when you’re ready to genuinely step off the tools — never forced.' },
 ];

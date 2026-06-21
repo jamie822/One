@@ -1,21 +1,20 @@
 ---
 import { site } from '../data/site.js';
 import { href } from '../lib/href.js';
+import Logo from './Logo.astro';
 const { path = '' } = Astro.props;
 const links = [
   { href: '/', label: 'Home' },
-  { href: '/services', label: 'Services' },
-  { href: '/about', label: 'About' },
+  { href: '/story', label: 'My Story' },
+  { href: '/services', label: 'What We Do' },
+  { href: '/packages', label: 'Packages' },
   { href: '/contact', label: 'Contact' },
 ];
-const isActive = (href) => (href === '/' ? path === '/' || path === '' : path.startsWith(href));
+const isActive = (h) => (h === '/' ? path === '/' || path === '' : path.startsWith(h));
 ---
 <header class="site-header">
   <div class="container site-header__inner">
-    <a class="brand" href={href('/')} aria-label={`${site.name} home`}>
-      <span class="brand__mark">{site.logoText}</span>
-      <span class="brand__name">{site.name}<span>Electrical Contractors</span></span>
-    </a>
+    <a href={href('/')} aria-label={`${site.name} home`}><Logo /></a>
 
     <button class="nav-toggle" aria-label="Toggle menu" aria-expanded="false" data-nav-toggle>
       <span></span><span></span><span></span>
@@ -25,7 +24,7 @@ const isActive = (href) => (href === '/' ? path === '/' || path === '' : path.st
       {links.map((l) => (
         <a href={href(l.href)} class={isActive(l.href) ? 'is-active' : ''}>{l.label}</a>
       ))}
-      <a class="nav__cta" href={href('/contact')}>Get a Quote</a>
+      <a class="btn btn--gold nav__cta" href={href('/contact')}>Book a Call</a>
     </nav>
   </div>
 </header>

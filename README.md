@@ -1,62 +1,45 @@
-# H H Electrical — Website
+# Off The Tools — Brand & Website
 
-A fast, SEO-optimised 4-page brochure website (Home, Services, About, Contact)
-built with [Astro](https://astro.build). Static output — cheap and easy to host
-on Netlify, Cloudflare Pages, GitHub Pages, Vercel or any static host.
+> **Stop being the business. Start owning one.**
+> Premium "Dark Luxe" brand + website for **Off The Tools** — websites & online
+> presence for electricians who want to get off the tools.
 
-Built in the agency **house style** (layout modelled on wyelectrical.co.uk) and
-recoloured per client. To reuse this for another client, see **[TEMPLATE.md](TEMPLATE.md)**.
+Built with [Astro](https://astro.build) (fast static output). Auto-deploys to
+GitHub Pages on every push.
 
-## 🌐 Live deploy (GitHub Pages)
+- 🎨 **Brand system:** [BRAND.md](BRAND.md) — palette, type, logo, voice, photography
+- 🧰 **Reusable template:** [TEMPLATE.md](TEMPLATE.md) — spin up future client sites
+- 🖼️ **Platform image kit:** `/brand-assets/` (regenerate: `node brand/render.mjs`)
 
-Pushing to the working branch auto-builds and publishes via
-`.github/workflows/deploy.yml`. **One-time setup:** repo **Settings → Pages →
-Source: "GitHub Actions"**. The site then goes live at
-`https://<owner>.github.io/<repo>/`. (Links/assets are base-path aware, so it
-works at a sub-path *and* on a custom domain at the root.)
+## ✏️ Edit everything in one place
 
-## ✏️ Edit business details in ONE place
+**`src/data/site.js`** holds the brand, contact, social links, pain points,
+services, packages, story and FAQs. Brand colour is one value (`brandColor`),
+injected onto `<html>` so it recolours the whole site instantly.
 
-Open **`src/data/site.js`** — business name, phone, email, location, service
-area, accreditations, opening hours, owner info and the full service list all
-live there. Everything marked `// TODO` is a placeholder to replace with the
-real details.
+## 🌐 Live site
 
-> 🔑 **For local SEO**, the most important fields to get right are
-> `address.locality`, `areaServed`, `phone`, `email` and `url`.
+Auto-deploys via `.github/workflows/deploy.yml` →
+`https://jamie822.github.io/One/`. Base-path aware, so it also works on a custom
+domain at the root (set `site.url` + leave `BASE_PATH` unset).
 
-## 🖼️ Adding photos
+## 🖥️ Pages
 
-The site ships with clearly-marked placeholder image slots (owner photo, job
-gallery, hero image). To use real photos:
+Home (animated hero) · My Story · What We Do · Packages · Book a Call (+ 404).
 
-1. Save the image into `public/images/` (e.g. `public/images/owner.jpg`).
-2. Point to it — e.g. set `owner.photo: '/images/owner.jpg'` in `src/data/site.js`,
-   or swap the relevant `<Placeholder>` for an `<img>` in the page.
-
-## 📨 Contact form
-
-The contact form (`src/pages/contact.astro`) needs a backend to send messages.
-Easiest no-code options:
-- **Formspree** — set the form `action` to your Formspree endpoint.
-- **Netlify Forms** — add the `netlify` attribute if hosting on Netlify.
-
-## 🚀 Develop & build
+## 🛠️ Commands
 
 ```bash
-npm install      # install dependencies
-npm run dev      # local dev server (http://localhost:4321)
+npm install      # install
+npm run dev      # local dev (http://localhost:4321)
 npm run build    # production build -> ./dist
-npm run preview  # preview the production build
+npm run preview  # preview the build
+node brand/render.mjs   # regenerate /brand-assets/*.png
 ```
 
-## 🔍 SEO features baked in
+## 🖼️ Photography
 
-- Per-page `<title>`, meta description, canonical URLs
-- Open Graph + Twitter card tags
-- schema.org `Electrician` / `LocalBusiness` structured data + service `ItemList`
-- Auto-generated `sitemap-index.xml` (`@astrojs/sitemap`)
-- `robots.txt`, semantic HTML, mobile-first responsive, fast static pages
-
-> After deploying, set the real domain in **`src/data/site.js` (`url`)** and in
-> `public/robots.txt`, then submit the sitemap in Google Search Console.
+This is a personal brand — real photos of the founder are central (see
+[BRAND.md §6](BRAND.md)). Drop graded images into `public/images/` and point
+`heroImage`, `storyImage`, `ctaImage`, `founder.photo` at them in `site.js`.
+Placeholders show until then.

@@ -2,45 +2,38 @@
 import Layout from '../layouts/Layout.astro';
 import Hero from '../components/Hero.astro';
 import Icon from '../components/Icon.astro';
-import { site, services } from '../data/site.js';
-const hasStreet = site.address.street && site.address.street.length > 0;
+import { site, packages } from '../data/site.js';
 ---
-<Layout
-  path="/contact"
-  title="Contact"
-  description={`Contact ${site.name} in ${site.address.locality}. Call ${site.phone} or email ${site.email} for a free, no-obligation electrical quote.`}
->
+<Layout path="/contact" title="Book a Call" description={`Book a free, no-pressure call with ${site.name}. Premium websites & online presence for electricians ready to get off the tools.`}>
   <Hero inner={true}>
-    <span class="eyebrow" style="color:var(--brand)">Get In Touch</span>
-    <h1>Let's talk about your project</h1>
-    <p>Ready to book a job or just want some advice? Call us, drop us an email, or send a message and we'll get straight back to you with a free, no-obligation quote.</p>
+    <span class="eyebrow">Book a Call</span>
+    <h1>Let's get you <span class="serif gold">off the tools</span>.</h1>
+    <p>A free, no-pressure call to map out how we'll turn your business into one that works for you. Tell us where you're at and we'll take it from there.</p>
   </Hero>
 
   <section class="section">
     <div class="container contact-grid">
       <div class="reveal">
-        <h2>Talk to us</h2>
+        <span class="eyebrow">Talk to us</span>
+        <hr class="rule" />
         <ul class="info-list">
           <li><span class="ico"><Icon name="phone" /></span><div><strong>Phone</strong><a href={`tel:${site.phoneHref}`}>{site.phone}</a></div></li>
           <li><span class="ico"><Icon name="mail" /></span><div><strong>Email</strong><a href={`mailto:${site.email}`}>{site.email}</a></div></li>
-          <li><span class="ico"><Icon name="pin" /></span><div><strong>Area covered</strong><span>{hasStreet ? `${site.address.street}, ` : ''}{site.address.locality}, {site.address.region} {site.address.postcode}</span></div></li>
-          <li><span class="ico"><Icon name="instagram" /></span><div><strong>Instagram</strong><a href={site.instagram} target="_blank" rel="noopener">Follow our latest work</a></div></li>
+          <li><span class="ico"><Icon name="clock" /></span><div><strong>Hours</strong><span>{site.hoursShort}</span></div></li>
+          {site.instagram && <li><span class="ico"><Icon name="instagram" /></span><div><strong>Instagram</strong><a href={site.instagram} target="_blank" rel="noopener">Follow the journey</a></div></li>}
         </ul>
-
-        <h3 style="margin-top:38px">Opening hours</h3>
-        <ul class="info-list">
-          {site.hours.map((h) => (
-            <li><span class="ico"><Icon name="clock" /></span><div><strong>{h.days}</strong><span>{h.time}</span></div></li>
-          ))}
-        </ul>
+        <div style="margin-top:34px;padding:24px;border:1px solid var(--line);border-radius:var(--radius);background:var(--panel)">
+          <p class="serif" style="font-size:1.25rem;color:var(--cream);margin:0 0 6px">"The best time to fix your online presence was last year. The second best time is this call."</p>
+          <span style="color:var(--brand);font-family:var(--font-display);font-weight:600">— {site.founder.name}</span>
+        </div>
       </div>
 
       <div class="reveal" data-delay="1">
-        <h2>Request a quote</h2>
+        <span class="eyebrow">Request your free game plan</span>
+        <hr class="rule" />
         <!--
-          TODO: This form needs a backend to actually send messages.
-            • Formspree  -> action="https://formspree.io/f/XXXXXXXX"
-            • Netlify Forms -> add  netlify  attribute if hosting on Netlify
+          TODO: connect this form to a backend (Formspree / Netlify Forms) or
+          replace it with your Calendly/GHL booking embed.
         -->
         <form class="form" action="https://formspree.io/f/your-form-id" method="POST">
           <div class="field--row">
@@ -48,17 +41,18 @@ const hasStreet = site.address.street && site.address.street.length > 0;
             <div class="field"><label for="phone">Phone</label><input id="phone" name="phone" type="tel" autocomplete="tel" required /></div>
           </div>
           <div class="field"><label for="email">Email</label><input id="email" name="email" type="email" autocomplete="email" required /></div>
+          <div class="field"><label for="business">Business name</label><input id="business" name="business" type="text" placeholder="e.g. Smith Electrical" /></div>
           <div class="field">
-            <label for="service">What do you need?</label>
-            <select id="service" name="service">
-              <option value="">Select a service…</option>
-              {services.map((s) => <option value={s.title}>{s.title}</option>)}
-              <option value="Other">Something else</option>
+            <label for="package">Where are you at?</label>
+            <select id="package" name="package">
+              <option value="">Choose a package…</option>
+              {packages.map((p) => <option value={p.name}>{p.name} — {p.tagline}</option>)}
+              <option value="Not sure">Not sure yet</option>
             </select>
           </div>
-          <div class="field"><label for="message">Details</label><textarea id="message" name="message" rows="5" placeholder="Tell us a bit about the job…"></textarea></div>
-          <button class="btn btn--brand btn--lg" type="submit" style="justify-content:center"><Icon name="mail" /> Send Enquiry</button>
-          <p class="form__note">We aim to reply the same working day. Prefer to talk? Call {site.phone}.</p>
+          <div class="field"><label for="message">What's holding you back?</label><textarea id="message" name="message" rows="4" placeholder="Tell us a bit about your business and what you want to change…"></textarea></div>
+          <button class="btn btn--gold btn--lg" type="submit" style="justify-content:center"><Icon name="calendar" /> Book My Call</button>
+          <p class="form__note">No hard sell. Just an honest conversation about your business.</p>
         </form>
       </div>
     </div>
@@ -66,10 +60,10 @@ const hasStreet = site.address.street && site.address.street.length > 0;
 
   <script>
     const params = new URLSearchParams(window.location.search);
-    const svc = params.get('service');
-    if (svc) {
-      const sel = document.getElementById('service');
-      if (sel) { const match = Array.from(sel.options).find((o) => o.value === svc); sel.value = match ? svc : 'Other'; }
+    const pkg = params.get('package');
+    if (pkg) {
+      const sel = document.getElementById('package');
+      if (sel) { const m = Array.from(sel.options).find((o) => o.value === pkg); sel.value = m ? pkg : 'Not sure'; }
     }
   </script>
 </Layout>

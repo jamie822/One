@@ -1,0 +1,81 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Hero from '../components/Hero.astro';
+import Icon from '../components/Icon.astro';
+import CtaBand from '../components/CtaBand.astro';
+import { href } from '../lib/href.js';
+import { site, packages, faqs } from '../data/site.js';
+---
+<Layout path="/packages" title="Packages" description={`Off The Tools packages for electricians — from a premium website to a full off-the-tools growth system. Tailored pricing, book a call.`}>
+  <Hero inner={true}>
+    <span class="eyebrow">Packages</span>
+    <h1>Pick your level. <span class="serif gold">We'll do the rest</span>.</h1>
+    <p>Three clear stages, from looking the part to building a business that runs without you. Every package is tailored to where you're at — so let's talk and find the right fit.</p>
+  </Hero>
+
+  <section class="section">
+    <div class="container">
+      <div class="pkgs">
+        {packages.map((pkg) => (
+          <article class={`pkg reveal${pkg.best ? ' pkg--best' : ''}`}>
+            {pkg.best && <span class="pkg__badge">Most popular</span>}
+            <div class="pkg__name">{pkg.name}</div>
+            <div class="pkg__tag">{pkg.tagline}</div>
+            <p class="pkg__summary">{pkg.summary}</p>
+            <ul class="pkg__features">
+              {pkg.features.map((f) => (<li><Icon name="check" /> {f}</li>))}
+            </ul>
+            <a class={`btn ${pkg.best ? 'btn--gold' : 'btn--ghost'}`} href={href('/contact')}>{pkg.cta} <Icon name="arrow" /></a>
+          </article>
+        ))}
+      </div>
+      <p class="text-center" style="margin-top:36px;color:var(--muted)">Prices are tailored to your business and goals — book a free call and we'll give you a straight number, no pressure.</p>
+    </div>
+  </section>
+
+  <!-- HOW IT WORKS -->
+  <section class="section section--panel">
+    <div class="container">
+      <div class="section__head reveal">
+        <span class="eyebrow" style="justify-content:center">How it works</span>
+        <hr class="rule" />
+        <h2>Simple, fast, done for you</h2>
+      </div>
+      <div class="grid grid--4">
+        {[
+          ['01', 'Book a call', 'A relaxed chat about your business, your goals and what’s holding you back.'],
+          ['02', 'Your game plan', 'We recommend the right package and map out exactly what we’ll build.'],
+          ['03', 'We build it', 'Website, brand, lead gen and systems — handled for you, fast.'],
+          ['04', 'You grow', 'Better jobs roll in while we fine-tune. When you’re ready, we help you step back.'],
+        ].map(([n, t, d], i) => (
+          <div class="pain reveal" data-delay={String(i % 4)}>
+            <span class="pain__n" style="font-size:1.6rem;opacity:.5">{n}</span>
+            <h3 style="margin-top:10px">{t}</h3>
+            <p>{d}</p>
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- FAQ -->
+  <section class="section">
+    <div class="container">
+      <div class="section__head reveal">
+        <span class="eyebrow" style="justify-content:center">Questions</span>
+        <hr class="rule" />
+        <h2>Before you book</h2>
+      </div>
+      <div class="faq reveal">
+        {faqs.map((f) => (
+          <details>
+            <summary>{f.q} <span class="plus"></span></summary>
+            <div class="faq__body"><p>{f.a}</p></div>
+          </details>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <CtaBand />
+</Layout>

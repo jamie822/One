@@ -1,0 +1,40 @@
+---
+// Off The Tools logo lockup.
+// variant: 'full' (mark + stacked wordmark) | 'stacked' | 'mark'
+// tone:    'gold' (on dark, default) | 'light' (all cream) | 'dark' (on light)
+const { variant = 'full', tone = 'gold', class: klass = '' } = Astro.props;
+
+const wordColor = tone === 'dark' ? '#0B0B0C' : '#F4F1EA';
+const subColor = tone === 'dark' ? '#6c6a64' : 'rgba(244,241,234,.6)';
+const id = 'lg' + Math.random().toString(36).slice(2, 7);
+---
+<span class={`logo logo--${variant} ${klass}`} aria-label="Off The Tools">
+  <svg class="logo__mark" viewBox="0 0 48 48" role="img" aria-hidden="true">
+    <defs>
+      <linearGradient id={id} x1="0" y1="0" x2="1" y2="1">
+        <stop offset="0" stop-color="#E4C77B" />
+        <stop offset="0.5" stop-color="#C9A24B" />
+        <stop offset="1" stop-color="#A8853A" />
+      </linearGradient>
+    </defs>
+    <circle cx="24" cy="24" r="22" fill="none" stroke={`url(#${id})`} stroke-width="2" />
+    <path d="M27.5 9 14.5 27.5h7.2L20 39l13.5-19h-7.4z" fill={`url(#${id})`} />
+  </svg>
+  {variant !== 'mark' && (
+    <span class="logo__words">
+      <span class="logo__top" style={`color:${subColor}`}>OFF&nbsp;THE</span>
+      <span class="logo__main" style={`color:${wordColor}`}>TOOLS</span>
+      <span class="logo__sub" style={`color:${subColor}`}>FOR&nbsp;ELECTRICIANS</span>
+    </span>
+  )}
+</span>
+
+<style>
+  .logo { display: inline-flex; align-items: center; gap: 12px; }
+  .logo__mark { width: 42px; height: 42px; flex: 0 0 auto; }
+  .logo--mark .logo__mark { width: 100%; height: 100%; }
+  .logo__words { display: grid; line-height: 1; }
+  .logo__top { font-family: var(--font-display); font-weight: 600; font-size: .62rem; letter-spacing: .42em; }
+  .logo__main { font-family: var(--font-display); font-weight: 800; font-size: 1.5rem; letter-spacing: .02em; }
+  .logo__sub { font-family: var(--font-body); font-weight: 500; font-size: .52rem; letter-spacing: .34em; margin-top: 3px; }
+</style>

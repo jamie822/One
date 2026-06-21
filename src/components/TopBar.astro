@@ -1,18 +1,25 @@
 ---
 import { site } from '../data/site.js';
 import Icon from './Icon.astro';
+const socials = [
+  ['instagram', site.instagram],
+  ['facebook', site.facebook],
+  ['youtube', site.youtube],
+  ['linkedin', site.linkedin],
+  ['tiktok', site.tiktok],
+];
 ---
 <div class="topbar">
   <div class="container topbar__inner">
     <div class="topbar__group">
       <a href={`tel:${site.phoneHref}`}><Icon name="phone" /> {site.phone}</a>
-      <a class="topbar__meta-item" href={`mailto:${site.email}`}><Icon name="mail" /> {site.email}</a>
-      <span class="topbar__group--meta" style="display:inline-flex;align-items:center;gap:8px;color:rgba(255,255,255,.78)"><Icon name="clock" /> {site.hoursShort}</span>
+      <a class="topbar__meta" href={`mailto:${site.email}`}><Icon name="mail" /> {site.email}</a>
+      <span class="topbar__meta" style="display:inline-flex;align-items:center;gap:8px"><Icon name="clock" /> {site.hoursShort}</span>
     </div>
     <div class="topbar__socials">
-      {site.instagram && <a href={site.instagram} target="_blank" rel="noopener" aria-label="Instagram"><Icon name="instagram" /></a>}
-      {site.facebook && <a href={site.facebook} target="_blank" rel="noopener" aria-label="Facebook"><Icon name="facebook" /></a>}
-      {site.whatsapp && <a href={`https://wa.me/${site.whatsapp}`} target="_blank" rel="noopener" aria-label="WhatsApp"><Icon name="whatsapp" /></a>}
+      {socials.filter(([, url]) => url).map(([name, url]) => (
+        <a href={url} target="_blank" rel="noopener" aria-label={name}><Icon name={name} /></a>
+      ))}
     </div>
   </div>
 </div>

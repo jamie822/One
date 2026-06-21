@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://www.hhelectrical.co.uk/sitemap-index.xml
+Sitemap: https://jamie822.github.io/One/sitemap-index.xml

@@ -3,19 +3,21 @@ import { site } from '../data/site.js';
 import { href } from '../lib/href.js';
 import Icon from './Icon.astro';
 const {
-  title = 'Need an electrician you can rely on?',
-  text = `Friendly, qualified and fully insured. Get a free, no-obligation quote for work across ${site.address.locality} and nearby.`,
+  title = 'Ready to get off the tools?',
+  text = 'Book a free, no-pressure call. We’ll map out exactly how to turn your business into one that works for you — not the other way round.',
 } = Astro.props;
 ---
-<section class="section">
-  <div class="container">
-    <div class="cta-band reveal">
-      <h2>{title}</h2>
-      <p>{text}</p>
-      <div class="cta-band__actions">
-        <a class="btn btn--brand btn--lg" href={`tel:${site.phoneHref}`}><Icon name="phone" /> Call {site.phone}</a>
-        <a class="btn btn--outline-light btn--lg" href={href('/contact')}>Request a Quote</a>
-      </div>
+<section class="cta">
+  <div class={`cta__bg${site.ctaImage ? '' : ' is-placeholder'}`}>
+    {site.ctaImage && <img src={href(site.ctaImage)} alt="" />}
+  </div>
+  <div class="cta__inner reveal">
+    <span class="eyebrow" style="justify-content:center">Your next move</span>
+    <h2 set:html={title} />
+    <p>{text}</p>
+    <div class="cta__actions">
+      <a class="btn btn--gold btn--lg" href={href('/contact')}>Book a Call <Icon name="arrow" /></a>
+      <a class="btn btn--ghost btn--lg" href={`tel:${site.phoneHref}`}><Icon name="phone" /> {site.phone}</a>
     </div>
   </div>
 </section>

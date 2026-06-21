@@ -4,30 +4,25 @@ import Hero from '../components/Hero.astro';
 import Icon from '../components/Icon.astro';
 import CtaBand from '../components/CtaBand.astro';
 import { href } from '../lib/href.js';
-import { site, services, process } from '../data/site.js';
+import { site, services } from '../data/site.js';
 
 const servicesSchema = {
   '@context': 'https://schema.org',
   '@type': 'ItemList',
   itemListElement: services.map((s, i) => ({
-    '@type': 'ListItem',
-    position: i + 1,
-    item: { '@type': 'Service', name: s.title, description: s.short, areaServed: site.address.locality, provider: { '@type': 'Electrician', name: site.name } },
+    '@type': 'ListItem', position: i + 1,
+    item: { '@type': 'Service', name: s.title, description: s.short, provider: { '@type': 'ProfessionalService', name: site.name } },
   })),
 };
 ---
-<Layout
-  path="/services"
-  title="Electrical Services"
-  description={`Full list of electrical services from ${site.name} in ${site.address.locality}: rewires, fuse board upgrades, EV chargers, EICR testing, lighting, fault finding and commercial work.`}
->
+<Layout path="/services" title="What We Do" description={`${site.name} builds premium websites, branding, lead generation, automation and coaching for electricians who want to get off the tools.`}>
   <Hero inner={true}>
-    <span class="eyebrow" style="color:var(--brand)">Our Services</span>
-    <h1>Electrical services in {site.address.locality}</h1>
-    <p>Whatever you need — at home or in business — we've got it covered. Every job is carried out by experienced electricians, fully certified and guaranteed.</p>
+    <span class="eyebrow">What We Do</span>
+    <h1>Your whole online presence, <span class="serif gold">done for you</span>.</h1>
+    <p>From the website that wins the work to the systems that capture it — everything an electrical business needs to look premium and grow, built by someone who's done it.</p>
     <div class="hero__actions">
-      <a class="btn btn--brand btn--lg" href={href('/contact')}>Get a Quote <Icon name="arrow" /></a>
-      <a class="hero__phone" href={`tel:${site.phoneHref}`}><Icon name="phone" /> {site.phone}</a>
+      <a class="btn btn--gold btn--lg" href={href('/contact')}>Book a Call <Icon name="arrow" /></a>
+      <a class="btn btn--ghost btn--lg" href={href('/packages')}>See Packages</a>
     </div>
   </Hero>
 
@@ -39,33 +34,22 @@ const servicesSchema = {
             <div class="svc__icon"><Icon name={s.icon} /></div>
             <h3>{s.title}</h3>
             <p>{s.long}</p>
-            <a class="svc__more" href={href(`/contact?service=${encodeURIComponent(s.title)}`)}>Get a Quote <Icon name="arrow" /></a>
+            <a class="svc__more" href={href('/contact')}>Get this <Icon name="arrow" /></a>
           </article>
         ))}
       </div>
     </div>
   </section>
 
-  <section class="section section--dark">
-    <div class="container">
-      <div class="section__head reveal">
-        <span class="eyebrow">How It Works</span>
-        <h2>From first call to certified finish</h2>
-        <p>A straightforward process designed to make your life easier.</p>
-      </div>
-      <div class="steps">
-        {process.map((p, i) => (
-          <div class="step reveal" data-delay={String(i % 4)}>
-            <div class="step__n">{p.n}</div>
-            <h3>{p.title}</h3>
-            <p>{p.text}</p>
-          </div>
-        ))}
-      </div>
+  <section class="section section--panel">
+    <div class="container container--narrow text-center reveal">
+      <span class="eyebrow" style="justify-content:center">One partner, not five</span>
+      <hr class="rule" />
+      <h2>Stop stitching together freelancers</h2>
+      <p class="lead" style="margin-top:18px">A web guy here, a "social media person" there, a lead-gen company that doesn't get the trade. We bring it all under one roof — joined up, on brand, and accountable to one thing: more of the right jobs for you.</p>
     </div>
   </section>
 
   <CtaBand />
-
   <script type="application/ld+json" set:html={JSON.stringify(servicesSchema)} />
 </Layout>

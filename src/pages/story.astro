@@ -1,0 +1,72 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Hero from '../components/Hero.astro';
+import Icon from '../components/Icon.astro';
+import Placeholder from '../components/Placeholder.astro';
+import CtaBand from '../components/CtaBand.astro';
+import { href } from '../lib/href.js';
+import { site, story } from '../data/site.js';
+---
+<Layout path="/story" title="My Story" description={`The story behind ${site.name} — ${site.founder.background} who got off the tools and now helps other electricians do the same.`}>
+  <Hero inner={true}>
+    <span class="eyebrow">My Story</span>
+    <h1>I built the business.<br />Then it nearly <span class="serif gold">broke me</span>.</h1>
+    <p>Off The Tools wasn't dreamed up in a marketing agency. It was forged on the tools, in the van, and in the late nights doing quotes when I should've been with my family.</p>
+  </Hero>
+
+  <!-- INTRO SPLIT -->
+  <section class="section">
+    <div class="container split">
+      <div class="split__media media-frame reveal">
+        <Placeholder src={site.storyImage} alt={site.founder.name} label="Your portrait / on a job" hint="Set storyImage in src/data/site.js" variant="ph--portrait" />
+      </div>
+      <div class="reveal" data-delay="1">
+        <span class="eyebrow">From one spark to another</span>
+        <hr class="rule" />
+        <h2>Hi, I'm {site.founder.name}.</h2>
+        <p class="lead">{site.founder.background} — so I know exactly what it feels like to be the best on the tools and still feel like the business is running you.</p>
+        <p style="color:var(--muted)">{/* TODO: replace with Jamie's real story — apprenticeship, building the firm, the turning point. */}
+          For years I believed the answer was simply to work harder. More hours, more jobs, more stress. The work was first class, but the brand looked cheap, the leads were unpredictable, and every penny depended on me swinging the tools.</p>
+        <p style="color:var(--muted)">Everything changed when I stopped treating the business like a job and started treating it like a business — proper branding, a website that won premium work, marketing that actually brought leads in, and systems that ran without me.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- TIMELINE -->
+  <section class="section section--panel">
+    <div class="container container--narrow">
+      <div class="section__head reveal">
+        <span class="eyebrow" style="justify-content:center">The journey</span>
+        <hr class="rule" />
+        <h2>How I got off the tools</h2>
+      </div>
+      <div class="timeline reveal">
+        {story.map((m) => (
+          <div class="tl">
+            <div class="tl__year">{m.year}</div>
+            <div>
+              <h3>{m.title}</h3>
+              <p>{m.text}</p>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- WHY IT MATTERS -->
+  <section class="section">
+    <div class="container container--narrow text-center reveal">
+      <span class="eyebrow" style="justify-content:center">Why I do this</span>
+      <hr class="rule" />
+      <h2>The unfair advantage I had to build from scratch</h2>
+      <p class="lead" style="margin-top:18px">I wasted years and a lot of money figuring this out alone. Off The Tools exists so you don't have to. Same trade, same language, no nonsense — just the marketing and systems that actually move the needle for an electrical business.</p>
+      <blockquote style="margin:36px 0 0;border-left:2px solid var(--brand);padding:6px 0 6px 24px;text-align:left">
+        <p class="serif" style="font-size:1.5rem;color:var(--cream);margin:0">"If your business can't run for a week without you, you don't own a business — you own a job."</p>
+        <cite style="display:block;margin-top:14px;color:var(--brand);font-style:normal;font-family:var(--font-display);font-weight:600">— {site.founder.name}, {site.founder.role}</cite>
+      </blockquote>
+    </div>
+  </section>
+
+  <CtaBand title="Let's write your next chapter" />
+</Layout>
