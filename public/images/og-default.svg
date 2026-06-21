@@ -17,7 +17,7 @@
     <circle cx="40" cy="40" r="37" fill="none" stroke="url(#g)" stroke-width="3"/>
     <path d="M46 16 24 47h12l-4 21 23-33H43z" fill="url(#g)"/>
   </g>
-  <text x="100" y="200" fill="#a9a59c" font-family="Sora, Arial, sans-serif" font-size="26" font-weight="700" letter-spacing="10">OFF THE TOOLS</text>
+  <text x="100" y="200" fill="#a9a59c" font-family="Sora, Arial, sans-serif" font-size="24" font-weight="700" letter-spacing="9">GET OFF THE TOOLS</text>
   <text x="200" y="305" fill="#f4f1ea" font-family="Sora, Arial, sans-serif" font-size="62" font-weight="800">Stop being the business.</text>
   <text x="200" y="375" font-family="Sora, Arial, sans-serif" font-size="62" font-weight="800" fill="url(#g)">Start owning one.</text>
   <text x="100" y="470" fill="#a9a59c" font-family="Inter, Arial, sans-serif" font-size="28">Premium websites &amp; online presence for electricians.</text>

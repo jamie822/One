@@ -8,18 +8,32 @@
 //  Edit business details here. Items marked  // TODO  need Jamie's real info.
 // =============================================================================
 
+// =============================================================================
+//  TRADE  — the audience this edition targets.
+//  Swap this one block to launch "Get Off The Tools for Roofers / Plumbers /…"
+//  Copy, logo and meta that reference it update automatically. Note: a few
+//  electrician-specific flourishes (the "rewire" pun, "sparks", "consumer
+//  unit") live in the page copy and would be re-themed per trade.
+// =============================================================================
+const trade = {
+  plural: 'electricians',
+  singular: 'electrician',
+  adjective: 'electrical',
+};
+
 export const site = {
+  trade,
   // --- Brand -----------------------------------------------------------------
-  name: 'Off The Tools',
-  legalName: 'Off The Tools',             // TODO: registered trading name
+  name: 'Get Off The Tools',
+  legalName: 'Get Off The Tools',         // TODO: registered trading name
   // The hook + the promise.
   tagline: 'Stop being the business. Start owning one.',
   // Brand strapline (electrical pun — transformation + what we do).
-  strapline: 'Rewiring electricians’ businesses.',
+  strapline: `Rewiring ${trade.plural}’ businesses.`,
   // One-line descriptor of who it's for.
-  descriptor: 'Premium websites & online presence for electricians.',
+  descriptor: `Premium websites & online presence for ${trade.plural}.`,
   url: 'https://jamie822.github.io/One',  // live (GitHub Pages); swap for real domain
-  logoText: 'OTT',                        // monogram
+  logoText: 'GOTT',                       // monogram
 
   // --- Brand colour (Dark Luxe: brushed gold on near-black) ------------------
   brandColor: '#c9a24b',                  // brushed gold
@@ -37,7 +51,7 @@ export const site = {
   // --- Contact ---------------------------------------------------------------
   phone: '07300 000 000',                 // TODO
   phoneHref: '+447300000000',             // TODO
-  email: 'hello@offthetools.co.uk',       // TODO
+  email: 'hello@getoffthetools.co.uk',    // TODO
   bookingUrl: '/contact',                 // TODO: Calendly/booking link if you have one
   hoursShort: 'Mon – Fri: 9:00 – 5:30',
 

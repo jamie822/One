@@ -1,4 +1,4 @@
-// Builds the Off The Tools lead-magnet PDF -> public/downloads/off-the-tools-guide.pdf
+// Builds the Get Off The Tools lead-magnet PDF -> public/downloads/off-the-tools-guide.pdf
 import { chromium } from 'playwright';
 import { mkdirSync } from 'node:fs';
 
@@ -58,7 +58,7 @@ const html = `<!doctype html><html><head><meta charset="utf-8">
 <section class="page"><div class="frame"></div>
   <div class="cover">
     ${mark}
-    <div class="eyebrow">Off The Tools&nbsp;·&nbsp;Free Guide</div>
+    <div class="eyebrow">Get Off The Tools&nbsp;·&nbsp;Free Guide</div>
     <h1>5 Reasons Electricians<br>Stay <span class="gold">Stuck On The Tools</span></h1>
     <p class="serif" style="font-size:22px;color:#c9a24b">…and exactly how to break free of each one.</p>
     <p class="muted" style="max-width:60ch;font-size:15px">If you went self-employed for freedom and more money but ended up with a job you can never clock off from — this is for you. Built by an electrician, for electricians.</p>
@@ -80,7 +80,7 @@ const html = `<!doctype html><html><head><meta charset="utf-8">
      <p><span class="tag gold">The fix — </span><span class="muted">${r[2]}</span></p></div>`).join('')}
   <div style="margin-top:30px;border:1px solid rgba(201,162,75,.3);border-radius:10px;padding:24px">
     <h2>The pattern</h2>
-    <p class="muted" style="font-size:14px;margin-top:8px">Every reason comes back to one thing: you're the engine. Off The Tools rewires your business so the brand, the leads and the systems do the heavy lifting — and you get your time back.</p>
+    <p class="muted" style="font-size:14px;margin-top:8px">Every reason comes back to one thing: you're the engine. Get Off The Tools rewires your business so the brand, the leads and the systems do the heavy lifting — and you get your time back.</p>
   </div>
 </section>
 
@@ -90,7 +90,7 @@ const html = `<!doctype html><html><head><meta charset="utf-8">
     <div class="eyebrow">Your next move</div>
     <h1>Ready to <span class="gold">rewire your business?</span></h1>
     <p class="muted" style="max-width:50ch;font-size:15px">Book a free, no-pressure call. We'll map out exactly how to get you off the tools — the website, the leads and the systems, done for you.</p>
-    <div class="btn">Book a Call → offthetools.co.uk</div>
+    <div class="btn">Book a Call → getoffthetools.co.uk</div>
     <p class="muted serif" style="font-size:18px;margin-top:10px">Rewiring electricians' businesses.</p>
   </div>
 </section>

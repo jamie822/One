@@ -37,7 +37,7 @@ const mark = (s) => `<svg width="${s}" height="${s}" viewBox="0 0 48 48">
 
 const wordmark = (scale = 1) => `
   <div style="line-height:1">
-    <div class="display" style="font-weight:600;font-size:${0.9 * scale}rem;letter-spacing:.42em;color:rgba(244,241,234,.6)">OFF&nbsp;THE</div>
+    <div class="display" style="font-weight:600;font-size:${0.9 * scale}rem;letter-spacing:.42em;color:rgba(244,241,234,.6)">GET&nbsp;OFF&nbsp;THE</div>
     <div class="display gold" style="font-weight:800;font-size:${3.2 * scale}rem;letter-spacing:.02em">TOOLS</div>
     <div style="font-weight:500;font-size:${0.62 * scale}rem;letter-spacing:.34em;color:rgba(244,241,234,.55)">FOR&nbsp;ELECTRICIANS</div>
   </div>`;
@@ -51,7 +51,7 @@ const assets = [
     name: 'profile-avatar', w: 1080, h: 1080,
     html: page(`<div style="display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;gap:40px;height:100%">
       ${mark(360)}
-      <div class="display" style="font-weight:800;font-size:3.4rem;letter-spacing:.04em"><span class="gold">OFF THE</span></div>
+      <div class="display" style="font-weight:800;font-size:3.4rem;letter-spacing:.04em"><span class="gold">GET OFF THE</span></div>
       <div class="display" style="font-weight:800;font-size:4.6rem;letter-spacing:.02em;margin-top:-30px">TOOLS</div>
     </div>`),
   },
@@ -59,7 +59,7 @@ const assets = [
     name: 'og-image', w: 1200, h: 630,
     html: page(`<div style="display:flex;align-items:center;gap:46px">${mark(150)}
       <div>
-        <div class="eyebrow" style="font-size:1rem;margin-bottom:18px">OFF&nbsp;THE&nbsp;TOOLS</div>
+        <div class="eyebrow" style="font-size:1rem;margin-bottom:18px">GET&nbsp;OFF&nbsp;THE&nbsp;TOOLS</div>
         <div class="display" style="font-weight:800;font-size:3.4rem;line-height:1.05">Stop being the business.<br><span class="gold">Start owning one.</span></div>
         <div style="color:var(--muted);font-size:1.4rem;margin-top:22px">Premium websites &amp; online presence for electricians.</div>
       </div></div>`, 80),
@@ -69,7 +69,7 @@ const assets = [
     html: page(`<div style="height:100%;display:flex;flex-direction:column;justify-content:space-between">
       <div class="eyebrow" style="font-size:1.1rem">Sound familiar?</div>
       <div class="display" style="font-weight:800;font-size:4.2rem;line-height:1.1">You didn't go self-employed to <span class="serif gold" style="font-weight:400">work even harder.</span></div>
-      <div style="display:flex;align-items:center;gap:18px">${mark(72)}<div class="display" style="font-weight:700;font-size:1.5rem">OFF THE <span class="gold">TOOLS</span></div></div>
+      <div style="display:flex;align-items:center;gap:18px">${mark(72)}<div class="display" style="font-weight:700;font-size:1.5rem">GET OFF THE <span class="gold">TOOLS</span></div></div>
     </div>`, 96),
   },
   {
@@ -85,7 +85,7 @@ const assets = [
   {
     name: 'facebook-cover', w: 1640, h: 624,
     html: page(`<div style="display:flex;align-items:center;gap:60px;height:100%">${mark(190)}
-      <div><div class="eyebrow" style="font-size:1rem;margin-bottom:16px">OFF THE TOOLS</div>
+      <div><div class="eyebrow" style="font-size:1rem;margin-bottom:16px">GET OFF THE TOOLS</div>
       <div class="display" style="font-weight:800;font-size:3.6rem;line-height:1.06">Get off the tools.<br><span class="gold">Build a real business.</span></div>
       <div style="color:var(--muted);font-size:1.4rem;margin-top:18px">Premium websites &amp; online presence — built by an electrician.</div></div></div>`, 90),
   },

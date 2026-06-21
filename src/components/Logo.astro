@@ -1,8 +1,10 @@
 ---
-// Off The Tools logo lockup.
+// Get Off The Tools logo lockup.
 // variant: 'full' (mark + stacked wordmark) | 'stacked' | 'mark'
 // tone:    'gold' (on dark, default) | 'light' (all cream) | 'dark' (on light)
+import { site } from '../data/site.js';
 const { variant = 'full', tone = 'gold', class: klass = '' } = Astro.props;
+const tradeUpper = site.trade.plural.toUpperCase();
 
 const wordColor = tone === 'dark' ? '#0B0B0C' : '#F4F1EA';
 const subColor = tone === 'dark' ? '#6c6a64' : 'rgba(244,241,234,.6)';
@@ -22,9 +24,9 @@ const id = 'lg' + Math.random().toString(36).slice(2, 7);
   </svg>
   {variant !== 'mark' && (
     <span class="logo__words">
-      <span class="logo__top" style={`color:${subColor}`}>OFF&nbsp;THE</span>
+      <span class="logo__top" style={`color:${subColor}`}>GET&nbsp;OFF&nbsp;THE</span>
       <span class="logo__main" style={`color:${wordColor}`}>TOOLS</span>
-      <span class="logo__sub" style={`color:${subColor}`}>FOR&nbsp;ELECTRICIANS</span>
+      <span class="logo__sub" style={`color:${subColor}`}>FOR&nbsp;{tradeUpper}</span>
     </span>
   )}
 </span>
