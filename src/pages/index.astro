@@ -52,14 +52,15 @@ const faqSchema = {
     const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     const flash = document.querySelector('[data-flash]');
 
-    // --- Circuit "current" flowing left -> right (exposed surge() trigger) ---
+    // --- Slow circuit fragments drifting through the hero at varied angles ---
     let surge = () => {};
     const canvas = document.querySelector('[data-lightning]');
     if (canvas && !reduce) {
       const ctx = canvas.getContext('2d');
       const hero = canvas.closest('.hero');
       let W = 0, H = 0, dpr = Math.min(window.devicePixelRatio || 1, 2);
-      let traces = [];
+      let frags = [];
+      const DIRS = [0, 45, 90, 135, 180, 225, 270, 315].map((d) => d * Math.PI / 180);
 
       const resize = () => {
         W = hero.clientWidth; H = hero.clientHeight;
@@ -68,87 +69,93 @@ const faqSchema = {
         ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
       };
 
-      // Build PCB-style traces that run left -> right with right-angle jogs.
-      function buildTraces() {
-        traces = [];
-        const rows = Math.max(4, Math.round(H / 115));
-        for (let i = 0; i < rows; i++) {
-          const baseY = (i + 0.5) * (H / rows) + (Math.random() - 0.5) * 22;
-          let x = -50, y = baseY;
-          const pts = [{ x, y }], nodes = [];
-          while (x < W + 70) {
-            x += 60 + Math.random() * 150; pts.push({ x, y });
-            if (Math.random() < 0.5) {
-              y = Math.max(18, Math.min(H - 18, y + (Math.random() < 0.5 ? -1 : 1) * (22 + Math.random() * 46)));
-              pts.push({ x, y });
-              if (Math.random() < 0.5) nodes.push({ x, y });
-            }
-          }
-          const segs = []; let total = 0;
-          for (let k = 0; k < pts.length - 1; k++) {
-            const a = pts[k], b = pts[k + 1], len = Math.hypot(b.x - a.x, b.y - a.y);
-            segs.push({ a, b, len, start: total }); total += len;
-          }
-          const pulses = [];
-          const n = 1 + (Math.random() < 0.5 ? 1 : 0);
-          for (let j = 0; j < n; j++) pulses.push({ head: Math.random() * total, speed: 70 + Math.random() * 120, len: 110 + Math.random() * 130 });
-          traces.push({ pts, segs, total, pulses, nodes });
+      // A circuit fragment: short octilinear (0/45/90°) trace + node pads,
+      // drifting slowly across the hero in its own direction.
+      function makeFrag() {
+        const n = 2 + Math.floor(Math.random() * 2);   // 2–3 segments
+        let x = 0, y = 0; const pts = [{ x, y }];
+        for (let s = 0; s < n; s++) {
+          const dir = DIRS[Math.floor(Math.random() * DIRS.length)];
+          const len = 34 + Math.random() * 72;
+          x += Math.cos(dir) * len; y += Math.sin(dir) * len;
+          pts.push({ x: Math.round(x), y: Math.round(y) });
         }
+        const xs = pts.map((p) => p.x), ys = pts.map((p) => p.y);
+        const minx = Math.min(...xs), miny = Math.min(...ys);
+        pts.forEach((p) => { p.x -= minx; p.y -= miny; });
+        const w = Math.max(...xs) - minx, h = Math.max(...ys) - miny;
+        const segs = []; let total = 0;
+        for (let k = 0; k < pts.length - 1; k++) {
+          const a = pts[k], b = pts[k + 1], l = Math.hypot(b.x - a.x, b.y - a.y);
+          segs.push({ a, b, l, start: total }); total += l;
+        }
+        const vdir = DIRS[Math.floor(Math.random() * DIRS.length)];
+        const spd = 7 + Math.random() * 13;            // slow drift (px/s)
+        return {
+          pts, segs, total, w, h,
+          x: -w + Math.random() * (W + w), y: -h + Math.random() * (H + h),
+          vx: Math.cos(vdir) * spd, vy: Math.sin(vdir) * spd,
+          pulse: Math.random() * total, pspd: 12 + Math.random() * 20, plen: 22 + Math.random() * 26,
+          nodes: [pts[0], pts[pts.length - 1]],
+        };
       }
-
-      const pointAt = (t, d) => {
-        d = ((d % t.total) + t.total) % t.total;
-        for (const s of t.segs) if (d <= s.start + s.len) {
-          const f = (d - s.start) / (s.len || 1);
-          return { x: s.a.x + (s.b.x - s.a.x) * f, y: s.a.y + (s.b.y - s.a.y) * f };
+      function buildFrags() {
+        const n = Math.max(14, Math.min(32, Math.round(W * H / 40000)));
+        frags = Array.from({ length: n }, makeFrag);
+      }
+      const pointAt = (f, d) => {
+        d = ((d % f.total) + f.total) % f.total;
+        for (const s of f.segs) if (d <= s.start + s.l) {
+          const t = (d - s.start) / (s.l || 1);
+          return { x: s.a.x + (s.b.x - s.a.x) * t, y: s.a.y + (s.b.y - s.a.y) * t };
         }
-        const l = t.segs[t.segs.length - 1]; return { x: l.b.x, y: l.b.y };
+        const l = f.segs[f.segs.length - 1]; return { x: l.b.x, y: l.b.y };
       };
 
-      function drawTrace(t, alpha) {
-        ctx.globalAlpha = alpha; ctx.strokeStyle = '#c9a24b'; ctx.lineWidth = 1; ctx.shadowBlur = 0;
-        ctx.beginPath(); ctx.moveTo(t.pts[0].x, t.pts[0].y);
-        for (let k = 1; k < t.pts.length; k++) ctx.lineTo(t.pts[k].x, t.pts[k].y);
-        ctx.stroke();
-        ctx.fillStyle = '#c9a24b';
-        for (const nd of t.nodes) { ctx.globalAlpha = alpha * 1.6; ctx.beginPath(); ctx.arc(nd.x, nd.y, 1.8, 0, 6.3); ctx.fill(); }
-      }
-      function drawPulse(t, p, bright) {
-        const steps = 12;
-        ctx.lineCap = 'round'; ctx.shadowColor = '#e4c77b'; ctx.shadowBlur = 12; ctx.strokeStyle = '#f6e8c2';
-        for (let s = 0; s < steps; s++) {
-          const a0 = pointAt(t, p.head - p.len * (s / steps));
-          const a1 = pointAt(t, p.head - p.len * ((s + 1) / steps));
-          ctx.globalAlpha = Math.min(1, (1 - s / steps) * 0.85 * bright);
-          ctx.lineWidth = 2.3;
-          ctx.beginPath(); ctx.moveTo(a1.x, a1.y); ctx.lineTo(a0.x, a0.y); ctx.stroke();
-        }
-        const h = pointAt(t, p.head);
-        ctx.globalAlpha = Math.min(1, bright); ctx.fillStyle = '#fff7e6'; ctx.shadowBlur = 16;
-        ctx.beginPath(); ctx.arc(h.x, h.y, 2.4, 0, 6.3); ctx.fill();
-      }
-
-      let speedMul = 1, bright = 1, last = performance.now();
+      let bright = 1, last = performance.now();
       function frame(now) {
         const dt = Math.min(0.05, (now - last) / 1000); last = now;
-        speedMul += (1 - speedMul) * Math.min(1, dt * 2.6);
-        bright += (1 - bright) * Math.min(1, dt * 2.6);
+        bright += (1 - bright) * Math.min(1, dt * 2);
         ctx.clearRect(0, 0, W, H);
-        for (const t of traces) {
-          drawTrace(t, 0.05 * bright);
-          for (const p of t.pulses) { p.head += p.speed * speedMul * dt; drawPulse(t, p, bright); }
+        const m = 100;
+        for (const f of frags) {
+          f.x += f.vx * dt; f.y += f.vy * dt;
+          if (f.x > W + m) f.x = -f.w - m; else if (f.x < -f.w - m) f.x = W + m;
+          if (f.y > H + m) f.y = -f.h - m; else if (f.y < -f.h - m) f.y = H + m;
+          // trace
+          ctx.globalAlpha = 0.14 * bright; ctx.strokeStyle = '#c9a24b'; ctx.lineWidth = 1.1; ctx.lineCap = 'round'; ctx.lineJoin = 'round'; ctx.shadowBlur = 0;
+          ctx.beginPath(); ctx.moveTo(f.x + f.pts[0].x, f.y + f.pts[0].y);
+          for (let k = 1; k < f.pts.length; k++) ctx.lineTo(f.x + f.pts[k].x, f.y + f.pts[k].y);
+          ctx.stroke();
+          // node pads
+          ctx.fillStyle = '#c9a24b';
+          for (const nd of f.nodes) { ctx.globalAlpha = 0.26 * bright; ctx.beginPath(); ctx.arc(f.x + nd.x, f.y + nd.y, 2, 0, 6.3); ctx.fill(); }
+          // slow current dot with a short soft tail
+          f.pulse += f.pspd * dt;
+          ctx.shadowColor = '#e4c77b'; ctx.shadowBlur = 9; ctx.strokeStyle = '#f6e8c2'; ctx.lineWidth = 1.7;
+          const steps = 5;
+          for (let s = 0; s < steps; s++) {
+            const a0 = pointAt(f, f.pulse - f.plen * (s / steps));
+            const a1 = pointAt(f, f.pulse - f.plen * ((s + 1) / steps));
+            ctx.globalAlpha = (1 - s / steps) * 0.45 * bright;
+            ctx.beginPath(); ctx.moveTo(f.x + a1.x, f.y + a1.y); ctx.lineTo(f.x + a0.x, f.y + a0.y); ctx.stroke();
+          }
+          const hd = pointAt(f, f.pulse);
+          ctx.globalAlpha = 0.85 * bright; ctx.fillStyle = '#fff7e6'; ctx.shadowBlur = 12;
+          ctx.beginPath(); ctx.arc(f.x + hd.x, f.y + hd.y, 1.8, 0, 6.3); ctx.fill();
         }
         ctx.globalAlpha = 1; ctx.shadowBlur = 0;
         requestAnimationFrame(frame);
       }
 
-      resize(); buildTraces();
-      window.addEventListener('resize', () => { resize(); buildTraces(); }, { passive: true });
+      resize(); buildFrags();
+      window.addEventListener('resize', () => { resize(); buildFrags(); }, { passive: true });
       requestAnimationFrame(frame);
 
+      // Gentle pulse of brightness on each word swap (no zap — keeps it calm).
       surge = () => {
-        speedMul = 5; bright = 2.4;
-        if (flash) { flash.classList.add('is-on'); setTimeout(() => flash.classList.remove('is-on'), 110); }
+        bright = 1.7;
+        if (flash) { flash.classList.add('is-on'); setTimeout(() => flash.classList.remove('is-on'), 150); }
       };
     }
 
