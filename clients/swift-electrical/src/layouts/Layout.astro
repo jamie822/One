@@ -166,22 +166,35 @@ const allSchemas = [businessSchema(), ...(crumbs ? [breadcrumbSchema(crumbs)] : 
         const rescue = () => {
           document.querySelectorAll('.reveal:not(.is-in)').forEach((el) => {
             const r = el.getBoundingClientRect();
-            if (r.height && r.top < window.innerHeight - 40 && r.bottom > 0) {
-              el.classList.add('is-in');
-            }
+            // Anything whose top has passed the fold line has been reached —
+            // including elements already scrolled off the top, which a fast
+            // scroll can carry past before the observer ever samples them.
+            // Leaving one of those hidden is content loss, not a missed
+            // animation, so the test is deliberately one-sided.
+            if (r.height && r.top < window.innerHeight - 40) el.classList.add('is-in');
           });
           if (!document.querySelector('.reveal:not(.is-in)')) {
+            window.removeEventListener('scroll', onScroll);
             window.removeEventListener('scrollend', rescue);
-            window.removeEventListener('scroll', onIdle);
           }
         };
-        let idle;
-        const onIdle = () => { clearTimeout(idle); idle = setTimeout(rescue, 120); };
+        // rAF-coalesced and time-gated, so a long continuous scroll is swept
+        // while it is still moving rather than only once it stops.
+        let last = 0;
+        let queued = false;
+        const onScroll = () => {
+          if (queued) return;
+          queued = true;
+          requestAnimationFrame(() => {
+            queued = false;
+            const now = performance.now();
+            if (now - last < 150) return;
+            last = now;
+            rescue();
+          });
+        };
+        window.addEventListener('scroll', onScroll, { passive: true });
         window.addEventListener('scrollend', rescue, { passive: true });
-        // scrollend is not universal yet; a debounced scroll covers the rest.
-        if (!('onscrollend' in window)) {
-          window.addEventListener('scroll', onIdle, { passive: true });
-        }
         setTimeout(rescue, 400);
         setTimeout(rescue, 1600);
       }
