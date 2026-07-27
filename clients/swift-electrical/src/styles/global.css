@@ -601,17 +601,20 @@ a:hover { text-decoration: underline; }
    background, and the defect it had been unable to see showed up on all 21
    pages that carry a trail. It was always there; nothing about it is new.
 
-   Kept quiet on purpose: 1px, offset clear of the baseline, and inheriting
-   the link colour so it reads as a hairline rather than as body-copy
-   underlining. */
+   The values are copied from a11y.css §11 rather than chosen here. That
+   section already fixes exactly this failure — links identified by colour
+   alone — for prose, the footer lists and the topbar, and it says it is
+   scoped deliberately rather than blanket. Breadcrumbs were simply not in
+   its list, because at the time nothing could see they were failing. So this
+   is that same treatment extended to the one place it had not reached, in its
+   own idiom, and not a second competing underline style. If §11's offset or
+   thickness ever changes, this should change with it. */
 .crumbs a {
   color: var(--muted);
   text-decoration: underline;
-  text-decoration-thickness: 1px;
-  text-underline-offset: 0.22em;
-  text-decoration-color: color-mix(in srgb, currentColor 55%, transparent);
+  text-underline-offset: 0.18em;
+  text-decoration-thickness: from-font;
 }
-.crumbs a:hover { text-decoration-color: currentColor; }
 .crumbs span { margin: 0 7px; opacity: 0.5; }
 
 /* Utilities --------------------------------------------------------------- */
