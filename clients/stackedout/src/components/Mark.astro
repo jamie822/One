@@ -34,12 +34,19 @@ const booked = [
   viewBox="0 0 72 82" width={size} height={h}
   class={`mark ${klass}`} role="img" aria-label="Stacked Out"
 >
-  <defs>
-    <linearGradient id={id} x1="0" y1="0" x2="1" y2="1">
-      <stop offset="0" stop-color="#ffdd33" />
-      <stop offset="1" stop-color="#3fe3ff" />
-    </linearGradient>
-  </defs>
+  {/* Only emitted when it is actually referenced. The story variant fills its slots
+      with flat yellow and cyan, so shipping the def anyway left an unreferenced
+      signature gradient in the DOM. Harmless to render, but it makes the page look
+      like it breaches the one-gradient-per-page rule to anything auditing by
+      counting stops, which is exactly how this was nearly mis-diagnosed. */}
+  {variant === 'gradient' && (
+    <defs>
+      <linearGradient id={id} x1="0" y1="0" x2="1" y2="1">
+        <stop offset="0" stop-color="#ffdd33" />
+        <stop offset="1" stop-color="#3fe3ff" />
+      </linearGradient>
+    </defs>
+  )}
 
   {rings && (
     <>

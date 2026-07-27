@@ -39,7 +39,17 @@ const candidates = [
   <a class="skip" href="#main">Skip to content</a>
   <header class="topbar">
     <a class="topbar__brand" href="/">
-      <Mark size={30} id={`nav-${variant}`} />
+      {/* One signature gradient per page. Measured per route rather than assumed:
+          / , /board/ and /timeline/ each carry exactly one, this mark. /diary/ is
+          the exception, because its hero IS the mark at scale with five gradient
+          slot fills, so the topbar mark would be a second object using the
+          signature on the same page. The guide's sanctioned story variant, four
+          yellow and one cyan with no gradient, resolves it without inventing a
+          treatment. Note this is NOT applied globally: doing that would leave
+          /board/ and /timeline/ with no signature moment anywhere, since the
+          board's busbar is a grey ramp and the timeline's payoff numeral is
+          yellow only. */}
+      <Mark size={30} id={`nav-${variant}`} variant={variant === 'diary' ? 'story' : 'gradient'} />
       <span class="topbar__word">Stacked&nbsp;Out</span>
     </a>
     <nav class="switch" aria-label="Hero candidates">
