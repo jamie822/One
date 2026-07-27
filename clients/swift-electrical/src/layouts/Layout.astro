@@ -152,6 +152,38 @@ const allSchemas = [businessSchema(), ...(crumbs ? [breadcrumbSchema(crumbs)] : 
           { threshold: 0.1, rootMargin: '0px 0px -40px' }
         );
         items.forEach((el) => io.observe(el));
+
+        /* Safety net against a self-deadlocking reveal.
+           IntersectionObserver measures the *clipped* intersection rect, so
+           any hidden state that clips or masks an element to zero area makes
+           it permanently unable to meet the threshold — it never receives
+           .is-in, so the state never opens, so it stays invisible. That is a
+           silent content-loss bug, not a missing animation.
+
+           This pass re-tests with getBoundingClientRect, which ignores
+           clipping and therefore cannot deadlock. It unbinds itself as soon
+           as every reveal has landed, so a settled page pays nothing. */
+        const rescue = () => {
+          document.querySelectorAll('.reveal:not(.is-in)').forEach((el) => {
+            const r = el.getBoundingClientRect();
+            if (r.height && r.top < window.innerHeight - 40 && r.bottom > 0) {
+              el.classList.add('is-in');
+            }
+          });
+          if (!document.querySelector('.reveal:not(.is-in)')) {
+            window.removeEventListener('scrollend', rescue);
+            window.removeEventListener('scroll', onIdle);
+          }
+        };
+        let idle;
+        const onIdle = () => { clearTimeout(idle); idle = setTimeout(rescue, 120); };
+        window.addEventListener('scrollend', rescue, { passive: true });
+        // scrollend is not universal yet; a debounced scroll covers the rest.
+        if (!('onscrollend' in window)) {
+          window.addEventListener('scroll', onIdle, { passive: true });
+        }
+        setTimeout(rescue, 400);
+        setTimeout(rescue, 1600);
       }
 
       /* ====================================================================

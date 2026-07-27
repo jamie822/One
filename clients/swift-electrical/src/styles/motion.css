@@ -118,17 +118,34 @@ html .reviews__head.reveal.is-in {
   mask-position: 0 0;
 }
 
-/* --- Framed image: a clip wipe from the left ---------------------------- */
+/* --- Framed image: a clip wipe from the left ----------------------------
+   The wipe is applied to the frame's CONTENTS, never to the observed
+   .reveal element itself.
+
+   Why: IntersectionObserver measures the *clipped* intersection rect. A
+   clip-path of inset(0 100% 0 0) on the observed element collapses that rect
+   to zero area, so the 0.1 threshold can never be met, .is-in is never added,
+   and the clip never opens — the element deadlocks itself shut and the
+   portrait renders as empty black. Measured: intersectionRect 0x0 against a
+   492x657 boundingClientRect; forcing clip-path:none took the ratio 0 -> 1.
+
+   Clipping the child instead leaves the observed element's geometry intact.
+   The frame's own overflow:hidden + border-radius still round the corners,
+   so the visual is unchanged. */
 html .frame.reveal,
 html .owner__frame.reveal {
   opacity: 1;
   filter: none;
   transform: none;
-  clip-path: inset(0 100% 0 0 round var(--radius-lg));
+  clip-path: none;
+}
+html .frame.reveal > *,
+html .owner__frame.reveal > * {
+  clip-path: inset(0 100% 0 0);
   transition: clip-path 900ms var(--ease-out);
 }
-html .frame.reveal.is-in,
-html .owner__frame.reveal.is-in { clip-path: inset(0 0 0 0 round var(--radius-lg)); }
+html .frame.reveal.is-in > *,
+html .owner__frame.reveal.is-in > * { clip-path: inset(0 0 0 0); }
 
 /* --- The two lead service tiles: directional, with depth ---------------- */
 html .svc-hero.reveal {
@@ -1029,6 +1046,9 @@ html .header { view-transition-name: site-header; }
     -webkit-mask-image: none !important;
     mask-image: none !important;
   }
+
+  html .frame.reveal > *,
+  html .owner__frame.reveal > * { clip-path: none !important; }
 
   html .card.reveal,
   html .cred.reveal,

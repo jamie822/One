@@ -190,9 +190,14 @@ a:hover { text-decoration: underline; }
 
 .section { padding: clamp(56px, 8vw, 104px) 0; }
 /* Vertical pacing. One repeated padding value on every section is what makes a
-   page feel metronomic; these are the deliberate compress/release steps. */
-.section--tight { padding-block: clamp(28px, 3.4vw, 44px); }
-.section--air { padding-block: clamp(80px, 11vw, 156px); }
+   page feel metronomic; these are the deliberate compress/release steps.
+
+   Read these as HALF an interval, not a whole one. Two sections that abut each
+   other both pay, so --air at both ends of two neighbouring sections spends
+   2 x its value on a single seam. 88 is the ceiling because 88+88 = 176 still
+   reads as a break; 156+156 = 312 reads as the page having ended. */
+.section--tight { padding-block: clamp(24px, 2.8vw, 40px); }
+.section--air { padding-block: clamp(48px, 6.1vw, 88px); }
 .section--panel {
   background: linear-gradient(180deg, var(--bg-2), var(--panel) 45%, var(--bg-2));
   border-block: 1px solid var(--line);
