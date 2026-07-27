@@ -20,16 +20,17 @@ const personSchema = {
 <Layout
   path="/about/"
   title="About Swift Electrical & Security"
-  description="Swift Electrical & Security is run by Adil, a NICEIC registered electrician working across Bradford and West Yorkshire. Electrical work and security systems from one firm instead of two."
+  description="Swift Electrical & Security is run by Adil, a NICEIC registered electrician working across Bradford and West Yorkshire. Who turns up, what the registration actually means, and how we price the work."
   crumbs={[{ name: 'Home', path: '/' }, { name: 'About', path: '/about/' }]}
   schemas={[personSchema]}
 >
   <Hero inner={true}>
     <p class="eyebrow">About</p>
-    <h1>Electrics and security, from one firm instead of two.</h1>
+    <h1>Who you're dealing with, and what he's registered to do.</h1>
     <p class="hero__sub">
-      Swift Electrical &amp; Security is run by Adil, working across Bradford and
-      West Yorkshire.
+      Swift Electrical &amp; Security is a NICEIC registered electrician and
+      security installer run by Adil, working across Bradford and West
+      Yorkshire.
     </p>
   </Hero>
 
@@ -50,11 +51,10 @@ const personSchema = {
         <h2>Adil</h2>
         <p class="lead">{client.owner.bio}</p>
         <p class="muted">
-          Three of the seven reviews on the Google profile name him. A landlord
-          renewing certificates on several properties says he struggled to find
-          anyone, and that the firms he did find quoted extortionate prices.
-          Another landlord says Adil talked him through exactly what needed
-          doing before doing any of it.
+          A landlord renewing EICRs on several properties says he struggled to
+          find anyone at all, and that the firms he did find quoted extortionate
+          prices. Another says Adil talked him through exactly what needed doing
+          before doing any of it. Three of the seven Google reviews name him.
         </p>
         <p class="muted">
           The security side is half the business and it's in the name. Two of
@@ -76,7 +76,7 @@ const personSchema = {
   <section class="section section--panel">
     <div class="container">
       <div class="section__head reveal">
-        <h2>What the badge actually means</h2>
+        <h2>What NICEIC registration actually means</h2>
         <p>
           NAPIT has told Parliament that public awareness of the competent-person
           schemes is low. Ask ten people what NICEIC registration involves and
@@ -137,8 +137,9 @@ const personSchema = {
       </p>
       <p class="muted">
         We won't tell you something is urgent when it isn't. An old fuse board
-        is worth knowing about and rarely an emergency. Anyone saying otherwise
-        on your doorstep is selling you something.
+        is worth knowing about, and it is almost never an emergency, whatever
+        the last person through your door told you. Get a second opinion. We
+        would rather you did that than take our word for it.
       </p>
     </div>
   </section>

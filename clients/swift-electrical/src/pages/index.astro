@@ -20,7 +20,7 @@ const rest = services.filter((s) => !lead.includes(s));
 const ledger = [
   { n: client.google.rating, l: 'Google rating' },
   { n: client.google.reviewCount, l: 'Reviews, every one 5★' },
-  { n: '2', l: 'Trades, one firm' },
+  { n: '3', l: 'Reviews name Adil' },
   { n: '8pm', l: 'Open until' },
 ];
 
@@ -50,8 +50,7 @@ const faqSchema = {
     <h2 class="hero__strapline rise"><span class="hl">Swift</span> by name. You'll know the price before we start.</h2>
     <p class="hero__sub rise">
       NICEIC registered, working across Bradford and West Yorkshire. Landlord
-      EICRs, fault finding, CCTV and alarms, lighting, rewires. One firm for
-      the wiring and the security, so nobody gets to blame the other trade.
+      EICRs, fault finding, CCTV and alarms, lighting, rewires.
     </p>
     <div class="hero__actions rise">
       {hasPhone
@@ -193,10 +192,9 @@ const faqSchema = {
         <h2>You'll be dealing with Adil</h2>
         <p class="owner__quote">{client.owner.bio}</p>
         <p class="muted">
-          Three of the seven reviews name him. In one, the power kept tripping
-          and several electricians had already been out without finding why. In
-          another, he drove forty minutes out of his way to sort a lighting
-          fault.
+          In one of those reviews the power kept tripping, and several
+          electricians had already been out without finding why. In another, he
+          drove forty minutes out of his way to sort a lighting fault.
         </p>
         <p><Needed label="Adil's surname, years trading, qualifications" /></p>
         <div class="owner__actions">

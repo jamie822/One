@@ -593,9 +593,14 @@ html .header.is-scrolled::after { transform: scaleX(1); }
     transform-origin: right;
     transition: transform 300ms var(--ease-out);
   }
-  html .nav a:not(.btn):hover::after { transform: scaleX(1); transform-origin: left; }
   html .nav a:not(.btn)[aria-current='page']::after { transform: scaleX(1); }
-  html .nav a:not(.btn):hover { text-decoration: none; }
+
+  /* Gated: on a touch tablet (>=901px, coarse pointer) an ungated :hover
+     leaves the underline stuck on after a tap. */
+  @media (hover: hover) and (pointer: fine) {
+    html .nav a:not(.btn):hover::after { transform: scaleX(1); transform-origin: left; }
+    html .nav a:not(.btn):hover { text-decoration: none; }
+  }
 }
 
 /* Burger becomes a cross. */
