@@ -17,9 +17,9 @@ const facts = [
   <h2 class="bwhy__h">Built by a spark, not a marketer.</h2>
 
   <p class="bwhy__p">
-    This studio exists because of one thing: marketing companies that didn't
+    This studio exists because of one thing: marketing companies that didn’t
     understand the trade. Nobody here needs you to explain what notifiable work
-    is, or why a rewire isn't a two day job.
+    is, or why a rewire isn’t a two day job.
   </p>
 
   <ul class="bfacts">
@@ -39,14 +39,21 @@ const facts = [
 
     <li class="bfact bfact--todo">
       <span class="label">Not set yet</span>
+      <!-- Written to the visitor, not to ourselves. The previous version
+           quoted our own brand guide at a spark who has never seen it. -->
       <span class="bfact__t">
-        Price and turnaround. The brand guide says put a real number on the page,
-        so one goes here the moment you pick it. It won't be guessed.
+        Price and turnaround. Neither is settled yet, so you get a gap here,
+        not a number we made up. Ask and we’ll tell you straight.
       </span>
     </li>
   </ul>
 
+  <!-- The address in plain text as well as behind the button. Both CTAs on
+       this page were mailto links and nothing else, so a visitor on a machine
+       with no mail client had no way to reach anyone. The diary candidate
+       already does this; the board had missed it. -->
   <div class="bwhy__do">
     <a class="btn btn--action" href={`mailto:${email}`}>Get in touch</a>
+    <p class="bwhy__addr">{email}</p>
   </div>
 </section>

@@ -35,11 +35,14 @@ demonstration: the sequence plays once, then the board stays switchable.
   <div class="bhero__grid">
 
     <div class="bhero__say">
-      <h1 class="bhero__h">{yearsOnTools} years on the tools. Now we build websites.</h1>
+      <!-- Non breaking space: the number and its unit are one token, and a
+           25 stranded at the end of a line is the one break this headline
+           cannot take. -->
+      <h1 class="bhero__h">{yearsOnTools}&nbsp;years on the tools. Now we build websites.</h1>
 
       <p class="bhero__lead">
         Websites for electricians and solar installers. Built by a spark, so
-        you'll never have to explain what an EICR is.
+        you’ll never have to explain what an EICR is.
       </p>
 
       <div class="bhero__do">

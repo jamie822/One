@@ -150,10 +150,16 @@
   content: ''; position: absolute; inset: 0;
   background: var(--hero-gradient);
   clip-path: inset(0 100% 0 0);           /* current arrives from the main switch */
-  transition: clip-path 900ms var(--ease-out);
+  /* De-energising is not the reverse of energising. Pulling the main switch
+     kills the bar at once; it does not drain back down it over most of a
+     second. Slow on the way up, snap on the way down. */
+  transition: clip-path 130ms var(--ease-out);
 }
 .bd[data-phase='main'] .bd__bus::before,
-.bd[data-phase='live'] .bd__bus::before { clip-path: inset(0 0 0 0); }
+.bd[data-phase='live'] .bd__bus::before {
+  clip-path: inset(0 0 0 0);
+  transition-duration: 900ms;
+}
 
 /* Travelling current. transform only, so it stays on the compositor. */
 .bd__pulse {
@@ -167,6 +173,10 @@
 }
 @media (prefers-reduced-motion: no-preference) {
   .bd[data-phase='live'] .bd__pulse { opacity: .8; animation: bd-run 3.4s linear infinite; }
+  /* Nothing should animate forever to an empty room. The observer that starts
+     the sequence also reports when the board leaves the viewport, and the
+     travelling current parks until it comes back. */
+  .bd[data-vis='out'] .bd__pulse { animation-play-state: paused; }
 }
 @keyframes bd-run {
   from { transform: translateX(-140%); }
@@ -275,7 +285,10 @@
   font-family: var(--font-display);
   font-weight: 600;
   font-variant-numeric: tabular-nums;
-  font-size: clamp(8px, 1.15cqw, 13px);
+  /* The container is the board, which tops out near 750px, so 1.15cqw peaked
+     at 8.6px and the 13px ceiling was unreachable: this printed at its 8px
+     floor on a 1440px desktop. 1.7cqw actually reaches the ceiling. */
+  font-size: clamp(8px, 1.7cqw, 13px);
   letter-spacing: .01em;
   line-height: 1;
   color: var(--ground);
@@ -307,7 +320,9 @@
   box-shadow: inset 0 1px 0 rgba(255, 255, 255, .3), 0 1px 2px rgba(0, 0, 0, .8);
   /* Breakers snap. They do not glide. Short, hard, a touch of over centre. */
   transition: transform 100ms var(--ease-snap);
-  will-change: transform;
+  /* No will-change. There are eleven of these and they are idle until tapped,
+     so hinting them all promotes eleven permanent compositor layers to serve a
+     100ms transform the browser promotes on its own anyway. */
 }
 
 .way[data-state='off']  .way__lever { transform: translateY(var(--bd-throw)); }
@@ -420,7 +435,10 @@
 
 .sc {
   padding-inline: 3px;
-  font-size: clamp(9px, 1.15cqw, 12px);
+  /* Same dead clamp as the ratings: pinned to 9px at every width. 1.45cqw
+     lifts the schedule to ~11px on a desktop board without pushing the longer
+     circuit names onto a second line. */
+  font-size: clamp(9px, 1.45cqw, 12px);
   line-height: 1.2;
   color: var(--ink-muted);
   overflow-wrap: break-word;
@@ -490,6 +508,14 @@
   color: var(--action);
 }
 .bfact__t { color: var(--ink-muted); font-size: var(--t-body); }
+/* Cold hands, in a van. A bare inline link is a 20px target. */
+.bfact a {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  font-weight: 700;
+  touch-action: manipulation;
+}
 
 /* The three figures arrive rather than being already there. Scroll driven, so
    it runs off the main thread with no observer and no library, and browsers
@@ -522,7 +548,13 @@
 }
 .bfact--todo .label { color: var(--ink-muted); display: block; margin-bottom: 6px; }
 
-.bwhy__do { margin-top: var(--s-5); display: flex; }
+.bwhy__do {
+  margin-top: var(--s-5);
+  display: grid;
+  justify-items: start;
+  gap: var(--s-2);
+}
+.bwhy__addr { font-size: var(--t-label); color: var(--ink-muted); }
 
 /* ============================================================================
    RESPONSIVE
@@ -531,10 +563,15 @@
    consumer units come in 6, 8, 10 and 12 way, and a small flat gets a 6.
    The board also goes full bleed there, which is what buys every breaker a
    44px tap target on a phone in a van with cold hands.
+
+   Below 390px even six ways cannot hold 44px: an 8 module rail inside a 320px
+   screen gives 36px a way. So the smallest phones get a 4 way board, which is
+   again a real object rather than a squeeze, and the four kept are the ones
+   this studio sells to: lights, sockets, the charge point and the inverter.
    ========================================================================== */
 
-.way--drop { display: none; }
-.sc--drop  { display: none; }
+.way--drop, .way--xs { display: none; }
+.sc--drop,  .sc--xs  { display: none; }
 .sc__short { display: block; }
 .sc__full  { display: none; }
 
@@ -547,6 +584,23 @@
   .bd__cavity { padding: 6px; }
   .bwhy { padding-block: var(--s-5); }
   .bd__screw { display: none; }            /* too small to read, so drop them */
+
+  /* The board is deliberately full bleed here. The readout under it is not:
+     it is prose, and it belongs on the same left edge as the headline rather
+     than 2px off the glass. max() keeps it clear of a notch in landscape. */
+  .bd__read {
+    padding-left:  max(calc(var(--s-3) - 2px), env(safe-area-inset-left));
+    padding-right: max(calc(var(--s-3) - 2px), env(safe-area-inset-right));
+  }
+}
+
+@media (max-width: 389px) {
+  .bd { --bd-cols: 6; }                    /* 4 ways plus the main switch */
+}
+
+@media (min-width: 390px) {
+  .way--xs { display: grid; }
+  .sc--xs  { display: block; }
 }
 
 @media (min-width: 700px) {

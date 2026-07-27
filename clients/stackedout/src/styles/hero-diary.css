@@ -38,7 +38,7 @@
    390 x 844 once the shared topbar has taken its ~172px. */
 .hero__grid {
   display: grid;
-  gap: 28px;
+  gap: var(--s-3);
   align-items: center;
 }
 
@@ -126,9 +126,13 @@
 
 /* The mark's viewBox carries 6 units of clear space below the page (the
    guide's clear-space rule). At hero scale that reads as the caption having
-   come loose, so it is pulled back into the object's own margin. */
+   come loose, so it is pulled back into the object's own margin.
+   The same viewBox puts 6 units of clear space to the LEFT of the page, so a
+   caption flush to the grid column hangs 6u outside the only edge the reader
+   can actually see. Indented to the body, not to the invisible viewBox. */
 .hero__caption {
   margin-top: calc(-3.4 * var(--u));
+  margin-left: calc(6 * var(--u));
   font-size: var(--t-body);
   color: var(--ink-muted);
   max-width: 30ch;
@@ -293,14 +297,24 @@
 .diary__free { color: var(--ink-muted); transition: color 200ms var(--ease-out); }
 
 /* Pointer and keyboard mapping: the control names the object it affects.
-   Reaching for the button lights the slot it fills. */
-.hero:has(.hero__cta:hover) .diary__slot--free,
+   Reaching for the button lights the slot it fills.
+   Keyboard first, and ungated: focus-visible is a real intent on any device.
+   Hover is gated, because a touch device fires :hover on tap and keeps it
+   there. Without the gate, tapping the CTA opens the mail client and the
+   visitor comes back to a slot stuck cyan with nothing hovering it. */
 .hero:has(.hero__cta:focus-visible) .diary__slot--free {
   box-shadow: inset 0 0 0 max(2px, calc(1.4 * var(--u))) var(--incoming);
   translate: 0 calc(-0.5 * var(--u));
 }
-.hero:has(.hero__cta:hover) .diary__free,
 .hero:has(.hero__cta:focus-visible) .diary__free { color: var(--incoming); }
+
+@media (hover: hover) and (pointer: fine) {
+  .hero:has(.hero__cta:hover) .diary__slot--free {
+    box-shadow: inset 0 0 0 max(2px, calc(1.4 * var(--u))) var(--incoming);
+    translate: 0 calc(-0.5 * var(--u));
+  }
+  .hero:has(.hero__cta:hover) .diary__free { color: var(--incoming); }
+}
 
 /* ---------------------------------------------------------------- bands --- */
 
@@ -401,6 +415,25 @@
   .diary__slot--booked {
     animation: slotStamp 420ms var(--ease-out) var(--in) both;
   }
+
+  /* Cyan is the brand's "arriving" colour, so the moment of impact is cyan
+     and the settled state is the booked gradient. The animation carries the
+     palette's own semantics rather than decorating them.
+     The ring is its own layer driven by opacity, not a box-shadow keyframe on
+     the tile: box-shadow cannot be composited, so animating it repaints five
+     tiles every frame for 420ms. Opacity and scale stay on the GPU and the
+     result is pixel for pixel the same. */
+  .diary__slot--booked::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    box-shadow: inset 0 0 0 2px var(--incoming);
+    opacity: 0;
+    pointer-events: none;
+    animation: slotSpark 420ms var(--ease-out) var(--in) both;
+  }
+
   .diary__job {
     animation: jobWriteOn 220ms var(--ease-out) calc(var(--in) + 140ms) both;
   }
@@ -410,13 +443,15 @@
     to   { clip-path: inset(0 0 0 0); }
   }
 
-  /* Cyan is the brand's "arriving" colour, so the moment of impact is cyan
-     and the settled state is the booked gradient. The animation carries the
-     palette's own semantics rather than decorating them. */
   @keyframes slotStamp {
-    0%   { scale: 1;    box-shadow: inset 0 0 0 1px rgba(255, 255, 255, .14); }
-    38%  { scale: 1.05; box-shadow: inset 0 0 0 2px var(--incoming); }
-    100% { scale: 1;    box-shadow: inset 0 0 0 1px rgba(255, 255, 255, .14); }
+    0%   { scale: 1; }
+    38%  { scale: 1.05; }
+    100% { scale: 1; }
+  }
+  @keyframes slotSpark {
+    0%   { opacity: 0; }
+    38%  { opacity: 1; }
+    100% { opacity: 0; }
   }
 
   @keyframes jobWriteOn {
@@ -524,13 +559,13 @@
   .diary__slot--free,
   .diary__job,
   .diary__stage,
-  .diary__sweep,
-  .diary__slot--booked {
+  .diary__sweep {
     animation: none !important;
     transform: none !important;
     opacity: 1;
     clip-path: none;
   }
   .diary__sweep { display: none; }
-  .diary__slot--free::after { content: none; }
+  .diary__slot--free::after,
+  .diary__slot--booked::after { content: none; }
 }

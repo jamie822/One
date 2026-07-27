@@ -49,6 +49,18 @@
   /* One offset governs the chapter's top padding, the sticky rest position of
      the numeral and the rail node, so all three stay locked at every width. */
   --tl-pad: clamp(40px, 10vw, 72px);
+
+  /* Three couplings that were previously duplicated literals. Each pair MUST
+     stay equal or the spine visibly breaks, so each is a token rather than a
+     value typed twice and hoped over.
+       --tl-gutter    the hero and the close indent to the rail, exactly as the
+                      chapters' first grid column does.
+       --tl-hero-tail the hero's bottom padding IS the distance its spine has to
+                      overrun to meet chapter one.
+       --tl-close-lead the close's top padding IS the height of its spine stub. */
+  --tl-gutter: calc(var(--tl-rail) + 8px);
+  --tl-hero-tail: clamp(56px, 12vw, 120px);
+  --tl-close-lead: clamp(64px, 13vw, 144px);
 }
 
 /* Long words like the domain must never push the page sideways. */
@@ -78,13 +90,13 @@
    founder did not override. */
 
 .tl-hero {
-  padding-block: clamp(48px, 11vw, 104px) clamp(56px, 12vw, 120px);
+  padding-block: clamp(48px, 11vw, 104px) var(--tl-hero-tail);
 }
 
 .tl-hero__inner {
   display: grid;
   gap: var(--s-3);
-  padding-left: calc(var(--tl-rail) + 8px);
+  padding-left: var(--tl-gutter);
   position: relative;
 }
 
@@ -95,7 +107,7 @@
   position: absolute;
   left: 0;
   top: 6px;
-  bottom: calc(-1 * clamp(56px, 12vw, 120px));
+  bottom: calc(-1 * var(--tl-hero-tail));
   width: 1px;
   background: linear-gradient(to bottom, transparent, var(--edge) 22%, var(--edge));
 }
@@ -281,9 +293,18 @@
   opacity: var(--tl-hold);
   font-family: var(--font-display);
   font-weight: 600;
-  font-size: clamp(1.6rem, 6.6vw, 2.5rem);
+  /* Was clamp(1.6rem, 6.6vw, 2.5rem), which landed at 25.7px against the 24px
+     chapter heading directly beneath it: a 1.07 step, so on a phone the two read
+     as two competing headlines rather than a quote and its heading. The floor is
+     now set to clear a 1.25 type step at every width. Desktop is unchanged. */
+  font-size: clamp(1.9375rem, 7.8vw, 2.5rem);
   line-height: 1.08;
   letter-spacing: -0.03em;
+  /* Clash Display draws a 0.14em word space, so the -0.03em tracking closes it
+     up: this renders as "Theyjust didn'tunderstand" without the space given back.
+     brand.css fixes this for h1-h4 but cannot reach a <p>, which is exactly the
+     case the Shell hit with .topbar__word. */
+  word-spacing: 0.1em;
   max-width: 21ch;
   margin: 0 0 var(--s-3);
   text-wrap: balance;
@@ -314,8 +335,33 @@
   font-weight: 500;
 }
 
+/* The one outbound link on the page, and the only piece of proof the founder has
+   supplied. It had no hover state and a 138x22px hit area. WCAG 2.2 SC 2.5.8
+   exempts links inside a sentence from the target minimum; the brand guide's
+   "44px on phone, cold hands, in a van" does not exempt anything. The pseudo
+   element grows the hit area to 44px without touching the line box, so the
+   paragraph's leading is unchanged. */
 .tl-ch__p a {
   color: var(--incoming);
+  position: relative;
+  transition: color 160ms ease-out, text-decoration-color 160ms ease-out;
+}
+
+.tl-ch__p a::after {
+  content: '';
+  position: absolute;
+  inset: -11px -4px;
+}
+
+/* Touch fires a false hover on tap, so this is gated. Hover moves toward ink
+   rather than away from it, because an interactive state should gain contrast:
+   18.4:1 against the ground, up from cyan's 12.9:1. The underline keeps the cyan
+   so the link still reads as a link while it is being pointed at. */
+@media (hover: hover) and (pointer: fine) {
+  .tl-ch__p a:hover {
+    color: var(--ink);
+    text-decoration-color: var(--incoming);
+  }
 }
 
 @media (min-width: 860px) {
@@ -380,11 +426,37 @@
   max-width: 30ch;
 }
 
+/* ------------------------------------------------------------- contrast ---
+   The ghost numeral sits at 10% ink deliberately, so the fill has somewhere to
+   rise from, and the spine is a 10% white hairline. Both are the first things to
+   disappear for a reader who has asked the OS for more contrast. Palette only:
+   the ghost gets more of the same ink, the hairline steps up to muted. */
+
+@media (prefers-contrast: more) {
+  .tl-fig__num::before {
+    color: color-mix(in srgb, var(--ink) 28%, transparent);
+  }
+
+  .tl-ch__rail,
+  .tl-ch__node {
+    border-color: var(--ink-muted);
+  }
+
+  .tl-ch__rail {
+    background: var(--ink-muted);
+  }
+
+  .tl-gap {
+    border-style: solid;
+    border-color: var(--incoming);
+  }
+}
+
 /* ---------------------------------------------------------------- close --- */
 
 .tl-close {
-  padding-block: clamp(64px, 13vw, 144px) clamp(56px, 11vw, 120px);
-  padding-left: calc(var(--tl-rail) + 8px);
+  padding-block: var(--tl-close-lead) clamp(56px, 11vw, 120px);
+  padding-left: var(--tl-gutter);
   position: relative;
   display: grid;
   gap: var(--s-3);
@@ -395,7 +467,7 @@
   position: absolute;
   left: 0;
   top: 0;
-  height: clamp(64px, 13vw, 144px);
+  height: var(--tl-close-lead);
   width: 1px;
   background: linear-gradient(to bottom, var(--edge), transparent);
 }

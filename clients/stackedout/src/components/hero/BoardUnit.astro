@@ -14,6 +14,7 @@ interface Way {
   name: string;
   short?: string;   // used when the board drops to 6 ways on a phone
   drop?: boolean;   // hidden below 700px
+  xs?: boolean;     // also hidden below 390px, where 6 ways cannot hold 44px
 }
 
 const ways: Way[] = [
@@ -22,9 +23,9 @@ const ways: Way[] = [
   { rating: 'B32', name: 'Sockets up',   drop: true },
   { rating: 'B32', name: 'Sockets down', short: 'Sockets' },
   { rating: 'B32', name: 'Kitchen ring', drop: true },
-  { rating: 'B16', name: 'Immersion' },
+  { rating: 'B16', name: 'Immersion',                     xs: true },
   { rating: 'B40', name: 'Cooker',       drop: true },
-  { rating: 'B45', name: 'Shower' },
+  { rating: 'B45', name: 'Shower',                        xs: true },
   { rating: 'B32', name: 'EV charger',   short: 'EV' },
   { rating: 'B20', name: 'PV inverter',  short: 'PV' },
 ];
@@ -69,7 +70,7 @@ const ways: Way[] = [
 
         {ways.map((w, i) => (
           <button
-            class:list={['way', w.drop && 'way--drop']}
+            class:list={['way', w.drop && 'way--drop', w.xs && 'way--xs']}
             type="button"
             data-way={i}
             data-state="off"
@@ -102,7 +103,7 @@ const ways: Way[] = [
     <div class="bd__sched" aria-hidden="true">
       <span class="sc sc--main" data-sched="main" data-state="off">Main switch</span>
       {ways.map((w, i) => (
-        <span class:list={['sc', w.drop && 'sc--drop']} data-sched={i} data-state="off" style={`--d:${i * 62}ms`}>
+        <span class:list={['sc', w.drop && 'sc--drop', w.xs && 'sc--xs']} data-sched={i} data-state="off" style={`--d:${i * 62}ms`}>
           {w.short
             ? (<><span class="sc__full">{w.name}</span><span class="sc__short">{w.short}</span></>)
             : w.name}
@@ -139,6 +140,17 @@ const ways: Way[] = [
     const scheds = [...board.querySelectorAll<HTMLElement>('[data-sched]')];
     const TRIP = 5;                       // the immersion. Way 6 on a full board.
 
+    // The board sheds ways on narrow screens, so the one that trips has to be
+    // a way that is actually on the rail: the immersion where it is showing,
+    // otherwise the last way that is. The fault line follows whichever it
+    // lands on, so the readout is never describing a breaker nobody can see.
+    const FAULTS: Record<string, string> = {
+      'Immersion':   'Immersion element gone to earth.',
+      'Shower':      'Shower element gone to earth.',
+      'EV charger':  'Charge point throwing a fault to earth.',
+      'PV inverter': 'Inverter throwing a fault to earth.',
+    };
+
     const calm = window.matchMedia('(prefers-reduced-motion: reduce)');
     const visible = () => ways.filter((w) => w.offsetParent !== null);
     const wayNo = (el: HTMLElement) => visible().indexOf(el as HTMLButtonElement) + 1;
@@ -146,8 +158,15 @@ const ways: Way[] = [
 
     let timers: number[] = [];
     let playing = false;
+    let tripped: HTMLButtonElement | null = null;
     const clear = () => { timers.forEach(clearTimeout); timers = []; playing = false; };
     const at = (ms: number, fn: () => void) => { timers.push(window.setTimeout(fn, ms)); };
+
+    function tripTarget() {
+      const v = visible();
+      return v.includes(ways[TRIP]) ? ways[TRIP] : v[v.length - 1];
+    }
+    const faultOf = (el: HTMLElement) => FAULTS[nameOf(el)] || 'Gone to earth.';
 
     function say(html: string) { statusEl!.innerHTML = html; }
 
@@ -207,21 +226,22 @@ const ways: Way[] = [
       at(2500, announceLive);
 
       at(4600, () => {
-        setWay(ways[TRIP], 'trip');
-        say(`<b>Way ${wayNo(ways[TRIP])} tripped.</b> Immersion element gone to earth.`);
+        tripped = tripTarget();
+        setWay(tripped, 'trip');
+        say(`<b>Way ${wayNo(tripped)} tripped.</b> ${faultOf(tripped)}`);
       });
 
       at(5900, () => {
-        say("Everything else stayed on. That's what you fit RCBOs for.");
+        say('Everything else stayed on. That’s what you fit RCBOs for.');
       });
 
       at(7300, () => {
-        setWay(ways[TRIP], 'off');
-        say("Mid trip. Knock it fully off first, it won't reset from there.");
+        if (tripped) setWay(tripped, 'off');
+        say('Mid trip. Knock it fully off first, it won’t reset from there.');
       });
 
       at(8500, () => {
-        setWay(ways[TRIP], 'on');
+        if (tripped) setWay(tripped, 'on');
         say('Reset. Sorted.');
       });
 
@@ -285,10 +305,15 @@ const ways: Way[] = [
     // Reduced motion gets the finished state, not the show.
     if (calm.matches) { settle(); return; }
 
-    // Play once, when it is actually on screen.
+    // Play once, when it is actually on screen. The observer is kept alive
+    // afterwards rather than disconnected, because it also parks the busbar's
+    // travelling current whenever the board scrolls away. Nothing should
+    // animate forever to an empty room.
+    let played = false;
     const io = new IntersectionObserver((entries) => {
       entries.forEach((en) => {
-        if (en.isIntersecting) { io.disconnect(); run(); }
+        board.dataset.vis = en.isIntersecting ? 'in' : 'out';
+        if (en.isIntersecting && !played) { played = true; run(); }
       });
     }, { threshold: 0.25 });
     io.observe(board);
