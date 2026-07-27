@@ -1,26 +1,77 @@
 ---
-// Real reviews only. Where the review names the electrician, show the name —
-// research found this is the most under-used trust signal in the market.
+// Reviews carousel. Real reviews only — see client.js.
 import { reviews } from '../data/client.js';
-const { limit = 3 } = Astro.props;
+const { limit = 7 } = Astro.props;
 const shown = reviews.slice(0, limit);
+const initial = (n) => (n || '?').trim().charAt(0).toUpperCase();
 ---
 {shown.length > 0 ? (
-  <div class="grid grid--3">
-    {shown.map((r, i) => (
-      <figure class="review reveal" style={`transition-delay:${i * 80}ms`}>
-        <blockquote class="review__quote">“{r.quote}”</blockquote>
-        <figcaption class="review__meta">
-          <strong>{r.author}</strong>
-          {[r.location, r.electrician && `worked with ${r.electrician}`, r.platform]
-            .filter(Boolean).join(' · ')}
-        </figcaption>
-      </figure>
-    ))}
+  <div class="rev" data-rev>
+    <div class="rev__track" data-rev-track>
+      {shown.map((r) => (
+        <figure class="rev__card">
+          <div class="rev__quote-mark" aria-hidden="true">&ldquo;</div>
+          <div class="rev__stars" aria-label="5 out of 5">★★★★★</div>
+          <blockquote class="rev__text">{r.quote}</blockquote>
+          <figcaption class="rev__by">
+            <span class="rev__av" aria-hidden="true">{initial(r.author)}</span>
+            <span>
+              <span class="rev__name">{r.author}</span>
+              <span class="rev__meta">
+                {[r.electrician && `worked with ${r.electrician}`, r.platform, r.date].filter(Boolean).join(' · ')}
+              </span>
+            </span>
+          </figcaption>
+        </figure>
+      ))}
+    </div>
+
+    <div class="rev__nav">
+      <button class="rev__btn" type="button" data-rev-prev aria-label="Previous review">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6" /></svg>
+      </button>
+      <button class="rev__btn" type="button" data-rev-next aria-label="Next review">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6" /></svg>
+      </button>
+      <div class="rev__dots" data-rev-dots></div>
+    </div>
   </div>
 ) : (
-  <div class="ph" style="aspect-ratio:auto;padding:38px">
+  <div class="ph" style="aspect-ratio:auto;padding:40px">
     <strong>No reviews added yet</strong>
-    <small>Add real reviews to the <code>reviews</code> array in src/data/client.js. Never write placeholder testimonials — they go live by accident.</small>
+    <small>Sync real reviews into src/data/client.js. Never write placeholder testimonials.</small>
   </div>
 )}
+
+<script>
+  document.querySelectorAll('[data-rev]').forEach((root) => {
+    const track = root.querySelector('[data-rev-track]');
+    const dots  = root.querySelector('[data-rev-dots]');
+    const cards = Array.from(track.children);
+    if (!cards.length) return;
+
+    cards.forEach((_, i) => {
+      const b = document.createElement('button');
+      b.className = 'rev__dot' + (i === 0 ? ' is-on' : '');
+      b.type = 'button';
+      b.setAttribute('aria-label', `Review ${i + 1}`);
+      b.addEventListener('click', () => cards[i].scrollIntoView({ behavior: 'smooth', inline: 'start', block: 'nearest' }));
+      dots.appendChild(b);
+    });
+
+    const step = () => (cards[1] ? cards[1].offsetLeft - cards[0].offsetLeft : cards[0].offsetWidth + 20);
+    root.querySelector('[data-rev-prev]').addEventListener('click', () => track.scrollBy({ left: -step(), behavior: 'smooth' }));
+    root.querySelector('[data-rev-next]').addEventListener('click', () => track.scrollBy({ left: step(), behavior: 'smooth' }));
+
+    // Mark the dot for whichever card is furthest into view.
+    const io = new IntersectionObserver((entries) => {
+      entries.forEach((e) => {
+        if (e.intersectionRatio > 0.6) {
+          const i = cards.indexOf(e.target);
+          dots.querySelectorAll('.rev__dot').forEach((d, j) => d.classList.toggle('is-on', j === i));
+        }
+      });
+    }, { root: track, threshold: [0.6] });
+    cards.forEach((c) => io.observe(c));
+  });
+</script>
