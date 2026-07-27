@@ -20,6 +20,7 @@ import re
 import sys
 import json
 import html
+import base64
 import pathlib
 
 dist = pathlib.Path('dist')
@@ -31,6 +32,56 @@ for f in sorted(dist.rglob('index.html')):
     route = '/' + str(f.parent.relative_to(dist)).replace('.', '').strip('/')
     route = '/' if route in ('/', '') else route.rstrip('/') + '/'
     pages[route] = f.read_text()
+
+if not pages:
+    sys.exit("No built pages found. Run `npm run build` first.")
+
+# -----------------------------------------------------------------------------
+# CRITICAL: the design tokens live on the <html> element, not in the stylesheet.
+#   <html data-mode="dark" style="--brand:#22c8ee;...">
+# The wrapper page supplies its own <html>, so those are lost unless they are
+# lifted out explicitly. Miss this and the site renders with no palette and a
+# fallback accent colour — which looks like a completely different, broken site.
+# -----------------------------------------------------------------------------
+home = pages.get('/') or next(iter(pages.values()))
+html_tag = re.search(r'<html([^>]*)>', home)
+attrs = html_tag.group(1) if html_tag else ''
+
+inline_vars = ''
+m = re.search(r'style="([^"]*)"', attrs)
+if m:
+    inline_vars = html.unescape(m.group(1))
+
+mode = ''
+m = re.search(r'data-mode="([^"]*)"', attrs)
+if m:
+    mode = m.group(1)
+
+# Re-point the mode-scoped token blocks at :root so they apply without <html>.
+# Minified CSS drops the attribute quotes ([data-mode=dark]), so match all forms.
+if mode:
+    css = re.sub(r"\[data-mode=['\"]?" + re.escape(mode) + r"['\"]?\]", ':root', css)
+    # Drop the other mode's block entirely so it can't win on source order —
+    # otherwise dark-mode text keeps the light-mode colour and vanishes.
+    other = 'light' if mode == 'dark' else 'dark'
+    css = re.sub(r"\[data-mode=['\"]?" + other + r"['\"]?\]\s*\{[^}]*\}", '', css)
+    # Any remaining rules scoped to the other mode (e.g. `[data-mode=light] .hero`)
+    # are dead weight in a single-mode preview.
+    css = re.sub(r"\[data-mode=['\"]?" + other + r"['\"]?\][^{]*\{[^}]*\}", '', css)
+
+# Fonts are same-origin files in the real build; inline them so the single file
+# is genuinely self-contained (the artifact CSP blocks external font hosts too).
+def inline_fonts(sheet):
+    def sub(m):
+        url = m.group(1).strip('\'"')
+        f = dist / url.lstrip('/')
+        if not f.exists():
+            return m.group(0)
+        b64 = base64.b64encode(f.read_bytes()).decode()
+        return f"url('data:font/woff2;base64,{b64}')"
+    return re.sub(r"url\((['\"]?[^)]+\.woff2['\"]?)\)", sub, sheet)
+
+css = inline_fonts(css)
 
 def body_of(doc):
     m = re.search(r'<body[^>]*>(.*)</body>', doc, re.S)
@@ -51,13 +102,21 @@ for route, doc in pages.items():
     b = re.sub(r'<style>.*?</style>', '', b, flags=re.S)
     sections.append(f'<div class="rt" data-route="{html.escape(route)}" hidden>{b}</div>')
 
-title = 'Swift Electrical &amp; Security — preview'
-out = f"""<title>{title}</title>
+# Site title, taken from the real build rather than hard-coded.
+tm = re.search(r'<title>(.*?)</title>', home, re.S)
+title = html.escape(re.sub(r'\s+', ' ', tm.group(1)).strip()) if tm else 'Site preview'
+
+out = f"""<title>{title} — preview</title>
 <style>
 {css}
 {"".join(scoped)}
+/* Tokens lifted off the built <html> element. MUST come after the stylesheet:
+   global.css declares its own :root defaults, and at equal specificity the
+   later rule wins. Emit these first and the client's accent silently loses to
+   the template default. */
+:root {{ {inline_vars} }}
 /* preview shell */
-html,body{{margin:0}}
+html,body{{margin:0;background:var(--bg,#0c0d10)}}
 .rt[hidden]{{display:none}}
 .pv-note{{position:fixed;left:0;right:0;bottom:0;z-index:999;background:#111318;color:#a1a5ad;
   border-top:1px solid rgba(255,255,255,.12);font:500 12px/1.45 system-ui,sans-serif;

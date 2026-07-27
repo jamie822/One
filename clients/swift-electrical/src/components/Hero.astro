@@ -1,42 +1,60 @@
 ---
-// LIVE HERO — see MASTER_PROMPT.md §6.
+// LIVE HERO — Swift Electrical & Security
 //
-// Layers, back to front:
-//   1. gradient wash          (CSS, works with zero photography)
-//   2. client photo + Ken Burns  (CSS transform only, no layout cost)
-//   3. animated circuit trace (SVG line-draw, CSS only, no JS)
-//   4. content, staggered in
+// Built around the client's own mark: the bolt from their logo, blown up huge
+// and bleeding off the right edge, with current running through a circuit
+// field behind it. No photography needed — the brand carries it.
 //
-// The <h1> is the LCP element and is never animated or delayed. The photo,
-// when present, is eager + fetchpriority=high. All motion is disabled under
-// prefers-reduced-motion via global.css.
+// Performance rules still hold: the <h1> is the LCP element and is never
+// animated or delayed. Everything moving is transform/opacity only, sits
+// behind the text, and stops under prefers-reduced-motion.
 import { client } from '../data/client.js';
 import { href } from '../lib/site.js';
 
 const { image = client.heroImage, inner = false } = Astro.props;
 ---
 <section class={`hero${inner ? ' hero--inner' : ''}`}>
-  <div class={`hero__media${image ? ' has-photo' : ''}`}>
-    {image && (
+  <div class="hero__grid" aria-hidden="true"></div>
+  <div class="hero__wash" aria-hidden="true"></div>
+
+  {image && (
+    <div class="hero__media has-photo">
       <img src={href(image)} alt="" loading="eager" fetchpriority="high" decoding="sync" />
-    )}
-  </div>
-  <div class="hero__wash"></div>
+    </div>
+  )}
 
   {!inner && (
-    <svg class="hero__circuit" viewBox="0 0 1200 600" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
-      <g fill="none" stroke="var(--brand)" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round">
-        <path class="trace" d="M-20 140 H180 l40 -40 H420 l50 50 H700" />
-        <path class="trace trace--2" d="M-20 420 H140 l60 60 H460 l40 -40 H820" />
-        <path class="trace trace--3" d="M900 -20 V120 l50 50 V320 l-40 40 V620" />
-      </g>
-      <g fill="var(--brand)">
-        <circle class="node" cx="180" cy="140" r="3" />
-        <circle class="node node--2" cx="420" cy="100" r="3" />
-        <circle class="node node--3" cx="460" cy="480" r="3" />
-        <circle class="node" cx="950" cy="170" r="3" />
-      </g>
-    </svg>
+    <>
+      <!-- The client's own bolt, oversized, bleeding off the right edge. -->
+      <svg class="hero__bolt" viewBox="0 0 200 300" aria-hidden="true" preserveAspectRatio="xMidYMid meet">
+        <defs>
+          <linearGradient id="boltFill" x1="0" y1="0" x2="0.4" y2="1">
+            <stop offset="0%"   stop-color="var(--brand)" stop-opacity="0.42" />
+            <stop offset="55%"  stop-color="var(--brand)" stop-opacity="0.16" />
+            <stop offset="100%" stop-color="var(--brand)" stop-opacity="0.04" />
+          </linearGradient>
+        </defs>
+        <path d="M132 8 30 168h62l-16 124 98-166h-62L132 8z" fill="url(#boltFill)" />
+        <path class="bolt-edge" d="M132 8 30 168h62l-16 124 98-166h-62L132 8z"
+              fill="none" stroke="var(--brand)" stroke-width="1.8" stroke-linejoin="round" />
+      </svg>
+
+      <!-- Current running through a circuit field. Pure SVG, no JS. -->
+      <svg class="hero__circuit" viewBox="0 0 1200 700" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+        <g fill="none" stroke="var(--brand)" stroke-width="1" stroke-linecap="square" stroke-linejoin="round">
+          <path class="rail"          d="M700 -20 V120 l70 70 V330 l-60 60 V720" />
+          <path class="rail rail--2"  d="M1240 240 H980 l-70 -70 H700" />
+          <path class="rail rail--3"  d="M1240 520 H1010 l-80 80 H660" />
+          <path class="rail rail--4"  d="M880 -20 V60 l90 90 H1240" />
+        </g>
+        <g fill="var(--brand)">
+          <circle class="pad" cx="770" cy="190" r="3.5" />
+          <circle class="pad pad--2" cx="910" cy="170" r="3.5" />
+          <circle class="pad pad--3" cx="930" cy="600" r="3.5" />
+          <circle class="pad pad--4" cx="970" cy="150" r="3.5" />
+        </g>
+      </svg>
+    </>
   )}
 
   <div class="container">
@@ -45,21 +63,58 @@ const { image = client.heroImage, inner = false } = Astro.props;
 </section>
 
 <style>
-  /* Line-draw: the dash offset animates, nothing reflows. */
-  .trace {
-    stroke-dasharray: 260 1400;
-    animation: flow 14s linear infinite;
-    opacity: 0.5;
+  /* Faint technical grid — reads as drawing paper, not decoration. */
+  .hero__grid {
+    position: absolute; inset: 0; z-index: -4; pointer-events: none;
+    background-image:
+      linear-gradient(to right, color-mix(in srgb, var(--brand) 7%, transparent) 1px, transparent 1px),
+      linear-gradient(to bottom, color-mix(in srgb, var(--brand) 7%, transparent) 1px, transparent 1px);
+    background-size: 64px 64px;
+    -webkit-mask-image: radial-gradient(115% 90% at 78% 26%, #000 12%, transparent 72%);
+    mask-image: radial-gradient(115% 90% at 78% 26%, #000 12%, transparent 72%);
   }
-  .trace--2 { animation-duration: 19s; animation-delay: -6s; }
-  .trace--3 { animation-duration: 23s; animation-delay: -11s; }
-  @keyframes flow { to { stroke-dashoffset: -1660; } }
 
-  .node { animation: pulse 3.6s ease-in-out infinite; transform-origin: center; }
-  .node--2 { animation-delay: -1.2s; }
-  .node--3 { animation-delay: -2.4s; }
-  @keyframes pulse {
-    0%, 100% { opacity: 0.25; }
-    50% { opacity: 0.9; }
+  .hero__bolt {
+    position: absolute; z-index: -2; pointer-events: none;
+    right: 4%; top: 50%; transform: translateY(-50%) rotate(6deg);
+    height: 86%; width: auto;
+    filter: drop-shadow(0 0 90px color-mix(in srgb, var(--brand) 38%, transparent));
+  }
+  .bolt-edge {
+    stroke-dasharray: 120 900;
+    animation: charge 7s cubic-bezier(.5,0,.5,1) infinite;
+    opacity: .85;
+  }
+  @keyframes charge { to { stroke-dashoffset: -1020; } }
+
+  .hero__circuit { position: absolute; inset: 0; z-index: -3; pointer-events: none; opacity: .5; }
+  .rail {
+    stroke-dasharray: 90 1100;
+    animation: run 9s linear infinite;
+    opacity: .75;
+  }
+  .rail--2 { animation-duration: 12s; animation-delay: -3s; }
+  .rail--3 { animation-duration: 15s; animation-delay: -8s; }
+  .rail--4 { animation-duration: 11s; animation-delay: -5s; }
+  @keyframes run { to { stroke-dashoffset: -1190; } }
+
+  .pad { animation: blip 4s ease-in-out infinite; }
+  .pad--2 { animation-delay: -1s; }
+  .pad--3 { animation-delay: -2s; }
+  .pad--4 { animation-delay: -3s; }
+  @keyframes blip {
+    0%, 100% { opacity: .2; r: 3; }
+    50%      { opacity: .95; r: 4.5; }
+  }
+
+  @media (max-width: 900px) {
+    .hero__bolt { right: -14%; height: 66%; opacity: .5; }
+    .hero__circuit { opacity: .3; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .bolt-edge, .rail, .pad { animation: none; }
+    .bolt-edge { stroke-dasharray: none; }
+    .rail { stroke-dasharray: none; opacity: .3; }
   }
 </style>

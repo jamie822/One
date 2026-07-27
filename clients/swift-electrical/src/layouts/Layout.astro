@@ -50,12 +50,10 @@ const allSchemas = [businessSchema(), ...(crumbs ? [breadcrumbSchema(crumbs)] : 
     <link rel="icon" href={href('/favicon.svg')} type="image/svg+xml" />
     <link rel="sitemap" href={href('/sitemap-index.xml')} />
 
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link
-      rel="stylesheet"
-      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Sora:wght@600;700;800&display=swap"
-    />
+    <!-- Fonts are self-hosted. No third-party request, nothing render-blocking,
+         and the page cannot silently fall back if a CDN is slow or blocked. -->
+    <link rel="preload" as="font" type="font/woff2" href={href('/fonts/sora-latin-800-normal.woff2')} crossorigin />
+    <link rel="preload" as="font" type="font/woff2" href={href('/fonts/inter-latin-400-normal.woff2')} crossorigin />
 
     {allSchemas.map((s) => (
       <script type="application/ld+json" set:html={JSON.stringify(s)} />
