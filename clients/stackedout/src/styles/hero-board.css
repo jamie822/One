@@ -517,9 +517,22 @@
   touch-action: manipulation;
 }
 
-/* The three figures arrive rather than being already there. Scroll driven, so
-   it runs off the main thread with no observer and no library, and browsers
-   without the timeline simply show the content. Content visible by default. */
+/* The figures arrive rather than being already there. Scroll driven, so it runs
+   off the main thread with no observer and no library.
+
+   The rise carries NO opacity fade, and that is the whole point. A view()
+   timeline parks its element on the `from` keyframe whenever the timeline never
+   advances, and it never advances in a full page screenshot, in print, or in
+   any client where the range does not resolve. This block used to start at
+   `opacity: 0`, so the only proof on the page (25, 13, the one live site, the
+   price placeholder) rendered as an empty gap in exactly the two places the
+   work gets reviewed and sent. Measured: opacity 0 under print emulation and in
+   a full page capture.
+
+   Translating only means the worst case is a 10px offset nobody will see,
+   instead of content nobody can. The diary candidate reached the same
+   conclusion and dropped its below-fold reveal outright; this keeps the motion
+   and removes the failure mode. */
 @media (prefers-reduced-motion: no-preference) {
   @supports (animation-timeline: view()) {
     .bfact {
@@ -532,8 +545,13 @@
   }
 }
 @keyframes bd-rise {
-  from { opacity: 0; transform: translateY(10px); }
-  to   { opacity: 1; transform: none; }
+  from { transform: translateY(10px); }
+  to   { transform: none; }
+}
+
+/* Belt and braces: paper never runs a timeline. */
+@media print {
+  .bfact { animation: none !important; transform: none !important; opacity: 1 !important; }
 }
 .bfact a { color: var(--incoming); }
 
