@@ -222,7 +222,7 @@ const faqSchema = {
        Coverage is a fact, not an argument. Narrow, small type, tight padding —
        the page's quietest beat, so the FAQ that follows can breathe. -->
   <Band tone="plain" class="areas">
-    <div class="container container--narrow">
+    <div class="container">
       <div class="areas__head reveal">
         <h2>Where we work</h2>
         <p>Bradford and out across the Aire valley. Each area page says what we find in that housing stock.</p>
@@ -332,7 +332,10 @@ const faqSchema = {
 
   /* --- PEAK 1: services --------------------------------------------------- */
   .svc { padding-block: clamp(64px, 9vw, 124px); }
-  .svc__head { max-width: 22ch; margin-bottom: clamp(34px, 4.5vw, 56px); }
+  /* Px, not ch: on the wrapper a ch unit resolves against the inherited body
+     size, which is a third of the heading it is meant to be measuring. */
+  .svc__head { max-width: 640px; margin-bottom: clamp(34px, 4.5vw, 56px); }
+  .svc__head p { max-width: 46ch; }
   .svc__head h2 {
     font-size: clamp(2.15rem, 4.6vw, 3.35rem);
     letter-spacing: -0.035em;
@@ -353,15 +356,18 @@ const faqSchema = {
   .svc :global(.svc-lead > :first-child h3) { font-size: clamp(1.7rem, 3vw, 2.4rem); }
 
   @media (max-width: 860px) {
-    .svc :global(.svc-lead > :first-child) { min-height: 300px; }
-    .svc :global(.svc-lead > :last-child) { min-height: 280px; margin-top: 0; }
+    .svc :global(.svc-lead) { grid-template-columns: minmax(0, 1fr); }
+    .svc :global(.svc-lead > :first-child) { min-height: 290px; }
+    .svc :global(.svc-lead > :last-child) { min-height: 260px; margin-top: 0; }
   }
 
   /* --- PEAK 2: the price -------------------------------------------------- */
   .est-band { padding-bottom: clamp(52px, 6.5vw, 96px); }
   .est-band :global(.est) { padding: clamp(28px, 4.4vw, 54px); }
   .est-band :global(.est__grid) { grid-template-columns: minmax(0, 1.25fr) minmax(0, 0.75fr); }
-  .est-band :global(.est__fig) { font-size: clamp(2.6rem, 5.6vw, 4rem); }
+  /* nowrap: the range is one figure, and letting "£120 – £150" break after the
+     dash reads as two prices. */
+  .est-band :global(.est__fig) { font-size: clamp(2.1rem, 3.7vw, 2.9rem); white-space: nowrap; }
   @media (max-width: 880px) {
     .est-band :global(.est__grid) { grid-template-columns: 1fr; }
   }
@@ -372,7 +378,7 @@ const faqSchema = {
     display: grid;
     grid-template-columns: repeat(4, minmax(0, 1fr));
     border-block: 1px solid var(--line);
-    padding-inline: max(22px, calc((100% - 1320px) / 2 + 22px));
+    padding-inline: max(22px, calc((100% - 1260px) / 2 + 22px));
   }
   .ledger__cell {
     display: flex;
@@ -412,7 +418,7 @@ const faqSchema = {
   /* --- PEAK 3: the person, bleeding off the left edge --------------------- */
   .owner__spread {
     display: grid;
-    grid-template-columns: minmax(220px, 0.42fr) minmax(0, 1fr);
+    grid-template-columns: minmax(240px, 0.68fr) minmax(0, 1fr);
     gap: clamp(26px, 5vw, 76px);
     align-items: center;
     /* % padding resolves against the band, so the right edge lands exactly on
@@ -428,7 +434,9 @@ const faqSchema = {
     box-shadow: 24px 28px 70px -40px rgba(0, 0, 0, 0.95);
   }
   .owner__frame :global(img) { width: 100%; object-fit: cover; }
-  .owner__frame :global(.ph) { border: 0; border-radius: 0; }
+  /* place-items alone splits the two lines across two stretched rows and puts
+     a third of the panel between them. Centre the block, not each row. */
+  .owner__frame :global(.ph) { border: 0; border-radius: 0; align-content: center; }
   .owner__body h2 {
     font-size: clamp(2rem, 3.6vw, 2.9rem);
     letter-spacing: -0.032em;
@@ -461,9 +469,11 @@ const faqSchema = {
 
   /* --- Reviews, bleeding off the right ------------------------------------ */
   .reviews { padding-block: clamp(56px, 7.5vw, 96px); }
-  .reviews__head { margin-bottom: 34px; max-width: 640px; }
-  .reviews__head h2 { margin-bottom: 10px; }
-  .reviews__head p { color: var(--muted); margin: 0; }
+  /* Measure goes on the text, never on the container: capping .container turns
+     its auto margins into an indent and the head drifts off the card edge. */
+  .reviews__head { margin-bottom: 34px; }
+  .reviews__head h2 { margin-bottom: 10px; max-width: 20ch; }
+  .reviews__head p { color: var(--muted); margin: 0; max-width: 46ch; }
   .rev-bleed { padding-left: max(22px, calc((100% - var(--maxw)) / 2 + 22px)); }
   .rev-bleed :global(.rev__track) { padding-right: 22px; }
 

@@ -1,6 +1,7 @@
 /* Type system: faces, scale, tracking, leading, measure. Loaded first so the
    tokens exist before anything below reaches for them. */
 @import './type.css';
+@import './motion.css'; /* motion layer — see motion.css cascade note */
 
 /* Self-hosted faces — see public/fonts. font-display:swap so text paints immediately. */
 @font-face{font-family:'Sora';src:url('/fonts/sora-latin-600-normal.woff2') format('woff2');font-weight:600;font-style:normal;font-display:swap}
@@ -31,31 +32,61 @@
   --radius: 12px;
   --radius-lg: 20px;
   --maxw: 1180px;
-
-  --font-display: 'Sora', system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
-  --font-body: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
-
-  --step-0: 1.0625rem;
-  --step-1: clamp(1.15rem, 1.6vw, 1.3rem);
-  --step-2: clamp(1.5rem, 2.4vw, 1.9rem);
-  --step-3: clamp(2rem, 4vw, 2.9rem);
-  --step-4: clamp(2.5rem, 5.9vw, 4.3rem);
 }
+/* Faces, type scale, tracking, leading and measure all live in type.css. */
+
+/* ==========================================================================
+   COLOUR — a lighting model, not a swatch list
+   --------------------------------------------------------------------------
+   The old palette had two surfaces that could actually be told apart and two
+   text tones. That is what "flat" means in practice: nothing in the page
+   tells your eye where to go next, so it reads everything at the same volume.
+
+   Two rules generate everything below.
+
+   1. SURFACES ARE AN EVEN LADDER, HUE-TIED TO THE BRAND.
+      Six steps at a constant ~0.038 OKLCH lightness interval, so no two
+      adjacent bands look like a rendering mistake and no jump looks like a
+      different site. Crucially the hue runs 234 -> 224 as the surface gets
+      lighter, walking toward the brand's own hue (219). The old greys sat at
+      257-262, a blue-violet forty degrees off the cyan, which is exactly why
+      the brand colour looked stuck on rather than emitted. A surface nearer
+      the light takes the light's colour.
+
+   2. TEXT IS A FALLOFF, NOT A GREYSCALE.
+      Four tones standing for four distances from the source: --text is the
+      lit face, --text-2 is the reading plane, --muted is turned away,
+      --faint is in shadow. Every one of them is verified against every
+      surface in the ladder at WCAG AA or better.
+
+   The two brand hues are untouched: cyan #22c8ee, amber #ffb63d.
+   --brand-ink / --accent-ink are those same hues re-levelled for use as
+   FOREGROUND text, which is a different job with a different contrast floor.
+   ========================================================================== */
 
 /* Dark mode (default) */
 [data-mode='dark'] {
-  /* Blue-biased, not neutral grey. Pure #000 with white text reads cheap;
-     a navy-black ground gives the cyan somewhere to sit and makes the whole
-     page feel lit rather than switched off. */
-  --bg:        #070a10;
-  --bg-2:      #0b111a;
-  --panel:     #101927;
-  --panel-2:   #162233;
-  --raised:    #1c2b40;
+  --sunk:      #02060a;   /* L .118  the floor: topbar, footer */
+  --bg:        #040d13;   /* L .152  page ground */
+  --bg-2:      #08161c;   /* L .190  section band */
+  --panel:     #0d1f27;   /* L .228  card */
+  --panel-2:   #142932;   /* L .268  card, upper */
+  --raised:    #1d353e;   /* L .312  nearest the light */
 
-  --text:      #eaf2fb;
-  --muted:     #90a4bd;
-  --line:      rgba(160, 200, 240, 0.13);
+  --text:      #ebf5f9;   /* 17.7 : 1 on --bg */
+  --text-2:    #ccdae0;   /* 13.7 : 1 */
+  --muted:     #a0b6bd;   /*  9.3 : 1 */
+  --faint:     #8aa3ab;   /*  7.4 : 1, and 4.85 on --raised */
+
+  /* Cyan is already legible on every dark surface (9.9:1 on --bg), so as
+     foreground it is simply itself. */
+  --brand-ink:  var(--brand);
+  --accent-ink: var(--accent);
+  --on-brand:   #002330;  /* ink for text sitting ON a cyan fill  — 8.2 : 1 */
+  --on-accent:  #2b1a03;  /* ink for text sitting ON an amber fill — 9.6 : 1 */
+
+  --line:        rgba(146, 200, 224, 0.13);
+  --line-2:      rgba(146, 200, 224, 0.22);
   --line-strong: rgba(34, 200, 238, 0.34);
 
   /* Third colour: warm amber. Cyan is cool and technical — it earns trust but
@@ -65,83 +96,96 @@
   --accent-dark: #e0982a;
   --accent-soft: rgba(255, 182, 61, 0.14);
 
-  --glow: 0 0 0 1px rgba(34,200,238,.16), 0 18px 48px -12px rgba(34,200,238,.28);
-  --shadow: 0 24px 60px rgba(2, 6, 14, 0.6);
-  --lift: 0 20px 44px -16px rgba(0,0,0,.75);
+  --glow: 0 0 0 1px rgba(34,200,238,.16), 0 18px 48px -12px rgba(34,200,238,.26);
+  --shadow: 0 24px 60px rgba(0, 4, 8, 0.68);
+  --lift: 0 20px 44px -16px rgba(0,0,0,.8);
 }
 
 /* Light mode */
 [data-mode='light'] {
-  --bg: #ffffff;
-  --bg-2: #f7f9fc;
-  --panel: #f2f5f9;
-  --panel-2: #e9eef5;
-  --raised: #ffffff;
-  --text: #0b1220;
-  --muted: #56657c;
-  --line: rgba(11, 18, 32, 0.12);
-  --line-strong: rgba(14, 159, 196, 0.4);
+  --sunk:      #dee5e9;
+  --bg:        #ffffff;
+  --bg-2:      #f4f9fb;
+  --panel:     #eaf2f6;
+  --panel-2:   #dfeaef;
+  --raised:    #ffffff;
+
+  --text:      #0a1b27;   /* 17.5 : 1 on white */
+  --text-2:    #253844;   /* 12.2 : 1 */
+  --muted:     #3e5360;   /*  8.0 : 1 */
+  --faint:     #485e6b;   /*  6.8 : 1, and 5.3 on --sunk */
+
+  /* Cyan at full strength is 1.99:1 on white — unusable as text. These are
+     the same two hues taken down in lightness only, so the brand still reads
+     as the brand and the type is legible. */
+  --brand-ink:  #00647f;  /* hue 219, 6.7 : 1 on white, 5.3 on --sunk */
+  --accent-ink: #815300;  /* hue  76, 6.6 : 1 on white, 5.2 on --sunk */
+  --on-brand:   #002330;
+  --on-accent:  #2b1a03;
+
+  --line:        rgba(10, 27, 39, 0.12);
+  --line-2:      rgba(10, 27, 39, 0.2);
+  --line-strong: rgba(0, 100, 127, 0.38);
+
   --accent: #c07800;
   --accent-dark: #a26400;
   --accent-soft: rgba(192, 120, 0, 0.12);
-  --glow: 0 0 0 1px rgba(14,159,196,.14), 0 18px 40px -14px rgba(14,159,196,.25);
-  --shadow: 0 20px 50px rgba(11, 18, 32, 0.1);
-  --lift: 0 18px 38px -16px rgba(11,18,32,.22);
+  --glow: 0 0 0 1px rgba(0,100,127,.14), 0 18px 40px -14px rgba(0,100,127,.22);
+  --shadow: 0 20px 50px rgba(10, 27, 39, 0.1);
+  --lift: 0 18px 38px -16px rgba(10,27,39,.22);
 }
 
 * { box-sizing: border-box; }
 html { background: var(--bg); -webkit-text-size-adjust: 100%; scroll-behavior: smooth; }
 body {
   margin: 0;
+  /* The three light sources. These were previously dead: a `background`
+     shorthand further down the rule reset background-image to none, so the
+     page had been rendering as flat colour. Declaring the colour as
+     background-color keeps both. */
+  background-color: var(--bg);
   background-image:
-    radial-gradient(900px 520px at 82% -8%, rgba(34,200,238,.11), transparent 62%),
-    radial-gradient(760px 480px at 6% 22%, rgba(34,200,238,.05), transparent 60%),
-    radial-gradient(700px 520px at 50% 108%, rgba(255,182,61,.055), transparent 62%);
+    radial-gradient(900px 520px at 82% -8%, rgba(34,200,238,.13), transparent 62%),
+    radial-gradient(760px 480px at 6% 22%, rgba(34,200,238,.055), transparent 60%),
+    radial-gradient(700px 520px at 50% 108%, rgba(255,182,61,.06), transparent 62%);
   background-attachment: fixed;
-  font-family: var(--font-body);
-  font-size: var(--step-0);
-  line-height: 1.7;
-  color: var(--text);
-  background: var(--bg);
+  /* Antialiased rather than subpixel: light-on-dark subpixel rendering fattens
+     every stem. Pairs with the tracking correction in type.css. */
   -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 img { max-width: 100%; display: block; height: auto; }
-a { color: var(--brand); text-decoration: none; }
+a { color: var(--brand-ink); text-decoration: none; }
 a:hover { text-decoration: underline; }
 
-h1, h2, h3, h4 {
-  font-family: var(--font-display);
-  line-height: 1.1;
-  letter-spacing: -0.02em;
-  margin: 0 0 0.5em;
-  font-weight: 700;
-}
-h1 { font-size: var(--step-4); font-weight: 800; letter-spacing: -0.035em; text-wrap: balance; }
 /* Puts the name itself in the brand colour, so the play on "Swift" lands
    visually as well as verbally. */
-.hl { color: var(--brand); }
+.hl { color: var(--brand-ink); -webkit-text-fill-color: var(--brand-ink); }
 
 /* Strapline sits under a keyword-led H1: the H1 carries "electrician
-   Bradford" for search, this carries the personality. Deliberately lighter
-   than the H1 so the hierarchy still reads correctly. */
+   Bradford" for search, this carries the personality.
+   It used to be set in the same near-white as the H1, so the two fought.
+   Dropping it to the reading tone and to Inter puts it where it belongs —
+   the second thing you read, not a second headline. */
 .hero__strapline {
-  font-size: clamp(1.35rem, 2.6vw, 2rem);
-  font-weight: 600;
-  letter-spacing: -0.015em;
-  color: var(--text);
+  font-family: var(--face-text);
+  font-size: clamp(1.3rem, 0.95rem + 1.55vw, 1.9rem);
+  font-weight: 500;
+  line-height: var(--leading-sub);
+  letter-spacing: calc(-0.018em + var(--optical));
+  color: var(--text-2);
   margin: 0 0 26px;
   max-width: 34ch;
   text-wrap: balance;
 }
-h2 { font-size: var(--step-3); }
-h3 { font-size: var(--step-2); }
-p { margin: 0 0 1rem; }
 
 .container { width: 100%; max-width: var(--maxw); margin: 0 auto; padding: 0 22px; }
 .container--narrow { max-width: 780px; }
 /* Two more container widths so a page can actually vary its measure: --wide for
-   the dense peak bands, --reading for long-form passages. */
-.container--wide { max-width: 1320px; }
+   the dense peak bands, --reading for long-form passages. 1260 is not
+   arbitrary: it keeps the wide gutter a constant 16px clear of the fixed
+   .spine, which is positioned off --maxw, at every viewport above 1180. */
+.container--wide { max-width: 1260px; }
 .container--reading { max-width: 720px; }
 
 .section { padding: clamp(56px, 8vw, 104px) 0; }
@@ -162,20 +206,16 @@ p { margin: 0 0 1rem; }
 }
 .section__head { max-width: 720px; margin: 0 0 48px; }
 .section__head.is-center { margin-inline: auto; text-align: center; }
-.section__head p { color: var(--muted); font-size: var(--step-1); }
-
-.eyebrow {
-  display: inline-block;
-  font-family: var(--font-display);
-  font-size: 0.74rem;
-  font-weight: 700;
-  letter-spacing: 0.22em;
-  text-transform: uppercase;
-  color: var(--brand);
-  margin-bottom: 14px;
+/* Section deck: one notch quieter than a page lead, and held to a shorter
+   measure than the headline above it so the block reads as a unit. */
+.section__head p {
+  color: var(--muted);
+  font-size: var(--step-1);
+  line-height: var(--leading-deck);
+  letter-spacing: calc(var(--track-1) + var(--optical));
+  max-width: 52ch;
 }
-.lead { font-size: var(--step-1); color: var(--muted); }
-.muted { color: var(--muted); }
+/* .eyebrow, .lead and .muted are defined in type.css. */
 
 /* Buttons ---------------------------------------------------------------- */
 .btn {
@@ -184,9 +224,13 @@ p { margin: 0 0 1rem; }
   gap: 10px;
   padding: 15px 28px;
   border-radius: 8px;
-  font-family: var(--font-display);
+  /* Buttons are read, not scanned, so they belong to the text face. Sora is
+     reserved for headlines. */
+  font-family: var(--face-text);
   font-weight: 600;
-  font-size: 0.98rem;
+  font-size: 0.9375rem;
+  line-height: 1.2;
+  letter-spacing: calc(-0.004em + var(--optical));
   border: 1px solid transparent;
   cursor: pointer;
   transition: transform 0.15s ease, background 0.15s ease, border-color 0.15s ease;
@@ -194,20 +238,28 @@ p { margin: 0 0 1rem; }
 }
 .btn:hover { text-decoration: none; transform: translateY(-1px); }
 .btn svg { width: 18px; height: 18px; flex: 0 0 auto; }
-.btn--primary { background: var(--brand); color: #fff; }
-.btn--primary:hover { background: var(--brand-dark); color: #fff; }
+/* White on cyan is 1.87:1. It was failing AA on the most prominent CTA on the
+   site. The ink is the brand hue taken almost to black: 8.2:1. */
+.btn--primary { background: var(--brand); color: var(--on-brand); }
+.btn--primary:hover { background: var(--brand-dark); color: var(--on-brand); }
 .btn--ghost { border-color: var(--line-strong); color: var(--text); }
-.btn--ghost:hover { border-color: var(--brand); color: var(--brand); }
-.btn--lg { padding: 17px 34px; font-size: 1.04rem; }
+.btn--ghost:hover { border-color: var(--brand); color: var(--brand-ink); }
+.btn--lg { padding: 17px 34px; font-size: 1rem; }
 
 /* Header ----------------------------------------------------------------- */
+/* Topbar and footer sit on --sunk: the page now has a floor and a ceiling
+   darker than the ground between them, which is what gives a long scroll a
+   sense of enclosure. */
 .topbar {
-  background: var(--panel-2);
+  background: var(--sunk);
   border-bottom: 1px solid var(--line);
-  font-size: 0.85rem;
+  font-family: var(--face-tech);
+  font-size: var(--step--2);
+  letter-spacing: 0.01em;
+  color: var(--muted);
 }
 .topbar__inner { display: flex; justify-content: space-between; gap: 16px; padding: 8px 0; flex-wrap: wrap; }
-.topbar a { color: var(--text); }
+.topbar a { color: var(--text-2); }
 
 .header {
   position: sticky;
@@ -220,11 +272,19 @@ p { margin: 0 0 1rem; }
 }
 .header.is-scrolled { border-bottom-color: var(--line); }
 .header__inner { display: flex; align-items: center; justify-content: space-between; gap: 20px; padding: 14px 0; }
-.brandmark { font-family: var(--font-display); font-weight: 800; font-size: 1.15rem; color: var(--text); text-decoration: none; }
+.brandmark { font-family: var(--face-display); font-weight: 800; font-size: 1.15rem; letter-spacing: var(--track-1); color: var(--text); text-decoration: none; }
 .brandmark:hover { text-decoration: none; }
 .nav { display: flex; align-items: center; gap: 26px; }
-.nav a { color: var(--text); font-family: var(--font-display); font-weight: 500; font-size: 0.94rem; }
-.nav a:hover, .nav a[aria-current='page'] { color: var(--brand); text-decoration: none; }
+/* Was Sora 500 — a weight that is not self-hosted, so every browser was
+   synthesising it. Inter 500 exists, and navigation is text, not display. */
+.nav a {
+  color: var(--text-2);
+  font-family: var(--face-text);
+  font-weight: 500;
+  font-size: var(--step--1);
+  letter-spacing: calc(-0.002em + var(--optical));
+}
+.nav a:hover, .nav a[aria-current='page'] { color: var(--brand-ink); text-decoration: none; }
 .nav-toggle { display: none; background: none; border: 0; padding: 8px; cursor: pointer; }
 .nav-toggle span { display: block; width: 24px; height: 2px; background: var(--text); margin: 5px 0; border-radius: 2px; }
 @media (max-width: 900px) {
@@ -263,7 +323,14 @@ p { margin: 0 0 1rem; }
 }
 [data-mode='dark'] .hero::before {
   content: ''; position: absolute; inset: 0; z-index: -1;
-  background: linear-gradient(95deg, rgba(8,9,11,0.94) 0%, rgba(8,9,11,0.72) 52%, rgba(8,9,11,0.34) 100%);
+  /* Was a hardcoded rgba(8,9,11) neutral black laid at 94% over the left of
+     the hero, which flattened the brand wash into grey and did not match the
+     new ground. Same scrim, keyed to --bg and eased off so the light behind
+     the type survives. */
+  background: linear-gradient(95deg,
+    color-mix(in srgb, var(--bg) 92%, transparent) 0%,
+    color-mix(in srgb, var(--bg) 66%, transparent) 54%,
+    color-mix(in srgb, var(--bg) 22%, transparent) 100%);
 }
 [data-mode='light'] .hero::before {
   content: ''; position: absolute; inset: 0; z-index: -1;
@@ -274,7 +341,11 @@ p { margin: 0 0 1rem; }
 .hero__inner { position: relative; padding: clamp(64px, 9vw, 128px) 0; max-width: 700px; }
 @media (min-width: 1100px) { .hero__inner { max-width: 820px; } }
 .hero h1 { margin-bottom: 18px; }
-.hero__sub { font-size: var(--step-1); color: var(--muted); max-width: 54ch; margin-bottom: 28px; }
+.hero__sub {
+  font-size: var(--step-1); font-weight: 400; line-height: var(--leading-deck);
+  letter-spacing: calc(var(--track-1) + var(--optical));
+  color: var(--muted); max-width: 54ch; margin-bottom: 28px;
+}
 .hero__actions { display: flex; flex-wrap: wrap; gap: 13px; margin-bottom: 30px; }
 .hero--inner .hero__inner { padding: clamp(48px, 7vw, 84px) 0; }
 
@@ -292,9 +363,13 @@ p { margin: 0 0 1rem; }
   display: flex; flex-wrap: wrap; align-items: center; gap: 14px 30px;
   padding: 18px 0; border-top: 1px solid var(--line); border-bottom: 1px solid var(--line);
 }
-.trustbar__item { display: inline-flex; align-items: center; gap: 9px; font-size: 0.92rem; color: var(--muted); }
-.trustbar__item strong { color: var(--text); font-family: var(--font-display); }
-.stars { color: var(--brand); letter-spacing: 0.08em; }
+.trustbar__item {
+  display: inline-flex; align-items: center; gap: 9px;
+  font-family: var(--face-tech); font-size: var(--step--2); font-weight: 400;
+  line-height: var(--leading-tech); letter-spacing: 0.005em; color: var(--faint);
+}
+.trustbar__item strong { color: var(--text-2); font-weight: 500; }
+.stars { color: var(--brand-ink); letter-spacing: 0.1em; }
 
 /* Cards ------------------------------------------------------------------- */
 .grid { display: grid; gap: 22px; }
@@ -315,13 +390,13 @@ p { margin: 0 0 1rem; }
   transition: border-color 0.18s ease, transform 0.18s ease;
 }
 .card:hover { border-color: var(--brand); transform: translateY(-3px); }
-.card h3 { font-size: 1.22rem; margin-bottom: 8px; }
-.card p { color: var(--muted); margin-bottom: 16px; }
-.card__link { margin-top: auto; font-family: var(--font-display); font-weight: 600; font-size: 0.88rem; color: var(--brand); }
+.card h3 { font-size: var(--step-1); letter-spacing: var(--track-1); margin-bottom: 8px; }
+.card p { color: var(--muted); font-size: var(--step--1); margin-bottom: 16px; }
+.card__link { margin-top: auto; font-family: var(--face-text); font-weight: 600; font-size: var(--step--1); letter-spacing: calc(-0.002em + var(--optical)); color: var(--brand-ink); }
 .card__icon {
   width: 44px; height: 44px; border-radius: 10px;
   display: grid; place-items: center; margin-bottom: 16px;
-  background: var(--brand-soft); color: var(--brand);
+  background: var(--brand-soft); color: var(--brand-ink);
 }
 .card__icon svg { width: 22px; height: 22px; flex: 0 0 auto; }
 
@@ -333,16 +408,16 @@ p { margin: 0 0 1rem; }
 
 /* Reviews ----------------------------------------------------------------- */
 .review { background: var(--panel); border: 1px solid var(--line); border-radius: var(--radius); padding: 24px; height: 100%; }
-.review__quote { font-size: 1.06rem; margin-bottom: 16px; }
-.review__meta { font-size: 0.88rem; color: var(--muted); }
-.review__meta strong { display: block; color: var(--text); font-family: var(--font-display); }
+.review__quote { font-size: var(--step-1); line-height: var(--leading-deck); letter-spacing: calc(var(--track-1) + var(--optical)); color: var(--text); margin-bottom: 16px; }
+.review__meta { font-family: var(--face-tech); font-size: var(--step--2); line-height: var(--leading-tech); color: var(--faint); }
+.review__meta strong { display: block; color: var(--text-2); font-weight: 500; }
 
 /* Case studies ------------------------------------------------------------ */
 .beforeafter { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
 .beforeafter figure { margin: 0; }
 .beforeafter figcaption {
-  font-family: var(--font-display); font-size: 0.74rem; font-weight: 700;
-  letter-spacing: 0.14em; text-transform: uppercase; color: var(--muted);
+  font-family: var(--face-tech); font-size: var(--step--3); font-weight: 500;
+  letter-spacing: var(--track-caps); text-transform: uppercase; color: var(--faint);
   margin-top: 8px;
 }
 
@@ -350,18 +425,20 @@ p { margin: 0 0 1rem; }
 .faq details { border-bottom: 1px solid var(--line); }
 .faq summary {
   cursor: pointer; list-style: none; padding: 20px 0;
-  font-family: var(--font-display); font-weight: 600; font-size: 1.06rem;
+  font-family: var(--face-text); font-weight: 600; font-size: var(--step-1);
+  line-height: var(--leading-sub); letter-spacing: calc(var(--track-1) + var(--optical));
+  color: var(--text);
   display: flex; justify-content: space-between; gap: 16px; align-items: center;
 }
 .faq summary::-webkit-details-marker { display: none; }
-.faq summary::after { content: '+'; color: var(--brand); font-size: 1.5rem; line-height: 1; }
+.faq summary::after { content: '+'; color: var(--brand-ink); font-size: 1.5rem; line-height: 1; }
 .faq details[open] summary::after { content: '−'; }
 .faq__body { padding-bottom: 20px; color: var(--muted); }
 
 /* Forms ------------------------------------------------------------------- */
 .form { display: grid; gap: 15px; background: var(--panel); border: 1px solid var(--line); border-radius: var(--radius); padding: 28px; }
 .field { display: grid; gap: 6px; }
-.field label { font-family: var(--font-display); font-weight: 600; font-size: 0.9rem; }
+.field label { font-family: var(--face-text); font-weight: 600; font-size: var(--step--1); letter-spacing: calc(0em + var(--optical)); color: var(--text-2); }
 .field input, .field textarea, .field select {
   padding: 13px 15px; border: 1px solid var(--line-strong); border-radius: 8px;
   font: inherit; color: var(--text); background: var(--bg);
@@ -379,21 +456,22 @@ p { margin: 0 0 1rem; }
 .cta__actions { display: flex; flex-wrap: wrap; gap: 13px; justify-content: center; }
 
 /* Footer ------------------------------------------------------------------ */
-.footer { background: var(--panel-2); border-top: 1px solid var(--line); padding: 56px 0 24px; font-size: 0.94rem; }
+.footer { background: var(--sunk); border-top: 1px solid var(--line); padding: 56px 0 24px; font-size: var(--step--1); }
 .footer__grid { display: grid; grid-template-columns: 1.5fr 1fr 1fr 1fr; gap: 32px; }
 @media (max-width: 880px) { .footer__grid { grid-template-columns: 1fr 1fr; } }
 @media (max-width: 560px) { .footer__grid { grid-template-columns: 1fr; } }
 .footer h4, .footer .footer__h {
-  font-size: 0.76rem; letter-spacing: 0.18em; text-transform: uppercase;
-  margin: 0 0 14px; font-weight: 700;
+  font-family: var(--face-tech); font-size: var(--step--3); font-weight: 600;
+  letter-spacing: var(--track-caps); text-transform: uppercase; color: var(--muted);
+  margin: 0 0 14px; line-height: var(--leading-tech);
 }
 .footer ul { list-style: none; padding: 0; margin: 0; display: grid; gap: 9px; }
 .footer a { color: var(--muted); }
-.footer a:hover { color: var(--brand); }
+.footer a:hover { color: var(--brand-ink); }
 .footer__bottom {
   margin-top: 40px; padding-top: 20px; border-top: 1px solid var(--line);
   display: flex; flex-wrap: wrap; gap: 10px; justify-content: space-between;
-  color: var(--muted); font-size: 0.85rem;
+  font-family: var(--face-tech); color: var(--faint); font-size: var(--step--2);
 }
 
 /* Placeholder slots ------------------------------------------------------- */
@@ -403,23 +481,24 @@ p { margin: 0 0 1rem; }
   aspect-ratio: 4 / 3; border: 1px dashed var(--line-strong); border-radius: var(--radius);
 }
 .ph--portrait { aspect-ratio: 3 / 4; }
-.ph strong { color: var(--text); font-size: 0.9rem; font-family: var(--font-display); }
-.ph small { font-size: 0.76rem; max-width: 30ch; }
+.ph strong { color: var(--text-2); font-family: var(--face-tech); font-size: var(--step--2); font-weight: 500; letter-spacing: 0.04em; text-transform: uppercase; }
+.ph small { font-family: var(--face-tech); font-size: var(--step--3); color: var(--faint); max-width: 34ch; line-height: var(--leading-tech); }
 
 /* Breadcrumbs ------------------------------------------------------------- */
-.crumbs { font-size: 0.85rem; color: var(--muted); padding: 14px 0; }
+.crumbs { font-family: var(--face-tech); font-size: var(--step--2); letter-spacing: 0.01em; color: var(--faint); padding: 14px 0; }
 .crumbs a { color: var(--muted); }
 .crumbs span { margin: 0 7px; opacity: 0.5; }
 
 /* Utilities --------------------------------------------------------------- */
 .skip {
   position: absolute; left: -9999px; top: 0; z-index: 100;
-  background: var(--brand); color: #fff; padding: 10px 16px;
+  background: var(--brand); color: var(--on-brand); font-weight: 600; padding: 10px 16px;
 }
 .skip:focus { left: 0; }
 .pill {
   display: inline-block; padding: 5px 13px; border-radius: 999px;
-  border: 1px solid var(--line-strong); font-size: 0.82rem; color: var(--muted);
+  border: 1px solid var(--line-strong); font-family: var(--face-tech);
+  font-size: var(--step--3); letter-spacing: 0.06em; text-transform: uppercase; color: var(--muted);
 }
 
 /* Scroll reveal ----------------------------------------------------------- */
@@ -470,8 +549,8 @@ p { margin: 0 0 1rem; }
 .section__node {
   position: absolute; left: 0; top: 0;
   display: inline-flex; align-items: center; gap: 12px;
-  font-family: var(--font-display); font-size: .74rem; font-weight: 700;
-  letter-spacing: .2em; text-transform: uppercase; color: var(--brand);
+  font-family: var(--face-tech); font-size: var(--step--3); font-weight: 600;
+  letter-spacing: var(--track-caps); text-transform: uppercase; color: var(--brand-ink);
 }
 
 /* --------------------------------------------------------------------------
@@ -502,15 +581,15 @@ p { margin: 0 0 1rem; }
 .svc-hero:hover { transform: translateY(-6px); border-color: var(--line-strong); box-shadow: var(--lift), var(--glow); text-decoration: none; }
 .svc-hero:hover::after { opacity: 1; transform: scale(1); }
 .svc-hero__tag {
-  align-self: flex-start; font-family: var(--font-display); font-size: .7rem; font-weight: 700;
-  letter-spacing: .16em; text-transform: uppercase; color: var(--accent);
+  align-self: flex-start; font-family: var(--face-tech); font-size: var(--step--3); font-weight: 600;
+  letter-spacing: var(--track-caps); text-transform: uppercase; color: var(--accent-ink);
   border: 1px solid color-mix(in srgb, var(--accent) 40%, transparent);
   background: var(--accent-soft); padding: 5px 12px; border-radius: 999px; margin-bottom: auto;
 }
-.svc-hero h3 { font-size: clamp(1.5rem, 2.6vw, 2.05rem); margin: 20px 0 10px; letter-spacing: -.02em; }
-.svc-hero p { color: var(--muted); margin: 0 0 18px; max-width: 40ch; }
-.svc-hero__go { font-family: var(--font-display); font-weight: 700; font-size: .9rem; color: var(--brand); display: inline-flex; gap: 9px; align-items: center; }
-.svc-hero:hover .svc-hero__go { color: var(--accent); }
+.svc-hero h3 { font-size: var(--step-2); margin: 20px 0 10px; letter-spacing: var(--track-2); }
+.svc-hero p { color: var(--muted); font-size: var(--step--1); line-height: var(--leading-ui); margin: 0 0 18px; max-width: 40ch; }
+.svc-hero__go { font-family: var(--face-text); font-weight: 600; font-size: var(--step--1); letter-spacing: calc(-0.002em + var(--optical)); color: var(--brand-ink); display: inline-flex; gap: 9px; align-items: center; }
+.svc-hero:hover .svc-hero__go { color: var(--accent-ink); }
 .svc-hero__go svg { width: 17px; height: 17px; transition: transform .3s; }
 .svc-hero:hover .svc-hero__go svg { transform: translateX(6px); }
 
@@ -529,12 +608,12 @@ p { margin: 0 0 1rem; }
 }
 .svc-row:hover { background: color-mix(in srgb, var(--brand) 6%, transparent); padding-left: 26px; text-decoration: none; }
 .svc-row:hover::before { transform: scaleY(1); }
-.svc-row__ico { width: 42px; height: 42px; display: grid; place-items: center; border-radius: 11px; background: var(--panel-2); border: 1px solid var(--line); color: var(--brand); }
+.svc-row__ico { width: 42px; height: 42px; display: grid; place-items: center; border-radius: 11px; background: var(--panel-2); border: 1px solid var(--line); color: var(--brand-ink); }
 .svc-row__ico svg { width: 20px; height: 20px; }
-.svc-row h3 { font-size: 1.08rem; margin: 0 0 3px; }
-.svc-row p { color: var(--muted); margin: 0; font-size: .93rem; }
+.svc-row h3 { font-size: var(--step-0); font-weight: 600; letter-spacing: var(--track-0); margin: 0 0 3px; }
+.svc-row p { color: var(--faint); margin: 0; font-size: var(--step--1); line-height: var(--leading-ui); }
 .svc-row__arrow { color: var(--muted); transition: color .25s, transform .3s; }
-.svc-row:hover .svc-row__arrow { color: var(--accent); transform: translateX(5px); }
+.svc-row:hover .svc-row__arrow { color: var(--accent-ink); transform: translateX(5px); }
 @media (max-width: 620px) {
   .svc-row { grid-template-columns: 40px 1fr; }
   .svc-row__arrow { display: none; }
@@ -559,19 +638,21 @@ p { margin: 0 0 1rem; }
 }
 .rev__card:hover { border-color: var(--line-strong); transform: translateY(-3px); }
 .rev__quote-mark {
-  font-family: Georgia, serif; font-size: 4.2rem; line-height: .8; color: var(--brand);
-  opacity: .3; margin-bottom: 4px;
+  font-family: var(--face-display); font-weight: 800; font-size: 3.6rem; line-height: .72;
+  color: var(--brand-ink); opacity: .28; margin-bottom: 4px;
 }
-.rev__stars { color: var(--accent); letter-spacing: .13em; font-size: .96rem; margin-bottom: 14px; }
-.rev__text { font-size: 1.04rem; line-height: 1.62; margin: 0 0 22px; flex: 1; }
+.rev__stars { color: var(--accent-ink); letter-spacing: .14em; font-size: var(--step--1); margin-bottom: 14px; }
+/* A testimonial is a pull quote, not body copy: up a step, leaded tighter,
+   and set at the lit tone so it carries its own weight in the card. */
+.rev__text { font-size: var(--step-1); font-weight: 400; line-height: var(--leading-deck); letter-spacing: calc(var(--track-1) + var(--optical)); color: var(--text); margin: 0 0 22px; flex: 1; }
 .rev__by { display: flex; align-items: center; gap: 13px; padding-top: 17px; border-top: 1px solid var(--line); }
 .rev__av {
   width: 42px; height: 42px; border-radius: 50%; flex: 0 0 auto; display: grid; place-items: center;
-  font-family: var(--font-display); font-weight: 800; font-size: 1rem; color: var(--bg);
+  font-family: var(--face-display); font-weight: 800; font-size: 1rem; letter-spacing: -0.02em; color: var(--on-brand);
   background: linear-gradient(140deg, var(--brand), var(--accent));
 }
-.rev__name { font-family: var(--font-display); font-weight: 700; font-size: .96rem; }
-.rev__meta { color: var(--muted); font-size: .83rem; }
+.rev__name { font-family: var(--face-text); font-weight: 600; font-size: var(--step--1); letter-spacing: calc(0em + var(--optical)); color: var(--text); }
+.rev__meta { font-family: var(--face-tech); color: var(--faint); font-size: var(--step--3); letter-spacing: 0.02em; }
 .rev__nav { display: flex; align-items: center; gap: 11px; margin-top: 6px; }
 .rev__btn {
   width: 44px; height: 44px; border-radius: 50%; display: grid; place-items: center;
@@ -597,16 +678,16 @@ p { margin: 0 0 1rem; }
   content: ''; position: absolute; inset: 0 0 auto; height: 2px;
   background: linear-gradient(90deg, var(--brand), transparent);
 }
-.cred__ico { width: 38px; height: 38px; color: var(--brand); margin-bottom: 15px; }
+.cred__ico { width: 38px; height: 38px; color: var(--brand-ink); margin-bottom: 15px; }
 .cred__ico svg { width: 100%; height: 100%; }
-.cred h3 { font-size: 1.02rem; margin: 0 0 7px; }
-.cred p { color: var(--muted); font-size: .91rem; margin: 0; }
+.cred h3 { font-size: var(--step-0); font-weight: 600; letter-spacing: var(--track-0); margin: 0 0 7px; }
+.cred p { color: var(--faint); font-size: var(--step--1); line-height: var(--leading-ui); margin: 0; }
 
 /* --------------------------------------------------------------------------
    ACTION COLOUR — amber means "do this". Cyan is the brand; amber is the verb.
    -------------------------------------------------------------------------- */
-.btn--act { background: var(--accent); color: #14100a; border-color: var(--accent); font-weight: 700; }
-.btn--act:hover { background: var(--accent-dark); color: #14100a; box-shadow: 0 14px 34px -10px color-mix(in srgb, var(--accent) 60%, transparent); }
+.btn--act { background: var(--accent); color: var(--on-accent); border-color: var(--accent); font-weight: 700; }
+.btn--act:hover { background: var(--accent-dark); color: var(--on-accent); box-shadow: 0 14px 34px -10px color-mix(in srgb, var(--accent) 60%, transparent); }
 
 /* Sticky mobile action bar — the phone is 70%+ of this audience */
 .callbar {
@@ -625,13 +706,21 @@ p { margin: 0 0 1rem; }
   border: 1px solid var(--line-strong);
   background: linear-gradient(120deg, color-mix(in srgb, var(--brand) 10%, transparent), transparent 70%), var(--panel);
 }
-.inline-cta p { margin: 0; font-family: var(--font-display); font-weight: 600; font-size: 1.06rem; }
+.inline-cta p { margin: 0; max-width: none; font-family: var(--face-text); font-weight: 500; font-size: var(--step-1); line-height: var(--leading-sub); letter-spacing: calc(var(--track-1) + var(--optical)); color: var(--text); }
 
 /* Stat strip */
 .stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 1px; background: var(--line); border: 1px solid var(--line); border-radius: 14px; overflow: hidden; }
 .stat { background: var(--panel); padding: 26px 20px; text-align: center; }
-.stat__n { font-family: var(--font-display); font-weight: 800; font-size: clamp(1.9rem, 3.4vw, 2.6rem); line-height: 1; color: var(--brand); letter-spacing: -.03em; }
-.stat__l { color: var(--muted); font-size: .87rem; margin-top: 9px; }
+.stat__n {
+  font-family: var(--face-tech); font-weight: 600;
+  font-size: clamp(1.9rem, 1.35rem + 2.45vw, 2.6rem); line-height: 1;
+  letter-spacing: -.035em; color: var(--brand-ink);
+  font-variant-numeric: tabular-nums; font-feature-settings: 'zero' 1;
+}
+.stat__l {
+  font-family: var(--face-tech); color: var(--faint); font-size: var(--step--3);
+  letter-spacing: var(--track-caps); text-transform: uppercase; margin-top: 9px;
+}
 
 /* Staggered, directional reveal — replaces the identical fade on everything */
 .reveal { opacity: 0; transform: translateY(22px); transition: opacity .7s cubic-bezier(.2,.8,.25,1), transform .7s cubic-bezier(.2,.8,.25,1); }
@@ -718,34 +807,35 @@ body::after {
 @media (max-width: 880px) { .est__grid { grid-template-columns: 1fr; } }
 .est__q { margin-bottom: 24px; }
 .est__q > span {
-  display: block; font-family: var(--font-display); font-weight: 700;
-  font-size: .78rem; letter-spacing: .14em; text-transform: uppercase;
+  display: block; font-family: var(--face-tech); font-weight: 500;
+  font-size: var(--step--3); letter-spacing: var(--track-caps); text-transform: uppercase;
   color: var(--muted); margin-bottom: 11px;
 }
 .est__opts { display: flex; flex-wrap: wrap; gap: 9px; }
 .est__opt {
-  font: inherit; font-family: var(--font-display); font-weight: 600; font-size: .93rem;
+  font: inherit; font-family: var(--face-text); font-weight: 500; font-size: var(--step--1);
+  letter-spacing: calc(0em + var(--optical));
   padding: 11px 17px; border-radius: 10px; cursor: pointer;
   border: 1px solid var(--line-strong); background: transparent; color: var(--text);
   transition: background .2s, color .2s, border-color .2s, transform .15s;
 }
 .est__opt:hover { border-color: var(--brand); transform: translateY(-1px); }
 .est__opt[aria-pressed='true'] {
-  background: var(--brand); border-color: var(--brand); color: #04222b;
+  background: var(--brand); border-color: var(--brand); color: var(--on-brand);
   box-shadow: 0 0 22px -6px color-mix(in srgb, var(--brand) 80%, transparent);
 }
 .est__out {
   text-align: center; padding: 30px 22px; border-radius: 16px;
   border: 1px solid var(--line); background: color-mix(in srgb, var(--bg) 55%, transparent);
 }
-.est__label { font-family: var(--font-display); font-size: .76rem; font-weight: 700; letter-spacing: .16em; text-transform: uppercase; color: var(--muted); }
+.est__label { font-family: var(--face-tech); font-size: var(--step--3); font-weight: 500; letter-spacing: var(--track-caps); text-transform: uppercase; color: var(--muted); }
 .est__fig {
-  font-family: var(--font-display); font-weight: 800; letter-spacing: -.03em;
-  font-size: clamp(2.4rem, 5vw, 3.4rem); line-height: 1.05; margin: 12px 0 4px;
-  color: var(--accent);
+  /* A price is a readout. Mono, tabular, slashed zero: it should look like
+     something a meter told you, not like a headline. */
+  font-family: var(--face-tech); font-weight: 600; letter-spacing: -.04em;
+  font-size: clamp(2.3rem, 1.55rem + 3.35vw, 3.3rem); line-height: 1.02; margin: 12px 0 4px;
+  font-variant-numeric: tabular-nums; font-feature-settings: 'zero' 1;
+  color: var(--accent-ink);
 }
-.est__note { color: var(--muted); font-size: .88rem; margin: 10px 0 20px; }
-.est__disc { font-size: .8rem; color: var(--muted); margin-top: 18px; line-height: 1.5; }
-
-/* Motion layer — loaded last so it can retune motion without touching tokens. */
-@import './motion.css';
+.est__note { color: var(--muted); font-size: var(--step--1); line-height: var(--leading-ui); margin: 10px 0 20px; }
+.est__disc { font-family: var(--face-tech); font-size: var(--step--3); color: var(--faint); margin-top: 18px; line-height: var(--leading-tech); }

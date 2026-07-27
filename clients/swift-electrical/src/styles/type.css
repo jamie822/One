@@ -149,16 +149,20 @@ h4 {
   line-height: var(--leading-sub);
 }
 
-/* The page is about light falling on things. A headline is a lit surface, so
-   it is fractionally brighter at the top than at the foot — a few percent of
-   luminance, no hue shift. Not gradient text; shading. Solid colour is the
-   fallback and stays the accessible value either way. */
-@supports (-webkit-background-clip: text) or (background-clip: text) {
+/* The page is about light falling on things, so a headline is treated as a
+   lit surface: fractionally brighter at the top than at the foot. No hue
+   shift and no second colour — this is shading, not gradient text. Held to
+   roughly a fifth of the way from --text toward --text-2, because on a
+   two-line headline the falloff lands across the line break and anything
+   stronger reads as a rendering fault rather than as light.
+   The solid colour underneath stays the accessible value in every case. */
+@supports (background-clip: text) or (-webkit-background-clip: text) {
   [data-mode='dark'] h1 {
-    background: linear-gradient(178deg, var(--text) 18%, var(--text-2) 96%);
+    background-image: linear-gradient(180deg,
+      var(--text) 30%,
+      color-mix(in oklab, var(--text) 80%, var(--text-2)) 100%);
     -webkit-background-clip: text;
     background-clip: text;
-    color: transparent;
     -webkit-text-fill-color: transparent;
   }
 }

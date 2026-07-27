@@ -16,13 +16,14 @@ const {
   lit = false,       // cove light along the top edge
   seam = false,      // hairline where the band meets the one above
   class: cls = '',
+  ...rest            // forwards the caller's scope attribute onto the root
 } = Astro.props;
 
 const cn = ['band', `band--${tone}`, lit && 'is-lit', seam && 'has-seam', cls]
   .filter(Boolean)
   .join(' ');
 ---
-<section class={cn}>
+<section class={cn} {...rest}>
   {grid && <div class="band__grid" aria-hidden="true"></div>}
 
   {rails && (

@@ -148,6 +148,210 @@ const allSchemas = [businessSchema(), ...(crumbs ? [breadcrumbSchema(crumbs)] : 
         );
         items.forEach((el) => io.observe(el));
       }
+
+      /* ====================================================================
+         INTERACTION LAYER
+         Everything below is motion that CSS genuinely cannot express: values
+         that depend on the pointer, on a number's value, or on gesture
+         velocity. All of it is inert under reduced motion, and none of it
+         touches a layout property.
+         ==================================================================== */
+      const fine = matchMedia('(hover: hover) and (pointer: fine)').matches;
+
+      /* --- 1. Light follows the cursor ---------------------------------
+         The trade is lighting, so a pointer crossing a surface should drag a
+         highlight over it. --mx/--my are registered with inherits:false in
+         motion.css, so writing them invalidates only that one element.
+         Primary CTAs additionally get a small magnetic pull toward the
+         cursor; the CSS transition on transform smooths and retargets it, so
+         it stays interruptible rather than fighting a running animation. */
+      if (fine && !reduce) {
+        const LIT = '.card, .cred, .rev__card, .svc-hero, .btn--primary, .btn--act';
+        const MAGNETIC = 6; // px — felt, not seen
+        let frame = 0;
+        let pending = null;
+
+        const apply = () => {
+          frame = 0;
+          if (!pending) return;
+          const { el, x, y, rect, magnetic } = pending;
+          pending = null;
+          el.style.setProperty('--mx', x + 'px');
+          el.style.setProperty('--my', y + 'px');
+          if (magnetic) {
+            const dx = (x / rect.width - 0.5) * 2 * MAGNETIC;
+            const dy = (y / rect.height - 0.5) * 2 * MAGNETIC;
+            el.style.setProperty('--magnet-x', dx.toFixed(2) + 'px');
+            el.style.setProperty('--magnet-y', dy.toFixed(2) + 'px');
+          }
+        };
+
+        document.addEventListener('pointermove', (e) => {
+          const el = e.target instanceof Element ? e.target.closest(LIT) : null;
+          if (!el) return;
+          const rect = el.getBoundingClientRect();
+          pending = {
+            el,
+            x: e.clientX - rect.left,
+            y: e.clientY - rect.top,
+            rect,
+            magnetic: el.classList.contains('btn'),
+          };
+          if (!frame) frame = requestAnimationFrame(apply);
+        }, { passive: true });
+
+        // Release the magnet on the way out so the button springs home.
+        document.addEventListener('pointerout', (e) => {
+          const el = e.target instanceof Element ? e.target.closest('.btn') : null;
+          if (!el || el.contains(e.relatedTarget)) return;
+          el.style.setProperty('--magnet-x', '0px');
+          el.style.setProperty('--magnet-y', '0px');
+        }, { passive: true });
+      }
+
+      /* --- 2. Stat count-up --------------------------------------------
+         The final value is already in the HTML, so if this never runs the
+         correct number is on screen. Only plain numerics are touched, which
+         is why "8pm" is skipped. motion.css sets tabular-nums on .stat__n so
+         the digits cannot change width: the count cannot shift layout. */
+      if (!reduce && 'IntersectionObserver' in window) {
+        const nums = [...document.querySelectorAll('.stat__n')].filter((el) =>
+          /^\d+(\.\d+)?$/.test(el.textContent.trim())
+        );
+        const countIO = new IntersectionObserver((entries) => {
+          entries.forEach((e) => {
+            if (!e.isIntersecting) return;
+            countIO.unobserve(e.target);
+            const el = e.target;
+            const raw = el.textContent.trim();
+            const target = parseFloat(raw);
+            const dp = (raw.split('.')[1] || '').length;
+            const DURATION = 1100;
+            const start = performance.now();
+            const tick = (now) => {
+              const t = Math.min(1, (now - start) / DURATION);
+              // Same strong ease-out as the CSS curve, so the number settles
+              // on the same beat as the tile it sits in.
+              const eased = 1 - Math.pow(1 - t, 3);
+              el.textContent = (target * eased).toFixed(dp);
+              if (t < 1) requestAnimationFrame(tick);
+              else el.textContent = raw;
+            };
+            requestAnimationFrame(tick);
+          });
+        }, { threshold: 0.4 });
+        nums.forEach((el) => countIO.observe(el));
+      }
+
+      /* --- 3. Estimator: the price should not teleport ------------------
+         A MutationObserver keeps this out of the component's own code. The
+         figure gets a short lift-and-glow so a changed price is noticed. */
+      if (!reduce) {
+        const retick = (el) => {
+          if (!el) return;
+          el.classList.remove('is-tick');
+          void el.offsetWidth; // restart the keyframes
+          el.classList.add('is-tick');
+        };
+        document.querySelectorAll('[data-est]').forEach((root) => {
+          const fig = root.querySelector('[data-est-out]');
+          const note = root.querySelector('[data-est-time]');
+          if (fig) {
+            new MutationObserver(() => { retick(fig); retick(note); })
+              .observe(fig, { childList: true, characterData: true, subtree: true });
+          }
+          // Latch feedback on the option itself, on pointer-down rather than
+          // click, so the press is acknowledged the instant it happens.
+          root.querySelectorAll('.est__opt').forEach((btn) => {
+            btn.addEventListener('pointerdown', () => {
+              btn.classList.remove('is-latched');
+              void btn.offsetWidth;
+              btn.classList.add('is-latched');
+            });
+            btn.addEventListener('animationend', () => btn.classList.remove('is-latched'));
+          });
+        });
+      }
+
+      /* --- 4. Carousel drag with momentum ------------------------------
+         The track already scrolls and snaps natively, which covers touch.
+         Mouse users had only the arrows. This adds 1:1 pointer tracking with
+         a proper velocity handoff: on release the resting point is projected
+         from the flick using the exponential-decay model, then snapped to the
+         nearest card — so a flick throws the carousel instead of stopping
+         dead where the finger left it. */
+      if (fine) {
+        // Apple's projection function from Designing Fluid Interfaces.
+        const project = (velocity, decelerationRate = 0.998) =>
+          ((velocity / 1000) * decelerationRate) / (1 - decelerationRate);
+
+        document.querySelectorAll('[data-rev-track]').forEach((track) => {
+          let down = false, dragging = false;
+          let startX = 0, startScroll = 0, lastX = 0, lastT = 0, velocity = 0;
+
+          track.addEventListener('pointerdown', (e) => {
+            if (e.pointerType !== 'mouse' || e.button !== 0) return;
+            down = true;
+            dragging = false;
+            startX = lastX = e.clientX;
+            startScroll = track.scrollLeft;
+            lastT = e.timeStamp;
+            velocity = 0;
+          });
+
+          track.addEventListener('pointermove', (e) => {
+            if (!down) return;
+            const dx = e.clientX - startX;
+            // ~10px of hysteresis before committing to a drag, so a click on
+            // a card is never stolen.
+            if (!dragging && Math.abs(dx) < 10) return;
+            if (!dragging) {
+              dragging = true;
+              track.classList.add('is-dragging');
+              track.setPointerCapture(e.pointerId);
+            }
+            const dt = e.timeStamp - lastT;
+            if (dt > 0) velocity = ((e.clientX - lastX) / dt) * 1000; // px/s
+            lastX = e.clientX;
+            lastT = e.timeStamp;
+            track.scrollLeft = startScroll - dx;
+            e.preventDefault();
+          });
+
+          const release = (e) => {
+            if (!down) return;
+            down = false;
+            if (!dragging) return;
+            dragging = false;
+            track.classList.remove('is-dragging');
+            if (track.hasPointerCapture?.(e.pointerId)) track.releasePointerCapture(e.pointerId);
+
+            // Where would this come to rest if we just let it run?
+            const projected = track.scrollLeft - project(velocity);
+            const cards = [...track.children];
+            let best = cards[0];
+            let bestGap = Infinity;
+            cards.forEach((c) => {
+              const gap = Math.abs(c.offsetLeft - track.offsetLeft - projected);
+              if (gap < bestGap) { bestGap = gap; best = c; }
+            });
+            track.scrollTo({
+              left: best.offsetLeft - track.offsetLeft,
+              behavior: reduce ? 'auto' : 'smooth',
+            });
+          };
+
+          track.addEventListener('pointerup', release);
+          track.addEventListener('pointercancel', release);
+          // A drag that ends over a card must not also fire that card's click.
+          track.addEventListener('click', (e) => {
+            if (track.classList.contains('is-dragging')) {
+              e.preventDefault();
+              e.stopPropagation();
+            }
+          }, true);
+        });
+      }
     </script>
   </body>
 </html>
