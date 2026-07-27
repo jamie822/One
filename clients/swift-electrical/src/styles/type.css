@@ -63,8 +63,8 @@
   --track--1:  0.000em;
   --track--2:  0.008em;
   --track--3:  0.014em;
-  --track-caps:    0.16em;   /* mono, uppercase, 11px */
-  --track-caps-lg: 0.13em;   /* mono, uppercase, 12.5px+ */
+  --track-caps:    0.14em;   /* mono, uppercase, 11px */
+  --track-caps-lg: 0.11em;   /* mono, uppercase, 12.5px+ */
 
   /* --- Leading -------------------------------------------------------------
      Leading falls as size rises. A 69px headline set at 1.6 is a list of
@@ -213,6 +213,15 @@ p {
   text-transform: uppercase;
   color: var(--brand-ink);
   margin-bottom: 14px;
+}
+
+/* Letterspacing widens the word space along with everything else, and a mono
+   space is already a full character wide. Pulling it back is the difference
+   between a tracked label and a row of stranded words. */
+.eyebrow, .section__node, .svc-hero__tag, .est__label, .est__q > span,
+.footer h4, .footer .footer__h, .beforeafter figcaption, .stat__l,
+.ph strong, .pill {
+  word-spacing: -0.14em;
 }
 
 /* Numbers are data. Data is set in figures that line up. */

@@ -587,7 +587,7 @@ a:hover { text-decoration: underline; }
   background: var(--accent-soft); padding: 5px 12px; border-radius: 999px; margin-bottom: auto;
 }
 .svc-hero h3 { font-size: var(--step-2); margin: 20px 0 10px; letter-spacing: var(--track-2); }
-.svc-hero p { color: var(--muted); font-size: var(--step--1); line-height: var(--leading-ui); margin: 0 0 18px; max-width: 40ch; }
+.svc-hero p { color: var(--muted); font-size: var(--step-0); line-height: var(--leading-ui); margin: 0 0 18px; max-width: 40ch; }
 .svc-hero__go { font-family: var(--face-text); font-weight: 600; font-size: var(--step--1); letter-spacing: calc(-0.002em + var(--optical)); color: var(--brand-ink); display: inline-flex; gap: 9px; align-items: center; }
 .svc-hero:hover .svc-hero__go { color: var(--accent-ink); }
 .svc-hero__go svg { width: 17px; height: 17px; transition: transform .3s; }
@@ -833,9 +833,13 @@ body::after {
   /* A price is a readout. Mono, tabular, slashed zero: it should look like
      something a meter told you, not like a headline. */
   font-family: var(--face-tech); font-weight: 600; letter-spacing: -.04em;
-  font-size: clamp(2.3rem, 1.55rem + 3.35vw, 3.3rem); line-height: 1.02; margin: 12px 0 4px;
+  /* Capped lower than the old display setting: mono advances are wide, and
+     a price that wraps is not a readout. */
+  font-size: clamp(2rem, 1.5rem + 2.25vw, 2.65rem); line-height: 1.04; margin: 12px 0 4px;
   font-variant-numeric: tabular-nums; font-feature-settings: 'zero' 1;
   color: var(--accent-ink);
 }
 .est__note { color: var(--muted); font-size: var(--step--1); line-height: var(--leading-ui); margin: 10px 0 20px; }
-.est__disc { font-family: var(--face-tech); font-size: var(--step--3); color: var(--faint); margin-top: 18px; line-height: var(--leading-tech); }
+/* Mono is for labels and figures. This is a sentence, so it stays in the
+   text face — just quieter and a step down. */
+.est__disc { font-size: var(--step--2); color: var(--faint); margin-top: 18px; line-height: var(--leading-ui); max-width: 56ch; }

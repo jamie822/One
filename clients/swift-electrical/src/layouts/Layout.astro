@@ -215,7 +215,7 @@ const allSchemas = [businessSchema(), ...(crumbs ? [breadcrumbSchema(crumbs)] : 
          is why "8pm" is skipped. motion.css sets tabular-nums on .stat__n so
          the digits cannot change width: the count cannot shift layout. */
       if (!reduce && 'IntersectionObserver' in window) {
-        const nums = [...document.querySelectorAll('.stat__n')].filter((el) =>
+        const nums = [...document.querySelectorAll('.stat__n, .ledger__n')].filter((el) =>
           /^\d+(\.\d+)?$/.test(el.textContent.trim())
         );
         const countIO = new IntersectionObserver((entries) => {

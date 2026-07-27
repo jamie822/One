@@ -91,7 +91,10 @@ html .reveal--scale.is-in { transform: none; }
    across a wall. No transform and no fade, so headings read as being *lit*
    rather than as arriving — which is what separates them from body copy.
    Browsers without mask support simply show the heading. */
-html .section__head.reveal {
+html .section__head.reveal,
+html .svc__head.reveal,
+html .areas__head.reveal,
+html .reviews__head.reveal {
   opacity: 1;
   transform: none;
   filter: none;
@@ -105,7 +108,10 @@ html .section__head.reveal {
   mask-repeat: no-repeat;
   transition: -webkit-mask-position 1.05s var(--ease-out), mask-position 1.05s var(--ease-out);
 }
-html .section__head.reveal.is-in {
+html .section__head.reveal.is-in,
+html .svc__head.reveal.is-in,
+html .areas__head.reveal.is-in,
+html .reviews__head.reveal.is-in {
   opacity: 1;
   transform: none;
   -webkit-mask-position: 0 0;
@@ -113,14 +119,16 @@ html .section__head.reveal.is-in {
 }
 
 /* --- Framed image: a clip wipe from the left ---------------------------- */
-html .frame.reveal {
+html .frame.reveal,
+html .owner__frame.reveal {
   opacity: 1;
   filter: none;
   transform: none;
   clip-path: inset(0 100% 0 0 round var(--radius-lg));
   transition: clip-path 900ms var(--ease-out);
 }
-html .frame.reveal.is-in { clip-path: inset(0 0 0 0 round var(--radius-lg)); }
+html .frame.reveal.is-in,
+html .owner__frame.reveal.is-in { clip-path: inset(0 0 0 0 round var(--radius-lg)); }
 
 /* --- The two lead service tiles: directional, with depth ---------------- */
 html .svc-hero.reveal {
@@ -141,10 +149,13 @@ html .svc-hero.reveal.is-in  { transform: none; filter: none; }
    observing each child, and it reads as one gesture rather than N. */
 html .svc-list.reveal,
 html .stats.reveal,
+html .ledger.reveal,
 html .faq.reveal,
 html .grid.reveal,
 html .reveal:has(> .pill),
+html .areas__field.reveal,
 html .reveal:has(.rev__track),
+html .rev-bleed.reveal,
 html .cta__inner.reveal {
   opacity: 1;
   transform: none;
@@ -155,23 +166,24 @@ html .cta__inner.reveal {
 /* Stagger indices, assigned in pure CSS — no JS writes these. */
 html .svc-list > *,
 html .stats > *,
+html .ledger > *,
 html .faq > details,
 html .grid.reveal > *,
 html .reveal:has(> .pill) > .pill,
 html .rev__track > *,
 html .cta__inner.reveal > * { --i: 0; }
 
-html .svc-list > :nth-child(2), html .stats > :nth-child(2),
+html .svc-list > :nth-child(2), html .stats > :nth-child(2), html .ledger > :nth-child(2),
 html .faq > details:nth-child(2), html .grid.reveal > :nth-child(2),
 html .reveal:has(> .pill) > .pill:nth-child(2), html .rev__track > :nth-child(2),
 html .cta__inner.reveal > :nth-child(2) { --i: 1; }
 
-html .svc-list > :nth-child(3), html .stats > :nth-child(3),
+html .svc-list > :nth-child(3), html .stats > :nth-child(3), html .ledger > :nth-child(3),
 html .faq > details:nth-child(3), html .grid.reveal > :nth-child(3),
 html .reveal:has(> .pill) > .pill:nth-child(3), html .rev__track > :nth-child(3),
 html .cta__inner.reveal > :nth-child(3) { --i: 2; }
 
-html .svc-list > :nth-child(4), html .stats > :nth-child(4),
+html .svc-list > :nth-child(4), html .stats > :nth-child(4), html .ledger > :nth-child(4),
 html .faq > details:nth-child(4), html .grid.reveal > :nth-child(4),
 html .reveal:has(> .pill) > .pill:nth-child(4), html .rev__track > :nth-child(4) { --i: 3; }
 
@@ -202,14 +214,16 @@ html .svc-list.reveal.is-in > .svc-row { opacity: 1; transform: none; }
 
 /* Stats rise and settle with a touch of overshoot — the one celebratory
    moment on the page, and where the count-up lands. */
-html .stats.reveal > .stat {
+html .stats.reveal > .stat,
+html .ledger.reveal > .ledger__cell {
   opacity: 0;
   transform: translate3d(0, 26px, 0) scale(0.94);
   transition:
     opacity 520ms var(--ease-out) calc(var(--i) * 70ms),
     transform 620ms var(--ease-spring) calc(var(--i) * 70ms);
 }
-html .stats.reveal.is-in > .stat { opacity: 1; transform: none; }
+html .stats.reveal.is-in > .stat,
+html .ledger.reveal.is-in > .ledger__cell { opacity: 1; transform: none; }
 
 /* FAQ rows drop in from above, one after another. */
 html .faq.reveal > details {
@@ -270,6 +284,23 @@ html .cred.reveal:nth-child(2) { transition-delay: 70ms; }
 html .cred.reveal:nth-child(3) { transition-delay: 140ms; }
 html .cred.reveal:nth-child(4) { transition-delay: 210ms; }
 html .cred.reveal:nth-child(n + 5) { transition-delay: 280ms; }
+
+/* Individually-revealed cards scale up off the surface. They carry their own
+   inline transition-delay from the page templates, which is left intact. */
+html .card.reveal,
+html .cred.reveal,
+html .review.reveal {
+  filter: none;
+  transform: translate3d(0, 18px, 0) scale(0.97);
+  transition:
+    opacity 520ms var(--ease-out),
+    transform 520ms var(--ease-out),
+    border-color var(--d-hover) ease,
+    box-shadow var(--d-hover) ease;
+}
+html .card.reveal.is-in,
+html .cred.reveal.is-in,
+html .review.reveal.is-in { transform: none; }
 
 /* Estimator and forms: one solid object arriving, not blurred prose. */
 html .reveal:has(> .est),
@@ -760,7 +791,8 @@ html .est__note.is-tick { animation: note-tick 380ms var(--ease-out) both; }
 
 /* Tabular figures so a counting number cannot change width — this is what
    keeps the count-up from producing any layout shift. */
-html .stat__n { font-variant-numeric: tabular-nums; }
+html .stat__n,
+html .ledger__n { font-variant-numeric: tabular-nums; }
 
 /* --------------------------------------------------------------------------
    12. SCROLL-DRIVEN DECORATIVE PARALLAX
@@ -818,6 +850,79 @@ html .stat__n { font-variant-numeric: tabular-nums; }
     @keyframes draw-line {
       from { transform: scaleX(0); opacity: 0; }
       to   { transform: scaleX(1); opacity: 0.5; }
+    }
+
+    /* --- The Band decorative layers ------------------------------------
+       Band.astro draws each section on a technical grid, wires it with
+       circuit rails and stands a bolt behind it. They were fixed to the
+       band, so the page had no depth between layers. Tying each to the same
+       view() timeline at a different rate parallaxes them against the
+       content: the grid barely moves, the rails drift, the bolt travels
+       furthest. Scroll-linked, so nothing runs when the page is still. */
+    html .band__grid {
+      animation: layer-near linear both;
+      animation-timeline: view();
+      animation-range: cover 0% cover 100%;
+    }
+    @keyframes layer-near {
+      from { transform: translate3d(0, -18px, 0); }
+      to   { transform: translate3d(0, 18px, 0); }
+    }
+
+    html .band__rails {
+      animation: layer-mid linear both;
+      animation-timeline: view();
+      animation-range: cover 0% cover 100%;
+    }
+    @keyframes layer-mid {
+      from { transform: translate3d(0, -52px, 0); opacity: 0.12; }
+      50%  { opacity: 0.34; }
+      to   { transform: translate3d(0, 52px, 0); opacity: 0.12; }
+    }
+
+    /* Keyframes carry the bolt's own base transform so the parallax composes
+       with its rotation and flip rather than replacing them. */
+    html .band__bolt--left {
+      animation: bolt-left linear both;
+      animation-timeline: view();
+      animation-range: cover 0% cover 100%;
+    }
+    @keyframes bolt-left {
+      from { transform: translateY(-50%) translateY(-74px) rotate(-11deg) scaleX(-1); }
+      to   { transform: translateY(-50%) translateY(74px) rotate(-3deg) scaleX(-1); }
+    }
+    html .band__bolt--right {
+      animation: bolt-right linear both;
+      animation-timeline: view();
+      animation-range: cover 0% cover 100%;
+    }
+    @keyframes bolt-right {
+      from { transform: translateY(-50%) translateY(-74px) rotate(2deg); }
+      to   { transform: translateY(-50%) translateY(74px) rotate(10deg); }
+    }
+
+    /* The cove light on a band's top edge pools and falls off. */
+    html .is-lit::after {
+      animation: cove linear both;
+      animation-timeline: view();
+      animation-range: entry 0% exit 100%;
+    }
+    @keyframes cove {
+      from { transform: translateX(-50%) translateY(-56px) scale(0.92); opacity: 0.25; }
+      45%  { transform: translateX(-50%) translateY(0) scale(1); opacity: 1; }
+      to   { transform: translateX(-50%) translateY(56px) scale(1.06); opacity: 0.3; }
+    }
+
+    /* Every seam hairline draws itself as the band arrives. */
+    html .has-seam::before {
+      animation: draw-seam linear both;
+      animation-timeline: view();
+      animation-range: entry 15% entry 95%;
+      transform-origin: center;
+    }
+    @keyframes draw-seam {
+      from { transform: scaleX(0); }
+      to   { transform: scaleX(1); }
     }
 
     /* The CTA band sweeps a bar of light across itself on approach. */
@@ -891,6 +996,7 @@ html .header { view-transition-name: site-header; }
   html .reveal:has(> .est),
   html .svc-list.reveal > .svc-row,
   html .stats.reveal > .stat,
+  html .ledger.reveal > .ledger__cell,
   html .faq.reveal > details,
   html .grid.reveal > *,
   html .reveal:has(> .pill) > .pill,
@@ -908,6 +1014,36 @@ html .header { view-transition-name: site-header; }
     -webkit-mask-image: none !important;
     mask-image: none !important;
   }
+
+  html .card.reveal,
+  html .cred.reveal,
+  html .review.reveal,
+  html .ledger.reveal > .ledger__cell,
+  html .owner__frame.reveal,
+  html .svc__head.reveal,
+  html .areas__head.reveal,
+  html .reviews__head.reveal,
+  html .areas__field.reveal > .pill {
+    opacity: 1 !important;
+    transform: none !important;
+    filter: none !important;
+    clip-path: none !important;
+    transition-delay: 0ms !important;
+  }
+  html .svc__head.reveal,
+  html .areas__head.reveal,
+  html .reviews__head.reveal {
+    -webkit-mask-image: none !important;
+    mask-image: none !important;
+  }
+
+  /* Band parallax layers rest exactly where the static design put them. */
+  html .band__grid, html .band__rails { transform: none !important; }
+  html .band__rails { opacity: 0.3 !important; }
+  html .band__bolt--left  { transform: translateY(-50%) rotate(-7deg) scaleX(-1) !important; }
+  html .band__bolt--right { transform: translateY(-50%) rotate(6deg) !important; }
+  html .is-lit::after { transform: translateX(-50%) !important; opacity: 1 !important; }
+  html .has-seam::before { transform: none !important; }
 
   /* Decorative light layers hold their settled position. */
   html .lit::before { transform: translateX(-50%) scaleX(1) !important; opacity: 1 !important; }
