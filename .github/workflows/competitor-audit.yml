@@ -65,7 +65,10 @@ jobs:
       - name: Run audit
         env:
           INPUT_URLS: ${{ inputs.urls }}
-          RUN_LH: ${{ inputs.lighthouse == false && 'false' || 'true' }}
+          # On a push trigger `inputs.lighthouse` is null, and in GitHub
+          # expressions `null == false` is TRUE — so the obvious ternary
+          # silently disabled Lighthouse. Compare against the string instead.
+          RUN_LH: ${{ inputs.lighthouse == 'false' && 'false' || 'true' }}
         run: |
           cp "$GITHUB_WORKSPACE/.github/scripts/audit.mjs" "$RUNNER_TEMP/audit/"
           cd "$RUNNER_TEMP/audit"
