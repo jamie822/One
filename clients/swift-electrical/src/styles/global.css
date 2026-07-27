@@ -903,7 +903,17 @@ body::after {
   transition: background .2s, color .2s, border-color .2s, transform .15s;
 }
 .est__opt:hover { border-color: var(--brand); transform: translateY(-1px); }
-.est__opt[aria-pressed='true'] {
+/* aria-CHECKED, not aria-pressed. The estimator's two option groups are
+   single-select, so the a11y pass rebuilt them as a WAI-ARIA APG radio group
+   (role="radiogroup"/role="radio"); aria-pressed is not valid on role="radio"
+   and no longer appears in the built HTML at all, which left this rule dead
+   and the selected state styled only by the mirror in a11y.css.
+   Retargeting rather than deleting keeps the component's own selected style in
+   the component layer where it belongs — a11y.css §7 says its copy exists only
+   because this selector was wrong, so that copy is now redundant (identical
+   declarations, `html`-prefixed so it still wins the tie) and safe for them to
+   drop. Restyle here, not there. */
+.est__opt[aria-checked='true'] {
   background: var(--brand); border-color: var(--brand); color: var(--on-brand);
   box-shadow: 0 0 22px -6px color-mix(in srgb, var(--brand) 80%, transparent);
 }

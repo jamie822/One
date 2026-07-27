@@ -80,9 +80,57 @@
 @font-face { font-family: 'Sora Fallback'; font-style: normal; font-weight: 700;
   src: local('Arial'), local('Liberation Sans'), local('Helvetica');
   size-adjust: 114.136%; ascent-override: 84.99%; descent-override: 25.41%; line-gap-override: 0%; }
+/* Sora 800 is fitted on LINE COUNT, not on width, and that is why this number
+   looks wrong next to the others.
+   --------------------------------------------------------------------------
+   Every other face here is fitted by matching advance width, because every
+   other face is used on shrink-to-fit elements where a width error moves a
+   sibling sideways. Sora 800 has exactly one job on this site: the <h1>. An
+   h1 is a full-width block, so its width error moves nothing — what moves the
+   page is the h1 taking a DIFFERENT NUMBER OF LINES in the fallback than in
+   Sora, because then every section below it jumps by a whole 44px line when
+   the swap lands.
+
+   Fitting on width gives ~108.7% (the h1 strings measure 105.578%-111.101%
+   against Arial). Measured, that is one of the worst possible values: line
+   counts disagree on 34 of 264 page x width combinations. Line breaking is
+   quantised at word boundaries, so the value that matches average advance is
+   not the value that reproduces the break positions.
+
+   Swept 104%-124% over all 22 sitemap pages x 12 viewports, counting h1s
+   whose fallback line count differs from Sora's:
+
+     104%  44      114%      12      118%   7   <- and the 7 are the mildest
+     108%  34      114.961%  12 (was in use)    119%  11
+     112%  15      117%       7                 124%  26
+
+   Then measured the CLS those mismatches actually cost, 3 runs each over the
+   13 worst combos, font responses delayed 700ms so the swap is observable the
+   way it is on a real connection rather than instant off localhost:
+
+     114.961%   sum of worst-case CLS  0.28695   worst single 0.04066
+     117%                              0.17890   worst single 0.03939
+     118%                              0.02420   worst single 0.02345
+
+   118% it is: a 92% reduction, and it takes /services/fault-finding/ at 768px
+   from 0.041 to 0.0001 and both /areas/bradford/ and /areas/keighley/ at 600
+   and 900px from 0.038 to 0.0002.
+
+   One case survives at every value from 114% to 118%: the h1 on
+   /services/eicr-landlord-certificates/ near 412px, 4 fallback lines against
+   3 real ones, ~0.023 and intermittent. No single scalar fixes it, because
+   Arial and Sora break "EICRs & Landlord Certificates in Bradford" at
+   different words no matter how the em is scaled. Left alone deliberately —
+   see the note in the report.
+
+   ascent/descent are rescaled by the same factor so the rendered line box is
+   unchanged: they are a fraction of the ALREADY-ADJUSTED em, so holding
+   ascent x size-adjust constant is what keeps the vertical metrics identical.
+     ascent   0.8438 x 1.14961 = 0.97005 -> 0.97005 / 1.18 = 82.208%
+     descent  0.2523 x 1.14961 = 0.29005 -> 0.29005 / 1.18 = 24.581% */
 @font-face { font-family: 'Sora Fallback'; font-style: normal; font-weight: 800;
   src: local('Arial'), local('Liberation Sans'), local('Helvetica');
-  size-adjust: 114.961%; ascent-override: 84.38%; descent-override: 25.23%; line-gap-override: 0%; }
+  size-adjust: 118%; ascent-override: 82.208%; descent-override: 24.581%; line-gap-override: 0%; }
 
 /* Monospace advances are a fixed fraction of the em, so Plex and the Courier
    New / Liberation Mono family already agree to within 0.02%. The overrides

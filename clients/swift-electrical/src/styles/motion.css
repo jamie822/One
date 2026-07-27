@@ -78,6 +78,47 @@ html .reveal.is-in {
   filter: none;
 }
 
+/* --- Blocks that can be the LCP element: never paint-suppressed -----------
+   CLAUDE.md: never animate the LCP element. The base reveal above starts at
+   opacity 0 with a 6px blur, and Chromium will not nominate an LCP candidate
+   until it is painted opaque — it re-evaluates as the opacity ramps and the
+   LAST entry wins, so the candidate lands at the END of the 620ms fade, not
+   the start. Traced on /areas/shipley/ at 412x823, 4x CPU:
+
+     156ms  first-contentful-paint
+     408ms  LCP candidate  <h1>            23,154px²
+     460ms  .is-in added by the observer
+    1144ms  LCP candidate  <p class=lead>  35,476px²   <- 460 + 620
+
+   Measured across all 23 pages at 412x823 and 1350x940, the elements that
+   actually win LCP from inside a .reveal are always a large prose block in
+   the first screenful, and they sit in exactly three containers:
+
+     .container--narrow.reveal   the area-page lead   6 of 8 area pages
+     .card.reveal                /areas/ and /services/ index cards
+     .review.reveal              /reviews/ first card
+
+   9 of 23 pages, +576ms to +1088ms of pure animation delay, and it put the
+   area pages — the programmatic search-entry pages — at LCP 2.7s against a
+   2.5s threshold under applied throttling. Lighthouse's default simulated
+   mode cannot see this at all: Lantern models the resource graph and scored
+   these same pages 99 with LCP 2.1s. It only shows up with real throttling.
+
+   These three keep the rise, and lose only the two properties that suppress
+   paint. The element is therefore painted in the first frame and LCP is not
+   deferred; the transform is composited and emits no new LCP candidate, so
+   the motion costs nothing. Same principle as the section headings below,
+   which have been exempt from the fade since they were written.
+
+   If a future block starts winning LCP, add it here — do not lower
+   --d-reveal, which treats the symptom and still animates the LCP element. */
+html .container--narrow.reveal,
+html .card.reveal,
+html .review.reveal {
+  opacity: 1;
+  filter: none;
+}
+
 /* Directional variants, retuned. */
 html .reveal--left  { transform: translate3d(-34px, 0, 0); }
 html .reveal--right { transform: translate3d(34px, 0, 0); }
