@@ -67,6 +67,8 @@ BUILD_PROCESS.md     The delivery SOP: 8 phases, skill order, quality gates.
 AUDIENCE.md          The end customer: decision process, fears, trust signals.
 
 client-template/     Brand-neutral Astro starter. One config file drives it.
+clients/             Real client builds. swift-electrical is the first.
+tools/               bundle-preview.py — one-file preview of a built site.
 research-output/     Live competitor audit — screenshots, Lighthouse, signals.
 .claude/skills/      41 vendored skills: design, copy, graphics, SEO, audit.
 .github/             Pages deploy + the competitor-audit workflow.
@@ -98,6 +100,20 @@ Three guardrails are built in deliberately:
   trust bar and page titles omit it entirely.
 - **The reviews array starts empty** and renders a warning rather than
   placeholder testimonials, which have a habit of going live by accident.
+
+---
+
+## Showing a client the site before launch
+
+```bash
+cd clients/<name> && npm run build
+python3 ../../tools/bundle-preview.py
+```
+
+Bundles every page into one self-contained HTML file with hash routing, so the
+whole site can be published or emailed as a single file. It is a preview
+harness, not the deliverable — page scripts are stripped and replaced with
+minimal routing, so always test the real build before launch.
 
 ---
 
