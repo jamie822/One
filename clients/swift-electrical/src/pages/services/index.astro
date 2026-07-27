@@ -38,9 +38,9 @@ const metaDesc =
         {services.map((s, i) => (
           <a class="card reveal" style={`transition-delay:${(i % 2) * 80}ms`} href={href(`/services/${s.slug}/`)}>
             <span class="card__icon"><Icon name={s.icon} /></span>
-            <h3>{s.title}</h3>
+            <h2>{s.title}</h2>
             <p>{s.symptom}</p>
-            <span class="card__link">Read more →</span>
+            <span class="card__link">Read more <span aria-hidden="true">→</span></span>
           </a>
         ))}
       </div>

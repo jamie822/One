@@ -19,7 +19,7 @@ import { hasRating } from '../lib/site.js';
     <h1>What customers say</h1>
     {hasRating && (
       <p class="hero__sub">
-        <span class="stars">{'★'.repeat(Math.round(client.google.rating))}</span>
+        <span class="stars" aria-hidden="true">{'★'.repeat(Math.round(client.google.rating))}</span>
         {client.google.rating} from {client.google.reviewCount} Google reviews.
       </p>
     )}
@@ -29,6 +29,10 @@ import { hasRating } from '../lib/site.js';
 
   <section class="section">
     <div class="container">
+      {/* The page's only content section had no heading at all, so navigating
+          by heading went h1 and then straight to the end of the document.
+          Visually hidden because the visible copy is final. */}
+      <h2 class="u-vh">What customers say</h2>
       {reviews.length > 0 ? (
         <div class="grid grid--3">
           {reviews.map((r, i) => (

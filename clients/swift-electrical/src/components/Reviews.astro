@@ -6,12 +6,27 @@ const shown = reviews.slice(0, limit);
 const initial = (n) => (n || '?').trim().charAt(0).toUpperCase();
 ---
 {shown.length > 0 ? (
-  <div class="rev" data-rev>
-    <div class="rev__track" data-rev-track>
+  <div class="rev" data-rev role="group" aria-roledescription="carousel" aria-label="Customer reviews">
+    {/* tabindex="0" is what makes the pointer drag keyboard-equivalent: a
+        focused scroll container responds to the arrow keys, so the gesture
+        has a non-dragging alternative (WCAG 2.5.7) and the panned content is
+        reachable without a mouse (2.1.1). It also resolves axe
+        scrollable-region-focusable, which fired because the cards contain no
+        focusable descendants of their own. */}
+    <div
+      class="rev__track"
+      data-rev-track
+      tabindex="0"
+      role="group"
+      aria-label={`${shown.length} customer reviews, scrollable`}
+    >
       {shown.map((r) => (
         <figure class="rev__card">
           <div class="rev__quote-mark" aria-hidden="true">&ldquo;</div>
-          <div class="rev__stars" aria-label="5 out of 5">★★★★★</div>
+          {/* aria-label is prohibited on a plain div (role="generic"), so the
+              rating needs a role that can carry a name. Without it the glyphs
+              are read out as "black star" five times. */}
+          <div class="rev__stars" role="img" aria-label="Rated 5 out of 5">★★★★★</div>
           <blockquote class="rev__text">{r.quote}</blockquote>
           <figcaption class="rev__by">
             <span class="rev__av" aria-hidden="true">{initial(r.author)}</span>
@@ -50,25 +65,42 @@ const initial = (n) => (n || '?').trim().charAt(0).toUpperCase();
     const cards = Array.from(track.children);
     if (!cards.length) return;
 
+    // A programmatic scroll ignores prefers-reduced-motion entirely — the
+    // media query only governs CSS. Read it here so the controls honour it
+    // too, and re-read it per call so a mid-session OS change is picked up.
+    const reduce = () => window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const behavior = () => (reduce() ? 'auto' : 'smooth');
+
     cards.forEach((_, i) => {
       const b = document.createElement('button');
       b.className = 'rev__dot' + (i === 0 ? ' is-on' : '');
       b.type = 'button';
-      b.setAttribute('aria-label', `Review ${i + 1}`);
-      b.addEventListener('click', () => cards[i].scrollIntoView({ behavior: 'smooth', inline: 'start', block: 'nearest' }));
+      // "Review 3 of 7" rather than "Review 3": the set size is the half of
+      // the position that the dots convey visually and were not conveying at
+      // all to anyone else.
+      b.setAttribute('aria-label', `Review ${i + 1} of ${cards.length}`);
+      if (i === 0) b.setAttribute('aria-current', 'true');
+      b.addEventListener('click', () => cards[i].scrollIntoView({ behavior: behavior(), inline: 'start', block: 'nearest' }));
       dots.appendChild(b);
     });
 
     const step = () => (cards[1] ? cards[1].offsetLeft - cards[0].offsetLeft : cards[0].offsetWidth + 20);
-    root.querySelector('[data-rev-prev]').addEventListener('click', () => track.scrollBy({ left: -step(), behavior: 'smooth' }));
-    root.querySelector('[data-rev-next]').addEventListener('click', () => track.scrollBy({ left: step(), behavior: 'smooth' }));
+    root.querySelector('[data-rev-prev]').addEventListener('click', () => track.scrollBy({ left: -step(), behavior: behavior() }));
+    root.querySelector('[data-rev-next]').addEventListener('click', () => track.scrollBy({ left: step(), behavior: behavior() }));
 
-    // Mark the dot for whichever card is furthest into view.
+    // Mark the dot for whichever card is furthest into view. `is-on` is the
+    // visual half; aria-current is the same fact for anyone who cannot see
+    // which dot is wider. Without it the carousel had no programmatic
+    // position at all (WCAG 4.1.2).
     const io = new IntersectionObserver((entries) => {
       entries.forEach((e) => {
         if (e.intersectionRatio > 0.6) {
           const i = cards.indexOf(e.target);
-          dots.querySelectorAll('.rev__dot').forEach((d, j) => d.classList.toggle('is-on', j === i));
+          dots.querySelectorAll('.rev__dot').forEach((d, j) => {
+            d.classList.toggle('is-on', j === i);
+            if (j === i) d.setAttribute('aria-current', 'true');
+            else d.removeAttribute('aria-current');
+          });
         }
       });
     }, { root: track, threshold: [0.6] });

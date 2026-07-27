@@ -1,5 +1,23 @@
 ---
-const { name } = Astro.props;
+/* `size` renders as width/height ATTRIBUTES, not CSS.
+
+   Presentation attributes sit below every author stylesheet in the cascade,
+   so `.btn svg`, `.card__icon svg`, `.cred__ico svg` and the rest continue to
+   win exactly as before and no sized icon moves. What changes is the icons
+   nothing sizes at all.
+
+   That was not a hypothetical set. Astro scopes a component's <style> to that
+   component's own elements, and the <svg> below belongs to Icon.astro, so it
+   never receives the caller's scope hash. Every icon rule written inside a
+   caller's <style> block — `.footer li svg`, `.trustbar__item svg`,
+   `li svg` in contact.astro — compiled to a selector that matches nothing.
+   Those icons had no intrinsic size and no CSS size, so they expanded to fill
+   their container: 347x347 in the footer, 360x360 in the contact list.
+
+   The contact list one is a conformance failure, not just a visual bug — a
+   360px-wide icon forces 382px of content into a 320px viewport, so the page
+   scrolls horizontally. WCAG 1.4.10 Reflow. */
+const { name, size = 16 } = Astro.props;
 const p = {
   bolt: 'M13 2 3 14h7l-1 8 10-12h-7l1-8z',
   clipboard: 'M9 2h6v3H9zM7 4H5v18h14V4h-2M9 11h6M9 15h4',
@@ -16,7 +34,7 @@ const p = {
   star: 'M12 2l3 6.5 7 .9-5 4.9 1.2 7-6.2-3.3L5.8 21 7 14.3l-5-4.9 7-.9L12 2z',
 }[name] || '';
 ---
-<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"
+<svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"
      stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
   <path d={p} />
 </svg>

@@ -25,9 +25,9 @@ const listed = areas.map((a) => ({ name: a.name, path: `/areas/${a.slug}/` }));
       <div class="grid grid--3">
         {areas.map((a, i) => (
           <a class="card reveal" style={`transition-delay:${(i % 3) * 70}ms`} href={href(`/areas/${a.slug}/`)}>
-            <h3>{a.name}</h3>
+            <h2>{a.name}</h2>
             <p>{a.travelNote || a.housingStock}</p>
-            <span class="card__link">Electrician in {a.name} →</span>
+            <span class="card__link">Electrician in {a.name} <span aria-hidden="true">→</span></span>
           </a>
         ))}
       </div>

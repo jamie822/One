@@ -14,13 +14,13 @@ const socials = Object.entries(client.social).filter(([, v]) => v);
       <div>
         <div style="margin-bottom:16px"><Logo height={44} /></div>
         <p class="muted" style="max-width:34ch">{client.tagline}</p>
-        <ul style="margin-top:14px">
-          <li>{hasPhone ? <a href={`tel:${client.phoneHref}`}><Icon name="phone" /> {client.phone}</a> : <Needed label="PHONE NEEDED" />}</li>
-          <li>{client.email ? <a href={`mailto:${client.email}`}><Icon name="mail" /> {client.email}</a> : <Needed label="EMAIL NEEDED" />}</li>
-          <li><span class="muted"><Icon name="clock" /> {client.hours}</span></li>
+        <ul role="list" style="margin-top:14px">
+          <li>{hasPhone ? <a href={`tel:${client.phoneHref}`}><Icon name="phone" size={15} /> {client.phone}</a> : <Needed label="PHONE NEEDED" />}</li>
+          <li>{client.email ? <a href={`mailto:${client.email}`}><Icon name="mail" size={15} /> {client.email}</a> : <Needed label="EMAIL NEEDED" />}</li>
+          <li><span class="muted"><Icon name="clock" size={15} /> {client.hours}</span></li>
           <li>
             <span class="muted">
-              <Icon name="pin" />
+              <Icon name="pin" size={15} />
               {client.showAddress
                 ? `${client.address.street}, ${client.address.locality} ${client.address.postcode}`
                 : `Serving ${client.address.locality} & ${client.address.region}`}
@@ -34,21 +34,21 @@ const socials = Object.entries(client.social).filter(([, v]) => v);
           headings puts both hubs one hop from every page in the site. */}
       <div>
         <h2 class="footer__h"><a href={href('/services/')}>Services</a></h2>
-        <ul>
+        <ul role="list">
           {services.map((s) => <li><a href={href(`/services/${s.slug}/`)}>{s.title}</a></li>)}
         </ul>
       </div>
 
       <div>
         <h2 class="footer__h"><a href={href('/areas/')}>Areas we cover</a></h2>
-        <ul>
+        <ul role="list">
           {areas.map((a) => <li><a href={href(`/areas/${a.slug}/`)}>{a.name}</a></li>)}
         </ul>
       </div>
 
       <div>
         <h2 class="footer__h">Company</h2>
-        <ul>
+        <ul role="list">
           <li><a href={href('/about/')}>About {client.owner.name}</a></li>
           <li><a href={href('/case-studies/')}>Our work</a></li>
           <li><a href={href('/reviews/')}>Reviews</a></li>
@@ -56,7 +56,7 @@ const socials = Object.entries(client.social).filter(([, v]) => v);
           <li><a href={href('/privacy/')}>Privacy</a></li>
         </ul>
         {socials.length > 0 && (
-          <ul style="margin-top:14px">
+          <ul role="list" style="margin-top:14px">
             {socials.map(([n, url]) => (
               <li><a href={url} rel="noopener" target="_blank">{n[0].toUpperCase() + n.slice(1)}</a></li>
             ))}

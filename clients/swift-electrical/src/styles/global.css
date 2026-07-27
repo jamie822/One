@@ -361,13 +361,41 @@ a:hover { text-decoration: underline; }
 .hero__actions { display: flex; flex-wrap: wrap; gap: 13px; margin-bottom: 30px; }
 .hero--inner .hero__inner { padding: clamp(48px, 7vw, 84px) 0; }
 
-/* Staggered entrance. Runs once, cheap, transform+opacity only. */
-.rise { animation: rise 0.6s cubic-bezier(0.22, 1, 0.36, 1) backwards; }
-.rise:nth-child(1) { animation-delay: 0.02s; }
-.rise:nth-child(2) { animation-delay: 0.10s; }
-.rise:nth-child(3) { animation-delay: 0.18s; }
-.rise:nth-child(4) { animation-delay: 0.26s; }
-.rise:nth-child(5) { animation-delay: 0.34s; }
+/* Staggered entrance. Runs once, cheap, transform+opacity only.
+   --------------------------------------------------------------------------
+   `:not(h1)` is the whole point of this block, so do not simplify it away.
+
+   motion.css opens by promising "the h1 (LCP) is never animated, delayed or
+   faded", and motion.css keeps that promise — it never selects .hero, .rise
+   or h1. This rule is older than the motion layer and was never held to it.
+   The homepage h1 ships as <h1 class="rise">, so it was matching here, and
+   `backwards` fill meant it sat at opacity 0 through the 0.10s delay and then
+   faded for 0.6s. An element at opacity 0 is not a paint, so Chrome could not
+   nominate the headline as the LCP candidate until the fade finished:
+
+     measured, 412x823, 4x CPU, 3 runs   FCP 540-940ms   LCP 1296-1648ms
+     FCP -> LCP gap                      708 / 712 / 756ms
+     delay 0.10s + duration 0.6s         = 700ms
+
+   The gap WAS the animation, to within measurement noise. Every other page on
+   the site reports LCP == FCP to the millisecond because their h1 has no
+   class on it. Excluding h1 here put the homepage back in that group.
+
+   `:not(h1)` rather than a later `h1.rise { animation: none }` override:
+   .rise:nth-child(n) is specificity (0,2,0) and h1.rise is only (0,1,1), so
+   an override would have lost the animation-delay and left a half-cancelled
+   rule that reads as working. This way the h1 never matches in the first
+   place, and any h1 given .rise in future is excluded automatically.
+
+   nth-child counts every sibling regardless of what the selector matches, so
+   the remaining items keep the delays they already had — the 0.10s slot is
+   simply unused and the stagger rhythm is unchanged. */
+.rise:not(h1) { animation: rise 0.6s cubic-bezier(0.22, 1, 0.36, 1) backwards; }
+.rise:not(h1):nth-child(1) { animation-delay: 0.02s; }
+.rise:not(h1):nth-child(2) { animation-delay: 0.10s; }
+.rise:not(h1):nth-child(3) { animation-delay: 0.18s; }
+.rise:not(h1):nth-child(4) { animation-delay: 0.26s; }
+.rise:not(h1):nth-child(5) { animation-delay: 0.34s; }
 @keyframes rise { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: none; } }
 
 /* Trust bar --------------------------------------------------------------- */

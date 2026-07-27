@@ -17,18 +17,26 @@ const links = [
 ];
 const isCurrent = (l) => (l === '/' ? path === '/' : path.startsWith(l));
 ---
-<div class="topbar">
+{/* A <div> here left the phone number and opening hours outside every
+    landmark on all 23 pages — axe "region", and a real orientation gap for
+    anyone navigating by landmark. <aside> is a complementary landmark and
+    renders identically to a div, so nothing moves. */}
+<aside class="topbar" aria-label="Contact and opening hours">
   <div class="container topbar__inner">
     <span>{hasPhone ? <a href={`tel:${client.phoneHref}`}>{client.phone}</a> : <Needed label="PHONE NUMBER NEEDED" />}</span>
     <span class="muted">{client.hours}</span>
   </div>
-</div>
+</aside>
 
 <header class="header">
   <div class="container header__inner">
     <a class="brandmark" href={href('/')}><Logo height={38} /></a>
-    <button class="nav-toggle" aria-label="Menu" aria-expanded="false"><span></span><span></span><span></span></button>
-    <nav class="nav">
+    {/* aria-controls completes the APG Disclosure pattern: aria-expanded says
+        a thing is open, aria-controls says which thing. */}
+    <button class="nav-toggle" type="button" aria-label="Menu" aria-expanded="false" aria-controls="site-nav"><span></span><span></span><span></span></button>
+    {/* Named, because the breadcrumb trail is also a <nav> and two unlabelled
+        navigation landmarks are indistinguishable in a landmark list. */}
+    <nav class="nav" id="site-nav" aria-label="Main">
       {links.map(([l, label]) => (
         <a href={href(l)} aria-current={isCurrent(l) ? 'page' : undefined}>{label}</a>
       ))}
@@ -38,6 +46,81 @@ const isCurrent = (l) => (l === '/' ? path === '/' : path.startsWith(l));
     </nav>
   </div>
 </header>
+
+<script>
+  /* ======================================================================
+     MOBILE DRAWER ACCESSIBILITY
+
+     Below 900px the drawer is closed with `max-height: 0; overflow: hidden`
+     (global.css) and `opacity: 0` on each link (motion.css). None of those
+     remove an element from the tab order, so with the drawer shut a keyboard
+     user tabbed through seven invisible controls — six nav links and the
+     header CTA — before reaching the page. WCAG 2.4.3 and 2.4.7.
+
+     `inert` is the fix rather than `display: none` or a visibility
+     transition, because it removes the subtree from the tab order AND from
+     the accessibility tree while changing nothing about how the element
+     paints. The open/close animation is a max-height transition plus a
+     staggered per-link fade; both survive completely untouched.
+
+     The state is read from the .is-open class through a MutationObserver
+     rather than from the click handler, so this stays correct no matter which
+     script does the toggling or in what order the two scripts load.
+     ====================================================================== */
+  const nav = document.getElementById('site-nav');
+  const toggle = document.querySelector('.nav-toggle');
+  const drawer = window.matchMedia('(max-width: 900px)');
+
+  if (nav && toggle) {
+    const sync = () => {
+      const shouldBeInert = drawer.matches && !nav.classList.contains('is-open');
+      if (shouldBeInert === nav.hasAttribute('inert')) return;
+      if (shouldBeInert) {
+        // Making an element inert while it holds focus drops focus onto the
+        // body, which strands the user at the top of the document. Hand it
+        // back to the control that closed the drawer first.
+        if (nav.contains(document.activeElement)) toggle.focus();
+        nav.setAttribute('inert', '');
+      } else {
+        nav.removeAttribute('inert');
+      }
+    };
+
+    new MutationObserver(sync).observe(nav, { attributes: true, attributeFilter: ['class'] });
+    drawer.addEventListener('change', sync);
+    sync();
+
+    // Escape closes the drawer and returns focus to the toggle — the other
+    // half of the Disclosure pattern, and the standard escape hatch a
+    // keyboard user will try first.
+    document.addEventListener('keydown', (e) => {
+      if (e.key !== 'Escape') return;
+      if (!drawer.matches || !nav.classList.contains('is-open')) return;
+      nav.classList.remove('is-open');
+      toggle.setAttribute('aria-expanded', 'false');
+      toggle.focus();
+    });
+
+    // Following a link inside the drawer on a same-page anchor would leave it
+    // open over the content it just scrolled to.
+    nav.addEventListener('click', (e) => {
+      if (!drawer.matches) return;
+      if (!(e.target instanceof Element) || !e.target.closest('a')) return;
+      nav.classList.remove('is-open');
+      toggle.setAttribute('aria-expanded', 'false');
+    });
+  }
+
+  /* The fixed mobile call bar is rendered by Layout.astro, which this
+     workstream does not own. It is the second block of content sitting
+     outside every landmark (23 more axe "region" nodes at ≤860px). Naming it
+     here is a stopgap; the attributes belong in the markup. */
+  const callbar = document.querySelector('.callbar');
+  if (callbar && !callbar.hasAttribute('role')) {
+    callbar.setAttribute('role', 'complementary');
+    callbar.setAttribute('aria-label', 'Quick contact');
+  }
+</script>
 
 <style>
   .nav .btn svg { width: 17px; height: 17px; }

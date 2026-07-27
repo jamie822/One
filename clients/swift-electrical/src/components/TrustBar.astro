@@ -8,7 +8,7 @@ const stars = hasRating ? '★'.repeat(Math.round(client.google.rating)) : '';
 <div class="trustbar">
   {hasRating && (
     <span class="trustbar__item">
-      <span class="stars">{stars}</span>
+      <span class="stars" aria-hidden="true">{stars}</span>
       <strong>{client.google.rating}</strong>
       from {client.google.reviewCount} Google reviews
     </span>
@@ -22,7 +22,7 @@ const stars = hasRating ? '★'.repeat(Math.round(client.google.rating)) : '';
 
   {client.accreditations.filter((a) => a.name).map((a) => (
     <span class="trustbar__item">
-      <Icon name="shield" style="width:16px;height:16px" />
+      <Icon name="shield" size={16} />
       {a.url ? <a href={a.url} rel="noopener" target="_blank">{a.name}</a> : a.name}
       {a.number && <span>#{a.number}</span>}
     </span>

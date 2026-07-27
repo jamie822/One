@@ -5,6 +5,10 @@ import Needed from '../components/Needed.astro';
 import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
 import '../styles/global.css';
+// Accessibility corrections layer. Must come after global.css (which imports
+// type.css and motion.css) so its overrides win on source order as well as on
+// specificity. See the header of a11y.css for what is in it and why.
+import '../styles/a11y.css';
 
 const {
   title,

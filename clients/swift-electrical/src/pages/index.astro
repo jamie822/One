@@ -41,7 +41,7 @@ const faqSchema = {
   <Hero>
     {hasRating && (
       <p class="rise" style="margin:0 0 16px;display:flex;align-items:center;gap:10px;flex-wrap:wrap">
-        <span class="stars" style="color:var(--accent)">{'★'.repeat(Math.round(client.google.rating))}</span>
+        <span class="stars" aria-hidden="true" style="color:var(--accent)">{'★'.repeat(Math.round(client.google.rating))}</span>
         <strong style="font-family:var(--font-display)">{client.google.rating}</strong>
         <span class="muted">from {client.google.reviewCount} Google reviews</span>
       </p>

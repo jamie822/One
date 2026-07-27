@@ -1,5 +1,6 @@
 ---
 import Layout from '../layouts/Layout.astro';
+import Needed from '../components/Needed.astro';
 import { client } from '../data/client.js';
 ---
 <Layout path="/privacy/" title="Privacy policy" description={`How ${client.name} handles your data.`}>
@@ -34,7 +35,13 @@ import { client } from '../data/client.js';
       <h2>Your rights</h2>
       <p>
         You can ask what we hold, ask us to correct it, or ask us to delete it.
-        Email <a href={`mailto:${client.email}`}>{client.email}</a>.
+        {/* client.email is empty, so this rendered <a href="mailto:"></a> — a
+            focusable link with no accessible name and no destination, live in
+            dist/privacy/index.html. Footer.astro and contact.astro both guard
+            it; this was the one instance that did not. */}
+        Email {client.email
+          ? <a href={`mailto:${client.email}`}>{client.email}</a>
+          : <Needed label="EMAIL NEEDED" />}.
       </p>
 
       <p class="muted" style="margin-top:34px;font-size:.88rem">

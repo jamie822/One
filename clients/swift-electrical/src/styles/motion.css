@@ -569,15 +569,26 @@ html .pill::before {
 /* --------------------------------------------------------------------------
    8. HEADER & NAV
    -------------------------------------------------------------------------- */
+/* backdrop-filter is deliberately NOT in this transition list, and
+   .is-scrolled deliberately does not re-declare it.
+
+   global.css:278 already sets `backdrop-filter: blur(12px)` on .header
+   unconditionally, and .is-scrolled used to set the identical blur(12px).
+   Same computed value on both sides, so the transition had nothing to
+   interpolate and the declaration had nothing to change — dead code that
+   still read like a scroll-driven blur, which is exactly the pattern a
+   previous pass removed from this file for costing 691ms of scroll blocking.
+   Leaving a lookalike here invites someone to "restore" it to a real value.
+
+   Verified no visual change: the header blur is constant in both states, as
+   it already was. Only border-color, background and box-shadow move. */
 html .header {
   transition:
     border-color var(--d-hover) ease,
     background var(--d-hover) ease,
-    backdrop-filter var(--d-hover) ease,
     box-shadow var(--d-hover) ease;
 }
 html .header.is-scrolled {
-  backdrop-filter: blur(12px);
   box-shadow: 0 12px 30px -22px rgba(0, 0, 0, 0.9);
 }
 /* A hairline of brand light draws across the header once you leave the top —

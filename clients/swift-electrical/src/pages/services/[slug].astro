@@ -80,7 +80,7 @@ const metaDesc = paired.length <= 158 ? paired : withPlace;
             <a class="card reveal" href={href(`/case-studies/${c.slug}/`)}>
               <h3>{c.title}</h3>
               <p>{c.problem}</p>
-              <span class="card__link">See the job →</span>
+              <span class="card__link">See the job <span aria-hidden="true">→</span></span>
             </a>
           ))}
         </div>
