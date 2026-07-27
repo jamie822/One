@@ -1,0 +1,66 @@
+name: Competitor audit
+
+# Fetches competitor electrician websites, screenshots them, extracts design and
+# SEO signals, and runs Lighthouse — then commits the results to research-output/.
+#
+# Why this exists: the Claude Code container's network policy blocks outbound
+# HTTPS, so live sites can't be inspected from there. GitHub's runners have
+# unrestricted internet, so the audit runs here and the findings get committed
+# back for analysis.
+#
+# Run it manually: Actions → Competitor audit → Run workflow.
+
+on:
+  workflow_dispatch:
+    inputs:
+      urls:
+        description: 'Comma-separated URLs (leave blank for the default competitor set)'
+        required: false
+        default: ''
+      lighthouse:
+        description: 'Run Lighthouse (slower, ~1 min per site)'
+        type: boolean
+        default: true
+
+permissions:
+  contents: write
+
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install tooling
+        run: |
+          npm init -y >/dev/null 2>&1
+          npm install --no-audit --no-fund playwright cheerio >/dev/null 2>&1
+          npx playwright install --with-deps chromium >/dev/null 2>&1
+          if [ "${{ inputs.lighthouse }}" = "true" ]; then
+            npm install --no-audit --no-fund lighthouse chrome-launcher >/dev/null 2>&1
+          fi
+          echo "installed"
+
+      - name: Run audit
+        env:
+          INPUT_URLS: ${{ inputs.urls }}
+          RUN_LH: ${{ inputs.lighthouse }}
+        run: node .github/scripts/audit.mjs
+
+      - name: Commit results
+        run: |
+          git config user.name  "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add research-output/
+          if git diff --cached --quiet; then
+            echo "No changes."
+          else
+            git commit -m "Competitor audit results ($(date -u +%Y-%m-%d))"
+            git push
+          fi
