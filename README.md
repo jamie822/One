@@ -2,7 +2,7 @@
 
 Everything needed to sell and build websites for UK electricians: the market
 research, the pricing, the outreach playbook, the build prompt, the code
-template, and 36 vendored skills.
+template, and 41 vendored skills.
 
 ---
 
@@ -21,7 +21,7 @@ template, and 36 vendored skills.
 
 ---
 
-## The four findings that drive all of this
+## The six findings that drive all of this
 
 **1. Nobody is competing on design.** Research across 21 competitor electricians
 in London, Manchester, Leeds, Birmingham and Glasgow found no design-led
@@ -66,7 +66,7 @@ AUDIENCE.md          The end customer: decision process, fears, trust signals.
 
 client-template/     Brand-neutral Astro starter. One config file drives it.
 research-output/     Live competitor audit — screenshots, Lighthouse, signals.
-.claude/skills/      36 vendored skills: design, copy, graphics, SEO, audit.
+.claude/skills/      41 vendored skills: design, copy, graphics, SEO, audit.
 .github/             Pages deploy + the competitor-audit workflow.
 
 src/ brand/ brand-assets/   The "Off The Tools" agency brand site (separate
