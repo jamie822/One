@@ -19,3 +19,7 @@ node_modules/
 # client builds
 clients/*/node_modules/
 clients/*/dist/
+
+# Agent scratch measurement scripts (never part of the deliverable)
+_*.mjs
+verify-tmp.mjs
