@@ -150,23 +150,31 @@ See `RESEARCH.md` for the full study.
 
 # PART 3 — SKILLS TO USE
 
-Vendored in `.claude/skills/`. Use them deliberately:
+36 skills are vendored in `.claude/skills/` (see its README for the full map).
+Use them deliberately, in roughly this order.
 
 | Stage | Skill |
 |---|---|
-| Choosing the visual direction | `aesthetic-anchors` — pick a distinctive anchor, never default trade-blue |
-| Layout and UI polish | `frontend-design`, `design-engineering`, `web-design-guidelines` |
-| Logo / brand assets | `graphic-design` |
+| **Audit the prospect** (pre-sale) | `prospect-audit` — turns cold outreach into three specific findings |
+| **Set the design direction** | **`impeccable`** — load before touching any layout. Then `design-taste` / `taste` for a second opinion, `aesthetic-anchors` to pick a colour direction that isn't trade-blue |
+| Brand and assets | `brandkit`, `graphic-design`, `imagegen-web` (per-section design refs), `image-to-code` |
 | Writing page copy | `copywriting`, `ogilvy` |
-| **Editing every page before publish** | **`stop-slop`** — mandatory pass |
-| Tightening existing copy | `copy-editing` |
+| Tightening the client's own words | `copy-editing` |
 | Page flow, forms, CTAs | `cro` |
-| Motion | `css-animations` first, `gsap` only if CSS can't do it |
+| **De-slop every page** | **`stop-slop` → `avoid-ai-writing` → `humanizer` → `structural-humanizer`** — all four, see §7 |
+| Layout and UI polish | `frontend-design`, `design-engineering`, `web-design-guidelines`, `apple-design` |
+| Motion | `css-animations` first, `gsap` only if CSS can't do it. `find-animation-opportunities`, `improve-animations`, `review-animations` to raise the bar |
 | Location/industry page clusters | `programmatic-seo` |
 | GBP, NAP, citations | `seo-local` |
 | Titles, meta, headings, links | `seo-page` |
 | JSON-LD | `seo-schema` |
 | Core Web Vitals, indexing | `seo-technical` |
+| **Verify before handover** | `performance-audit`, `lighthouse-100`, `responsive-check`, `a11y-critic`, `a11y-test` |
+
+Browser-driven skills (`prospect-audit`, `responsive-check`, `a11y-test`,
+`lighthouse-100`) need network access to reach a live site. They work against a
+local dev server anywhere; auditing a prospect's live site needs a session with
+unrestricted outbound network.
 
 ---
 
@@ -342,8 +350,26 @@ Most clients will supply phone photos or nothing.
 
 # PART 7 — COPY
 
-Read `.claude/skills/stop-slop/SKILL.md` before writing a word, and run it over
-every page before publishing.
+## The de-slop pass — all four, in order
+
+Run every page through all four before it ships. One pass does not get there;
+each catches what the others miss.
+
+1. **`stop-slop`** — filler, adverbs, passive voice, rule-of-three lists, em
+   dashes, pull-quote sentences.
+2. **`avoid-ai-writing`** — set the voice profile to match how the client
+   actually speaks (usually `blunt` or `casual` for a tradesperson), then run
+   iterate-to-convergence.
+3. **`humanizer`** — word and phrase level: inflated symbolism, promotional
+   language, vague attribution, negative parallelisms.
+4. **`structural-humanizer`** — the one people skip, and the one that matters
+   most. Removes moral-of-the-story closers, tidy single-track arcs and
+   unbroken linear structure. The StoryScope study found narrative structure
+   alone identifies AI text at 93.2% F1, and that professional stylistic
+   rewriting moved detection by only 1.6 points — meaning rewording alone does
+   not work.
+
+Then read it aloud. Anything the client would never say out loud gets cut.
 
 ## Banned
 
@@ -461,7 +487,7 @@ coverage weekly for the first month.
 # PART 10 — DEFINITION OF DONE
 
 **Content**
-- [ ] Every page written, `stop-slop` passed, read aloud
+- [ ] Every page written, all four de-slop passes run, read aloud
 - [ ] No two pages share a sentence
 - [ ] Every claim has a name, number, date or place
 - [ ] Owner photographed and named on home and about
