@@ -96,6 +96,12 @@ h1, h2, h3, h4 {
   letter-spacing: -0.025em;
   text-wrap: balance;
   margin: 0;
+
+  /* Clash Display draws its word space at 0.14em against Satoshi's 0.27em, so the
+     -0.025em display tracking is enough to collide adjacent words: "Stacked Out"
+     renders as "StackedOut". Tracking is negative by design here, so the space has
+     to be given back explicitly rather than by loosening the letter-spacing. */
+  word-spacing: 0.1em;
 }
 
 p { margin: 0; max-width: var(--measure); }

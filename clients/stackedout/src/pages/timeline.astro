@@ -1,0 +1,137 @@
+---
+import Shell from '../layouts/Shell.astro';
+import TimelineChapter from '../components/hero/TimelineChapter.astro';
+import TimelineGap from '../components/hero/TimelineGap.astro';
+import { studio } from '../data/studio.js';
+import '../styles/hero-timeline.css';
+
+const { yearsOnTools, yearsSelfEmployed } = studio.founder;
+const { ownSite } = studio.proof;
+const mailto = `mailto:${studio.contact.email}?subject=Website%20enquiry`;
+---
+<Shell
+  title="25 years, scrubbed. Stacked Out hero candidate 3"
+  variant="timeline"
+  blurb="The founder story as the hero. Scroll scrubbed, on the tools to the studio."
+>
+  <!--
+    THESIS: The founder is the product, so he is the hero rather than an About
+    paragraph. Refuses the agency default of leading with services.
+    OWN-WORLD: Charcoal ground, one hairline spine down the left gutter, five
+    numerals in Clash Display at 11rem that fill with yellow as you scroll.
+    No cards, no photography, no icons. Hairlines and numbers only.
+    STORY: A self employed spark reads five beats, recognises his own week by
+    beat two, and emails by the close.
+    FIRST VIEWPORT: Tiny caps audience label, h1 across two lines, one muted
+    line, one yellow button, spine starting at the left edge. Nothing else.
+    FORM: Scroll-Triggered Storytelling. Brief pinned, so no concept roll was
+    run and no seed was dealt. Staging: chaptered spine, sticky numerals.
+  -->
+
+  <div class="tl shell">
+    <!-- ------------------------------------------------------------ hero -->
+    <section class="tl-hero">
+      <div class="tl-hero__inner">
+        <p class="label tl-hero__label">Websites for electricians and solar installers</p>
+
+        <!-- LCP element. Never animated, never gradient clipped. -->
+        <h1 class="tl-hero__h">
+          I did {yearsOnTools}&nbsp;years on the tools. Now I build the websites.
+        </h1>
+
+        <div class="tl-hero__foot">
+          <p class="tl-hero__sub">
+            For electricians and solar installers. Nobody else. So you never have
+            to explain the job to your web bloke.
+          </p>
+          <a class="btn btn--action tl-hero__cta" href={mailto}>Email me</a>
+        </div>
+      </div>
+    </section>
+
+    <!-- ----------------------------------------------------------- story -->
+    <div class="tl-story">
+      <TimelineChapter n={1} figure={String(yearsOnTools)} unit="years" heading="On the tools.">
+        <p class="tl-ch__p">
+          I know what your week looks like because I have had it.
+        </p>
+        <TimelineGap
+          variant="portrait"
+          need="Your name and a photo"
+          ask="A phone photo on a job beats anything I could buy. Send one and it goes here."
+        />
+      </TimelineChapter>
+
+      <TimelineChapter n={2} figure={String(yearsSelfEmployed)} unit="of those years" heading="On my own.">
+        <p class="tl-ch__p">
+          Thirteen of those years I worked for myself. Same job, plus the quoting
+          and the invoicing and finding the next one. Finding the next one never stops.
+        </p>
+      </TimelineChapter>
+
+      <TimelineChapter
+        n={3}
+        openNode
+        said="They just did not understand our industry."
+        heading="Then the marketing companies."
+      >
+        <p class="tl-ch__p">
+          It did my head in. That is why this exists. If the person building your
+          site has never been on a job, you end up teaching them the trade at your
+          own expense.
+        </p>
+      </TimelineChapter>
+
+      <TimelineChapter n={4} figure="1" unit="site" heading="So I built my own.">
+        <p class="tl-ch__p">
+          <a href={ownSite.url} target="_blank" rel="noopener">{ownSite.url.replace('https://', '')}</a>
+          is my electrical business in West Yorkshire. The site is live. Go and
+          look at it, then come back. It is the only one I am putting in front of
+          you until there are more.
+        </p>
+        <TimelineGap
+          need="Where that site ranks"
+          ask="Something checkable, like the map pack position for your main town. Without one I will not write a ranking claim."
+        />
+      </TimelineChapter>
+
+      <TimelineChapter
+        n={5}
+        payoff
+        figure={String(yearsOnTools)}
+        unit="years, yours now"
+        heading="Now I build them for you."
+      >
+        <p class="tl-ch__p">
+          Same twenty five years. The job changed. I build websites for
+          electricians and solar installers now, and I will not pretend to know
+          anybody else’s trade.
+        </p>
+      </TimelineChapter>
+    </div>
+
+    <!-- ----------------------------------------------------------- close -->
+    <section class="tl-close">
+      <h2 class="tl-close__h">Tell me what you do and where you work.</h2>
+      <p class="tl-close__p">
+        I will come back with what I would build and what it would cost.
+      </p>
+      <a class="btn btn--action tl-close__cta" href={mailto}>Email me</a>
+
+      <div class="tl-close__gaps">
+        <TimelineGap
+          need="A price"
+          ask="A real number here beats every agency that hides one. Give me a starting figure and it goes on the page."
+        />
+        <TimelineGap
+          need="A turnaround"
+          ask="If it takes three weeks, we say three weeks."
+        />
+        <TimelineGap
+          need="A phone number"
+          ask="Half of them will ring rather than type. Right now the only way through is email."
+        />
+      </div>
+    </section>
+  </div>
+</Shell>

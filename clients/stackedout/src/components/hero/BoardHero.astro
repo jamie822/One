@@ -1,0 +1,56 @@
+---
+import { studio } from '../../data/studio.js';
+import BoardUnit from './BoardUnit.astro';
+
+const { yearsOnTools } = studio.founder;
+const { email } = studio.contact;
+const site = studio.proof.ownSite;
+const host = site.url.replace('https://', '');
+---
+<!--
+DIRECTION CONTRACT / candidate 02
+
+THESIS: The board sells, not the copy. This page refuses the studio hero the
+category always ships, a laptop mockup of a website on a dark gradient, and puts
+the visitor's own working object on the screen instead, drawn correctly.
+
+OWN-WORLD: Charcoal ground, one raised metal enclosure. Component language is DIN
+rail hardware: butted modules with no gaps, a busbar, cover screws, flying neutral
+tails, a schedule card. Clash Display for numbers and ratings, Satoshi for
+everything else. The signature yellow into cyan gradient appears exactly once, as
+the energised busbar, and nowhere else on the page.
+
+STORY: A spark recognises the board in half a second, sees details only a trade
+person would know to draw, and concludes this studio understands the job. Then he
+mails enquiries@wyelectrical.co.uk.
+
+FIRST VIEWPORT: Left column, roughly 38%, holds the h1 at clamp 34 to 56px, a 20
+word lead, and two buttons, the yellow one first. Right column holds the board at
+full column width, vertically centred, with a live status line beneath it.
+
+FORM: Brief pinned, so no concept roll was run. Staging is the interactive
+demonstration: the sequence plays once, then the board stays switchable.
+-->
+<section class="bhero shell">
+  <div class="bhero__grid">
+
+    <div class="bhero__say">
+      <h1 class="bhero__h">{yearsOnTools} years on the tools. Now we build websites.</h1>
+
+      <p class="bhero__lead">
+        Websites for electricians and solar installers. Built by a spark, so
+        you'll never have to explain what an EICR is.
+      </p>
+
+      <div class="bhero__do">
+        <a class="btn btn--action" href={`mailto:${email}`}>Get in touch</a>
+        <a class="btn btn--ghost" href={site.url} rel="noopener">See {host}</a>
+      </div>
+    </div>
+
+    <div class="bhero__board">
+      <BoardUnit />
+    </div>
+
+  </div>
+</section>

@@ -1,0 +1,509 @@
+/* ===========================================================================
+   Hero candidate 3 — "25 years, scrubbed."
+   Owns: /timeline only. Uses brand.css tokens exclusively. No eighth colour.
+
+   THE MECHANIC
+   Zero JavaScript. The whole narrative is driven by CSS scroll-driven
+   animations, so progress is a pure function of scroll offset. Nothing is
+   pinned and nothing listens to the scrollbar, which means a fast flick to
+   the bottom cannot strand anyone mid-story: it just lands on the end state.
+
+   Two registered custom properties are animated on each (non-sticky) chapter
+   and inherit down to its (sticky) children. That is what lets a sticky
+   element be scrubbed at all, since a sticky box freezes its own view()
+   timeline.
+
+     --tl-fill  100% = empty, 0% = full. Drives the numeral, the rail
+                segment and the rail node. Initial value 0%, so with no
+                animation running the page renders FULLY FILLED. The static
+                page is the finished page; scroll only performs it.
+     --tl-hold  1 = present, 0 = handed off. Cross-fades one chapter's
+                numeral into the next.
+
+   Every scroll-driven rule sits inside
+   @media (prefers-reduced-motion: no-preference) { @supports (...) }
+   so reduced motion and unsupporting browsers get the complete static
+   sequence rather than a blank page.
+   =========================================================================== */
+
+@property --tl-fill {
+  syntax: '<percentage>';
+  inherits: true;
+  initial-value: 0%;
+}
+
+@property --tl-hold {
+  syntax: '<number>';
+  inherits: true;
+  initial-value: 1;
+}
+
+.tl {
+  /* The shell's 24px gutter covers the notch in portrait; this guards the
+     landscape case, where the cutout eats into the inline edge. */
+  padding-inline: max(0px, calc(env(safe-area-inset-left) - 24px))
+                  max(0px, calc(env(safe-area-inset-right) - 24px));
+  --tl-rail: 22px;
+  --tl-ease: cubic-bezier(0.23, 1, 0.32, 1);
+  --tl-num: clamp(5.5rem, 29vw, 12.5rem);
+  /* One offset governs the chapter's top padding, the sticky rest position of
+     the numeral and the rail node, so all three stay locked at every width. */
+  --tl-pad: clamp(40px, 10vw, 72px);
+}
+
+/* Long words like the domain must never push the page sideways. */
+.tl p,
+.tl h1,
+.tl h2,
+.tl h3 {
+  overflow-wrap: break-word;
+}
+
+.tl p {
+  text-wrap: pretty;
+}
+
+/* Trades read this on a phone, in a van, with cold hands. Kill the 300ms
+   double tap delay and pick the tap flash rather than inheriting the OS one. */
+.tl a,
+.tl button {
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: color-mix(in srgb, var(--action) 22%, transparent);
+}
+
+/* ---------------------------------------------------------------- hero ---
+   The h1 is the LCP element. It is never animated, never gradient clipped
+   and never transformed. Only the three elements around it move, once, for
+   200ms, which is the motion budget the brand guide sets for everything the
+   founder did not override. */
+
+.tl-hero {
+  padding-block: clamp(48px, 11vw, 104px) clamp(56px, 12vw, 120px);
+}
+
+.tl-hero__inner {
+  display: grid;
+  gap: var(--s-3);
+  padding-left: calc(var(--tl-rail) + 8px);
+  position: relative;
+}
+
+/* The spine starts here and runs the length of the story. It is structure,
+   not decoration: it is the same line the chapter nodes sit on. */
+.tl-hero__inner::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 6px;
+  bottom: calc(-1 * clamp(56px, 12vw, 120px));
+  width: 1px;
+  background: linear-gradient(to bottom, transparent, var(--edge) 22%, var(--edge));
+}
+
+.tl-hero__h {
+  font-size: clamp(2rem, 8.4vw, 4.25rem);
+  max-width: 24ch;
+  margin-block: 6px 0;
+}
+
+.tl-hero__foot {
+  display: grid;
+  gap: var(--s-3);
+  margin-top: var(--s-2);
+}
+
+.tl-hero__sub {
+  color: var(--ink-muted);
+  font-size: var(--t-lead);
+  max-width: 44ch;
+}
+
+.tl-hero__cta {
+  justify-self: start;
+}
+
+@media (min-width: 860px) {
+  .tl-hero__foot {
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: end;
+    gap: var(--s-4);
+    margin-top: var(--s-4);
+  }
+  .tl-hero__cta {
+    justify-self: end;
+  }
+}
+
+/* ------------------------------------------------------------- chapters ---
+   Mobile: one centred block per chapter, nothing sticky. Scroll-scrubbed
+   narratives fall apart on phones precisely because of pinning, so there is
+   none here. The numeral simply fills as its chapter crosses the screen.
+
+   Desktop: the numeral becomes sticky in its own column while the prose
+   scrolls past it in the next column. Two columns means the two never
+   overlap, which is the only reason sticky earns its place. */
+
+.tl-story {
+  display: grid;
+}
+
+.tl-ch {
+  display: grid;
+  grid-template-columns: var(--tl-rail) minmax(0, 1fr);
+  grid-template-areas:
+    'rail fig'
+    'rail body';
+  align-content: start;
+  min-height: 62svh;
+  padding-block: var(--tl-pad) clamp(48px, 9vw, 88px);
+  position: relative;
+}
+
+/* The rail segment. Taken out of grid flow so it spans the chapter's whole
+   box, padding included, and the spine stays unbroken between chapters. Each
+   chapter owns its own piece of the line, which is why the line fills chapter
+   by chapter with no global timeline to coordinate. */
+.tl-ch__rail {
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 1px;
+  background: var(--edge);
+}
+
+.tl-ch__railfill {
+  position: absolute;
+  inset: 0;
+  background: var(--action);
+  clip-path: inset(0 0 var(--tl-fill) 0);
+}
+
+.tl-ch:last-child .tl-ch__rail::after {
+  content: '';
+  position: absolute;
+  left: -3px;
+  bottom: 0;
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  border: 1px solid var(--edge);
+}
+
+/* Five nodes, one per chapter. Chapter three's is left open on purpose: it
+   is the beat with no number, and an unfilled slot is already the brand's
+   own idea. */
+.tl-ch__node {
+  position: absolute;
+  left: 50%;
+  top: calc(var(--tl-pad) + 0.34 * var(--tl-num));
+  translate: -50% -50%;
+  width: 11px;
+  height: 11px;
+  border-radius: 50%;
+  border: 1px solid var(--ink-muted);
+  background: var(--ground);
+  display: grid;
+  place-items: center;
+}
+
+.tl-ch__node span {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: var(--action);
+  clip-path: inset(var(--tl-fill) 0 0 0);
+}
+
+/* ------------------------------------------------------------- the number */
+
+.tl-fig {
+  grid-area: fig;
+  opacity: var(--tl-hold);
+  display: grid;
+  justify-items: start;
+  gap: 2px;
+  margin-bottom: var(--s-3);
+}
+
+/* The numeral is drawn twice, as two pseudo elements over a hidden text node.
+   The text node exists only to give the box its metrics; hiding it keeps a
+   deliberately sub contrast ghost out of every contrast audit, which is
+   correct here because the figure is exposed to assistive tech as a labelled
+   image, not as text. */
+.tl-fig__num {
+  position: relative;
+  display: block;
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  font-size: var(--tl-num);
+  line-height: 0.82;
+  letter-spacing: -0.04em;
+  visibility: hidden;
+}
+
+.tl-fig__num::before,
+.tl-fig__num::after {
+  content: attr(data-n);
+  position: absolute;
+  inset: 0;
+  visibility: visible;
+}
+
+/* The ghost: the number that has not happened yet. */
+.tl-fig__num::before {
+  color: color-mix(in srgb, var(--ink) 10%, transparent);
+}
+
+/* The fill. Current rising up through the digits as you scroll. */
+.tl-fig__num::after {
+  color: var(--action);
+  clip-path: inset(var(--tl-fill) 0 0 0);
+}
+
+/* The one signature gradient on this page. It lands on the last number,
+   where the story turns from his twenty five years into yours. */
+.tl-ch--payoff .tl-fig__num::after {
+  background: var(--hero-gradient);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+.tl-fig__unit {
+  color: var(--ink-muted);
+}
+
+/* Chapter three carries his own words where the number would be. */
+.tl-said {
+  grid-area: fig;
+  opacity: var(--tl-hold);
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: clamp(1.6rem, 6.6vw, 2.5rem);
+  line-height: 1.08;
+  letter-spacing: -0.03em;
+  max-width: 21ch;
+  margin: 0 0 var(--s-3);
+  text-wrap: balance;
+}
+
+/* --------------------------------------------------------------- prose --- */
+
+.tl-ch__body {
+  grid-area: body;
+  display: grid;
+  gap: var(--s-2);
+  align-content: start;
+}
+
+.tl-ch__h {
+  font-size: var(--t-h4);
+  color: var(--ink);
+}
+
+.tl-ch__p {
+  color: var(--ink-muted);
+  font-size: var(--t-lead);
+  max-width: 46ch;
+}
+
+.tl-ch__p strong {
+  color: var(--ink);
+  font-weight: 500;
+}
+
+.tl-ch__p a {
+  color: var(--incoming);
+}
+
+@media (min-width: 860px) {
+  .tl-ch {
+    --tl-pad: clamp(76px, 14vh, 124px);
+    grid-template-columns: var(--tl-rail) minmax(0, 30ch) minmax(0, 1fr);
+    grid-template-areas: 'rail fig body';
+    column-gap: clamp(24px, 4vw, 64px);
+    /* Enough overrun for the numeral to hold and hand off to the next one,
+       not so much that the prose scrolls away and leaves the reader staring
+       at a lone digit. Tuned against the render, not guessed. */
+    min-height: 86svh;
+  }
+
+  .tl-fig,
+  .tl-said {
+    position: sticky;
+    top: var(--tl-pad);
+    align-self: start;
+    margin-bottom: 0;
+  }
+
+  .tl-ch__body {
+    align-content: start;
+    padding-top: clamp(8px, 2vh, 24px);
+    gap: var(--s-3);
+  }
+
+  .tl-ch__h {
+    font-size: var(--t-h3);
+  }
+}
+
+/* ------------------------------------------------------- what is missing ---
+   Nothing on this page is invented. Where a fact has not been supplied it
+   renders as one of these, in cyan, because cyan is the brand's colour for
+   things still arriving. */
+
+.tl-gap {
+  display: grid;
+  gap: 4px;
+  padding: 14px 16px;
+  border: 1px dashed color-mix(in srgb, var(--incoming) 45%, transparent);
+  border-radius: var(--r-chip);
+  background: color-mix(in srgb, var(--incoming) 5%, transparent);
+  max-width: 46ch;
+}
+
+.tl-gap__label {
+  color: var(--incoming);
+}
+
+.tl-gap__ask {
+  font-size: var(--t-body);
+  color: var(--ink-muted);
+  margin: 0;
+}
+
+.tl-gap--portrait {
+  min-height: 132px;
+  align-content: center;
+  max-width: 30ch;
+}
+
+/* ---------------------------------------------------------------- close --- */
+
+.tl-close {
+  padding-block: clamp(64px, 13vw, 144px) clamp(56px, 11vw, 120px);
+  padding-left: calc(var(--tl-rail) + 8px);
+  position: relative;
+  display: grid;
+  gap: var(--s-3);
+}
+
+.tl-close::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0;
+  height: clamp(64px, 13vw, 144px);
+  width: 1px;
+  background: linear-gradient(to bottom, var(--edge), transparent);
+}
+
+.tl-close__h {
+  font-size: clamp(1.75rem, 6vw, 3rem);
+  max-width: 20ch;
+}
+
+.tl-close__p {
+  color: var(--ink-muted);
+  font-size: var(--t-lead);
+  max-width: 46ch;
+}
+
+.tl-close__cta {
+  justify-self: start;
+  margin-top: var(--s-2);
+}
+
+.tl-close__gaps {
+  display: grid;
+  gap: 12px;
+  margin-top: var(--s-4);
+  align-content: start;
+}
+
+@media (min-width: 860px) {
+  .tl-close {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 24rem);
+    column-gap: clamp(32px, 6vw, 96px);
+    align-items: start;
+  }
+  .tl-close__h,
+  .tl-close__p,
+  .tl-close__cta {
+    grid-column: 1;
+  }
+  .tl-close__gaps {
+    grid-column: 2;
+    grid-row: 1 / span 4;
+    margin-top: 6px;
+  }
+}
+
+/* ===========================================================================
+   MOTION. Everything above renders complete and correct with none of this.
+   =========================================================================== */
+
+@media (prefers-reduced-motion: no-preference) {
+  /* One-time entrance around the h1. The h1 itself never moves: animating
+     the LCP element cost 666ms on the last build. 200ms is the brand guide's
+     ceiling for motion the founder did not override. */
+  .tl-hero__label,
+  .tl-hero__sub,
+  .tl-hero__cta {
+    animation: tl-in 200ms var(--tl-ease) both;
+  }
+  .tl-hero__sub {
+    animation-delay: 70ms;
+  }
+  .tl-hero__cta {
+    animation-delay: 140ms;
+  }
+
+  @supports (animation-timeline: view()) {
+    /* The whole scrub. Two animations per chapter, both keyed to the
+       chapter's own position in the scrollport. The chapter box is not
+       sticky, so its timeline never freezes; its sticky children inherit
+       the animated values. */
+    .tl-ch {
+      animation:
+        tl-charge linear both,
+        tl-handoff linear both;
+      animation-timeline: view(), view();
+      /* The handoff is deliberately late. Fade the numeral any earlier and a
+         half transparent digit sits mid screen next to the following chapter,
+         which reads as a rendering fault rather than a handover. */
+      animation-range: cover 14% cover 54%, cover 87% cover 99%;
+    }
+  }
+}
+
+@keyframes tl-in {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes tl-charge {
+  from {
+    --tl-fill: 100%;
+  }
+  to {
+    --tl-fill: 0%;
+  }
+}
+
+@keyframes tl-handoff {
+  from {
+    --tl-hold: 1;
+  }
+  to {
+    --tl-hold: 0;
+  }
+}

@@ -1,0 +1,536 @@
+/* ===========================================================================
+   Hero candidate 01 — "The diary fills"
+   ---------------------------------------------------------------------------
+   Component layer only. Every value below resolves to a primitive in
+   brand.css; there is no raw hex here except --ring, which is lifted verbatim
+   from the production mark in brand guide section 2 (and is already on the
+   page via Mark.astro in the topbar). No eighth colour is introduced.
+
+   The signature gradient appears ONCE: as the fill of the five booked diary
+   tiles, which is the mark's own native treatment. Nowhere else on the page.
+
+   Motion is CSS only. GSAP is not installed in this workspace and, more to the
+   point, is not needed: the load sequence is keyframes and the scroll work is
+   native scroll driven animation, which runs off the main thread and degrades
+   to the finished state where it is unsupported.
+   =========================================================================== */
+
+:root {
+  color-scheme: dark;
+
+  /* Binding ring metal. Verbatim from the guide's production SVG. */
+  --ring: #c9ced6;
+
+  /* Strong curves. The CSS built ins are too weak to read as intentional. */
+  --ease-out: cubic-bezier(0.23, 1, 0.32, 1);
+  --ease-expo: cubic-bezier(0.16, 1, 0.3, 1);
+
+}
+
+/* ---------------------------------------------------------------- hero ---- */
+
+.hero {
+  padding-block: clamp(24px, 5vw, 64px) var(--s-5);
+  overflow-x: clip;
+}
+
+/* Mobile rhythm is set by one thing: how much of the diary clears the fold at
+   390 x 844 once the shared topbar has taken its ~172px. */
+.hero__grid {
+  display: grid;
+  gap: 28px;
+  align-items: center;
+}
+
+.hero__eyebrow { margin: 0 0 var(--s-2); }
+
+/* Clash Display ships a 0.14em space against Satoshi's 0.27em, so negative
+   tracking crushes word gaps to 0.105em and the words touch. Measured, not
+   guessed: -0.02em tracking plus 0.1em word-spacing lands the space back at
+   0.22em, which is where a display face should sit. Applied to every Clash
+   heading on this page. */
+.hero__h1,
+.band__h {
+  letter-spacing: -0.02em;
+  word-spacing: 0.1em;
+}
+
+/* Display type wants negative tracking as it grows, and tight leading.
+   Capped at 4rem: past that a headline stops being read and starts being
+   looked at. */
+.hero__h1 {
+  font-size: clamp(2.25rem, 7.2vw, 4rem);
+  line-height: 1.0;
+  margin: 0;
+  max-width: 14ch;
+}
+
+.hero__lead {
+  margin: var(--s-3) 0 0;
+  font-size: var(--t-lead);
+  line-height: 1.55;
+  color: var(--ink-muted);
+  max-width: 34ch;
+  text-wrap: pretty;
+}
+
+.hero__actions {
+  margin-top: var(--s-3);
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--s-3) var(--s-4);
+}
+
+.hero__cta {
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* Not a second CTA. A different intent: go and check the one piece of proof. */
+.hero__proof {
+  display: inline-grid;
+  gap: 1px;
+  font-size: var(--t-body);
+  line-height: 1.3;
+  color: var(--ink);
+  text-decoration: none;
+  min-height: 44px;
+  align-content: center;
+  touch-action: manipulation;
+}
+.hero__proof-url {
+  color: var(--incoming);
+  font-size: var(--t-label);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  text-decoration-thickness: 1px;
+}
+.hero__proof:hover .hero__proof-url { text-decoration-thickness: 2px; }
+
+/* The figure is the query container, so the board can size off a real length
+   rather than a percentage. A percentage inside --u resolves against height in
+   the vertical axis and collapses the stage; cqw is a length and cannot. */
+.hero__figure {
+  margin: 0;
+  container-type: inline-size;
+  display: grid;
+  justify-items: start;
+  gap: 0;
+
+  /* One unit of the mark's 72 x 82 viewBox. Everything scales off it.
+     Declared here, not on .diary, so the caption can use it too. */
+  --board: min(100cqw, 470px);
+  --u: calc(var(--board) / 72);
+}
+
+/* The mark's viewBox carries 6 units of clear space below the page (the
+   guide's clear-space rule). At hero scale that reads as the caption having
+   come loose, so it is pulled back into the object's own margin. */
+.hero__caption {
+  margin-top: calc(-3.4 * var(--u));
+  font-size: var(--t-body);
+  color: var(--ink-muted);
+  max-width: 30ch;
+}
+
+@media (min-width: 1000px) {
+  .hero { padding-block: var(--s-6); }
+  .hero__grid {
+    grid-template-columns: minmax(0, 1fr) minmax(300px, 430px);
+    gap: 48px;
+  }
+}
+
+@media (min-width: 1240px) {
+  .hero__grid { grid-template-columns: minmax(0, 1fr) 470px; gap: 88px; }
+}
+
+/* --------------------------------------------------------------- diary ---- */
+
+.diary { width: var(--board); max-width: 100%; }
+
+/* The stage is the mark's viewBox, one to one. */
+.diary__stage {
+  position: relative;
+  width: calc(72 * var(--u));
+  height: calc(82 * var(--u));
+}
+
+/* Rings: cx 26 / 46, cy 9, r 3.6, stroke 4. Positions and radii are the mark's
+   exactly. What changes at hero scale is material: a flat grey annulus reads as
+   a washer at 470px, so the wire gets a lit top and a shaded underside, both
+   mixed from --ring rather than from new hexes. The annulus is a masked disc,
+   not a border, because a border cannot take a gradient. */
+.diary__ring {
+  position: absolute;
+  top: calc(9 * var(--u));
+  width: calc(11.2 * var(--u));           /* r 3.6 + stroke 4, per the mark */
+  height: calc(11.2 * var(--u));
+  margin: calc(-5.6 * var(--u)) 0 0 calc(-5.6 * var(--u));
+  border-radius: 50%;
+  background: linear-gradient(
+    168deg,
+    color-mix(in srgb, var(--ring) 60%, #fff) 0%,
+    var(--ring) 32%,
+    color-mix(in srgb, var(--ring) 66%, var(--ground)) 68%,
+    color-mix(in srgb, var(--ring) 50%, var(--ground)) 100%
+  );
+  /* Hole punched to r 3.6 of the 5.6 outer radius = 64%. */
+  -webkit-mask: radial-gradient(closest-side, #0000 0 63%, #000 64.5% 100%);
+  mask: radial-gradient(closest-side, #0000 0 63%, #000 64.5% 100%);
+}
+.diary__ring--a { left: calc(26 * var(--u)); }
+.diary__ring--b { left: calc(46 * var(--u)); }
+
+/* The wire has to go through something. Two punched holes in the page turn the
+   rings from floating discs into binding, and give the header band a reason to
+   be as deep as the mark makes it. */
+.diary__punch {
+  position: absolute;
+  /* The ring's lower arc reaches 2.6u into the page, so the hole spans that. */
+  top: calc(1.4 * var(--u));
+  width: calc(3 * var(--u));
+  height: calc(1.7 * var(--u));
+  margin-left: calc(-1.5 * var(--u));
+  border-radius: 999px;
+  background: var(--ground);
+  box-shadow: inset 0 calc(0.22 * var(--u)) 0 rgba(255, 255, 255, .16);
+}
+.diary__punch--a { left: calc(20 * var(--u)); }   /* 26 in stage space */
+.diary__punch--b { left: calc(40 * var(--u)); }   /* 46 in stage space */
+
+/* Body: x 6, y 12, 60 x 64, rx 13. A brand panel, hairline bordered. */
+.diary__body {
+  position: absolute;
+  left: calc(6 * var(--u));
+  top: calc(12 * var(--u));
+  width: calc(60 * var(--u));
+  height: calc(64 * var(--u));
+  border-radius: calc(13 * var(--u));
+  background: var(--panel);
+  border: 1px solid rgba(255, 255, 255, .16);
+  overflow: hidden;
+}
+
+/* Header band: y 12 to the rule at y 30. */
+.diary__head {
+  position: absolute;
+  inset: 0 0 auto 0;
+  height: calc(18 * var(--u));
+  display: flex;
+  align-items: center;
+  padding-inline: calc(6 * var(--u));
+  border-bottom: 1px solid rgba(255, 255, 255, .12);
+}
+.diary__headline {
+  color: var(--ink);
+  font-size: clamp(0.75rem, calc(2 * var(--u)), 1rem);
+  margin-top: calc(2 * var(--u));          /* clear of the punched holes */
+}
+
+/* Grid box: 48 x 32 at 12,37 in stage space, so 6,25 inside the body. */
+.diary__grid {
+  position: absolute;
+  left: calc(6 * var(--u));
+  top: calc(25 * var(--u));
+  width: calc(48 * var(--u));
+  height: calc(32 * var(--u));
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: grid;
+  grid-template-columns: repeat(3, calc(14 * var(--u)));
+  grid-auto-rows: calc(14 * var(--u));
+  column-gap: calc(3 * var(--u));
+  row-gap: calc(4 * var(--u));
+}
+
+.diary__slot {
+  position: relative;
+  border-radius: calc(3.5 * var(--u));
+  display: grid;
+  place-items: center;
+  padding: calc(1.7 * var(--u));
+  text-align: center;
+}
+
+/* Unbooked state is the honest default: if nothing runs, the mark still reads
+   as five booked and one free, because .diary__fill sits at full clip. */
+.diary__slot--booked { box-shadow: inset 0 0 0 1px rgba(255, 255, 255, .14); }
+
+.diary__fill {
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+
+  /* One gradient plane spanning the whole grid, windowed per tile, so the five
+     tiles read as one object rather than five separate swatches. */
+  background-image: var(--hero-gradient);
+  background-size: calc(48 * var(--u)) calc(32 * var(--u));
+  background-position: calc(-1 * var(--gx) * var(--u)) calc(-1 * var(--gy) * var(--u));
+}
+
+.diary__job {
+  position: relative;
+  font-family: var(--font-body);
+  font-weight: 700;
+  font-size: clamp(0.6875rem, calc(2.1 * var(--u)), 0.9375rem);
+  line-height: 1.15;
+  letter-spacing: -0.01em;
+  color: var(--ground);          /* dark on gradient: 12.9:1 at worst */
+  text-wrap: balance;
+}
+
+/* The sixth slot. Outline only, forever. */
+.diary__slot--free {
+  box-shadow: inset 0 0 0 max(2px, calc(1.4 * var(--u))) rgba(255, 255, 255, .35);
+  /* `translate`, not `scale`: the scroll timeline below owns `scale`, and an
+     animation beats a transition in the cascade, so a scale here would silently
+     stop working the moment the hero started leaving the viewport. */
+  transition: box-shadow 200ms var(--ease-out), translate 260ms var(--ease-out);
+}
+.diary__free { color: var(--ink-muted); transition: color 200ms var(--ease-out); }
+
+/* Pointer and keyboard mapping: the control names the object it affects.
+   Reaching for the button lights the slot it fills. */
+.hero:has(.hero__cta:hover) .diary__slot--free,
+.hero:has(.hero__cta:focus-visible) .diary__slot--free {
+  box-shadow: inset 0 0 0 max(2px, calc(1.4 * var(--u))) var(--incoming);
+  translate: 0 calc(-0.5 * var(--u));
+}
+.hero:has(.hero__cta:hover) .diary__free,
+.hero:has(.hero__cta:focus-visible) .diary__free { color: var(--incoming); }
+
+/* ---------------------------------------------------------------- bands --- */
+
+.band { padding-block: var(--s-6); border-top: 1px solid var(--edge); }
+.band--close { padding-bottom: var(--s-7); }
+
+.band__h {
+  font-size: clamp(1.75rem, 4.4vw, var(--t-h2));
+  max-width: 18ch;
+}
+.band__lead {
+  margin-top: var(--s-3);
+  font-size: var(--t-lead);
+  color: var(--ink-muted);
+  max-width: 46ch;
+  text-wrap: pretty;
+}
+
+.story { margin-top: var(--s-5); display: grid; gap: var(--s-5); }
+
+.story__figures {
+  margin: 0;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--s-4);
+  align-content: start;
+}
+.story__figure { display: grid; gap: var(--s-1); }
+.story__figure dt { order: 2; }
+.story__n {
+  order: 1;
+  margin: 0;
+  font-size: clamp(3.5rem, 13vw, 5.5rem);
+  color: var(--action);
+}
+
+.story__prose { display: grid; gap: var(--s-3); }
+.story__prose p { color: var(--ink-muted); }
+/* Cold hands, in a van. A bare inline link is a 20px target. */
+.story__link a {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  font-weight: 700;
+  touch-action: manipulation;
+}
+
+@media (min-width: 860px) {
+  .story { grid-template-columns: minmax(0, 20rem) minmax(0, 1fr); gap: var(--s-6); }
+  .story__figures { grid-template-columns: minmax(0, 1fr); gap: var(--s-4); }
+}
+
+/* Placeholders. Shown as gaps on purpose: a dashed hairline reads as "not
+   filled in yet" and never as a value. */
+.gaps {
+  margin: var(--s-5) 0 var(--s-3);
+  padding: 0;
+  list-style: none;
+  display: grid;
+  gap: var(--s-2);
+  max-width: 34rem;
+}
+.gap {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--s-2);
+  padding: 14px var(--s-3);
+  border: 1px dashed rgba(255, 255, 255, .22);
+  border-radius: var(--r-chip);
+}
+.gap__k { color: var(--ink-muted); }
+.gap__v { font-weight: 500; color: var(--ink); }
+
+.gaps__note { font-size: var(--t-label); color: var(--ink-muted); max-width: 48ch; }
+
+.close { margin-top: var(--s-5); display: grid; justify-items: start; gap: var(--s-2); }
+.close__addr { font-size: var(--t-label); color: var(--ink-muted); }
+
+/* =========================================================================
+   MOTION
+   One authored moment: a week booking itself. Everything else holds still.
+   The h1 is absent from every rule below, deliberately and permanently.
+   ========================================================================= */
+
+@media (prefers-reduced-motion: no-preference) {
+
+  /* ---- Act one: the week books itself. ~4.2s, plays once, on load. ----
+     Each tile is a stamp, not a bar: the gradient wipes up in 240ms with a
+     short overshoot on the tile, then the job name writes on. The uneven
+     delays set in DiaryBoard.astro are what stop this reading as loading. */
+
+  .diary__fill {
+    clip-path: inset(100% 0 0 0);
+    animation: slotFill 260ms var(--ease-expo) var(--in) both;
+  }
+  .diary__slot--booked {
+    animation: slotStamp 420ms var(--ease-out) var(--in) both;
+  }
+  .diary__job {
+    animation: jobWriteOn 220ms var(--ease-out) calc(var(--in) + 140ms) both;
+  }
+
+  @keyframes slotFill {
+    from { clip-path: inset(100% 0 0 0); }
+    to   { clip-path: inset(0 0 0 0); }
+  }
+
+  /* Cyan is the brand's "arriving" colour, so the moment of impact is cyan
+     and the settled state is the booked gradient. The animation carries the
+     palette's own semantics rather than decorating them. */
+  @keyframes slotStamp {
+    0%   { scale: 1;    box-shadow: inset 0 0 0 1px rgba(255, 255, 255, .14); }
+    38%  { scale: 1.05; box-shadow: inset 0 0 0 2px var(--incoming); }
+    100% { scale: 1;    box-shadow: inset 0 0 0 1px rgba(255, 255, 255, .14); }
+  }
+
+  @keyframes jobWriteOn {
+    from { opacity: 0; transform: translateY(calc(0.6 * var(--u))); }
+    to   { opacity: 1; transform: none; }
+  }
+
+  /* One pass of raked light across the page once the week is full. Not the
+     signature gradient a second time: plain light, clipped to the body. */
+  .diary__sweep {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    background: linear-gradient(
+      100deg,
+      transparent 38%,
+      rgba(255, 255, 255, .42) 50%,
+      transparent 62%
+    );
+    mix-blend-mode: screen;
+    opacity: 0;
+    animation: sweep 1100ms var(--ease-out) 3.3s 1 both;
+  }
+  @keyframes sweep {
+    0%   { opacity: 0; transform: translateX(-115%) skewX(-10deg); }
+    12%  { opacity: 1; }
+    88%  { opacity: 1; }
+    100% { opacity: 0; transform: translateX(115%) skewX(-10deg); }
+  }
+
+  /* The free slot starts breathing only once everything else has settled, so
+     it is the last thing moving and therefore the thing you look at. 2.6s
+     cycle keeps it clear of the ~0.2Hz band that triggers motion discomfort. */
+  .diary__slot--free::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    border: max(2px, calc(1.4 * var(--u))) solid var(--incoming);
+    opacity: 0;
+    /* No backwards fill: with `both` the ring would sit at full opacity for the
+       whole 4.1s delay and the gap would be shouting before the week is booked. */
+    animation: freeBreathe 2.6s var(--ease-out) 4.1s infinite;
+    pointer-events: none;
+  }
+  @keyframes freeBreathe {
+    0%   { opacity: 0;   scale: 1; }
+    18%  { opacity: .55; scale: 1.01; }
+    72%  { opacity: 0;   scale: 1.17; }
+    100% { opacity: 0;   scale: 1.17; }
+  }
+
+  /* ---- Act two: scroll. Native scroll driven animation, off main thread.
+     Unsupported browsers simply render the finished state. ---- */
+
+  @supports (animation-timeline: view()) {
+
+    /* Parallax on the object only. The headline never moves. */
+    .diary__stage {
+      animation: diaryDrift linear both;
+      animation-timeline: view();
+      animation-range: entry 0% exit 100%;
+      will-change: transform;
+    }
+    @keyframes diaryDrift {
+      from { transform: translateY(2.5%); }
+      to   { transform: translateY(-8%); }
+    }
+
+    /* As the hero leaves, the five booked tiles recede and the gap grows.
+       The composition narrows to the one thing still available. */
+    .diary__slot--booked {
+      animation:
+        slotStamp 420ms var(--ease-out) var(--in) both,
+        slotRecede linear both;
+      animation-timeline: auto, view();
+      animation-range: normal, exit 0% exit 100%;
+    }
+    @keyframes slotRecede { to { opacity: .34; } }
+
+    .diary__slot--free {
+      animation: gapGrows linear both;
+      animation-timeline: view();
+      animation-range: exit 0% exit 100%;
+    }
+    @keyframes gapGrows { to { scale: 1.1; } }
+
+    /* No scroll-reveal on below-fold content, deliberately. A view() timeline
+       leaves its element at the `from` keyframe whenever the timeline does not
+       advance: full-page screenshots, print, and any client where the range
+       never resolves. That would hand a reviewer a blank page. Motion here is
+       reserved for the diary, where every fallback state is the finished one
+       and nothing can hide content.
+       ---------------------------------------------------------------------- */
+  }
+}
+
+/* Reduced motion: no movement at all, and everything sits at its finished
+   state. brand.css crushes durations but leaves delays intact, which would
+   strand a delayed tile in its `backwards` fill, so these are killed outright
+   rather than shortened. */
+@media (prefers-reduced-motion: reduce) {
+  .diary__fill,
+  .diary__slot--booked,
+  .diary__slot--free,
+  .diary__job,
+  .diary__stage,
+  .diary__sweep,
+  .diary__slot--booked {
+    animation: none !important;
+    transform: none !important;
+    opacity: 1;
+    clip-path: none;
+  }
+  .diary__sweep { display: none; }
+  .diary__slot--free::after { content: none; }
+}

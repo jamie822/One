@@ -1,0 +1,52 @@
+---
+import { studio } from '../../data/studio.js';
+
+const { yearsOnTools, yearsSelfEmployed } = studio.founder;
+const { email } = studio.contact;
+const site = studio.proof.ownSite;
+const host = site.url.replace('https://', '');
+
+// Verified facts only. studio.js marks everything else NEEDED, and a NEEDED
+// value renders as a visible placeholder rather than a guess.
+const facts = [
+  { n: String(yearsOnTools),      t: 'years on the tools.' },
+  { n: String(yearsSelfEmployed), t: 'of those self employed.' },
+];
+---
+<section class="bwhy shell">
+  <h2 class="bwhy__h">Built by a spark, not a marketer.</h2>
+
+  <p class="bwhy__p">
+    This studio exists because of one thing: marketing companies that didn't
+    understand the trade. Nobody here needs you to explain what notifiable work
+    is, or why a rewire isn't a two day job.
+  </p>
+
+  <ul class="bfacts">
+    {facts.map((f) => (
+      <li class="bfact">
+        <span class="figure bfact__n">{f.n}</span>
+        <span class="bfact__t">{f.t}</span>
+      </li>
+    ))}
+    <li class="bfact">
+      <span class="figure bfact__n">1</span>
+      <span class="bfact__t">
+        site of our own, live right now.
+        <a href={site.url} rel="noopener">{host}</a>
+      </span>
+    </li>
+
+    <li class="bfact bfact--todo">
+      <span class="label">Not set yet</span>
+      <span class="bfact__t">
+        Price and turnaround. The brand guide says put a real number on the page,
+        so one goes here the moment you pick it. It won't be guessed.
+      </span>
+    </li>
+  </ul>
+
+  <div class="bwhy__do">
+    <a class="btn btn--action" href={`mailto:${email}`}>Get in touch</a>
+  </div>
+</section>
