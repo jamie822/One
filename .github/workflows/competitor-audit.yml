@@ -75,5 +75,12 @@ jobs:
             echo "No changes."
           else
             git commit -m "Competitor audit results ($(date -u +%Y-%m-%d))"
-            git push origin HEAD:${{ github.ref_name }}
+            # The branch may have moved while the audit was running — rebase
+            # onto it rather than failing the run.
+            for i in 1 2 3; do
+              git pull --rebase origin ${{ github.ref_name }} || true
+              git push origin HEAD:${{ github.ref_name }} && exit 0
+              echo "push rejected, retrying ($i)"; sleep 5
+            done
+            echo "::error::could not push results after 3 attempts"; exit 1
           fi
