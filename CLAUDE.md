@@ -37,6 +37,10 @@ Invoke with `Skill(skill_name)`. Follow what each returns.
 | # | Skill | For |
 |---|---|---|
 | 4 | **`impeccable`** | **The flagship. Load first, always. Run its `context.mjs`, load the playbook that matches the request, then load `craft-floor.md` before editing any UI.** |
+| 4b | **`ui-ux-pro-max`** | **Run `--design-system` with the `--variance` / `--motion` / `--density` dials before any visual decision. Local database, works offline: 84 styles, 192 palettes, 74 font pairings, 98 UX guidelines, 16 GSAP motion presets, Astro stack rules.** |
+| 4c | `ui-styling` | Component and layout patterns |
+| 4d | `design-system` | Three-layer token architecture |
+| 4e | `design` · `brand` · `banner-design` · `slides` | Identity, assets and decks when the job calls for them |
 | 5 | `design-taste` | Second opinion on direction |
 | 6 | `taste` | Anti-slop check on the direction |
 | 7 | `aesthetic-anchors` | Pick a deliberate visual direction — never default trade-blue |
