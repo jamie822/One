@@ -1,0 +1,108 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Hero from '../components/Hero.astro';
+import TrustBar from '../components/TrustBar.astro';
+import CtaBand from '../components/CtaBand.astro';
+import Placeholder from '../components/Placeholder.astro';
+import Icon from '../components/Icon.astro';
+import { href, primaryArea } from '../lib/site.js';
+import { client } from '../data/client.js';
+
+// E-E-A-T: a named, photographed, qualified human. Google weights this, and so
+// do customers. Research found almost no UK electrician site does it.
+const personSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'Person',
+  name: client.owner.name,
+  jobTitle: client.owner.role,
+  worksFor: { '@id': `${client.url}/#business` },
+  knowsAbout: client.qualifications,
+};
+---
+<Layout
+  path="/about/"
+  title={`About ${client.name}`}
+  description={`${client.owner.name} has been an electrician in ${primaryArea.name} since ${client.owner.since}. ${client.qualifications.join(', ')}.`}
+  crumbs={[{ name: 'Home', path: '/' }, { name: 'About', path: '/about/' }]}
+  schemas={[personSchema]}
+>
+  <Hero inner={true}>
+    <p class="eyebrow">About</p>
+    <h1>{client.owner.name}, {client.name}</h1>
+    <p class="hero__sub">On the tools in {primaryArea.name} since {client.owner.since}.</p>
+  </Hero>
+
+  <div class="container"><TrustBar /></div>
+
+  <section class="section">
+    <div class="container split">
+      <div class="frame reveal">
+        <Placeholder
+          src={client.owner.photo}
+          alt={`${client.owner.name}, ${client.owner.role}`}
+          label="Owner photo needed"
+          hint="Real photo, never stock. This is the highest-trust image on the site."
+          variant="ph--portrait"
+        />
+      </div>
+      <div class="reveal">
+        <h2>How I got here</h2>
+        <p class="lead">{client.owner.bio}</p>
+        <!-- TODO: expand into 3–4 paragraphs in the owner's own words.
+             Interview them. Use their phrases. What they did before the trade,
+             why they went out on their own, what they refuse to do and why. -->
+        <p class="muted">
+          Add the rest of the story here — in the owner's words, first person.
+          A genuine opinion is worth more than a page of adjectives.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <section class="section section--panel">
+    <div class="container container--narrow reveal">
+      <h2>Qualifications &amp; cover</h2>
+      <ul style="list-style:none;padding:0;display:grid;gap:12px;margin-top:20px">
+        {client.qualifications.map((q) => (
+          <li style="display:flex;gap:11px"><Icon name="check" /> {q}</li>
+        ))}
+        {client.accreditations.filter((a) => a.name).map((a) => (
+          <li style="display:flex;gap:11px">
+            <Icon name="shield" />
+            {a.url ? <a href={a.url} rel="noopener" target="_blank">{a.name}</a> : a.name}
+            {a.number && <> · #{a.number}</>}
+          </li>
+        ))}
+        <li style="display:flex;gap:11px"><Icon name="check" /> {client.insurance}</li>
+      </ul>
+    </div>
+  </section>
+
+  {client.team.length > 0 && (
+    <section class="section">
+      <div class="container">
+        <div class="section__head reveal">
+          <p class="eyebrow">The team</p>
+          <h2>Who you'll meet</h2>
+        </div>
+        <div class="grid grid--3">
+          {client.team.map((m, i) => (
+            <div class="card reveal" style={`transition-delay:${(i % 3) * 80}ms`}>
+              <div class="frame" style="margin-bottom:16px">
+                <Placeholder src={m.photo} alt={m.name} label="Team photo" variant="ph--portrait" />
+              </div>
+              <h3>{m.name}</h3>
+              <p>{m.role}{m.specialism ? ` · ${m.specialism}` : ''}</p>
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+  )}
+
+  <CtaBand />
+</Layout>
+
+<style>
+  li svg { width: 19px; height: 19px; color: var(--brand); flex: 0 0 auto; margin-top: 4px; }
+</style>

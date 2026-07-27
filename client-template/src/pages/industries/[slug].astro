@@ -1,0 +1,72 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import Hero from '../../components/Hero.astro';
+import TrustBar from '../../components/TrustBar.astro';
+import CtaBand from '../../components/CtaBand.astro';
+import Icon from '../../components/Icon.astro';
+import { href, primaryArea } from '../../lib/site.js';
+import { client, industries, caseStudies } from '../../data/client.js';
+
+export function getStaticPaths() {
+  return industries.map((industry) => ({ params: { slug: industry.slug }, props: { industry } }));
+}
+
+const { industry } = Astro.props;
+const path = `/industries/${industry.slug}/`;
+const related = caseStudies.filter((c) => c.industry === industry.slug).slice(0, 2);
+---
+<Layout
+  path={path}
+  title={`Electrical contractors for ${industry.name}`}
+  description={industry.obligation}
+  crumbs={[{ name: 'Home', path: '/' }, { name: 'Commercial', path: '/industries/' }, { name: industry.name, path }]}
+>
+  <Hero inner={true}>
+    <p class="eyebrow">Commercial</p>
+    <h1>Electrical work for {industry.name}</h1>
+    <p class="hero__sub">{industry.obligation}</p>
+    <div class="hero__actions">
+      <a class="btn btn--primary btn--lg" href={`tel:${client.phoneHref}`}>
+        <Icon name="phone" /> {client.phone}
+      </a>
+      <a class="btn btn--ghost btn--lg" href={href('/contact/')}>Request a quote</a>
+    </div>
+  </Hero>
+
+  <div class="container"><TrustBar /></div>
+
+  <section class="section">
+    <div class="container container--narrow reveal">
+      <h2>What we handle</h2>
+      <p class="lead">{industry.scope}</p>
+      {industry.accreditation && (
+        <p><strong>Accreditation:</strong> {industry.accreditation}</p>
+      )}
+      {industry.downtime && (
+        <>
+          <h2 style="margin-top:40px">Working around you</h2>
+          <p>{industry.downtime}</p>
+        </>
+      )}
+    </div>
+  </section>
+
+  {related.length > 0 && (
+    <section class="section section--panel">
+      <div class="container">
+        <div class="section__head reveal"><h2>Work we've done</h2></div>
+        <div class="grid grid--2">
+          {related.map((c) => (
+            <a class="card reveal" href={href(`/case-studies/${c.slug}/`)}>
+              <h3>{c.title}</h3>
+              <p>{c.problem}</p>
+              <span class="card__link">See the job →</span>
+            </a>
+          ))}
+        </div>
+      </div>
+    </section>
+  )}
+
+  <CtaBand title={`${industry.name} in ${primaryArea.name}?`} />
+</Layout>

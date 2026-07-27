@@ -1,0 +1,66 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Hero from '../components/Hero.astro';
+import TrustBar from '../components/TrustBar.astro';
+import CtaBand from '../components/CtaBand.astro';
+import { client, reviews } from '../data/client.js';
+import { hasRating } from '../lib/site.js';
+---
+<Layout
+  path="/reviews/"
+  title="Reviews"
+  description={hasRating
+    ? `${client.google.rating} stars from ${client.google.reviewCount} Google reviews.`
+    : `What customers say about ${client.name}.`}
+  crumbs={[{ name: 'Home', path: '/' }, { name: 'Reviews', path: '/reviews/' }]}
+>
+  <Hero inner={true}>
+    <p class="eyebrow">Reviews</p>
+    <h1>What customers say</h1>
+    {hasRating && (
+      <p class="hero__sub">
+        <span class="stars">{'★'.repeat(Math.round(client.google.rating))}</span>
+        {client.google.rating} from {client.google.reviewCount} Google reviews.
+      </p>
+    )}
+  </Hero>
+
+  <div class="container"><TrustBar /></div>
+
+  <section class="section">
+    <div class="container">
+      {reviews.length > 0 ? (
+        <div class="grid grid--3">
+          {reviews.map((r, i) => (
+            <figure class="review reveal" style={`transition-delay:${(i % 3) * 70}ms`}>
+              <blockquote class="review__quote">“{r.quote}”</blockquote>
+              <figcaption class="review__meta">
+                <strong>{r.author}</strong>
+                {[r.location, r.electrician && `worked with ${r.electrician}`, r.platform, r.date]
+                  .filter(Boolean).join(' · ')}
+              </figcaption>
+            </figure>
+          ))}
+        </div>
+      ) : (
+        <div class="ph" style="aspect-ratio:auto;padding:44px">
+          <strong>No reviews added yet</strong>
+          <small>
+            Sync real reviews from Google, Checkatrade or Trustpilot into the reviews
+            array in src/data/client.js. Never write placeholder testimonials.
+          </small>
+        </div>
+      )}
+
+      {client.google.profileUrl && (
+        <p style="margin-top:30px">
+          <a class="btn btn--ghost" href={client.google.profileUrl} rel="noopener" target="_blank">
+            Read them on Google
+          </a>
+        </p>
+      )}
+    </div>
+  </section>
+
+  <CtaBand />
+</Layout>

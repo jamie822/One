@@ -1,0 +1,40 @@
+---
+import { client, industries } from '../data/client.js';
+import { href } from '../lib/site.js';
+import Icon from './Icon.astro';
+
+const { path = '/' } = Astro.props;
+const links = [
+  ['/', 'Home'],
+  ['/services/', 'Services'],
+  ['/areas/', 'Areas'],
+  ...(industries.length ? [['/industries/', 'Commercial']] : []),
+  ['/case-studies/', 'Our Work'],
+  ['/reviews/', 'Reviews'],
+  ['/about/', 'About'],
+];
+const isCurrent = (l) => (l === '/' ? path === '/' : path.startsWith(l));
+---
+<div class="topbar">
+  <div class="container topbar__inner">
+    <span><a href={`tel:${client.phoneHref}`}>{client.phone}</a></span>
+    <span class="muted">{client.hours}</span>
+  </div>
+</div>
+
+<header class="header">
+  <div class="container header__inner">
+    <a class="brandmark" href={href('/')}>{client.name}</a>
+    <button class="nav-toggle" aria-label="Menu" aria-expanded="false"><span></span><span></span><span></span></button>
+    <nav class="nav">
+      {links.map(([l, label]) => (
+        <a href={href(l)} aria-current={isCurrent(l) ? 'page' : undefined}>{label}</a>
+      ))}
+      <a class="btn btn--primary" href={`tel:${client.phoneHref}`}><Icon name="phone" style="width:17px" /> Call now</a>
+    </nav>
+  </div>
+</header>
+
+<style>
+  .nav .btn svg { width: 17px; height: 17px; }
+</style>

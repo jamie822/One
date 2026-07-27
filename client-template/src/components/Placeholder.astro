@@ -1,0 +1,20 @@
+---
+// Renders the image when it exists, and an obvious labelled gap when it does
+// not — so a missing photo is visible in review rather than silently shipping.
+const { src, alt = '', label = 'Photo needed', hint = '', variant = '', eager = false } = Astro.props;
+import { href } from '../lib/site.js';
+---
+{src ? (
+  <img
+    src={href(src)}
+    alt={alt}
+    loading={eager ? 'eager' : 'lazy'}
+    fetchpriority={eager ? 'high' : 'auto'}
+    decoding={eager ? 'sync' : 'async'}
+  />
+) : (
+  <div class={`ph ${variant}`}>
+    <strong>{label}</strong>
+    {hint && <small>{hint}</small>}
+  </div>
+)}

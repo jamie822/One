@@ -1,0 +1,75 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import Hero from '../../components/Hero.astro';
+import CtaBand from '../../components/CtaBand.astro';
+import Placeholder from '../../components/Placeholder.astro';
+import { href } from '../../lib/site.js';
+import { client, caseStudies, areas } from '../../data/client.js';
+
+export function getStaticPaths() {
+  return caseStudies.map((study) => ({ params: { slug: study.slug }, props: { study } }));
+}
+
+const { study } = Astro.props;
+const path = `/case-studies/${study.slug}/`;
+const area = areas.find((a) => a.slug === study.area);
+---
+<Layout
+  path={path}
+  title={study.title}
+  description={`${study.problem} — ${study.outcome}`}
+  crumbs={[{ name: 'Home', path: '/' }, { name: 'Our Work', path: '/case-studies/' }, { name: study.title, path }]}
+>
+  <Hero inner={true}>
+    <p class="eyebrow">{[area?.name, study.date].filter(Boolean).join(' · ')}</p>
+    <h1>{study.title}</h1>
+    <p class="hero__sub">{study.problem}</p>
+  </Hero>
+
+  <section class="section">
+    <div class="container container--narrow">
+      <div class="reveal">
+        <h2>The problem</h2>
+        <p class="lead">{study.problem}</p>
+
+        <h2 style="margin-top:40px">What we did</h2>
+        <p>{study.work}</p>
+
+        <h2 style="margin-top:40px">The result</h2>
+        <p>{study.outcome}</p>
+
+        <div style="display:flex;flex-wrap:wrap;gap:10px;margin-top:24px">
+          {study.duration && <span class="pill">{study.duration}</span>}
+          {study.clientName && <span class="pill">{study.clientName}</span>}
+          {area && <span class="pill">{area.name}</span>}
+        </div>
+      </div>
+
+      {(study.imageBefore || study.imageAfter) && (
+        <div class="beforeafter reveal" style="margin-top:40px">
+          <figure>
+            <div class="frame">
+              <Placeholder src={study.imageBefore} alt={`Before — ${study.title}`} label="Before photo" />
+            </div>
+            <figcaption>Before</figcaption>
+          </figure>
+          <figure>
+            <div class="frame">
+              <Placeholder src={study.imageAfter} alt={`After — ${study.title}`} label="After photo" />
+            </div>
+            <figcaption>After</figcaption>
+          </figure>
+        </div>
+      )}
+
+      {study.quote && (
+        <blockquote class="review reveal" style="margin-top:40px">
+          <p class="review__quote">“{study.quote}”</p>
+          <footer class="review__meta"><strong>{study.quoteAuthor}</strong></footer>
+        </blockquote>
+      )}
+    </div>
+  </section>
+
+  <CtaBand title={`Got a similar job?`} />
+</Layout>

@@ -1,0 +1,47 @@
+---
+import Layout from '../layouts/Layout.astro';
+import { client } from '../data/client.js';
+---
+<Layout path="/privacy/" title="Privacy policy" description={`How ${client.name} handles your data.`}>
+  <section class="section">
+    <div class="container container--narrow">
+      <h1>Privacy policy</h1>
+      <p class="lead">
+        {client.legalName} collects only what it needs to quote and carry out your work.
+      </p>
+
+      <h2>What we collect</h2>
+      <p>
+        Your name, phone number, email and address when you contact us, plus details
+        of the work you're asking about.
+      </p>
+
+      <h2>Why we collect it</h2>
+      <p>To give you a price, carry out the work, and issue your certificates.</p>
+
+      <h2>How long we keep it</h2>
+      <p>
+        Electrical certificates are kept for the period required by our registration
+        body. Enquiries that don't become jobs are deleted within 12 months.
+      </p>
+
+      <h2>Who we share it with</h2>
+      <p>
+        Nobody, except where we're required to notify Building Control or our
+        registration scheme as part of certifying your installation.
+      </p>
+
+      <h2>Your rights</h2>
+      <p>
+        You can ask what we hold, ask us to correct it, or ask us to delete it.
+        Email <a href={`mailto:${client.email}`}>{client.email}</a>.
+      </p>
+
+      <p class="muted" style="margin-top:34px;font-size:.88rem">
+        <!-- TODO: have this reviewed before launch. Add cookie/analytics detail
+             once analytics are configured. -->
+        Last updated: on launch.
+      </p>
+    </div>
+  </section>
+</Layout>

@@ -1,0 +1,190 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Hero from '../components/Hero.astro';
+import TrustBar from '../components/TrustBar.astro';
+import Reviews from '../components/Reviews.astro';
+import CtaBand from '../components/CtaBand.astro';
+import Placeholder from '../components/Placeholder.astro';
+import Icon from '../components/Icon.astro';
+import { href, hasRating, primaryArea } from '../lib/site.js';
+import { client, services, areas, caseStudies, faqs } from '../data/client.js';
+
+const faqSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'FAQPage',
+  mainEntity: faqs.map((f) => ({
+    '@type': 'Question',
+    name: f.q,
+    acceptedAnswer: { '@type': 'Answer', text: f.a },
+  })),
+};
+---
+<Layout
+  path="/"
+  title={`Electricians in ${primaryArea.name}`}
+  description={`${client.name} — ${client.owner.yearsTrading} years of electrical work across ${primaryArea.name} and ${client.address.region}. ${client.responsePromise}`}
+  schemas={[faqSchema]}
+>
+  <Hero>
+    <p class="eyebrow rise">
+      {client.accreditations[0]?.name} · {client.address.region}
+    </p>
+    <h1 class="rise">Electricians in {primaryArea.name}, since {client.owner.since}</h1>
+    <p class="hero__sub rise">
+      {client.owner.bio}
+    </p>
+    <div class="hero__actions rise">
+      <a class="btn btn--primary btn--lg" href={`tel:${client.phoneHref}`}>
+        <Icon name="phone" /> {client.phone}
+      </a>
+      <a class="btn btn--ghost btn--lg" href={href('/contact/')}>Request a quote</a>
+    </div>
+    {hasRating && (
+      <p class="rise muted" style="margin:0">
+        <span class="stars">{'★'.repeat(Math.round(client.google.rating))}</span>
+        {client.google.rating} from {client.google.reviewCount} Google reviews
+      </p>
+    )}
+  </Hero>
+
+  <div class="container"><TrustBar /></div>
+
+  <!-- PROBLEM-LED INTRO — name the customer's problem before the business.
+       Rewrite this per client in their own words. See MASTER_PROMPT §7. -->
+  <section class="section">
+    <div class="container container--narrow">
+      <div class="reveal">
+        <h2>Something's not right with the electrics</h2>
+        <p class="lead">
+          Maybe the board trips when the shower goes on. Maybe your letting agent
+          wants an EICR by the end of the month. Maybe you've had three people out
+          and nobody can find the fault.
+        </p>
+        <p class="muted">
+          <!-- TODO: replace with the owner's own words. -->
+          We price the job before we start, turn up when we say we will, and leave
+          you the certificate you actually need.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- SERVICES -->
+  <section class="section section--panel">
+    <div class="container">
+      <div class="section__head reveal">
+        <p class="eyebrow">What we do</p>
+        <h2>Electrical work across {primaryArea.name}</h2>
+      </div>
+      <div class="grid grid--3">
+        {services.map((s, i) => (
+          <a class="card reveal" style={`transition-delay:${(i % 3) * 80}ms`} href={href(`/services/${s.slug}/`)}>
+            <span class="card__icon"><Icon name={s.icon} /></span>
+            <h3>{s.title}</h3>
+            <p>{s.short}</p>
+            <span class="card__link">Read more →</span>
+          </a>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- THE OWNER — the single biggest differentiator in this market. -->
+  <section class="section">
+    <div class="container split">
+      <div class="frame reveal">
+        <Placeholder
+          src={client.owner.photo}
+          alt={`${client.owner.name}, ${client.owner.role} at ${client.name}`}
+          label="Owner photo needed"
+          hint="A real photo of the owner. Never stock. Drop it in /public/images and set owner.photo."
+          variant="ph--portrait"
+        />
+      </div>
+      <div class="reveal">
+        <p class="eyebrow">Who you'll be dealing with</p>
+        <h2>{client.owner.name}</h2>
+        <p class="lead">{client.owner.bio}</p>
+        <ul style="list-style:none;padding:0;display:grid;gap:10px;margin:22px 0">
+          {client.qualifications.map((q) => (
+            <li style="display:flex;gap:10px;align-items:flex-start">
+              <Icon name="check" /> {q}
+            </li>
+          ))}
+          <li style="display:flex;gap:10px;align-items:flex-start">
+            <Icon name="check" /> {client.insurance}
+          </li>
+        </ul>
+        <a class="btn btn--ghost" href={href('/about/')}>More about {client.name}</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- CASE STUDIES -->
+  {caseStudies.length > 0 && (
+    <section class="section section--panel">
+      <div class="container">
+        <div class="section__head reveal">
+          <p class="eyebrow">Recent work</p>
+          <h2>Jobs we've finished</h2>
+        </div>
+        <div class="grid grid--3">
+          {caseStudies.slice(0, 3).map((c, i) => (
+            <a class="card reveal" style={`transition-delay:${(i % 3) * 80}ms`} href={href(`/case-studies/${c.slug}/`)}>
+              <h3>{c.title}</h3>
+              <p>{c.problem}</p>
+              <span class="card__link">See the job →</span>
+            </a>
+          ))}
+        </div>
+      </div>
+    </section>
+  )}
+
+  <!-- REVIEWS -->
+  <section class="section">
+    <div class="container">
+      <div class="section__head reveal">
+        <p class="eyebrow">What customers say</p>
+        <h2>Reviews</h2>
+      </div>
+      <Reviews limit={3} />
+      <p style="margin-top:26px"><a href={href('/reviews/')}>Read all reviews →</a></p>
+    </div>
+  </section>
+
+  <!-- AREAS -->
+  <section class="section section--panel">
+    <div class="container">
+      <div class="section__head reveal">
+        <p class="eyebrow">Where we work</p>
+        <h2>Areas we cover</h2>
+      </div>
+      <div class="reveal" style="display:flex;flex-wrap:wrap;gap:10px">
+        {areas.map((a) => (
+          <a class="pill" href={href(`/areas/${a.slug}/`)}>{a.name}</a>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- FAQ -->
+  <section class="section">
+    <div class="container container--narrow">
+      <div class="section__head reveal">
+        <p class="eyebrow">Questions</p>
+        <h2>Things people ask</h2>
+      </div>
+      <div class="faq reveal">
+        {faqs.map((f) => (
+          <details>
+            <summary>{f.q}</summary>
+            <div class="faq__body">{f.a}</div>
+          </details>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <CtaBand />
+</Layout>

@@ -1,0 +1,106 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Hero from '../components/Hero.astro';
+import TrustBar from '../components/TrustBar.astro';
+import Icon from '../components/Icon.astro';
+import { href } from '../lib/site.js';
+import { client, services } from '../data/client.js';
+---
+<Layout
+  path="/contact/"
+  title="Contact"
+  description={`Call ${client.phone} or send an enquiry. ${client.responsePromise}`}
+  crumbs={[{ name: 'Home', path: '/' }, { name: 'Contact', path: '/contact/' }]}
+>
+  <Hero inner={true}>
+    <p class="eyebrow">Contact</p>
+    <h1>Get a price</h1>
+    <p class="hero__sub">{client.responsePromise}</p>
+  </Hero>
+
+  <div class="container"><TrustBar /></div>
+
+  <section class="section">
+    <div class="container">
+      <div class="split" style="align-items:start">
+        <div class="reveal">
+          <h2>Get in touch</h2>
+          <ul style="list-style:none;padding:0;display:grid;gap:20px;margin-top:22px">
+            <li>
+              <Icon name="phone" />
+              <strong>Phone</strong>
+              <a href={`tel:${client.phoneHref}`}>{client.phone}</a>
+            </li>
+            <li>
+              <Icon name="mail" />
+              <strong>Email</strong>
+              <a href={`mailto:${client.email}`}>{client.email}</a>
+            </li>
+            <li>
+              <Icon name="clock" />
+              <strong>Hours</strong>
+              <span class="muted">{client.hours}</span>
+              {client.emergency && <span class="muted"><br />{client.emergency}</span>}
+            </li>
+            <li>
+              <Icon name="pin" />
+              <strong>Where we work</strong>
+              <span class="muted">
+                {client.showAddress
+                  ? `${client.address.street}, ${client.address.locality}, ${client.address.postcode}`
+                  : `${client.address.locality} and across ${client.address.region}`}
+              </span>
+            </li>
+          </ul>
+
+          <!-- TODO: embed the Google Map tied to the real GBP listing.
+               Keep it lazy-loaded so it can't hurt LCP. -->
+          <div class="ph" style="margin-top:26px;aspect-ratio:16/10">
+            <strong>Google Map embed</strong>
+            <small>Embed the map from the client's verified Google Business Profile, with loading="lazy".</small>
+          </div>
+        </div>
+
+        <!-- TODO: point action= at Formspree, Netlify Forms or similar. -->
+        <form class="form reveal" method="POST" action="#">
+          <div class="field--row">
+            <div class="field">
+              <label for="name">Your name</label>
+              <input id="name" name="name" required />
+            </div>
+            <div class="field">
+              <label for="phone">Phone</label>
+              <input id="phone" name="phone" type="tel" required />
+            </div>
+          </div>
+          <div class="field">
+            <label for="email">Email</label>
+            <input id="email" name="email" type="email" />
+          </div>
+          <div class="field">
+            <label for="postcode">Postcode</label>
+            <input id="postcode" name="postcode" />
+          </div>
+          <div class="field">
+            <label for="job">What do you need?</label>
+            <select id="job" name="job">
+              {services.map((s) => <option value={s.slug}>{s.title}</option>)}
+              <option value="other">Something else</option>
+            </select>
+          </div>
+          <div class="field">
+            <label for="detail">Tell us about the job</label>
+            <textarea id="detail" name="detail" rows="4"></textarea>
+          </div>
+          <button class="btn btn--primary btn--lg" type="submit">Send enquiry</button>
+          <p class="muted" style="font-size:.82rem;margin:0">{client.responsePromise}</p>
+        </form>
+      </div>
+    </div>
+  </section>
+</Layout>
+
+<style>
+  li svg { width: 20px; height: 20px; color: var(--brand); }
+  li strong { display: block; font-family: var(--font-display); margin: 4px 0 2px; }
+</style>

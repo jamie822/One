@@ -1,0 +1,38 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import Hero from '../../components/Hero.astro';
+import TrustBar from '../../components/TrustBar.astro';
+import CtaBand from '../../components/CtaBand.astro';
+import { href } from '../../lib/site.js';
+import { client, industries } from '../../data/client.js';
+---
+<Layout
+  path="/industries/"
+  title="Commercial electrical work"
+  description={`Commercial and industrial electrical contracting across ${client.address.region}.`}
+  crumbs={[{ name: 'Home', path: '/' }, { name: 'Commercial', path: '/industries/' }]}
+>
+  <Hero inner={true}>
+    <p class="eyebrow">Commercial</p>
+    <h1>Who we work for</h1>
+    <p class="hero__sub">Compliance, maintenance and installation for businesses across {client.address.region}.</p>
+  </Hero>
+
+  <div class="container"><TrustBar /></div>
+
+  <section class="section">
+    <div class="container">
+      <div class="grid grid--2">
+        {industries.map((ind, i) => (
+          <a class="card reveal" style={`transition-delay:${(i % 2) * 80}ms`} href={href(`/industries/${ind.slug}/`)}>
+            <h3>{ind.name}</h3>
+            <p>{ind.obligation}</p>
+            <span class="card__link">Read more →</span>
+          </a>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <CtaBand />
+</Layout>
