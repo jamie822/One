@@ -20,8 +20,8 @@ const rest = services.filter((s) => !lead.includes(s));
 const ledger = [
   { n: client.google.rating, l: 'Google rating' },
   { n: client.google.reviewCount, l: 'Reviews, every one 5★' },
-  { n: '2', l: 'Trades under one roof' },
-  { n: '8pm', l: 'We answer until' },
+  { n: '2', l: 'Trades, one firm' },
+  { n: '8pm', l: 'Open until' },
 ];
 
 const faqSchema = {
@@ -47,11 +47,11 @@ const faqSchema = {
       </p>
     )}
     <h1 class="rise">Electrician &amp; security installer in Bradford</h1>
-    <h2 class="hero__strapline rise"><span class="hl">Swift</span> on the job. Straight on the price.</h2>
+    <h2 class="hero__strapline rise"><span class="hl">Swift</span> by name. You'll know the price before we start.</h2>
     <p class="hero__sub rise">
-      NICEIC registered, covering Bradford and across West Yorkshire. Landlord
-      EICRs, fault finding, CCTV and alarms, lighting and rewires. Electrical
-      work and security from the same pair of hands.
+      NICEIC registered, working across Bradford and West Yorkshire. Landlord
+      EICRs, fault finding, CCTV and alarms, lighting, rewires. One firm for
+      the wiring and the security, so nobody gets to blame the other trade.
     </p>
     <div class="hero__actions rise">
       {hasPhone
@@ -77,25 +77,25 @@ const faqSchema = {
       <div class="spread__aside reveal reveal--left">
         <h2 class="spread__title">Two trades,<br />one van</h2>
         <p class="spread__deck">
-          Most people land here because someone gave them our name and they want
-          to check we are real. So, briefly, this is what we do.
+          Someone gave you our name and you want to check we're real. That's
+          most of our visitors, and it's the right instinct.
         </p>
       </div>
 
       <div class="spread__body reveal">
         <p class="lead">
           Swift Electrical &amp; Security does the wiring and the security. Most
-          electricians stop at the consumer unit and hand you to a separate firm
-          for cameras; most alarm companies are not qualified to touch a
-          circuit. Doing both means one visit, and one person who knows where the cables
-          run when something stops working.
+          electricians stop at the consumer unit and hand you to a camera firm,
+          and most camera firms aren't qualified to touch a circuit. Doing both
+          means one visit, and one person who knows where the cables run when
+          something stops working.
         </p>
         <p class="muted">
-          The bulk of the work is domestic and landlord: EICR inspections and
-          certificates, fault finding, fuse board replacements, extra sockets,
-          indoor and outdoor lighting, and full or partial rewires. On the
-          security side it is camera systems, alarms, door entry and floodlights
-          Specified for the property rather than pulled off a shelf.
+          Day to day it's houses and rented property: EICR inspections and
+          certificates, fault finding, fuse board changes, extra sockets, indoor
+          and outdoor lighting, partial and full rewires. The security half is
+          cameras, alarms, door entry and floodlights, specified for the
+          building rather than pulled off a shelf.
         </p>
         <p class="muted">
           We test to BS 7671 and certify the work. Notifiable jobs go to Building
@@ -122,14 +122,14 @@ const faqSchema = {
   <Band tone="panel" grid rails seam class="section svc">
     <div class="container container--wide">
       <div class="svc__head reveal">
-        <h2>What we get called out for most</h2>
-        <p>Ordered by what people book most.</p>
+        <h2>What we get called out for</h2>
+        <p>The two at the top are what the reviews keep coming back to.</p>
       </div>
 
       <div class="svc-lead">
         {lead.map((s, i) => (
           <a class={`svc-hero reveal ${i === 0 ? 'reveal--left' : 'reveal--right'}`} href={href(`/services/${s.slug}/`)}>
-            <span class="svc-hero__tag">{s.slug === 'cctv-security' ? 'The half nobody else does' : 'Most booked'}</span>
+            <span class="svc-hero__tag">{s.slug === 'cctv-security' ? 'The half most electricians hand off' : 'Two reviews, both landlords'}</span>
             <h3>{s.title}</h3>
             <p>{s.symptom}</p>
             <span class="svc-hero__go">See how it works <Icon name="arrow" /></span>
@@ -193,10 +193,10 @@ const faqSchema = {
         <h2>You'll be dealing with Adil</h2>
         <p class="owner__quote">{client.owner.bio}</p>
         <p class="muted">
-          Three of the seven reviews name him. One customer had the power
-          tripping constantly and had already had several electricians out.
-          None of them found it. Another customer had Adil drive forty minutes out of his way to sort a
-          lighting fault.
+          Three of the seven reviews name him. In one, the power kept tripping
+          and several electricians had already been out without finding why. In
+          another, he drove forty minutes out of his way to sort a lighting
+          fault.
         </p>
         <p><Needed label="Adil's surname, years trading, qualifications" /></p>
         <div class="owner__actions">
@@ -213,7 +213,7 @@ const faqSchema = {
   <Band tone="panel" seam class="section reviews">
     <div class="container reviews__head reveal">
       <h2>Seven reviews. Seven fives.</h2>
-      <p>Copied from Google word for word, including the typos.</p>
+      <p>Seven isn't many. They're copied off Google word for word, typos included.</p>
     </div>
     <div class="rev-bleed reveal reveal--right"><Reviews /></div>
   </Band>
@@ -225,7 +225,7 @@ const faqSchema = {
     <div class="container">
       <div class="areas__head reveal">
         <h2>Where we work</h2>
-        <p>Bradford and out across the Aire valley. Each area page says what we find in that housing stock.</p>
+        <p>Bradford and out along the Aire valley. Each page says what the wiring is usually like round there.</p>
       </div>
       <div class="areas__field reveal">
         {areas.map((a) => (
@@ -253,7 +253,7 @@ const faqSchema = {
         ))}
       </div>
       <div class="inline-cta reveal">
-        <p>Still not sure? Ask and we'll tell you straight.</p>
+        <p>Question that isn't up there? Send it over.</p>
         <a class="btn btn--act" href={href('/contact/')}>Ask a question <Icon name="arrow" /></a>
       </div>
     </div>

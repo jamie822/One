@@ -124,7 +124,12 @@ const allSchemas = [businessSchema(), ...(crumbs ? [breadcrumbSchema(crumbs)] : 
           const pct = max > 0 ? Math.min(1, window.scrollY / max) : 0;
           const h = pct * window.innerHeight;
           fill.style.height = h + 'px';
-          if (head) head.style.top = h + 'px';
+          // Position the head with a transform rather than `top`. Writing
+          // `top` every scroll frame moved a painted element, which Chrome
+          // records as a layout shift (it was the page's only CLS source) and
+          // forced a layout pass per frame. translateY is composited and
+          // pixel-identical. The spine itself is unchanged.
+          if (head) head.style.transform = 'translate3d(0,' + h + 'px,0)';
           ticking = false;
         };
         window.addEventListener('scroll', () => {

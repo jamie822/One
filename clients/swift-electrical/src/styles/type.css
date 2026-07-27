@@ -101,10 +101,11 @@ body {
   line-height: var(--leading-body);
   letter-spacing: calc(var(--track-0) + var(--optical));
   color: var(--text-2);
-  /* cv05 = l with a tail, cv08 = I with serifs. On a page full of EICR,
-     BS 7671, RCBO and IP65 the difference between I, l and 1 is not a
-     nicety. ss03 gives typographic rather than typewriter quotes. */
-  font-feature-settings: 'cv05' 1, 'cv08' 1, 'ss03' 1;
+  /* Checked, not assumed: the @fontsource subsets in public/fonts keep
+     `tnum` but have the cvXX / ssXX character-variant tables stripped, so
+     there is no point declaring them. Figure alignment therefore comes from
+     tabular-nums on Inter and from the mono face everywhere numbers matter,
+     which is part of why the technical voice exists at all. */
   font-variant-numeric: proportional-nums;
   text-rendering: optimizeLegibility;
 }
@@ -224,9 +225,9 @@ p {
   word-spacing: -0.14em;
 }
 
-/* Numbers are data. Data is set in figures that line up. */
+/* Numbers are data. Data is set in figures that line up: tabular on Inter,
+   inherently so on the mono face. */
 .stars, .rev__stars, .stat__n, .est__fig, .rev__meta, .trustbar__item,
-.crumbs, .footer__bottom, time, .est__label {
+.crumbs, .footer__bottom, time, .est__label, .review__meta {
   font-variant-numeric: tabular-nums;
-  font-feature-settings: 'zero' 1;
 }

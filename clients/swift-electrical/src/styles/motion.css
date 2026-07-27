@@ -152,9 +152,7 @@ html .stats.reveal,
 html .ledger.reveal,
 html .faq.reveal,
 html .grid.reveal,
-html .reveal:has(> .pill),
 html .areas__field.reveal,
-html .reveal:has(.rev__track),
 html .rev-bleed.reveal,
 html .cta__inner.reveal {
   opacity: 1;
@@ -169,37 +167,37 @@ html .stats > *,
 html .ledger > *,
 html .faq > details,
 html .grid.reveal > *,
-html .reveal:has(> .pill) > .pill,
+html .areas__field.reveal > .pill,
 html .rev__track > *,
 html .cta__inner.reveal > * { --i: 0; }
 
 html .svc-list > :nth-child(2), html .stats > :nth-child(2), html .ledger > :nth-child(2),
 html .faq > details:nth-child(2), html .grid.reveal > :nth-child(2),
-html .reveal:has(> .pill) > .pill:nth-child(2), html .rev__track > :nth-child(2),
+html .areas__field.reveal > .pill:nth-child(2), html .rev__track > :nth-child(2),
 html .cta__inner.reveal > :nth-child(2) { --i: 1; }
 
 html .svc-list > :nth-child(3), html .stats > :nth-child(3), html .ledger > :nth-child(3),
 html .faq > details:nth-child(3), html .grid.reveal > :nth-child(3),
-html .reveal:has(> .pill) > .pill:nth-child(3), html .rev__track > :nth-child(3),
+html .areas__field.reveal > .pill:nth-child(3), html .rev__track > :nth-child(3),
 html .cta__inner.reveal > :nth-child(3) { --i: 2; }
 
 html .svc-list > :nth-child(4), html .stats > :nth-child(4), html .ledger > :nth-child(4),
 html .faq > details:nth-child(4), html .grid.reveal > :nth-child(4),
-html .reveal:has(> .pill) > .pill:nth-child(4), html .rev__track > :nth-child(4) { --i: 3; }
+html .areas__field.reveal > .pill:nth-child(4), html .rev__track > :nth-child(4) { --i: 3; }
 
 html .svc-list > :nth-child(5), html .faq > details:nth-child(5),
-html .grid.reveal > :nth-child(5), html .reveal:has(> .pill) > .pill:nth-child(5),
+html .grid.reveal > :nth-child(5), html .areas__field.reveal > .pill:nth-child(5),
 html .rev__track > :nth-child(5) { --i: 4; }
 
 html .svc-list > :nth-child(6), html .faq > details:nth-child(6),
-html .grid.reveal > :nth-child(6), html .reveal:has(> .pill) > .pill:nth-child(6),
+html .grid.reveal > :nth-child(6), html .areas__field.reveal > .pill:nth-child(6),
 html .rev__track > :nth-child(6) { --i: 5; }
 
 html .svc-list > :nth-child(7), html .faq > details:nth-child(7),
-html .reveal:has(> .pill) > .pill:nth-child(7), html .rev__track > :nth-child(7) { --i: 6; }
+html .areas__field.reveal > .pill:nth-child(7), html .rev__track > :nth-child(7) { --i: 6; }
 
 html .faq > details:nth-child(n + 8),
-html .reveal:has(> .pill) > .pill:nth-child(n + 8) { --i: 7; }
+html .areas__field.reveal > .pill:nth-child(n + 8) { --i: 7; }
 
 /* Service rows slide in along the circuit, from the spine side. */
 html .svc-list.reveal > .svc-row {
@@ -246,7 +244,7 @@ html .grid.reveal > * {
 html .grid.reveal.is-in > * { opacity: 1; transform: none; }
 
 /* Area pills pop in like nodes energising along the circuit. */
-html .reveal:has(> .pill) > .pill {
+html .areas__field.reveal > .pill {
   opacity: 0;
   transform: translate3d(0, 10px, 0) scale(0.9);
   transition:
@@ -255,11 +253,11 @@ html .reveal:has(> .pill) > .pill {
     border-color var(--d-hover) ease,
     color var(--d-hover) ease;
 }
-html .reveal:has(> .pill).is-in > .pill { opacity: 1; transform: none; }
+html .areas__field.reveal.is-in > .pill { opacity: 1; transform: none; }
 
 /* Review cards scale only — a translate would extend the horizontal scroll
    container and momentarily spawn a scrollbar. */
-html .reveal:has(.rev__track) .rev__card {
+html .rev-bleed.reveal .rev__card {
   opacity: 0;
   transform: scale(0.95);
   transition:
@@ -267,7 +265,7 @@ html .reveal:has(.rev__track) .rev__card {
     transform 500ms var(--ease-out) calc(var(--i) * 60ms),
     border-color var(--d-hover) ease;
 }
-html .reveal:has(.rev__track).is-in .rev__card { opacity: 1; transform: none; }
+html .rev-bleed.reveal.is-in .rev__card { opacity: 1; transform: none; }
 
 /* CTA band: title, copy and buttons arrive in sequence. */
 html .cta__inner.reveal > * {
@@ -303,7 +301,7 @@ html .cred.reveal.is-in,
 html .review.reveal.is-in { transform: none; }
 
 /* Estimator and forms: one solid object arriving, not blurred prose. */
-html .reveal:has(> .est),
+html .reveal--scale,
 html .form.reveal {
   filter: none;
   transform: translate3d(0, 22px, 0) scale(0.985);
@@ -311,7 +309,7 @@ html .form.reveal {
     opacity 700ms var(--ease-out),
     transform 700ms var(--ease-out);
 }
-html .reveal:has(> .est).is-in,
+html .reveal--scale.is-in,
 html .form.reveal.is-in { transform: none; }
 
 /* Inline CTAs: a small, confident pop. */
@@ -562,7 +560,7 @@ html .header {
     box-shadow var(--d-hover) ease;
 }
 html .header.is-scrolled {
-  backdrop-filter: blur(18px) saturate(150%);
+  backdrop-filter: blur(12px);
   box-shadow: 0 12px 30px -22px rgba(0, 0, 0, 0.9);
 }
 /* A hairline of brand light draws across the header once you leave the top —
@@ -795,6 +793,18 @@ html .stat__n,
 html .ledger__n { font-variant-numeric: tabular-nums; }
 
 /* --------------------------------------------------------------------------
+   11b. THE SPINE
+   The page's existing authored moment, kept exactly as designed. The only
+   change is mechanical: the head is placed with a transform instead of `top`
+   (see Layout.astro), which removes the one real layout-shift source on the
+   page without altering a pixel of how it looks.
+   -------------------------------------------------------------------------- */
+html .spine__head {
+  top: 0;
+  transition: transform 0.12s linear;
+}
+
+/* --------------------------------------------------------------------------
    12. SCROLL-DRIVEN DECORATIVE PARALLAX
    The light layers already in global.css are static. Tying them to a view()
    timeline makes light pool and fall off as you move past a section — which
@@ -993,14 +1003,14 @@ html .header { view-transition-name: site-header; }
   html .section__head.reveal,
   html .inline-cta.reveal,
   html .form.reveal,
-  html .reveal:has(> .est),
+  html .reveal--scale,
   html .svc-list.reveal > .svc-row,
   html .stats.reveal > .stat,
   html .ledger.reveal > .ledger__cell,
   html .faq.reveal > details,
   html .grid.reveal > *,
-  html .reveal:has(> .pill) > .pill,
-  html .reveal:has(.rev__track) .rev__card,
+  html .areas__field.reveal > .pill,
+  html .rev-bleed.reveal .rev__card,
   html .cta__inner.reveal > *,
   html .nav a {
     opacity: 1 !important;
@@ -1073,4 +1083,5 @@ html .header { view-transition-name: site-header; }
   html .btn--act::after { display: none !important; }
 
   html .rev__track { cursor: default; }
+  html .spine__head { transition: none !important; }
 }
