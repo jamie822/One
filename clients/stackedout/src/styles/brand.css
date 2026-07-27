@@ -6,10 +6,45 @@
    the build environment, and a webfont that silently falls back is worse than one
    that ships in the repo. */
 
+/* Each real face is followed immediately by its metric matched fallback. The
+   fallbacks fetch nothing: src is local() only, so they cost zero bytes and are
+   available on the very first paint.
+
+   Why they exist. The swap from fallback to real face used to re-wrap the topbar
+   nav, taking it from 237px to 187px on a 390px screen and dragging <main> up with
+   it. Measured 0.1936 CLS on mobile. Isolated to one face: satoshi-500, the nav
+   chips. Blocking any other face left the bar at 187px; blocking satoshi-500 alone
+   reproduced the full 237px.
+
+   Arial is the pin, not system-ui. system-ui is a different typeface on every OS
+   and no single scalar can correct all of them. Liberation Sans is Arial's metric
+   clone and is what Linux resolves to, so the pair covers every platform.
+
+   size-adjust does the work. The ascent/descent/line-gap overrides are inert
+   wherever an explicit unitless line-height is already set, which is nearly
+   everywhere below, but they are declared so the faces stay correct if that
+   changes.
+
+   Every number below was measured, not estimated: the per face scalar is the
+   ratio of glyph advance widths, real face over fallback, taken with canvas
+   measureText at 100px over the real strings on all four routes and weighted by
+   run width. Two things that measurement caught and arithmetic would not:
+   local() resolves to Arial REGULAR at every declared weight, so the 700 faces
+   are fitted against Regular glyphs, not Bold; and uppercase tracked labels sit
+   at a different ratio (96.4%) from mixed case body (100.9%), so the fit is
+   weighted across both rather than taken from one sample. */
+
 @font-face {
   font-family: 'Clash Display';
   src: url('/fonts/clash-display-600.woff2') format('woff2');
   font-weight: 600; font-style: normal; font-display: swap;
+}
+@font-face {
+  font-family: 'Clash Display Fallback';
+  src: local('Arial'), local('Liberation Sans');
+  font-weight: 600; font-style: normal;
+  size-adjust: 112.54%;
+  ascent-override: 79.08%; descent-override: 22.21%; line-gap-override: 0%;
 }
 @font-face {
   font-family: 'Clash Display';
@@ -17,22 +52,56 @@
   font-weight: 700; font-style: normal; font-display: swap;
 }
 @font-face {
+  font-family: 'Clash Display Fallback';
+  src: local('Arial'), local('Liberation Sans');
+  font-weight: 700; font-style: normal;
+  size-adjust: 111.63%;
+  ascent-override: 79.73%; descent-override: 22.40%; line-gap-override: 0%;
+}
+@font-face {
   font-family: 'Satoshi';
   src: url('/fonts/satoshi-400.woff2') format('woff2');
   font-weight: 400; font-style: normal; font-display: swap;
+}
+@font-face {
+  font-family: 'Satoshi Fallback';
+  src: local('Arial'), local('Liberation Sans');
+  font-weight: 400; font-style: normal;
+  size-adjust: 98.33%;
+  ascent-override: 102.72%; descent-override: 24.41%; line-gap-override: 0%;
 }
 @font-face {
   font-family: 'Satoshi';
   src: url('/fonts/satoshi-500.woff2') format('woff2');
   font-weight: 500; font-style: normal; font-display: swap;
 }
+/* The one that caused the 0.19. */
+@font-face {
+  font-family: 'Satoshi Fallback';
+  src: local('Arial'), local('Liberation Sans');
+  font-weight: 500; font-style: normal;
+  size-adjust: 98.38%;
+  ascent-override: 102.66%; descent-override: 24.40%; line-gap-override: 0%;
+}
 @font-face {
   font-family: 'Satoshi';
   src: url('/fonts/satoshi-700.woff2') format('woff2');
   font-weight: 700; font-style: normal; font-display: swap;
 }
+@font-face {
+  font-family: 'Satoshi Fallback';
+  src: local('Arial'), local('Liberation Sans');
+  font-weight: 700; font-style: normal;
+  size-adjust: 103.80%;
+  ascent-override: 97.30%; descent-override: 23.12%; line-gap-override: 0%;
+}
 
 :root {
+  /* Charcoal is the brand, not a mode, and there is no light variant. Declaring it
+     here is what makes the scrollbar, form controls, spellcheck underlines and the
+     native focus UI render dark instead of arriving light on a charcoal page. */
+  color-scheme: dark;
+
   /* ---- Palette. The whole thing. Adding an eighth colour is a brand breach. ---- */
   --ground:      #08090b;              /* page background, the default state of everything */
   --panel:       #0d0f13;              /* cards and raised surfaces sitting on the ground  */
@@ -47,8 +116,12 @@
   --hero-gradient: linear-gradient(100deg, #ffdd33, #3fe3ff);
 
   /* ---- Type. Display carries headlines and, above all, numbers. ---- */
-  --font-display: 'Clash Display', 'Inter', system-ui, sans-serif;
-  --font-body:    'Satoshi', 'Inter', system-ui, sans-serif;
+  /* The metric matched fallback sits directly behind each real face. Inter and
+     system-ui are deliberately gone: neither is pinned to known metrics, and an
+     unpinned fallback is the whole cause of the shift these faces exist to stop.
+     Arial closes the stack in case local() finds nothing at all. */
+  --font-display: 'Clash Display', 'Clash Display Fallback', Arial, sans-serif;
+  --font-body:    'Satoshi', 'Satoshi Fallback', Arial, sans-serif;
 
   /* One scale, used consistently. 13 / 16 / 18 / 24 / 32 / 48 / 72 per the guide,
      extended upward only for the hero number, which the guide explicitly wants
@@ -69,6 +142,16 @@
   /* Generous vertical rhythm. Cramped dark layouts read as cheap. */
   --s-1: 8px;  --s-2: 16px; --s-3: 24px; --s-4: 40px;
   --s-5: 64px; --s-6: 96px; --s-7: 144px;
+
+  /* ---- Motion. Three curves, named for the job, not numbered. ----
+     These are not invented. Each is the curve the candidates had already reached
+     for independently, promoted to the shared layer so nobody writes a fourth:
+     --ease-ui was declared identically in hero-diary.css and hero-board.css and
+     again as --tl-ease in hero-timeline.css, and --ease-snap came from the board.
+     Values are unchanged, so lifting them here alters nothing on screen. */
+  --ease-ui:    cubic-bezier(.23, 1, .32, 1);    /* state change you caused: hover, focus, press, colour */
+  --ease-enter: cubic-bezier(.16, 1, .3, 1);     /* something arriving: reveals, first paint of a panel  */
+  --ease-snap:  cubic-bezier(.62, .01, .16, 1);  /* a mechanism that travels and stops hard, no overshoot */
 
   --measure: 65ch;
   --shell: 1240px;
@@ -115,6 +198,43 @@ a { color: var(--incoming); text-decoration-thickness: 1px; text-underline-offse
   border-radius: 4px;
 }
 
+/* Skip link. First thing in the tab order, invisible until it is focused.
+   position: fixed in both states, so it is outside flow and can never contribute
+   a layout shift of its own. It is parked above the viewport rather than hidden
+   with display:none, which would take it out of the tab order entirely. */
+.skip {
+  position: fixed; top: var(--s-1); left: var(--s-1); z-index: 200;
+  display: inline-flex; align-items: center;
+  min-height: 44px; padding: 12px 18px;
+  font-family: var(--font-body); font-weight: 700; font-size: var(--t-body);
+  color: var(--ink); background: var(--panel);
+  border: 1px solid var(--edge); border-radius: var(--r-chip);
+  text-decoration: none;
+  /* Panel rather than yellow: the guide allows one accent per screen and the
+     topbar's current chip already owns it. 17.7:1 against the panel. */
+  transform: translateY(calc(-100% - var(--s-3)));
+  transition: transform 160ms var(--ease-ui);
+}
+.skip:focus { transform: translateY(0); }
+
+/* main takes focus when the skip link is used. It is a container, not a control,
+   so the ring belongs on the link the reader is looking at, not boxing the whole
+   page. The feedback lands on the next keystroke: Tab from here goes to the first
+   control inside main, in the viewport, with a visible ring, which is measured
+   behaviour on all four routes and is the entire job of a skip link. */
+main:focus { outline: none; }
+
+/* The topbar is sticky above 720px, so anything the browser scrolls to on its own,
+   a focused control or the skip link's own #main jump or any in page anchor, can
+   come to rest underneath it. Forty five Tab stops per route were measured and
+   Chrome's focus scrolling currently keeps clear on all four, so this is a guard
+   rather than a repair, but the bar is 66px tall and nothing was reserving room
+   for it. WCAG 2.2 section 2.4.11, focus not obscured. Below 721px the bar is
+   static and there is nothing to clear. */
+@media (min-width: 721px) {
+  html { scroll-padding-top: 5rem; }
+}
+
 /* Tiny labels are the only ALL CAPS allowed, at .08em tracking. */
 .label {
   font-family: var(--font-body);
@@ -151,7 +271,7 @@ a { color: var(--incoming); text-decoration-thickness: 1px; text-underline-offse
   border: 1px solid transparent; cursor: pointer;
   min-height: 44px;                     /* guide §4: cold hands, in a van */
   text-decoration: none;
-  transition: background-color 160ms ease-out, transform 160ms ease-out, border-color 160ms ease-out;
+  transition: background-color 160ms var(--ease-ui), transform 160ms var(--ease-ui), border-color 160ms var(--ease-ui);
 }
 .btn--action { background: var(--action); color: var(--ground); }
 .btn--action:hover { background: var(--action-deep); }
