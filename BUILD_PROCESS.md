@@ -77,8 +77,42 @@ below exists because doing it out of order costs more time than it saves.
 
 ## Who you are actually writing for
 
-Not the electrician. **The electrician's customer**, and there are four of them
-with different fears:
+Full research in [`AUDIENCE.md`](AUDIENCE.md). Read it before writing copy.
+
+### The finding that shapes every page
+
+**For most visitors the site is a verification channel, not a discovery
+channel.** 69% of UK hires come from word-of-mouth. Someone has already been
+given a name and is Googling it to check the person is real, local, registered
+and not a disaster.
+
+**The job is to survive scrutiny, not to make a cold pitch.** Verifiable
+specifics beat persuasive language, and anything that looks evasive costs more
+than anything that looks unpolished.
+
+### Three numbers worth memorising
+
+- **85% rank contact details and opening hours as important — above price,
+  proximity and reviews.** 35% leave for a competitor over wrong information.
+  The dullest finding in the research is also the best evidenced.
+- **73% only trust reviews written in the last month.** Ten recent detailed
+  reviews beat two hundred undated ones.
+- **Purchase likelihood peaks at 4.2–4.5 stars.** Products rated 4.7–5.0 are
+  *less* likely to be bought than those rated 4.2–4.7 (Northwestern). Don't
+  chase a spotless 5.0 — a few 4-stars with a good reply underneath are more
+  persuasive.
+
+### The anxiety nobody addresses
+
+**Only 22% of women say having a tradesperson alone in their home has never made
+them feel unsafe, against 59% of men** (YouGov). Four in five women have felt
+unsafe at least sometimes, and almost no electrician's site acknowledges it.
+
+For that reader, a real photograph, a first name, "we'll text you a photo of the
+engineer before he arrives", ID cards and a marked van aren't decoration — they
+decide it. **This is the biggest untapped trust opportunity in the market.**
+
+### The four buyers
 
 | Buyer | Trigger | What they're afraid of | What lands |
 |---|---|---|---|
@@ -90,6 +124,23 @@ with different fears:
 **Write each page for one of these four.** A page that speaks to all of them
 speaks to none.
 
+### Two things that are not website problems, but are your problem
+
+**Answering the phone beats anything on the site.** Responding within 5 minutes
+makes a firm 21x more likely to qualify a lead than waiting 30 minutes
+(MIT/InsideSales); HBR found 23% of businesses never respond at all. A site that
+generates calls into an unanswered mobile is a wasted build. Every proposal needs
+either a call-answering arrangement or an honest promise the client can keep.
+
+**Accreditation badges do almost nothing on their own.** Consumer awareness of
+Part P has been measured at 14%, and NAPIT conceded to Parliament that awareness
+of Competent Person schemes is low. A row of logos reads as "some official-looking
+badges". Each one needs a sentence translating it:
+
+> **NICEIC Approved Contractor.** An independent assessor inspects our work every
+> year. It also means we can self-certify to Building Control — so you get the
+> compliance certificate your solicitor will ask for when you sell.
+
 The site is a stranger's first impression of someone who will be inside their
 home. Everything below serves that.
 
@@ -97,11 +148,32 @@ home. Everything below serves that.
 
 ## The ethics line — no fear-selling
 
-The electrical trade has a real problem with manufactured urgency: *"your
-consumer unit is a fire risk, it needs replacing today."* We do not do this. Not
-because it never works, but because it makes the customer feel worse and it puts
-the client on the wrong side of the Consumer Protection from Unfair Trading
-Regulations 2008.
+Full argument and evidence in [`AUDIENCE.md`](AUDIENCE.md) §6.
+
+### Get the argument right
+
+**Do not tell a client that fear-selling doesn't work.** It does. The best
+evidence available — Tannenbaum et al. (2015), a meta-analysis of 248 samples,
+N≈27,372 — found fear appeals produce a real positive effect (d = 0.29) and
+that there are *"no identified circumstances under which they backfire."*
+
+Any electrician using scare tactics has probably watched them work. A pitch built
+on a false premise gets dismissed by the people you most need to convince. The
+honest case has three legs:
+
+1. **That evidence doesn't transfer.** Its samples are health campaigns, where
+   the threat is genuine and the communicator has no financial interest in the
+   recommended action. Neither holds when someone in your hallway says a working
+   installation will burn your house down and he can fix it today for £900.
+2. **Reactance, amplified by context.** Coerced people resolve the discomfort by
+   deciding the messenger isn't credible. And **only 52% of consumers trust the
+   tradesperson they already hired** — so a fear pitch lands on existing
+   suspicion, not a neutral prior. The same message that persuades a stranger in
+   a public health campaign confirms a suspicion in a kitchen.
+3. **Several common forms are illegal.** CPRs 2008 regs 5, 6 and 7 plus the
+   Schedule 1 banned practices; and since April 2025 the DMCC Act lets the CMA
+   **fine up to 10% of global turnover directly, without going to court.** Drip
+   pricing and fake reviews are explicitly prohibited.
 
 ### The test
 

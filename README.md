@@ -14,6 +14,8 @@ template, and 36 vendored skills.
 | Understand the market | [`RESEARCH.md`](RESEARCH.md) |
 | Set a price or handle an objection | [`COMMERCIALS.md`](COMMERCIALS.md) |
 | Find and contact prospects | [`OUTREACH.md`](OUTREACH.md) |
+| **Follow the build process** | [`BUILD_PROCESS.md`](BUILD_PROCESS.md) — phases, skill order, gates |
+| Understand the end customer | [`AUDIENCE.md`](AUDIENCE.md) — what makes someone ring an electrician |
 | Know which skill does what | [`.claude/skills/README.md`](.claude/skills/README.md) |
 | See the code | [`client-template/`](client-template/) |
 
@@ -36,7 +38,16 @@ the *top third* of this market, not the cheap end. It's defensible — market ra
 for website copywriting alone is £1,200–£2,600 — but it has to be justified, not
 assumed.
 
-**4. You cannot lawfully cold-email a sole trader.** Under PECR, sole traders
+**4. Not one competitor passes Core Web Vitals.** The best LCP in the set is
+2.9s against a 2.5s threshold; six sites are over 7 seconds. The one competitor
+with a genuinely ambitious animated hero scores 15/100 with a 23.7s LCP — they
+hung a video on the LCP element. A static build with CSS motion gets both.
+
+**5. The site is a verification channel, not a discovery channel.** 69% of hires
+come from word-of-mouth; people Google the name they were given. The job is to
+survive scrutiny, not to pitch.
+
+**6. You cannot lawfully cold-email a sole trader.** Under PECR, sole traders
 are individual subscribers and need consent; limited companies don't. Your best
 prospect is often a sole trader. Phone, post and in-person are the compliant
 routes, and they're also what works best on trades.
@@ -50,6 +61,8 @@ MASTER_PROMPT.md     The build brief. Fill in Part 1 per client.
 RESEARCH.md          Market study: competitors, anti-patterns, SEO, GBP.
 COMMERCIALS.md       Pricing, packaging, objection handling, payment terms.
 OUTREACH.md          Finding prospects, PECR/GDPR compliance, cadence.
+BUILD_PROCESS.md     The delivery SOP: 8 phases, skill order, quality gates.
+AUDIENCE.md          The end customer: decision process, fears, trust signals.
 
 client-template/     Brand-neutral Astro starter. One config file drives it.
 research-output/     Live competitor audit — screenshots, Lighthouse, signals.
