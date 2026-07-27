@@ -280,7 +280,23 @@ a:hover { text-decoration: underline; }
   transition: border-color 0.2s ease;
 }
 .header.is-scrolled { border-bottom-color: var(--line); }
-.header__inner { display: flex; align-items: center; justify-content: space-between; gap: 20px; padding: 14px 0; }
+/* padding-block, NOT the `padding: 14px 0` shorthand this used to be.
+   The element is <div class="container header__inner">, so it is meant to sit
+   on the same 22px gutter as every other container. The shorthand set the
+   inline padding to 0 and, being the later single-class rule, beat
+   `.container { padding: 0 22px }` — so the header lost its gutter entirely.
+
+   That was invisible at the two widths people usually check: below 901px the
+   CTA moves into the drawer and picks up its own `margin: 14px 22px` (line
+   ~312), and above --maxw (1180px) the container's max-width centres it and
+   manufactures a gutter. In between — 901px to 1180px, which includes the
+   1024px breakpoint and most small laptops — the logo sat flush on the left
+   edge and the "Get in touch" CTA flush on the right, misaligned against page
+   content that was correctly indented 22px.
+
+   Setting only padding-block means the gutter is inherited from .container,
+   so the header cannot drift out of alignment if that 22px ever changes. */
+.header__inner { display: flex; align-items: center; justify-content: space-between; gap: 20px; padding-block: 14px; }
 .brandmark { font-family: var(--face-display); font-weight: 800; font-size: 1.15rem; letter-spacing: var(--track-1); color: var(--text); text-decoration: none; }
 .brandmark:hover { text-decoration: none; }
 .nav { display: flex; align-items: center; gap: 26px; }
@@ -447,8 +463,35 @@ a:hover { text-decoration: underline; }
 .frame img { width: 100%; object-fit: cover; }
 
 /* Reviews ----------------------------------------------------------------- */
+
+/* The UA stylesheet gives <figure> and <blockquote> `margin: 1em 40px`. Every
+   figure and blockquote on this site is a card or a card's quote, so those
+   80px of inline margin are never wanted, and left in place they were not
+   merely cosmetic:
+
+   /reviews/ lays the cards out with `.grid--3` (repeat(3, 1fr)). A `1fr`
+   track is minmax(auto, 1fr), so it cannot shrink below the item's
+   min-content width — and each item's min-content included the 80px. Measured
+   at a 1024px viewport: grid 980px wide, tracks resolved to
+   341.078 + 346.375 + 370.562 + 44 gap = 1102px. The page scrolled
+   sideways by 60px and the header's "Get in touch" CTA was clipped.
+
+   The same 80px on `.rev__card` inflated the carousel rail's 20px gap to an
+   effective 100px, and squeezed the quote text into a column ~180px wide.
+
+   `.beforeafter figure` below has carried its own `margin: 0` for a while,
+   which is the same bug found once and patched locally instead of at the
+   root. Reset it at the root and that rule becomes belt-and-braces.
+
+   Scoped to the four classes rather than a bare `figure, blockquote` reset
+   because these are every figure and blockquote the build emits (verified
+   against dist: 14 figures, 38 blockquotes, no other classes), and a blanket
+   reset would silently restyle any future pull-quote that does want indenting. */
+.review, .rev__card, .review__quote, .rev__text { margin-inline: 0; }
+.review, .rev__card { margin-block: 0; }
+
 .review { background: var(--panel); border: 1px solid var(--line); border-radius: var(--radius); padding: 24px; height: 100%; }
-.review__quote { font-size: var(--step-1); line-height: var(--leading-deck); letter-spacing: calc(var(--track-1) + var(--optical)); color: var(--text); margin-bottom: 16px; }
+.review__quote { font-size: var(--step-1); line-height: var(--leading-deck); letter-spacing: calc(var(--track-1) + var(--optical)); color: var(--text); margin-block: 0 16px; }
 .review__meta { font-family: var(--face-tech); font-size: var(--step--2); line-height: var(--leading-tech); color: var(--faint); }
 .review__meta strong { display: block; color: var(--text-2); font-weight: 500; }
 

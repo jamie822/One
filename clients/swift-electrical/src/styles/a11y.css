@@ -350,7 +350,54 @@ html body .faq details[open] summary::after {
 }
 
 /* --------------------------------------------------------------------------
-   14. PLACEHOLDER SCAFFOLDING CONTRAST
+   14. REFLOW AT 320px
+   WCAG 1.4.10 Reflow — AA
+
+   /contact/ and /reviews/ scrolled horizontally at 320px: 382px and 331px of
+   content in a 320px viewport.
+
+   Neither is a width that was authored. Both are single-column grids at that
+   breakpoint — `.split` at 1fr, `.grid--3` at 1fr — and a `1fr` track's
+   automatic minimum is `min-content`, not zero. So a track that should have
+   been 276px was sized by its widest item instead: 360px and 348.7px, both
+   punching straight through the container.
+
+   minmax(0, 1fr) is the standard correction: it caps the track at the space
+   available and lets the content wrap, which is what a single-column layout
+   was always meant to do. Scoped to the breakpoints where global.css has
+   already collapsed these grids to one column, so no multi-column layout is
+   touched.
+   -------------------------------------------------------------------------- */
+@media (max-width: 880px) {
+  html .split {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+@media (max-width: 620px) {
+  html .grid--2,
+  html .grid--3,
+  html .grid--4 {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  html .field--row {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+/* Same failure, different mechanism: a text input carries an intrinsic width
+   from its `size` default, and as a grid item that intrinsic width becomes
+   its automatic minimum. The enquiry form's fields therefore refused to go
+   below ~177px each and pushed /contact/ to 353px. min-width: 0 lets them
+   size to the track they are in. */
+html .field input,
+html .field select,
+html .field textarea {
+  min-width: 0;
+  max-width: 100%;
+}
+
+/* --------------------------------------------------------------------------
+   15. PLACEHOLDER SCAFFOLDING CONTRAST
    WCAG 1.4.3 Contrast (Minimum)
 
    Belt-and-braces alongside the fix in Needed.astro. The NEEDED markers are
