@@ -1,0 +1,200 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Hero from '../components/Hero.astro';
+import TrustBar from '../components/TrustBar.astro';
+import Reviews from '../components/Reviews.astro';
+import CtaBand from '../components/CtaBand.astro';
+import Placeholder from '../components/Placeholder.astro';
+import Needed from '../components/Needed.astro';
+import Icon from '../components/Icon.astro';
+import { href, hasRating, hasPhone, primaryArea } from '../lib/site.js';
+import { client, services, areas, faqs } from '../data/client.js';
+
+const faqSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'FAQPage',
+  mainEntity: faqs.filter((f) => f.a).map((f) => ({
+    '@type': 'Question',
+    name: f.q,
+    acceptedAnswer: { '@type': 'Answer', text: f.a },
+  })),
+};
+---
+<Layout
+  path="/"
+  title="Electrician in Bradford"
+  description="Swift Electrical & Security — electrician and security installer covering Bradford, Shipley, Saltaire, Bingley and Keighley. EICRs, fault finding, CCTV. 5.0 from 7 Google reviews."
+  schemas={[faqSchema]}
+>
+  <Hero>
+    {hasRating && (
+      <p class="rise" style="margin:0 0 14px;display:flex;align-items:center;gap:10px;flex-wrap:wrap">
+        <span class="stars">{'★'.repeat(Math.round(client.google.rating))}</span>
+        <strong style="font-family:var(--font-display)">{client.google.rating}</strong>
+        <span class="muted">from {client.google.reviewCount} Google reviews</span>
+      </p>
+    )}
+    <p class="eyebrow rise">Electrician &amp; security installer · Bradford</p>
+    <h1 class="rise">Straight prices, and we actually find the fault.</h1>
+    <p class="hero__sub rise">
+      Domestic electrical work and security systems across Bradford, Shipley,
+      Saltaire, Bingley and Keighley. EICRs for landlords, cameras, and the
+      intermittent faults other people have given up on.
+    </p>
+    <div class="hero__actions rise">
+      {hasPhone
+        ? <a class="btn btn--primary btn--lg" href={`tel:${client.phoneHref}`}><Icon name="phone" /> {client.phone}</a>
+        : <Needed label="PHONE NUMBER NEEDED — add to Google too" />}
+      <a class="btn btn--ghost btn--lg" href={href('/contact/')}>Ask for a price</a>
+    </div>
+  </Hero>
+
+  <div class="container"><TrustBar /></div>
+
+  <!-- PROBLEM-LED INTRO. Written from the reviews, in the customer's framing.
+       No fear, no urgency — the promise is certainty, not alarm. -->
+  <section class="section">
+    <div class="container container--narrow reveal">
+      <h2>Two things people say about us, unprompted</h2>
+      <p class="lead">
+        Read the reviews and the same two points keep coming back. The price is
+        the one people settle on after being quoted elsewhere. And when
+        something is genuinely hard to find, it gets found.
+      </p>
+      <p class="muted">
+        One customer had the power tripping constantly and had already had
+        several electricians out — none of them could work out why. Another had
+        EICR certificates due across a portfolio and had been quoted what he
+        described as extortionate prices before he was put in touch with us
+        through a friend.
+      </p>
+      <p class="muted">
+        That is most of what this business runs on: someone tells someone else.
+        This site exists so that when they look us up, there is something
+        sensible to find.
+      </p>
+    </div>
+  </section>
+
+  <!-- SERVICES -->
+  <section class="section section--panel">
+    <div class="container">
+      <div class="section__head reveal">
+        <p class="eyebrow">What we do</p>
+        <h2>Electrical work and security, from one person</h2>
+        <p>
+          Most electricians do not fit cameras, and most security firms are not
+          electricians. Doing both means one visit and one person responsible.
+        </p>
+      </div>
+      <div class="grid grid--3">
+        {services.map((s, i) => (
+          <a class="card reveal" style={`transition-delay:${(i % 3) * 80}ms`} href={href(`/services/${s.slug}/`)}>
+            <span class="card__icon"><Icon name={s.icon} /></span>
+            <h3>{s.title}</h3>
+            <p>{s.short}</p>
+            <span class="card__link">Read more →</span>
+          </a>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- THE OWNER -->
+  <section class="section">
+    <div class="container split">
+      <div class="frame reveal">
+        <Placeholder
+          src={client.owner.photo}
+          alt={`${client.owner.name} of ${client.name}`}
+          label="Photo of Adil needed"
+          hint="A real photo — even one taken on a phone. This is the highest-trust image on the site and there is currently nothing here."
+          variant="ph--portrait"
+        />
+      </div>
+      <div class="reveal">
+        <p class="eyebrow">Who turns up</p>
+        <h2>{client.owner.name}</h2>
+        <p class="lead">{client.owner.bio}</p>
+        <p class="muted">
+          Three of the seven reviews on our Google profile name Adil directly.
+          One notes he drove forty minutes out of his way to sort a lighting
+          fault. Another describes being talked through exactly what needed
+          doing before anything was done.
+        </p>
+        <p class="muted">
+          <Needed label="Adil's surname, years trading, qualifications" />
+        </p>
+        <a class="btn btn--ghost" href={href('/about/')}>More about us</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- REVIEWS -->
+  <section class="section section--panel">
+    <div class="container">
+      <div class="section__head reveal">
+        <p class="eyebrow">In their words</p>
+        <h2>What customers said</h2>
+        <p>
+          Every review below is copied from our Google profile, unedited.
+        </p>
+      </div>
+      <Reviews limit={3} />
+      <p style="margin-top:26px"><a href={href('/reviews/')}>Read all {client.google.reviewCount} reviews →</a></p>
+    </div>
+  </section>
+
+  <!-- CASE STUDIES PLACEHOLDER -->
+  <section class="section">
+    <div class="container container--narrow">
+      <div class="section__head reveal" style="margin-bottom:26px">
+        <p class="eyebrow">Recent work</p>
+        <h2>Jobs we have finished</h2>
+      </div>
+      <div class="ph reveal" style="aspect-ratio:auto;padding:40px">
+        <strong>Three real jobs needed</strong>
+        <small>
+          The best candidate is already in the reviews — the intermittent
+          tripping fault several other electricians could not find. What was
+          wrong, what it turned out to be, how long it took.
+        </small>
+      </div>
+    </div>
+  </section>
+
+  <!-- AREAS -->
+  <section class="section section--panel">
+    <div class="container">
+      <div class="section__head reveal">
+        <p class="eyebrow">Where we work</p>
+        <h2>Bradford and around it</h2>
+      </div>
+      <div class="reveal" style="display:flex;flex-wrap:wrap;gap:10px">
+        {areas.map((a) => (
+          <a class="pill" href={href(`/areas/${a.slug}/`)}>{a.name}</a>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- FAQ -->
+  <section class="section">
+    <div class="container container--narrow">
+      <div class="section__head reveal">
+        <p class="eyebrow">Worth knowing</p>
+        <h2>Questions we get asked</h2>
+      </div>
+      <div class="faq reveal">
+        {faqs.map((f) => (
+          <details>
+            <summary>{f.q}</summary>
+            <div class="faq__body">{f.a || <Needed label="ANSWER NEEDED" />}</div>
+          </details>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <CtaBand title="Want a price?" />
+</Layout>

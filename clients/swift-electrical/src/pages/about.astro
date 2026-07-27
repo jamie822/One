@@ -1,0 +1,141 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Hero from '../components/Hero.astro';
+import TrustBar from '../components/TrustBar.astro';
+import CtaBand from '../components/CtaBand.astro';
+import Placeholder from '../components/Placeholder.astro';
+import Needed from '../components/Needed.astro';
+import Icon from '../components/Icon.astro';
+import { href } from '../lib/site.js';
+import { client } from '../data/client.js';
+
+const personSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'Person',
+  name: client.owner.name,
+  jobTitle: client.owner.role,
+  worksFor: { '@id': `${client.url}/#business` },
+};
+---
+<Layout
+  path="/about/"
+  title="About Swift Electrical & Security"
+  description="Swift Electrical & Security is run by Adil, a NICEIC registered electrician working across Bradford and West Yorkshire. Electrical work and security systems from the same person."
+  crumbs={[{ name: 'Home', path: '/' }, { name: 'About', path: '/about/' }]}
+  schemas={[personSchema]}
+>
+  <Hero inner={true}>
+    <p class="eyebrow">About</p>
+    <h1>Electrics and security, from the same person.</h1>
+    <p class="hero__sub">
+      Swift Electrical &amp; Security is run by Adil, working across Bradford and
+      West Yorkshire.
+    </p>
+  </Hero>
+
+  <div class="container"><TrustBar /></div>
+
+  <section class="section">
+    <div class="container split">
+      <div class="frame reveal">
+        <Placeholder
+          src={client.owner.photo}
+          alt={`${client.owner.name}, ${client.name}`}
+          label="Photo of Adil needed"
+          hint="Real photo, not stock. There are 18 posts on the Instagram already — a still from one of those would do to start."
+          variant="ph--portrait"
+        />
+      </div>
+      <div class="reveal">
+        <h2>Adil</h2>
+        <p class="lead">{client.owner.bio}</p>
+        <p class="muted">
+          Three of the seven reviews on the Google profile name him. One
+          describes him driving forty minutes out of his way to sort a lighting
+          fault. Another describes being talked through exactly what needed
+          doing before anything was done. A third, from a landlord with several
+          properties, says his was the most reasonable of every quote received.
+        </p>
+        <p class="muted">
+          The security side is not an add-on. It is in the name, and two of the
+          seven reviews are about camera installs — one from a customer who has
+          used the company several times.
+        </p>
+        <div class="ph" style="aspect-ratio:auto;padding:24px;margin-top:22px;text-align:left">
+          <strong>Adil's own words needed here</strong>
+          <small>
+            How he got into the trade, what he did before, why he added security
+            to the electrical side. Two or three paragraphs, first person, in
+            his voice. This is the highest-trust content on the site.
+          </small>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section section--panel">
+    <div class="container container--narrow reveal">
+      <h2>Qualifications &amp; cover</h2>
+      <ul style="list-style:none;padding:0;display:grid;gap:14px;margin-top:20px">
+        <li>
+          <Icon name="shield" />
+          <span>
+            <strong>NICEIC Registered</strong>
+            An independent assessor inspects the work every year. It also means
+            we can self-certify to Building Control — so you get the compliance
+            certificate your solicitor asks for when you sell.
+            <br /><Needed label="ENROLMENT NUMBER NEEDED — so customers can check the register" />
+          </span>
+        </li>
+        <li>
+          <Icon name="check" />
+          <span>
+            <strong>Qualifications</strong>
+            <Needed label="2391? 18th Edition? ECS card?" />
+          </span>
+        </li>
+        <li>
+          <Icon name="check" />
+          <span>
+            <strong>Public liability insurance</strong>
+            <Needed label="COVER AMOUNT NEEDED" />
+          </span>
+        </li>
+        <li>
+          <Icon name="clock" />
+          <span>
+            <strong>Trading since</strong>
+            <Needed label="YEAR NEEDED — reviews go back at least 2 years" />
+          </span>
+        </li>
+      </ul>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="container container--narrow reveal">
+      <h2>How we work</h2>
+      <p>
+        We tell you what we have found before we do anything about it, and what
+        it will cost before we start. If we find something on an inspection that
+        needs putting right, that gets quoted separately and you are free to
+        take the quote elsewhere. Testing and fixing are two different jobs.
+      </p>
+      <p class="muted">
+        We will not tell you something is urgent when it is not. An old fuse
+        board is worth knowing about; it is rarely an emergency, and anyone
+        telling you otherwise on the doorstep is selling rather than advising.
+      </p>
+    </div>
+  </section>
+
+  <CtaBand title="Want a price?" />
+</Layout>
+
+<style>
+  li { display: flex; gap: 13px; align-items: flex-start; }
+  li svg { width: 20px; height: 20px; color: var(--brand); flex: 0 0 auto; margin-top: 4px; }
+  li strong { display: block; font-family: var(--font-display); margin-bottom: 3px; }
+  li span { color: var(--muted); }
+  li strong { color: var(--text); }
+</style>

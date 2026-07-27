@@ -1,0 +1,46 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import Hero from '../../components/Hero.astro';
+import CtaBand from '../../components/CtaBand.astro';
+import { href } from '../../lib/site.js';
+import { client, caseStudies, areas } from '../../data/client.js';
+---
+<Layout
+  path="/case-studies/"
+  title="Our work"
+  description={`Real jobs finished by ${client.name} — what the problem was, what we did, and what it cost.`}
+  crumbs={[{ name: 'Home', path: '/' }, { name: 'Our Work', path: '/case-studies/' }]}
+>
+  <Hero inner={true}>
+    <p class="eyebrow">Our work</p>
+    <h1>Jobs we've finished</h1>
+    <p class="hero__sub">Real jobs, real photos, real customers.</p>
+  </Hero>
+
+  <section class="section">
+    <div class="container">
+      {caseStudies.length > 0 ? (
+        <div class="grid grid--3">
+          {caseStudies.map((c, i) => {
+            const area = areas.find((a) => a.slug === c.area);
+            return (
+              <a class="card reveal" style={`transition-delay:${(i % 3) * 70}ms`} href={href(`/case-studies/${c.slug}/`)}>
+                <p class="eyebrow">{[area?.name, c.date].filter(Boolean).join(' · ')}</p>
+                <h3>{c.title}</h3>
+                <p>{c.problem}</p>
+                <span class="card__link">See the job →</span>
+              </a>
+            );
+          })}
+        </div>
+      ) : (
+        <div class="ph" style="aspect-ratio:auto;padding:44px">
+          <strong>No case studies yet</strong>
+          <small>Add at least three real jobs to the caseStudies array in src/data/client.js. Research found case studies are the clearest gap across the whole UK market.</small>
+        </div>
+      )}
+    </div>
+  </section>
+
+  <CtaBand />
+</Layout>

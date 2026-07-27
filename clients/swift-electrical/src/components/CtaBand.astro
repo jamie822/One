@@ -1,0 +1,27 @@
+---
+import { client } from '../data/client.js';
+import { href, hasPhone } from '../lib/site.js';
+import Needed from './Needed.astro';
+import Icon from './Icon.astro';
+
+const {
+  title = `Need an electrician in ${client.address.locality}?`,
+  text = client.responsePromise || 'Tell us what the problem is and we will tell you what it will cost before we start.',
+} = Astro.props;
+---
+<section class="cta">
+  <div class="cta__inner reveal">
+    <h2>{title}</h2>
+    <p class="lead">{text}</p>
+    <div class="cta__actions">
+      {hasPhone
+        ? <a class="btn btn--primary btn--lg" href={`tel:${client.phoneHref}`}><Icon name="phone" /> {client.phone}</a>
+        : <Needed label="PHONE NUMBER NEEDED" />}
+      <a class="btn btn--ghost btn--lg" href={href('/contact/')}>Request a quote</a>
+    </div>
+  </div>
+</section>
+
+<style>
+  .cta .btn svg { width: 18px; height: 18px; }
+</style>

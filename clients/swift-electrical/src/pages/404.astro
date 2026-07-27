@@ -1,0 +1,17 @@
+---
+import Layout from '../layouts/Layout.astro';
+import { href } from '../lib/site.js';
+import { client } from '../data/client.js';
+---
+<Layout path="/404/" title="Page not found" description="That page doesn't exist.">
+  <section class="section">
+    <div class="container container--narrow" style="text-align:center">
+      <h1>Page not found</h1>
+      <p class="lead">That link's gone dead. Nothing to do with the wiring.</p>
+      <div style="display:flex;gap:12px;justify-content:center;flex-wrap:wrap;margin-top:26px">
+        <a class="btn btn--primary" href={href('/')}>Back to home</a>
+        <a class="btn btn--ghost" href={`tel:${client.phoneHref}`}>{client.phone}</a>
+      </div>
+    </div>
+  </section>
+</Layout>

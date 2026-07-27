@@ -1,0 +1,40 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import Hero from '../../components/Hero.astro';
+import TrustBar from '../../components/TrustBar.astro';
+import CtaBand from '../../components/CtaBand.astro';
+import Icon from '../../components/Icon.astro';
+import { href, primaryArea } from '../../lib/site.js';
+import { client, services } from '../../data/client.js';
+---
+<Layout
+  path="/services/"
+  title="Electrical services"
+  description={`Rewires, EICRs, consumer units, EV chargers and fault finding across ${primaryArea.name} and ${client.address.region}.`}
+  crumbs={[{ name: 'Home', path: '/' }, { name: 'Services', path: '/services/' }]}
+>
+  <Hero inner={true}>
+    <p class="eyebrow">Services</p>
+    <h1>What we do</h1>
+    <p class="hero__sub">Domestic and commercial electrical work across {client.address.region}.</p>
+  </Hero>
+
+  <div class="container"><TrustBar /></div>
+
+  <section class="section">
+    <div class="container">
+      <div class="grid grid--2">
+        {services.map((s, i) => (
+          <a class="card reveal" style={`transition-delay:${(i % 2) * 80}ms`} href={href(`/services/${s.slug}/`)}>
+            <span class="card__icon"><Icon name={s.icon} /></span>
+            <h3>{s.title}</h3>
+            <p>{s.symptom}</p>
+            <span class="card__link">Read more →</span>
+          </a>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <CtaBand />
+</Layout>
