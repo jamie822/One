@@ -3,7 +3,7 @@
     "url": "https://wyelectrical.co.uk/",
     "ok": true,
     "status": 200,
-    "loadMs": 464,
+    "loadMs": 570,
     "title": "Electrician in Leeds | Domestic & Commercial Electrical Services",
     "titleLength": 64,
     "metaDescription": "Leeds-based NICEIC-registered local electrician, providing domestic and commercial electrical services across West Yorkshire. No call-out fees and free quotes. We handle everything from quick fixes to full rewires.",
@@ -145,13 +145,24 @@
       "rgb(255, 255, 255) (1)",
       "rgb(24, 24, 24) (1)"
     ],
-    "heroHtmlSample": "\n\t\t\t<div class=\"elementor-element elementor-element-65f6e7b7 e-con-full e-flex e-con e-parent e-lazyloaded\" data-id=\"65f6e7b7\" data-element_type=\"container\" data-e-type=\"container\" data-settings=\"{&quot;background_background&quot;:&quot;classic&quot;}\">\n\t\t<div class=\"elementor-element elementor-element-578f4ca3 e-flex e-con-boxed e-con e-child\" data-id=\"578f4ca3\" data-element_type=\"container\" data-e-type=\"container\">\n\t\t\t\t\t<div class=\"e-con-inner\">\n\t\t<div class=\"elementor-element elementor-element-623b0f1f e-con-full e-grid e-con e-child\" data-id=\"623b0f1f\" data-element_type=\"container\" data-e-type=\"container\">\n\t\t<div class=\"elementor-element elementor-element-7482914b e-con-full e-flex e-con e-child\" data-id=\"7482914b\" data-element_type=\"container\" data-e-type=\"container\">\n\t\t\t\t<div class=\"elementor-element elementor-element-2839157 elementor-position-inline-start elementor-mobile-position-inline-start elementor-view-default elementor-widget elementor-widget-icon-box\" data-id=\"2839157\" data-element_type=\"widget\" data-e-type=\"widget\" data-widget_type=\"icon-box.default\">\n\t\t\t\t<div class=\"elementor-widget-container\">\n\t\t\t\t\t\t\t<div class=\"elementor-icon-box-wrapper\">\n\n\t\t\t\t\t\t<div class=\"elementor-icon-box-icon\">\n\t\t\t\t<a href=\"tel:07300789356\" class=\"elementor-icon elementor-animation-float\" tabindex=\"-1\" aria-label=\"07300789356\">\n\t\t\t\t<svg xmlns=\"http://www.w3.org/2000/svg\" id=\"Layer_1\" data-name=\"Layer 1\" viewBox=\"0 0 24 24\" width=\"512\" height=\"512\"><path d=\"M13,1a1,1,0,0,1,1-1A10.011,10.011,0,0,1,24,10a1,1,0,0,1-2,0,8.009,8.009,0,0,0-8-8A1,1,0,0,1,13,1Zm1,5a4,4,0,0,1,4,4,1,1,0,0,0,2,0,6.006,6.006,0,0,0-6-6,1,1,0,0,0,0,2Zm9.093,10.739a3.1,3.1,0,0,1,0,4.378l-.91,1.049c-8.19,7.841-28.12-12.084-20.4-20.3l1.15-1A3.081,3.081,0,0,1,7.26.906c.031.031,1.884,2.438,1.884,2.438a3.1,3.1,0,0,1-.007,4.282L7.979,9.082a12.781,12.781,0,0,0,6.931,6.945l1.465-1.165a3.1,3.1,0,0,1,4.281-.006S23.062,16.708,23.093,16.739Zm-1.376,1.454s-2.393-1.841-2.424-1.872a1.1,1.1,0,0,0-1.549,0c-.027.028-2.044,1.635-2.044,1.635a1,1,0,0,1-.979.152A15.009,15.009,0,0,1,5.9,9.3a1,1,0,0,1,.145-1S7.652,6.282,7.679,6.256a1.1,1.1,0,0,0,0-1.549c-.031-.03-1.872-2.425-1.872-2.425a1.1,1.1,0,0,0-1.51.039l-1.15,1C-2.495,10.105,14.776,26.418,20.721,20.8l.911-1.05A1.121,1.121,0,0,0,21.717,18.193Z\"></path></svg>\t\t\t\t</a>\n\t\t\t</div>\n\t\t\t\n\t\t\t\t\t\t<div class=\"elementor-icon-box-content\">\n\n\t\t\t\t\t\t\t\t\t<p class=\"elementor-icon-box-title\">\n\t\t\t\t\t\t<a href=\"tel:07300789356\">\n\t\t\t\t\t\t\t07300789356\t\t\t\t\t\t</a>\n\t\t\t\t\t</p>\n\t\t\t\t\n\t\t\t\t\n\t\t\t</div>\n\t\t"
+    "heroHtmlSample": "\n\t\t\t<div class=\"elementor-element elementor-element-65f6e7b7 e-con-full e-flex e-con e-parent e-lazyloaded\" data-id=\"65f6e7b7\" data-element_type=\"container\" data-e-type=\"container\" data-settings=\"{&quot;background_background&quot;:&quot;classic&quot;}\">\n\t\t<div class=\"elementor-element elementor-element-578f4ca3 e-flex e-con-boxed e-con e-child\" data-id=\"578f4ca3\" data-element_type=\"container\" data-e-type=\"container\">\n\t\t\t\t\t<div class=\"e-con-inner\">\n\t\t<div class=\"elementor-element elementor-element-623b0f1f e-con-full e-grid e-con e-child\" data-id=\"623b0f1f\" data-element_type=\"container\" data-e-type=\"container\">\n\t\t<div class=\"elementor-element elementor-element-7482914b e-con-full e-flex e-con e-child\" data-id=\"7482914b\" data-element_type=\"container\" data-e-type=\"container\">\n\t\t\t\t<div class=\"elementor-element elementor-element-2839157 elementor-position-inline-start elementor-mobile-position-inline-start elementor-view-default elementor-widget elementor-widget-icon-box\" data-id=\"2839157\" data-element_type=\"widget\" data-e-type=\"widget\" data-widget_type=\"icon-box.default\">\n\t\t\t\t<div class=\"elementor-widget-container\">\n\t\t\t\t\t\t\t<div class=\"elementor-icon-box-wrapper\">\n\n\t\t\t\t\t\t<div class=\"elementor-icon-box-icon\">\n\t\t\t\t<a href=\"tel:07300789356\" class=\"elementor-icon elementor-animation-float\" tabindex=\"-1\" aria-label=\"07300789356\">\n\t\t\t\t<svg xmlns=\"http://www.w3.org/2000/svg\" id=\"Layer_1\" data-name=\"Layer 1\" viewBox=\"0 0 24 24\" width=\"512\" height=\"512\"><path d=\"M13,1a1,1,0,0,1,1-1A10.011,10.011,0,0,1,24,10a1,1,0,0,1-2,0,8.009,8.009,0,0,0-8-8A1,1,0,0,1,13,1Zm1,5a4,4,0,0,1,4,4,1,1,0,0,0,2,0,6.006,6.006,0,0,0-6-6,1,1,0,0,0,0,2Zm9.093,10.739a3.1,3.1,0,0,1,0,4.378l-.91,1.049c-8.19,7.841-28.12-12.084-20.4-20.3l1.15-1A3.081,3.081,0,0,1,7.26.906c.031.031,1.884,2.438,1.884,2.438a3.1,3.1,0,0,1-.007,4.282L7.979,9.082a12.781,12.781,0,0,0,6.931,6.945l1.465-1.165a3.1,3.1,0,0,1,4.281-.006S23.062,16.708,23.093,16.739Zm-1.376,1.454s-2.393-1.841-2.424-1.872a1.1,1.1,0,0,0-1.549,0c-.027.028-2.044,1.635-2.044,1.635a1,1,0,0,1-.979.152A15.009,15.009,0,0,1,5.9,9.3a1,1,0,0,1,.145-1S7.652,6.282,7.679,6.256a1.1,1.1,0,0,0,0-1.549c-.031-.03-1.872-2.425-1.872-2.425a1.1,1.1,0,0,0-1.51.039l-1.15,1C-2.495,10.105,14.776,26.418,20.721,20.8l.911-1.05A1.121,1.121,0,0,0,21.717,18.193Z\"></path></svg>\t\t\t\t</a>\n\t\t\t</div>\n\t\t\t\n\t\t\t\t\t\t<div class=\"elementor-icon-box-content\">\n\n\t\t\t\t\t\t\t\t\t<p class=\"elementor-icon-box-title\">\n\t\t\t\t\t\t<a href=\"tel:07300789356\">\n\t\t\t\t\t\t\t07300789356\t\t\t\t\t\t</a>\n\t\t\t\t\t</p>\n\t\t\t\t\n\t\t\t\t\n\t\t\t</div>\n\t\t",
+    "lighthouse": {
+      "performance": 42,
+      "accessibility": 92,
+      "bestPractices": 75,
+      "seo": 85,
+      "LCP": "7.3 s",
+      "CLS": "0.002",
+      "TBT": "2,790 ms",
+      "speedIndex": "5.8 s",
+      "pageWeight": "Total size was 3,458 KiB"
+    }
   },
   {
     "url": "https://www.quantum-electrical.co.uk/",
     "ok": true,
     "status": 200,
-    "loadMs": 2862,
+    "loadMs": 1527,
     "title": "Experienced Electrician London | Quantum Electrical",
     "titleLength": 51,
     "metaDescription": "Find experienced electrician London for reliable residential and commercial electrical services. Emergency repairs available. Electrician help near you.",
@@ -251,8 +262,8 @@
     "hasCaseStudies": false,
     "hasReviewsPage": false,
     "hasBlog": true,
-    "requestCount": 134,
-    "thirdPartyRequests": 70,
+    "requestCount": 133,
+    "thirdPartyRequests": 69,
     "fonts": [
       "Rubik"
     ],
@@ -263,13 +274,24 @@
       "rgb(249, 249, 249) (1)",
       "rgb(28, 117, 188) (1)"
     ],
-    "heroHtmlSample": "<div id=\"_header_row-417-22\" class=\"oxy-header-row first-row\"><div class=\"oxy-header-container\"><div id=\"_header_left-418-22\" class=\"oxy-header-left\"><a id=\"link-419-22\" class=\"ct-link\" href=\"https://www.quantum-electrical.co.uk/\"><img id=\"image-420-22\" alt=\"\" src=\"https://www.quantum-electrical.co.uk/wp-content/uploads/2021/11/quantum-electricians-and-plumbers.svg\" class=\"ct-image brand-logo header-images\" srcset=\"\" sizes=\"(max-width: 1px) 100vw, 1px\"></a></div><div id=\"_header_center-421-22\" class=\"oxy-header-center\">\n\t\t<div id=\"-pro-menu-431-22\" class=\"oxy-pro-menu \"><div class=\"oxy-pro-menu-mobile-open-icon \" data-off-canvas-alignment=\"\"><svg id=\"-pro-menu-431-22-open-icon\"><use xlink:href=\"#FontAwesomeicon-ellipsis-v\"></use></svg>Menu</div>\n\n                \n        <div class=\"oxy-pro-menu-container oxy-pro-menu-dropdown-links-visible-on-mobile oxy-pro-menu-dropdown-links-toggle oxy-pro-menu-show-dropdown oxy-pro-menu-init\" data-aos-duration=\"400\" data-oxy-pro-menu-dropdown-animation=\"fade-up\" data-oxy-pro-menu-dropdown-animation-duration=\"0.2\" data-entire-parent-toggles-dropdown=\"true\" data-oxy-pro-menu-dropdown-links-on-mobile=\"toggle\">\n             \n            <div class=\"menu-main-menu-container\"><ul id=\"menu-main-menu\" class=\"oxy-pro-menu-list\"><li id=\"menu-item-5923\" class=\"menu-item menu-item-type-post_type menu-item-object-page menu-item-5923\"><a href=\"https://www.quantum-electrical.co.uk/virtual-assistance/\">Book a Video Call Out<div class=\"oxy-pro-menu-dropdown-icon-click-area\"></div></a></li>\n<li id=\"menu-item-38\" class=\"menu-item menu-item-type-post_type menu-item-object-page menu-item-38\"><a href=\"https://www.quantum-electrical.co.uk/rates/\">Rates<div class=\"oxy-pro-menu-dropdown-icon-click-area\"></div></a></li>\n<li id=\"menu-item-7860\" class=\"menu-item menu-item-type-post_type menu-item-object-page menu-item-7860\"><a href=\"https://www.quantum-electrical.co.uk/news/\">News<div class=\"oxy-pro-menu-dropdown-icon-click-area\"></div></a></li>\n</ul></div>\n            <div class=\"oxy-pro-menu-mobile-close-icon\"><svg id=\"svg--pro-menu-431-22\"><use xlink:href=\"#FontAwesomeicon-close\"></use></svg>close</div>\n\n        </div>\n\n        </div>\n\n\t\t<script type=\"text/javascript\">\n\t\t\tjQuery('#-pro-menu-431-22 .oxy-pro-menu-show-dropdown .menu-item-has-children > a', 'body').each(function(){\n                jQuery(this).append('<div class=\"oxy-pro-menu-dropdown-icon-click-area\"><svg class=\"oxy-pro-menu-dropdown-icon\"><use xlink:href=\"#FontAwesomeicon-arrow"
+    "heroHtmlSample": "<div id=\"_header_row-417-22\" class=\"oxy-header-row first-row\"><div class=\"oxy-header-container\"><div id=\"_header_left-418-22\" class=\"oxy-header-left\"><a id=\"link-419-22\" class=\"ct-link\" href=\"https://www.quantum-electrical.co.uk/\"><img id=\"image-420-22\" alt=\"\" src=\"https://www.quantum-electrical.co.uk/wp-content/uploads/2021/11/quantum-electricians-and-plumbers.svg\" class=\"ct-image brand-logo header-images\" srcset=\"\" sizes=\"(max-width: 1px) 100vw, 1px\"></a></div><div id=\"_header_center-421-22\" class=\"oxy-header-center\">\n\t\t<div id=\"-pro-menu-431-22\" class=\"oxy-pro-menu \"><div class=\"oxy-pro-menu-mobile-open-icon \" data-off-canvas-alignment=\"\"><svg id=\"-pro-menu-431-22-open-icon\"><use xlink:href=\"#FontAwesomeicon-ellipsis-v\"></use></svg>Menu</div>\n\n                \n        <div class=\"oxy-pro-menu-container oxy-pro-menu-dropdown-links-visible-on-mobile oxy-pro-menu-dropdown-links-toggle oxy-pro-menu-show-dropdown oxy-pro-menu-init\" data-aos-duration=\"400\" data-oxy-pro-menu-dropdown-animation=\"fade-up\" data-oxy-pro-menu-dropdown-animation-duration=\"0.2\" data-entire-parent-toggles-dropdown=\"true\" data-oxy-pro-menu-dropdown-links-on-mobile=\"toggle\">\n             \n            <div class=\"menu-main-menu-container\"><ul id=\"menu-main-menu\" class=\"oxy-pro-menu-list\"><li id=\"menu-item-5923\" class=\"menu-item menu-item-type-post_type menu-item-object-page menu-item-5923\"><a href=\"https://www.quantum-electrical.co.uk/virtual-assistance/\">Book a Video Call Out<div class=\"oxy-pro-menu-dropdown-icon-click-area\"></div></a></li>\n<li id=\"menu-item-38\" class=\"menu-item menu-item-type-post_type menu-item-object-page menu-item-38\"><a href=\"https://www.quantum-electrical.co.uk/rates/\">Rates<div class=\"oxy-pro-menu-dropdown-icon-click-area\"></div></a></li>\n<li id=\"menu-item-7860\" class=\"menu-item menu-item-type-post_type menu-item-object-page menu-item-7860\"><a href=\"https://www.quantum-electrical.co.uk/news/\">News<div class=\"oxy-pro-menu-dropdown-icon-click-area\"></div></a></li>\n</ul></div>\n            <div class=\"oxy-pro-menu-mobile-close-icon\"><svg id=\"svg--pro-menu-431-22\"><use xlink:href=\"#FontAwesomeicon-close\"></use></svg>close</div>\n\n        </div>\n\n        </div>\n\n\t\t<script type=\"text/javascript\">\n\t\t\tjQuery('#-pro-menu-431-22 .oxy-pro-menu-show-dropdown .menu-item-has-children > a', 'body').each(function(){\n                jQuery(this).append('<div class=\"oxy-pro-menu-dropdown-icon-click-area\"><svg class=\"oxy-pro-menu-dropdown-icon\"><use xlink:href=\"#FontAwesomeicon-arrow",
+    "lighthouse": {
+      "performance": 40,
+      "accessibility": 93,
+      "bestPractices": 79,
+      "seo": 92,
+      "LCP": "14.9 s",
+      "CLS": "0.022",
+      "TBT": "940 ms",
+      "speedIndex": "6.1 s",
+      "pageWeight": "Total size was 2,145 KiB"
+    }
   },
   {
     "url": "https://certifiedelectricians.london/",
     "ok": true,
     "status": 200,
-    "loadMs": 1111,
+    "loadMs": 1808,
     "title": "Certified Electricians London | Your Local Electrician London",
     "titleLength": 61,
     "metaDescription": "Trusted electricians in London providing expert electrical installations, repairs and testing. Fully certified and experienced professionals offering a reliable service for homes and businesses.",
@@ -383,8 +405,8 @@
     "hasCaseStudies": false,
     "hasReviewsPage": false,
     "hasBlog": true,
-    "requestCount": 78,
-    "thirdPartyRequests": 44,
+    "requestCount": 79,
+    "thirdPartyRequests": 45,
     "fonts": [
       "Merriweather",
       "Lato"
@@ -396,13 +418,24 @@
       "rgb(239, 244, 251) (1)",
       "rgb(244, 244, 244) (1)"
     ],
-    "heroHtmlSample": "<div class=\"gm-wrapper\"><div class=\"gm-inner\"><div class=\"gm-inner-bg\"></div><div class=\"gm-container\"><div class=\"gm-logo\"></div><div class=\"gm-main-menu-wrapper d-flex\"><nav id=\"gm-main-menu\"><ul id=\"menu-main\" class=\"gm-navbar-nav\"><li id=\"menu-item-59\" class=\"menu-item menu-item-type-post_type menu-item-object-page menu-item-home current-menu-item page_item page-item-27 current_page_item gm-menu-item gm-menu-item--lvl-0\"><a href=\"https://certifiedelectricians.london/\" class=\"gm-anchor\"><span class=\"gm-menu-item__txt-wrapper\"><span class=\"gm-menu-item__txt\">Home</span></span></a></li><li id=\"menu-item-4886\" class=\"menu-item menu-item-type-custom menu-item-object-custom gm-menu-item gm-menu-item--lvl-0\"><a href=\"https://certifiedelectricians.london/about-us/\" class=\"gm-anchor\"><span class=\"gm-menu-item__txt-wrapper\"><span class=\"gm-menu-item__txt\">About Us</span></span></a></li><li id=\"menu-item-3351\" class=\"menu-item menu-item-type-post_type menu-item-object-page gm-menu-item gm-menu-item--lvl-0\"><a href=\"https://certifiedelectricians.london/pricing/\" class=\"gm-anchor\"><span class=\"gm-menu-item__txt-wrapper\"><span class=\"gm-menu-item__txt\">Pricing</span></span></a></li><li id=\"menu-item-3352\" class=\"menu-item menu-item-type-post_type menu-item-object-page gm-menu-item gm-menu-item--lvl-0\"><a href=\"https://certifiedelectricians.london/get-a-quote/\" class=\"gm-anchor\"><span class=\"gm-menu-item__txt-wrapper\"><span class=\"gm-menu-item__txt\">Get A Quote</span></span></a></li><li id=\"menu-item-4888\" class=\"menu-item menu-item-type-custom menu-item-object-custom gm-menu-item gm-menu-item--lvl-0\"><a href=\"https://certifiedelectricians.london/areas-covered/\" class=\"gm-anchor\"><span class=\"gm-menu-item__txt-wrapper\"><span class=\"gm-menu-item__txt\">Areas Covered</span></span></a></li><li id=\"menu-item-3353\" class=\"menu-item menu-item-type-post_type menu-item-object-page gm-menu-item gm-menu-item--lvl-0\"><a href=\"https://certifiedelectricians.london/blog/\" class=\"gm-anchor\"><span class=\"gm-menu-item__txt-wrapper\"><span class=\"gm-menu-item__txt\">Electrician’s Blog</span></span></a></li><li id=\"menu-item-3599\" class=\"menu-item menu-item-type-post_type menu-item-object-page menu-item-has-children gm-menu-item gm-menu-item--lvl-0 gm-dropdown mega-gm-dropdown\"><a href=\"https://certifiedelectricians.london/domestic-electricians-in-london/\" class=\"gm-anchor gm-dropdown-toggle\"><span class=\"gm-menu-item__txt-wrapper\"><span class=\"gm-menu-item__txt\">Domestic Services</span><"
+    "heroHtmlSample": "<div class=\"gm-wrapper\"><div class=\"gm-inner\"><div class=\"gm-inner-bg\"></div><div class=\"gm-container\"><div class=\"gm-logo\"></div><div class=\"gm-main-menu-wrapper d-flex\"><nav id=\"gm-main-menu\"><ul id=\"menu-main\" class=\"gm-navbar-nav\"><li id=\"menu-item-59\" class=\"menu-item menu-item-type-post_type menu-item-object-page menu-item-home current-menu-item page_item page-item-27 current_page_item gm-menu-item gm-menu-item--lvl-0\"><a href=\"https://certifiedelectricians.london/\" class=\"gm-anchor\"><span class=\"gm-menu-item__txt-wrapper\"><span class=\"gm-menu-item__txt\">Home</span></span></a></li><li id=\"menu-item-4886\" class=\"menu-item menu-item-type-custom menu-item-object-custom gm-menu-item gm-menu-item--lvl-0\"><a href=\"https://certifiedelectricians.london/about-us/\" class=\"gm-anchor\"><span class=\"gm-menu-item__txt-wrapper\"><span class=\"gm-menu-item__txt\">About Us</span></span></a></li><li id=\"menu-item-3351\" class=\"menu-item menu-item-type-post_type menu-item-object-page gm-menu-item gm-menu-item--lvl-0\"><a href=\"https://certifiedelectricians.london/pricing/\" class=\"gm-anchor\"><span class=\"gm-menu-item__txt-wrapper\"><span class=\"gm-menu-item__txt\">Pricing</span></span></a></li><li id=\"menu-item-3352\" class=\"menu-item menu-item-type-post_type menu-item-object-page gm-menu-item gm-menu-item--lvl-0\"><a href=\"https://certifiedelectricians.london/get-a-quote/\" class=\"gm-anchor\"><span class=\"gm-menu-item__txt-wrapper\"><span class=\"gm-menu-item__txt\">Get A Quote</span></span></a></li><li id=\"menu-item-4888\" class=\"menu-item menu-item-type-custom menu-item-object-custom gm-menu-item gm-menu-item--lvl-0\"><a href=\"https://certifiedelectricians.london/areas-covered/\" class=\"gm-anchor\"><span class=\"gm-menu-item__txt-wrapper\"><span class=\"gm-menu-item__txt\">Areas Covered</span></span></a></li><li id=\"menu-item-3353\" class=\"menu-item menu-item-type-post_type menu-item-object-page gm-menu-item gm-menu-item--lvl-0\"><a href=\"https://certifiedelectricians.london/blog/\" class=\"gm-anchor\"><span class=\"gm-menu-item__txt-wrapper\"><span class=\"gm-menu-item__txt\">Electrician’s Blog</span></span></a></li><li id=\"menu-item-3599\" class=\"menu-item menu-item-type-post_type menu-item-object-page menu-item-has-children gm-menu-item gm-menu-item--lvl-0 gm-dropdown mega-gm-dropdown\"><a href=\"https://certifiedelectricians.london/domestic-electricians-in-london/\" class=\"gm-anchor gm-dropdown-toggle\"><span class=\"gm-menu-item__txt-wrapper\"><span class=\"gm-menu-item__txt\">Domestic Services</span><",
+    "lighthouse": {
+      "performance": 47,
+      "accessibility": 90,
+      "bestPractices": 71,
+      "seo": 92,
+      "LCP": "9.2 s",
+      "CLS": "0.196",
+      "TBT": "500 ms",
+      "speedIndex": "4.5 s",
+      "pageWeight": "Total size was 1,689 KiB"
+    }
   },
   {
     "url": "https://www.khlelectricalcontractors.co.uk/",
     "ok": true,
     "status": 200,
-    "loadMs": 749,
+    "loadMs": 779,
     "title": "Emergency Electrician Manchester | 24/7 Fast Response | KHL Electrical Contractors",
     "titleLength": 82,
     "metaDescription": "Looking for THE BEST Emergency Electrician in Manchester? KHL  expert team is available 24/7 to provide the best electricians in Manchester whenever you need them. Contact us now for fast and reliable solutions to all your electrical needs.",
@@ -464,7 +497,7 @@
     "imagesMissingAlt": 0,
     "modernImageFormats": true,
     "lazyLoadedImages": 14,
-    "wordCount": 4170,
+    "wordCount": 4165,
     "accreditationsMentioned": [
       "ECA",
       "SELECT",
@@ -536,8 +569,8 @@
     "hasCaseStudies": false,
     "hasReviewsPage": false,
     "hasBlog": true,
-    "requestCount": 202,
-    "thirdPartyRequests": 198,
+    "requestCount": 201,
+    "thirdPartyRequests": 197,
     "fonts": [
       "Arial",
       "poppins-extralight",
@@ -551,13 +584,24 @@
       "rgb(3, 68, 89) (1)",
       "rgba(255, 255, 255, 0) (1)"
     ],
-    "heroHtmlSample": "<div class=\"uZIV9d\"><div id=\"bgLayers_SITE_HEADER\" data-hook=\"bgLayers\" data-motion-part=\"BG_LAYER SITE_HEADER\" class=\"QG9w8P XzOkCb\"><div data-testid=\"colorUnderlay\" class=\"LNYVZi ayCf9D\"></div><div id=\"bgMedia_SITE_HEADER\" data-motion-part=\"BG_MEDIA SITE_HEADER\" class=\"ROWgFb\"></div></div><div class=\"ncI7Xj\"></div></div><div class=\"XKFSfx\"><div data-mesh-id=\"SITE_HEADERinlineContent\" data-testid=\"inline-content\" class=\"\"><div data-mesh-id=\"SITE_HEADERinlineContent-gridContainer\" data-testid=\"mesh-container-content\"><div id=\"comp-lg42ktgj\" class=\"W4V2qg comp-lg42ktgj wixui-image cs40a3\"><a data-testid=\"linkElement\" href=\"https://www.khlelectricalcontractors.co.uk\" target=\"_self\" class=\"apPOZK\"><img fetchpriority=\"high\" sizes=\"284px\" srcset=\"https://static.wixstatic.com/media/adce29_9054ef8c2ea44f60a06d68a36cecc797~mv2.png/v1/fill/w_284,h_166,al_c,q_85,usm_0.66_1.00_0.01,enc_avif,quality_auto/khl%20logo(Transparent).png 1x, https://static.wixstatic.com/media/adce29_9054ef8c2ea44f60a06d68a36cecc797~mv2.png/v1/fill/w_568,h_332,al_c,q_85,usm_0.66_1.00_0.01,enc_avif,quality_auto/khl%20logo(Transparent).png 2x\" id=\"img_comp-lg42ktgj\" src=\"https://static.wixstatic.com/media/adce29_9054ef8c2ea44f60a06d68a36cecc797~mv2.png/v1/fill/w_284,h_166,al_c,q_85,usm_0.66_1.00_0.01,enc_avif,quality_auto/khl%20logo(Transparent).png\" alt=\"Website Logo\" style=\"object-fit:cover\" class=\"gRkIq0 sFiSiq\" width=\"284\" height=\"166\"></a></div><div id=\"comp-lg2jrqe0\" class=\"comp-lg2jrqe0 I9v6Rw wZrAIE\"><nav class=\"StylableHorizontalMenu3372578893__root StylableHorizontalMenu3372578893---menuMode-4-wrap style-mb250hbt__root wixui-horizontal-menu\" aria-label=\"Site\"><ul class=\"StylableHorizontalMenu3372578893__menu\"><li class=\"itemDepth02233374943__itemWrapper wixui-horizontal-menu__item\" data-testid=\"menuItemDepth0\" data-item-depth=\"0\" data-is-current=\"true\" aria-current=\"true\"><div class=\"itemShared2352141355__rootContainer\"><a data-item-label=\"true\" data-testid=\"linkElement\" href=\"https://www.khlelectricalcontractors.co.uk\" target=\"_self\" class=\"itemDepth02233374943__root itemDepth02233374943--isCurrentPage StylableHorizontalMenu3372578893__menuItem itemShared2352141355__menuItem\" tabindex=\"0\"><div class=\"itemDepth02233374943__container\"><span class=\"itemDepth02233374943__label wixui-horizontal-menu__item-label\">HOME</span></div></a></div></li><li class=\"itemDepth02233374943__itemWrapper wixui-horizontal-menu__item\" data-testid=\"menuItemDepth0\" data-item-depth=\"0\" data-is-current=\"false\""
+    "heroHtmlSample": "<div class=\"uZIV9d\"><div id=\"bgLayers_SITE_HEADER\" data-hook=\"bgLayers\" data-motion-part=\"BG_LAYER SITE_HEADER\" class=\"QG9w8P XzOkCb\"><div data-testid=\"colorUnderlay\" class=\"LNYVZi ayCf9D\"></div><div id=\"bgMedia_SITE_HEADER\" data-motion-part=\"BG_MEDIA SITE_HEADER\" class=\"ROWgFb\"></div></div><div class=\"ncI7Xj\"></div></div><div class=\"XKFSfx\"><div data-mesh-id=\"SITE_HEADERinlineContent\" data-testid=\"inline-content\" class=\"\"><div data-mesh-id=\"SITE_HEADERinlineContent-gridContainer\" data-testid=\"mesh-container-content\"><div id=\"comp-lg42ktgj\" class=\"W4V2qg comp-lg42ktgj wixui-image cs40a3\"><a data-testid=\"linkElement\" href=\"https://www.khlelectricalcontractors.co.uk\" target=\"_self\" class=\"apPOZK\"><img fetchpriority=\"high\" sizes=\"284px\" srcset=\"https://static.wixstatic.com/media/adce29_9054ef8c2ea44f60a06d68a36cecc797~mv2.png/v1/fill/w_284,h_166,al_c,q_85,usm_0.66_1.00_0.01,enc_avif,quality_auto/khl%20logo(Transparent).png 1x, https://static.wixstatic.com/media/adce29_9054ef8c2ea44f60a06d68a36cecc797~mv2.png/v1/fill/w_568,h_332,al_c,q_85,usm_0.66_1.00_0.01,enc_avif,quality_auto/khl%20logo(Transparent).png 2x\" id=\"img_comp-lg42ktgj\" src=\"https://static.wixstatic.com/media/adce29_9054ef8c2ea44f60a06d68a36cecc797~mv2.png/v1/fill/w_284,h_166,al_c,q_85,usm_0.66_1.00_0.01,enc_avif,quality_auto/khl%20logo(Transparent).png\" alt=\"Website Logo\" style=\"object-fit:cover\" class=\"gRkIq0 sFiSiq\" width=\"284\" height=\"166\"></a></div><div id=\"comp-lg2jrqe0\" class=\"comp-lg2jrqe0 I9v6Rw wZrAIE\"><nav class=\"StylableHorizontalMenu3372578893__root StylableHorizontalMenu3372578893---menuMode-4-wrap style-mb250hbt__root wixui-horizontal-menu\" aria-label=\"Site\"><ul class=\"StylableHorizontalMenu3372578893__menu\"><li class=\"itemDepth02233374943__itemWrapper wixui-horizontal-menu__item\" data-testid=\"menuItemDepth0\" data-item-depth=\"0\" data-is-current=\"true\" aria-current=\"true\"><div class=\"itemShared2352141355__rootContainer\"><a data-item-label=\"true\" data-testid=\"linkElement\" href=\"https://www.khlelectricalcontractors.co.uk\" target=\"_self\" class=\"itemDepth02233374943__root itemDepth02233374943--isCurrentPage StylableHorizontalMenu3372578893__menuItem itemShared2352141355__menuItem\" tabindex=\"0\"><div class=\"itemDepth02233374943__container\"><span class=\"itemDepth02233374943__label wixui-horizontal-menu__item-label\">HOME</span></div></a></div></li><li class=\"itemDepth02233374943__itemWrapper wixui-horizontal-menu__item\" data-testid=\"menuItemDepth0\" data-item-depth=\"0\" data-is-current=\"false\"",
+    "lighthouse": {
+      "performance": 69,
+      "accessibility": 92,
+      "bestPractices": 100,
+      "seo": 100,
+      "LCP": "3.6 s",
+      "CLS": "0",
+      "TBT": "810 ms",
+      "speedIndex": "3.1 s",
+      "pageWeight": "Total size was 1,890 KiB"
+    }
   },
   {
     "url": "https://www.amaraelectrical.co.uk/",
     "ok": true,
     "status": 200,
-    "loadMs": 1050,
+    "loadMs": 1402,
     "title": "Electrical Installer | Electricians Manchester - Amara Electrical",
     "titleLength": 65,
     "metaDescription": "Looking for a reliable electrician in Manchester? Amara Electricians are trained and experienced and can handle any electrical job, big or small. Call now.",
@@ -648,13 +692,24 @@
       "rgba(0, 0, 0, 0.6) (1)",
       "rgb(225, 105, 38) (1)"
     ],
-    "heroHtmlSample": "<div class=\"l-subheader at_top width_full\"><div class=\"l-subheader-h\"><div class=\"l-subheader-cell at_left\"></div><div class=\"l-subheader-cell at_center\"></div><div class=\"l-subheader-cell at_right\"><div class=\"w-text ush_text_1\"><span class=\"w-text-h\"><span class=\"w-text-value\">Call An Electrician Now </span></span></div><div class=\"w-socials ush_socials_1 align_left color_brand shape_square style_default hover_fade\"><div class=\"w-socials-list\"><div class=\"w-socials-item custom\"><a class=\"w-socials-item-link\" href=\"tel:07946 541 693\" target=\"_blank\" rel=\"noopener nofollow\" style=\"color:#e16926\" title=\"Call Us \" aria-label=\"Call Us \" data-wpel-link=\"internal\"><span class=\"w-socials-item-link-hover\" style=\"background:#e16926;\"></span><i class=\"fas fa-phone\"></i></a></div><div class=\"w-socials-item email\"><a class=\"w-socials-item-link\" href=\"mailto: help@amaraelectrical.co.uk\" title=\"Email\" aria-label=\"Email\"><span class=\"w-socials-item-link-hover\"></span><i class=\"fas fa-envelope\"></i></a></div><div class=\"w-socials-item facebook\"><a class=\"w-socials-item-link\" href=\"https://www.facebook.com/AmaraElectricalContractors/\" target=\"_blank\" rel=\"noopener nofollow\" title=\"Facebook\" aria-label=\"Facebook\" data-wpel-link=\"external\"><span class=\"w-socials-item-link-hover\"></span><i class=\"fab fa-facebook\"></i></a></div></div></div></div></div></div><div class=\"l-subheader at_middle width_full\"><div class=\"l-subheader-h\"><div class=\"l-subheader-cell at_left\"><div class=\"w-image ush_image_1 with_transparent\"><a href=\"https://www.amaraelectrical.co.uk/\" aria-label=\"Link\" class=\"w-image-h\" data-wpel-link=\"internal\"><img width=\"1024\" height=\"452\" src=\"https://www.amaraelectrical.co.uk/wp-content/uploads/2019/03/Amara-Electrical-Master-Logos_Colour-1024x452.png\" class=\"attachment-large size-large\" alt=\"\" decoding=\"async\" loading=\"lazy\" srcset=\"https://www.amaraelectrical.co.uk/wp-content/uploads/2019/03/Amara-Electrical-Master-Logos_Colour-1024x452.png 1024w, https://www.amaraelectrical.co.uk/wp-content/uploads/2019/03/Amara-Electrical-Master-Logos_Colour-300x132.png 300w, https://www.amaraelectrical.co.uk/wp-content/uploads/2019/03/Amara-Electrical-Master-Logos_Colour-500x221.png 500w, https://www.amaraelectrical.co.uk/wp-content/uploads/2019/03/Amara-Electrical-Master-Logos_Colour.png 2048w\" sizes=\"(max-width: 1024px) 100vw, 1024px\"><img width=\"1024\" height=\"452\" src=\"https://www.amaraelectrical.co.uk/wp-content/uploads/2019/03/Amara-Electrical-Master-Logos_Colour-Invert"
+    "heroHtmlSample": "<div class=\"l-subheader at_top width_full\"><div class=\"l-subheader-h\"><div class=\"l-subheader-cell at_left\"></div><div class=\"l-subheader-cell at_center\"></div><div class=\"l-subheader-cell at_right\"><div class=\"w-text ush_text_1\"><span class=\"w-text-h\"><span class=\"w-text-value\">Call An Electrician Now </span></span></div><div class=\"w-socials ush_socials_1 align_left color_brand shape_square style_default hover_fade\"><div class=\"w-socials-list\"><div class=\"w-socials-item custom\"><a class=\"w-socials-item-link\" href=\"tel:07946 541 693\" target=\"_blank\" rel=\"noopener nofollow\" style=\"color:#e16926\" title=\"Call Us \" aria-label=\"Call Us \" data-wpel-link=\"internal\"><span class=\"w-socials-item-link-hover\" style=\"background:#e16926;\"></span><i class=\"fas fa-phone\"></i></a></div><div class=\"w-socials-item email\"><a class=\"w-socials-item-link\" href=\"mailto: help@amaraelectrical.co.uk\" title=\"Email\" aria-label=\"Email\"><span class=\"w-socials-item-link-hover\"></span><i class=\"fas fa-envelope\"></i></a></div><div class=\"w-socials-item facebook\"><a class=\"w-socials-item-link\" href=\"https://www.facebook.com/AmaraElectricalContractors/\" target=\"_blank\" rel=\"noopener nofollow\" title=\"Facebook\" aria-label=\"Facebook\" data-wpel-link=\"external\"><span class=\"w-socials-item-link-hover\"></span><i class=\"fab fa-facebook\"></i></a></div></div></div></div></div></div><div class=\"l-subheader at_middle width_full\"><div class=\"l-subheader-h\"><div class=\"l-subheader-cell at_left\"><div class=\"w-image ush_image_1 with_transparent\"><a href=\"https://www.amaraelectrical.co.uk/\" aria-label=\"Link\" class=\"w-image-h\" data-wpel-link=\"internal\"><img width=\"1024\" height=\"452\" src=\"https://www.amaraelectrical.co.uk/wp-content/uploads/2019/03/Amara-Electrical-Master-Logos_Colour-1024x452.png\" class=\"attachment-large size-large\" alt=\"\" decoding=\"async\" loading=\"lazy\" srcset=\"https://www.amaraelectrical.co.uk/wp-content/uploads/2019/03/Amara-Electrical-Master-Logos_Colour-1024x452.png 1024w, https://www.amaraelectrical.co.uk/wp-content/uploads/2019/03/Amara-Electrical-Master-Logos_Colour-300x132.png 300w, https://www.amaraelectrical.co.uk/wp-content/uploads/2019/03/Amara-Electrical-Master-Logos_Colour-500x221.png 500w, https://www.amaraelectrical.co.uk/wp-content/uploads/2019/03/Amara-Electrical-Master-Logos_Colour.png 2048w\" sizes=\"(max-width: 1024px) 100vw, 1024px\"><img width=\"1024\" height=\"452\" src=\"https://www.amaraelectrical.co.uk/wp-content/uploads/2019/03/Amara-Electrical-Master-Logos_Colour-Invert",
+    "lighthouse": {
+      "performance": 46,
+      "accessibility": 94,
+      "bestPractices": 75,
+      "seo": 92,
+      "LCP": "4.3 s",
+      "CLS": "0.004",
+      "TBT": "1,260 ms",
+      "speedIndex": "8.3 s",
+      "pageWeight": "Total size was 2,637 KiB"
+    }
   },
   {
     "url": "https://www.scott-electrical.com/",
     "ok": true,
     "status": 200,
-    "loadMs": 1479,
+    "loadMs": 1744,
     "title": "Electrical Contractors Leeds | Commercial & Industrial Electricians",
     "titleLength": 67,
     "metaDescription": "Commercial and industrial electrical contractors in Leeds, delivering installations, maintenance and upgrades in live environments with minimal disruption. Get a quote today.",
@@ -756,8 +811,8 @@
     "hasCaseStudies": true,
     "hasReviewsPage": false,
     "hasBlog": true,
-    "requestCount": 148,
-    "thirdPartyRequests": 41,
+    "requestCount": 149,
+    "thirdPartyRequests": 42,
     "fonts": [
       "Montserrat"
     ],
@@ -767,13 +822,24 @@
       "rgba(255, 255, 255, 0) (2)",
       "rgb(34, 34, 34) (1)"
     ],
-    "heroHtmlSample": "\n\t\t\t<div class=\"et_builder_inner_content et_pb_gutters3\">\n\t\t<div id=\"site_header\" class=\"et_pb_section et_pb_section_0_tb_header et_pb_with_background et_section_regular et_pb_section--fixed et_pb_section--with-menu\">\n\t\t\t\t\n\t\t\t\t\n\t\t\t\t\n\t\t\t\t\n\t\t\t\t\n\t\t\t\t\n\t\t\t\t<div class=\"et_pb_row et_pb_row_0_tb_header et_pb_equal_columns et_pb_gutters1 et_pb_row--with-menu et_pb_row_3-4_1-4\" style=\"z-index: 3;\">\n\t\t\t\t<div class=\"et_pb_column et_pb_column_3_4 et_pb_column_0_tb_header  et_pb_css_mix_blend_mode_passthrough et_pb_column--with-menu\">\n\t\t\t\t\n\t\t\t\t\n\t\t\t\t\n\t\t\t\t\n\t\t\t\t<div id=\"site_menu\" class=\"et_pb_module et_pb_menu et_pb_menu_0_tb_header et_pb_bg_layout_light  et_pb_text_align_right et_dropdown_animation_fade et_pb_menu--with-logo et_pb_menu--style-left_aligned\">\n\t\t\t\t\t\n\t\t\t\t\t\n\t\t\t\t\t\n\t\t\t\t\t\n\t\t\t\t\t<div class=\"et_pb_menu_inner_container clearfix\">\n\t\t\t\t\t\t<div class=\"et_pb_menu__logo-wrap\">\n\t\t\t  <div class=\"et_pb_menu__logo\">\n\t\t\t\t<a href=\"https://www.scott-electrical.com/\"><img fetchpriority=\"high\" decoding=\"async\" width=\"2560\" height=\"544\" src=\"/wp-content/uploads/2025/05/Scott-Electrical-Leeds-Logo-scaled.png\" alt=\"\" srcset=\"https://www.scott-electrical.com/wp-content/uploads/2025/05/Scott-Electrical-Leeds-Logo-scaled.png 2560w, https://www.scott-electrical.com/wp-content/uploads/2025/05/Scott-Electrical-Leeds-Logo-1280x272.png 1280w, https://www.scott-electrical.com/wp-content/uploads/2025/05/Scott-Electrical-Leeds-Logo-980x208.png 980w, https://www.scott-electrical.com/wp-content/uploads/2025/05/Scott-Electrical-Leeds-Logo-480x102.png 480w\" sizes=\"(min-width: 0px) and (max-width: 480px) 480px, (min-width: 481px) and (max-width: 980px) 980px, (min-width: 981px) and (max-width: 1280px) 1280px, (min-width: 1281px) 2560px, 100vw\" class=\"wp-image-1174\"></a>\n\t\t\t  </div>\n\t\t\t</div>\n\t\t\t\t\t\t<div class=\"et_pb_menu__wrap\">\n\t\t\t\t\t\t\t<div class=\"et_pb_menu__menu\">\n\t\t\t\t\t\t\t\t<nav class=\"et-menu-nav\"><ul id=\"menu-main_menu\" class=\"et-menu nav\"><li class=\"menu-click et_pb_menu_page_id-1799 menu-item menu-item-type-custom menu-item-object-custom menu-item-has-children menu-item-1799\"><a>Commercial Electrical</a>\n<ul class=\"sub-menu\">\n\t<li class=\"et_pb_menu_page_id-1748 menu-item menu-item-type-post_type menu-item-object-commercial menu-item-1798\"><a href=\"https://www.scott-electrical.com/commercial/commercial-electricians-leeds/\">Commercial Electrical</a></li>\n\t<li class=\"et_pb_menu_page_id-3176 menu-item menu-item-type-post_type menu-item-object-commercial menu-item-3247\"><a href=\"https://www.scott-elec"
+    "heroHtmlSample": "\n\t\t\t<div class=\"et_builder_inner_content et_pb_gutters3\">\n\t\t<div id=\"site_header\" class=\"et_pb_section et_pb_section_0_tb_header et_pb_with_background et_section_regular et_pb_section--fixed et_pb_section--with-menu\">\n\t\t\t\t\n\t\t\t\t\n\t\t\t\t\n\t\t\t\t\n\t\t\t\t\n\t\t\t\t\n\t\t\t\t<div class=\"et_pb_row et_pb_row_0_tb_header et_pb_equal_columns et_pb_gutters1 et_pb_row--with-menu et_pb_row_3-4_1-4\" style=\"z-index: 3;\">\n\t\t\t\t<div class=\"et_pb_column et_pb_column_3_4 et_pb_column_0_tb_header  et_pb_css_mix_blend_mode_passthrough et_pb_column--with-menu\">\n\t\t\t\t\n\t\t\t\t\n\t\t\t\t\n\t\t\t\t\n\t\t\t\t<div id=\"site_menu\" class=\"et_pb_module et_pb_menu et_pb_menu_0_tb_header et_pb_bg_layout_light  et_pb_text_align_right et_dropdown_animation_fade et_pb_menu--with-logo et_pb_menu--style-left_aligned\">\n\t\t\t\t\t\n\t\t\t\t\t\n\t\t\t\t\t\n\t\t\t\t\t\n\t\t\t\t\t<div class=\"et_pb_menu_inner_container clearfix\">\n\t\t\t\t\t\t<div class=\"et_pb_menu__logo-wrap\">\n\t\t\t  <div class=\"et_pb_menu__logo\">\n\t\t\t\t<a href=\"https://www.scott-electrical.com/\"><img fetchpriority=\"high\" decoding=\"async\" width=\"2560\" height=\"544\" src=\"/wp-content/uploads/2025/05/Scott-Electrical-Leeds-Logo-scaled.png\" alt=\"\" srcset=\"https://www.scott-electrical.com/wp-content/uploads/2025/05/Scott-Electrical-Leeds-Logo-scaled.png 2560w, https://www.scott-electrical.com/wp-content/uploads/2025/05/Scott-Electrical-Leeds-Logo-1280x272.png 1280w, https://www.scott-electrical.com/wp-content/uploads/2025/05/Scott-Electrical-Leeds-Logo-980x208.png 980w, https://www.scott-electrical.com/wp-content/uploads/2025/05/Scott-Electrical-Leeds-Logo-480x102.png 480w\" sizes=\"(min-width: 0px) and (max-width: 480px) 480px, (min-width: 481px) and (max-width: 980px) 980px, (min-width: 981px) and (max-width: 1280px) 1280px, (min-width: 1281px) 2560px, 100vw\" class=\"wp-image-1174\"></a>\n\t\t\t  </div>\n\t\t\t</div>\n\t\t\t\t\t\t<div class=\"et_pb_menu__wrap\">\n\t\t\t\t\t\t\t<div class=\"et_pb_menu__menu\">\n\t\t\t\t\t\t\t\t<nav class=\"et-menu-nav\"><ul id=\"menu-main_menu\" class=\"et-menu nav\"><li class=\"menu-click et_pb_menu_page_id-1799 menu-item menu-item-type-custom menu-item-object-custom menu-item-has-children menu-item-1799\"><a>Commercial Electrical</a>\n<ul class=\"sub-menu\">\n\t<li class=\"et_pb_menu_page_id-1748 menu-item menu-item-type-post_type menu-item-object-commercial menu-item-1798\"><a href=\"https://www.scott-electrical.com/commercial/commercial-electricians-leeds/\">Commercial Electrical</a></li>\n\t<li class=\"et_pb_menu_page_id-3176 menu-item menu-item-type-post_type menu-item-object-commercial menu-item-3247\"><a href=\"https://www.scott-elec",
+    "lighthouse": {
+      "performance": 15,
+      "accessibility": 76,
+      "bestPractices": 75,
+      "seo": 85,
+      "LCP": "23.7 s",
+      "CLS": "0.913",
+      "TBT": "970 ms",
+      "speedIndex": "8.6 s",
+      "pageWeight": "Total size was 39,471 KiB"
+    }
   },
   {
     "url": "https://www.sselectricalleeds.co.uk/",
     "ok": true,
     "status": 200,
-    "loadMs": 1682,
+    "loadMs": 1515,
     "title": "Electrician Leeds Domestic and Commercial - 5 Star Rated",
     "titleLength": 56,
     "metaDescription": "For your Domestic and Commercial Electrician Leeds services contact SS Electrical in Leeds for more information on our range of services, Call Today",
@@ -856,13 +922,24 @@
     "heroColors": [
       "rgb(255, 255, 255) (3)"
     ],
-    "heroHtmlSample": "\n<section class=\"elementor-section elementor-top-section elementor-element elementor-element-76982fc6 elementor-section-height-min-height elementor-hidden-desktop elementor-hidden-tablet elementor-section-boxed elementor-section-height-default elementor-section-items-middle\" data-id=\"76982fc6\" data-element_type=\"section\" data-e-type=\"section\" data-settings=\"{&quot;background_background&quot;:&quot;classic&quot;,&quot;sticky&quot;:&quot;top&quot;,&quot;sticky_on&quot;:[&quot;mobile&quot;],&quot;sticky_offset&quot;:0,&quot;sticky_effects_offset&quot;:0,&quot;sticky_anchor_link_offset&quot;:0}\">\n<div class=\"elementor-container elementor-column-gap-default\">\n<div class=\"elementor-column elementor-col-33 elementor-top-column elementor-element elementor-element-789cd5b\" data-id=\"789cd5b\" data-element_type=\"column\" data-e-type=\"column\">\n<div class=\"elementor-widget-wrap elementor-element-populated\">\n<div class=\"elementor-element elementor-element-71eedabb elementor-widget elementor-widget-image\" data-id=\"71eedabb\" data-element_type=\"widget\" data-e-type=\"widget\" data-widget_type=\"image.default\">\n<div class=\"elementor-widget-container\">\n<a href=\"https://www.sselectricalleeds.co.uk\">\n<img fetchpriority=\"high\" width=\"1069\" height=\"580\" src=\"https://www.sselectricalleeds.co.uk/wp-content/uploads/2019/12/sse.jpg\" class=\"attachment-full size-full wp-image-126\" alt=\"\" srcset=\"https://www.sselectricalleeds.co.uk/wp-content/uploads/2019/12/sse.jpg 1069w, https://www.sselectricalleeds.co.uk/wp-content/uploads/2019/12/sse-300x163.jpg 300w, https://www.sselectricalleeds.co.uk/wp-content/uploads/2019/12/sse-1024x556.jpg 1024w, https://www.sselectricalleeds.co.uk/wp-content/uploads/2019/12/sse-768x417.jpg 768w\" sizes=\"(max-width: 1069px) 100vw, 1069px\">\t\t\t\t\t\t\t\t</a>\n</div>\n</div>\n</div>\n</div>\n<div class=\"elementor-column elementor-col-33 elementor-top-column elementor-element elementor-element-67590a96\" data-id=\"67590a96\" data-element_type=\"column\" data-e-type=\"column\">\n<div class=\"elementor-widget-wrap elementor-element-populated\">\n<div class=\"elementor-element elementor-element-38aa4675 elementor-nav-menu__align-end elementor-nav-menu--stretch elementor-nav-menu__text-align-center elementor-hidden-desktop elementor-hidden-tablet elementor-nav-menu--dropdown-tablet elementor-nav-menu--toggle elementor-nav-menu--burger elementor-widget elementor-widget-nav-menu\" data-id=\"38aa4675\" data-element_type=\"widget\" data-e-type=\"widget\" data-settings=\"{&quot;full_width&quot;:&quot;stret"
+    "heroHtmlSample": "\n<section class=\"elementor-section elementor-top-section elementor-element elementor-element-76982fc6 elementor-section-height-min-height elementor-hidden-desktop elementor-hidden-tablet elementor-section-boxed elementor-section-height-default elementor-section-items-middle\" data-id=\"76982fc6\" data-element_type=\"section\" data-e-type=\"section\" data-settings=\"{&quot;background_background&quot;:&quot;classic&quot;,&quot;sticky&quot;:&quot;top&quot;,&quot;sticky_on&quot;:[&quot;mobile&quot;],&quot;sticky_offset&quot;:0,&quot;sticky_effects_offset&quot;:0,&quot;sticky_anchor_link_offset&quot;:0}\">\n<div class=\"elementor-container elementor-column-gap-default\">\n<div class=\"elementor-column elementor-col-33 elementor-top-column elementor-element elementor-element-789cd5b\" data-id=\"789cd5b\" data-element_type=\"column\" data-e-type=\"column\">\n<div class=\"elementor-widget-wrap elementor-element-populated\">\n<div class=\"elementor-element elementor-element-71eedabb elementor-widget elementor-widget-image\" data-id=\"71eedabb\" data-element_type=\"widget\" data-e-type=\"widget\" data-widget_type=\"image.default\">\n<div class=\"elementor-widget-container\">\n<a href=\"https://www.sselectricalleeds.co.uk\">\n<img fetchpriority=\"high\" width=\"1069\" height=\"580\" src=\"https://www.sselectricalleeds.co.uk/wp-content/uploads/2019/12/sse.jpg\" class=\"attachment-full size-full wp-image-126\" alt=\"\" srcset=\"https://www.sselectricalleeds.co.uk/wp-content/uploads/2019/12/sse.jpg 1069w, https://www.sselectricalleeds.co.uk/wp-content/uploads/2019/12/sse-300x163.jpg 300w, https://www.sselectricalleeds.co.uk/wp-content/uploads/2019/12/sse-1024x556.jpg 1024w, https://www.sselectricalleeds.co.uk/wp-content/uploads/2019/12/sse-768x417.jpg 768w\" sizes=\"(max-width: 1069px) 100vw, 1069px\">\t\t\t\t\t\t\t\t</a>\n</div>\n</div>\n</div>\n</div>\n<div class=\"elementor-column elementor-col-33 elementor-top-column elementor-element elementor-element-67590a96\" data-id=\"67590a96\" data-element_type=\"column\" data-e-type=\"column\">\n<div class=\"elementor-widget-wrap elementor-element-populated\">\n<div class=\"elementor-element elementor-element-38aa4675 elementor-nav-menu__align-end elementor-nav-menu--stretch elementor-nav-menu__text-align-center elementor-hidden-desktop elementor-hidden-tablet elementor-nav-menu--dropdown-tablet elementor-nav-menu--toggle elementor-nav-menu--burger elementor-widget elementor-widget-nav-menu\" data-id=\"38aa4675\" data-element_type=\"widget\" data-e-type=\"widget\" data-settings=\"{&quot;full_width&quot;:&quot;stret",
+    "lighthouse": {
+      "performance": 45,
+      "accessibility": 89,
+      "bestPractices": 79,
+      "seo": 100,
+      "LCP": "9.0 s",
+      "CLS": "0.001",
+      "TBT": "810 ms",
+      "speedIndex": "8.4 s",
+      "pageWeight": "Total size was 2,137 KiB"
+    }
   },
   {
     "url": "https://gallagherelectricalltd.co.uk/",
     "ok": true,
     "status": 200,
-    "loadMs": 1755,
+    "loadMs": 1987,
     "title": "Electrician in Birmingham | NICEIC Approved, Solar & EV Installers",
     "titleLength": 66,
     "metaDescription": "Need a reliable electrician in Birmingham? NICEIC-approved specialists in solar panels, EV chargers & electrical work. Get a free quote today.",
@@ -960,13 +1037,24 @@
       "rgb(242, 242, 242) (1)",
       "rgb(32, 48, 63) (1)"
     ],
-    "heroHtmlSample": "<div class=\"fl-row fl-row-full-width fl-row-bg-color fl-node-5f59f9d43b45e fl-row-default-height fl-row-align-center fl-visible-desktop fl-visible-large\" data-node=\"5f59f9d43b45e\">\n\t<div class=\"fl-row-content-wrap\">\n\t\t\t\t\t\t\t\t<div class=\"fl-row-content fl-row-full-width fl-node-content\" style=\"position: relative;\">\n\t\t\n<div class=\"fl-col-group fl-node-rlcogutsx9ak fl-col-group-equal-height fl-col-group-align-center\" data-node=\"rlcogutsx9ak\">\n\t\t\t<div class=\"fl-col fl-node-5e0dsbxvnzfo fl-col-bg-color fl-col-small\" data-node=\"5e0dsbxvnzfo\">\n\t<div class=\"fl-col-content fl-node-content\"><div class=\"fl-module fl-module-photo fl-node-601013152d904\" data-node=\"601013152d904\">\n\t<div class=\"fl-module-content fl-node-content\">\n\t\t<div role=\"figure\" class=\"fl-photo fl-photo-align-left\" itemscope=\"\" itemtype=\"https://schema.org/ImageObject\">\n\t<div class=\"fl-photo-content fl-photo-img-png\">\n\t\t\t\t<a href=\"https://gallagherelectricalltd.co.uk/\" target=\"_self\" itemprop=\"url\">\n\t\t\t\t<img loading=\"lazy\" decoding=\"async\" class=\"fl-photo-img wp-image-1763 size-large fl-node-601013152d904-img-0\" src=\"https://gallagherelectricalltd.co.uk/wp-content/uploads/2020/05/Gallagher-Electrical-Logo-Services-1024x1024.png\" alt=\"Gallagher Electrical Logo\" height=\"1024\" width=\"1024\" title=\"Gallagher Electrical Logo - Services\" data-no-lazy=\"1\" itemprop=\"image\" srcset=\"https://gallagherelectricalltd.co.uk/wp-content/uploads/2020/05/Gallagher-Electrical-Logo-Services-1024x1024.png 1024w, https://gallagherelectricalltd.co.uk/wp-content/uploads/2020/05/Gallagher-Electrical-Logo-Services-300x300.png 300w, https://gallagherelectricalltd.co.uk/wp-content/uploads/2020/05/Gallagher-Electrical-Logo-Services-150x150.png 150w, https://gallagherelectricalltd.co.uk/wp-content/uploads/2020/05/Gallagher-Electrical-Logo-Services-768x768.png 768w, https://gallagherelectricalltd.co.uk/wp-content/uploads/2020/05/Gallagher-Electrical-Logo-Services-1536x1536.png 1536w, https://gallagherelectricalltd.co.uk/wp-content/uploads/2020/05/Gallagher-Electrical-Logo-Services-2048x2048.png 2048w\" sizes=\"auto, (max-width: 1024px) 100vw, 1024px\">\n\t\t\t\t</a>\n\t\t\t\t\t</div>\n\t</div>\n\t</div>\n</div>\n</div>\n</div>\n\t\t\t<div class=\"fl-col fl-node-mwvnuia36jtz fl-col-bg-color fl-col-has-cols\" data-node=\"mwvnuia36jtz\">\n\t<div class=\"fl-col-content fl-node-content\">\n<div class=\"fl-col-group fl-node-721xu4p6to83 fl-col-group-nested fl-col-group-equal-height fl-col-group-align-center\" data-node=\"721xu4p6to83\">\n\t\t\t<div class=\"fl-col fl-node-f7g1shdr6"
+    "heroHtmlSample": "<div class=\"fl-row fl-row-full-width fl-row-bg-color fl-node-5f59f9d43b45e fl-row-default-height fl-row-align-center fl-visible-desktop fl-visible-large\" data-node=\"5f59f9d43b45e\">\n\t<div class=\"fl-row-content-wrap\">\n\t\t\t\t\t\t\t\t<div class=\"fl-row-content fl-row-full-width fl-node-content\" style=\"position: relative;\">\n\t\t\n<div class=\"fl-col-group fl-node-rlcogutsx9ak fl-col-group-equal-height fl-col-group-align-center\" data-node=\"rlcogutsx9ak\">\n\t\t\t<div class=\"fl-col fl-node-5e0dsbxvnzfo fl-col-bg-color fl-col-small\" data-node=\"5e0dsbxvnzfo\">\n\t<div class=\"fl-col-content fl-node-content\"><div class=\"fl-module fl-module-photo fl-node-601013152d904\" data-node=\"601013152d904\">\n\t<div class=\"fl-module-content fl-node-content\">\n\t\t<div role=\"figure\" class=\"fl-photo fl-photo-align-left\" itemscope=\"\" itemtype=\"https://schema.org/ImageObject\">\n\t<div class=\"fl-photo-content fl-photo-img-png\">\n\t\t\t\t<a href=\"https://gallagherelectricalltd.co.uk/\" target=\"_self\" itemprop=\"url\">\n\t\t\t\t<img loading=\"lazy\" decoding=\"async\" class=\"fl-photo-img wp-image-1763 size-large fl-node-601013152d904-img-0\" src=\"https://gallagherelectricalltd.co.uk/wp-content/uploads/2020/05/Gallagher-Electrical-Logo-Services-1024x1024.png\" alt=\"Gallagher Electrical Logo\" height=\"1024\" width=\"1024\" title=\"Gallagher Electrical Logo - Services\" data-no-lazy=\"1\" itemprop=\"image\" srcset=\"https://gallagherelectricalltd.co.uk/wp-content/uploads/2020/05/Gallagher-Electrical-Logo-Services-1024x1024.png 1024w, https://gallagherelectricalltd.co.uk/wp-content/uploads/2020/05/Gallagher-Electrical-Logo-Services-300x300.png 300w, https://gallagherelectricalltd.co.uk/wp-content/uploads/2020/05/Gallagher-Electrical-Logo-Services-150x150.png 150w, https://gallagherelectricalltd.co.uk/wp-content/uploads/2020/05/Gallagher-Electrical-Logo-Services-768x768.png 768w, https://gallagherelectricalltd.co.uk/wp-content/uploads/2020/05/Gallagher-Electrical-Logo-Services-1536x1536.png 1536w, https://gallagherelectricalltd.co.uk/wp-content/uploads/2020/05/Gallagher-Electrical-Logo-Services-2048x2048.png 2048w\" sizes=\"auto, (max-width: 1024px) 100vw, 1024px\">\n\t\t\t\t</a>\n\t\t\t\t\t</div>\n\t</div>\n\t</div>\n</div>\n</div>\n</div>\n\t\t\t<div class=\"fl-col fl-node-mwvnuia36jtz fl-col-bg-color fl-col-has-cols\" data-node=\"mwvnuia36jtz\">\n\t<div class=\"fl-col-content fl-node-content\">\n<div class=\"fl-col-group fl-node-721xu4p6to83 fl-col-group-nested fl-col-group-equal-height fl-col-group-align-center\" data-node=\"721xu4p6to83\">\n\t\t\t<div class=\"fl-col fl-node-f7g1shdr6",
+    "lighthouse": {
+      "performance": 55,
+      "accessibility": 87,
+      "bestPractices": 96,
+      "seo": 100,
+      "LCP": "17.9 s",
+      "CLS": "0.001",
+      "TBT": "300 ms",
+      "speedIndex": "13.2 s",
+      "pageWeight": "Total size was 6,297 KiB"
+    }
   },
   {
     "url": "https://bainselectrical.co.uk/",
     "ok": true,
     "status": 200,
-    "loadMs": 1315,
+    "loadMs": 2183,
     "title": "Bains Electrical Contractors Glasgow | Electricians Glasgow",
     "titleLength": 59,
     "metaDescription": "Bains Electrical Contractors Glasgow are Award Winning Electricians, specialising in Electrical services for Residential & Commercial properties in Glasgow.",
@@ -1078,13 +1166,24 @@
       "rgb(0, 0, 0) (1)",
       "rgba(0, 0, 0, 0.65) (1)"
     ],
-    "heroHtmlSample": "\n\t\t\t<div class=\"et_builder_inner_content et_pb_gutters3\">\n\t\t<div class=\"et_pb_section et_pb_section_1_tb_header et_pb_with_background et_pb_section_parallax et_section_regular\">\n\t\t\t\t\n\t\t\t\t\n\t\t\t\t\n\t\t\t\t\n\t\t\t\t\n\t\t\t\t\n\t\t\t\t<div class=\"et_pb_row et_pb_row_0_tb_header et_pb_equal_columns et_pb_gutters1\">\n\t\t\t\t<div class=\"et_pb_column et_pb_column_1_3 et_pb_column_0_tb_header  et_pb_css_mix_blend_mode_passthrough\">\n\t\t\t\t\n\t\t\t\t\n\t\t\t\t\n\t\t\t\t\n\t\t\t\t<div class=\"et_pb_module et_pb_text et_pb_text_0_tb_header  et_pb_text_align_center et_pb_bg_layout_light\">\n\t\t\t\t\n\t\t\t\t\n\t\t\t\t\n\t\t\t\t\n\t\t\t\t<div class=\"et_pb_text_inner\"><p>Scotland's Qualified Electrical Specialists</p></div>\n\t\t\t</div>\n\t\t\t</div><div class=\"et_pb_column et_pb_column_1_3 et_pb_column_1_tb_header  et_pb_css_mix_blend_mode_passthrough\">\n\t\t\t\t\n\t\t\t\t\n\t\t\t\t\n\t\t\t\t\n\t\t\t\t<div class=\"et_pb_button_module_wrapper et_pb_button_0_tb_header_wrapper et_pb_button_alignment_center et_pb_module \">\n\t\t\t\t<a class=\"et_pb_button et_pb_button_0_tb_header et_pb_bg_layout_light\" href=\"tel:01413109801\" data-icon=\"\">Get a Quote</a>\n\t\t\t</div>\n\t\t\t</div><div class=\"et_pb_column et_pb_column_1_3 et_pb_column_2_tb_header  et_pb_css_mix_blend_mode_passthrough et-last-child\">\n\t\t\t\t\n\t\t\t\t\n\t\t\t\t\n\t\t\t\t\n\t\t\t\t<div class=\"et_pb_module et_pb_blurb et_pb_blurb_0_tb_header  et_pb_text_align_center  et_pb_blurb_position_left et_pb_bg_layout_light\">\n\t\t\t\t\n\t\t\t\t\n\t\t\t\t\n\t\t\t\t\n\t\t\t\t<div class=\"et_pb_blurb_content\">\n\t\t\t\t\t\n\t\t\t\t\t<div class=\"et_pb_blurb_container\">\n\t\t\t\t\t\t<h4 class=\"et_pb_module_header\"><a href=\"tel:01413109801\">CALL US: 0141 310 9801</a></h4>\n\t\t\t\t\t\t\n\t\t\t\t\t</div>\n\t\t\t\t</div>\n\t\t\t</div>\n\t\t\t</div>\n\t\t\t\t\n\t\t\t\t\n\t\t\t\t\n\t\t\t\t\n\t\t\t</div>\n\t\t\t\t\n\t\t\t\t\n\t\t\t</div><div class=\"et_pb_section et_pb_section_3_tb_header et_pb_section_parallax et_section_regular et_pb_section--with-menu\">\n\t\t\t\t\n\t\t\t\t\n\t\t\t\t\n\t\t\t\t\n\t\t\t\t\n\t\t\t\t\n\t\t\t\t<div class=\"et_pb_row et_pb_row_1_tb_header et_pb_equal_columns et_pb_gutters1\">\n\t\t\t\t<div class=\"et_pb_column et_pb_column_4_4 et_pb_column_3_tb_header  et_pb_css_mix_blend_mode_passthrough et-last-child\">\n\t\t\t\t\n\t\t\t\t\n\t\t\t\t\n\t\t\t\t\n\t\t\t\t<div class=\"et_pb_module et_pb_image et_pb_image_0_tb_header et_pb_image_sticky\">\n\t\t\t\t\n\t\t\t\t\n\t\t\t\t\n\t\t\t\t\n\t\t\t\t<a href=\"https://bainselectrical.co.uk/\"><span class=\"et_pb_image_wrap \"><img fetchpriority=\"high\" decoding=\"async\" width=\"830\" height=\"260\" src=\"https://bainselectrical.co.uk/wp-content/uploads/2026/05/Bains-Electrical-Award-Winning-Electricians-Glasgow.webp\" alt=\"\" title=\"Bains Electrical Award-Winning Electricians Glasgow\" srcset=\"https://bainselectrical.co.u"
+    "heroHtmlSample": "\n\t\t\t<div class=\"et_builder_inner_content et_pb_gutters3\">\n\t\t<div class=\"et_pb_section et_pb_section_1_tb_header et_pb_with_background et_pb_section_parallax et_section_regular\">\n\t\t\t\t\n\t\t\t\t\n\t\t\t\t\n\t\t\t\t\n\t\t\t\t\n\t\t\t\t\n\t\t\t\t<div class=\"et_pb_row et_pb_row_0_tb_header et_pb_equal_columns et_pb_gutters1\">\n\t\t\t\t<div class=\"et_pb_column et_pb_column_1_3 et_pb_column_0_tb_header  et_pb_css_mix_blend_mode_passthrough\">\n\t\t\t\t\n\t\t\t\t\n\t\t\t\t\n\t\t\t\t\n\t\t\t\t<div class=\"et_pb_module et_pb_text et_pb_text_0_tb_header  et_pb_text_align_center et_pb_bg_layout_light\">\n\t\t\t\t\n\t\t\t\t\n\t\t\t\t\n\t\t\t\t\n\t\t\t\t<div class=\"et_pb_text_inner\"><p>Scotland's Qualified Electrical Specialists</p></div>\n\t\t\t</div>\n\t\t\t</div><div class=\"et_pb_column et_pb_column_1_3 et_pb_column_1_tb_header  et_pb_css_mix_blend_mode_passthrough\">\n\t\t\t\t\n\t\t\t\t\n\t\t\t\t\n\t\t\t\t\n\t\t\t\t<div class=\"et_pb_button_module_wrapper et_pb_button_0_tb_header_wrapper et_pb_button_alignment_center et_pb_module \">\n\t\t\t\t<a class=\"et_pb_button et_pb_button_0_tb_header et_pb_bg_layout_light\" href=\"tel:01413109801\" data-icon=\"\">Get a Quote</a>\n\t\t\t</div>\n\t\t\t</div><div class=\"et_pb_column et_pb_column_1_3 et_pb_column_2_tb_header  et_pb_css_mix_blend_mode_passthrough et-last-child\">\n\t\t\t\t\n\t\t\t\t\n\t\t\t\t\n\t\t\t\t\n\t\t\t\t<div class=\"et_pb_module et_pb_blurb et_pb_blurb_0_tb_header  et_pb_text_align_center  et_pb_blurb_position_left et_pb_bg_layout_light\">\n\t\t\t\t\n\t\t\t\t\n\t\t\t\t\n\t\t\t\t\n\t\t\t\t<div class=\"et_pb_blurb_content\">\n\t\t\t\t\t\n\t\t\t\t\t<div class=\"et_pb_blurb_container\">\n\t\t\t\t\t\t<h4 class=\"et_pb_module_header\"><a href=\"tel:01413109801\">CALL US: 0141 310 9801</a></h4>\n\t\t\t\t\t\t\n\t\t\t\t\t</div>\n\t\t\t\t</div>\n\t\t\t</div>\n\t\t\t</div>\n\t\t\t\t\n\t\t\t\t\n\t\t\t\t\n\t\t\t\t\n\t\t\t</div>\n\t\t\t\t\n\t\t\t\t\n\t\t\t</div><div class=\"et_pb_section et_pb_section_3_tb_header et_pb_section_parallax et_section_regular et_pb_section--with-menu\">\n\t\t\t\t\n\t\t\t\t\n\t\t\t\t\n\t\t\t\t\n\t\t\t\t\n\t\t\t\t\n\t\t\t\t<div class=\"et_pb_row et_pb_row_1_tb_header et_pb_equal_columns et_pb_gutters1\">\n\t\t\t\t<div class=\"et_pb_column et_pb_column_4_4 et_pb_column_3_tb_header  et_pb_css_mix_blend_mode_passthrough et-last-child\">\n\t\t\t\t\n\t\t\t\t\n\t\t\t\t\n\t\t\t\t\n\t\t\t\t<div class=\"et_pb_module et_pb_image et_pb_image_0_tb_header et_pb_image_sticky\">\n\t\t\t\t\n\t\t\t\t\n\t\t\t\t\n\t\t\t\t\n\t\t\t\t<a href=\"https://bainselectrical.co.uk/\"><span class=\"et_pb_image_wrap \"><img fetchpriority=\"high\" decoding=\"async\" width=\"830\" height=\"260\" src=\"https://bainselectrical.co.uk/wp-content/uploads/2026/05/Bains-Electrical-Award-Winning-Electricians-Glasgow.webp\" alt=\"\" title=\"Bains Electrical Award-Winning Electricians Glasgow\" srcset=\"https://bainselectrical.co.u",
+    "lighthouse": {
+      "performance": 24,
+      "accessibility": 79,
+      "bestPractices": 75,
+      "seo": 85,
+      "LCP": "17.1 s",
+      "CLS": "0.287",
+      "TBT": "1,260 ms",
+      "speedIndex": "8.1 s",
+      "pageWeight": "Total size was 2,810 KiB"
+    }
   },
   {
     "url": "https://www.pwsglasgow.com/",
     "ok": true,
     "status": 200,
-    "loadMs": 553,
+    "loadMs": 689,
     "title": "Electrician Glasgow - SELECT Approved | PWS Electrical",
     "titleLength": 54,
     "metaDescription": "PWS Electrical is a trusted local Electrician in Glasgow. 5 Star rated electrical work for homes and businesses. Over 10 years experience. Get a free quote.",
@@ -1111,7 +1210,12 @@
       "WebSite",
       "SearchAction",
       "WebPage",
-      "Article"
+      "Article",
+      "Product",
+      "Brand",
+      "AggregateRating",
+      "Review",
+      "Rating"
     ],
     "heroVideo": 0,
     "heroCanvas": 0,
@@ -1126,15 +1230,15 @@
       "Google Reviews embed"
     ],
     "cssAnimationRules": {
-      "keyframes": 4,
-      "animatedRules": 80
+      "keyframes": 7,
+      "animatedRules": 120
     },
     "heroAnimatesLive": false,
-    "imageCount": 15,
+    "imageCount": 84,
     "imagesMissingAlt": 6,
     "modernImageFormats": false,
-    "lazyLoadedImages": 11,
-    "wordCount": 2234,
+    "lazyLoadedImages": 80,
+    "wordCount": 2794,
     "accreditationsMentioned": [
       "NAPIT",
       "ECA",
@@ -1143,9 +1247,11 @@
       "OZEV"
     ],
     "ratingClaims": [
+      "5 Star",
       "5 stars"
     ],
     "reviewCountClaims": [
+      "0565 reviews",
       "398 reviews"
     ],
     "mentionsTeamPage": true,
@@ -1176,8 +1282,8 @@
     "hasCaseStudies": true,
     "hasReviewsPage": false,
     "hasBlog": false,
-    "requestCount": 14,
-    "thirdPartyRequests": 3,
+    "requestCount": 60,
+    "thirdPartyRequests": 40,
     "fonts": [
       "Cabin",
       "Poppins",
@@ -1185,9 +1291,20 @@
     ],
     "heroColors": [
       "rgba(255, 255, 255, 0) (17)",
-      "rgb(255, 255, 255) (7)",
-      "rgb(59, 151, 210) (1)"
+      "rgb(255, 255, 255) (3)",
+      "rgb(250, 250, 250) (1)"
     ],
-    "heroHtmlSample": "<div class=\"elementor-element elementor-element-d2091af e-flex e-con-boxed e-con e-parent\" data-id=\"d2091af\" data-element_type=\"container\" data-settings=\"{&quot;background_background&quot;:&quot;classic&quot;}\"><div class=\"e-con-inner\"><div class=\"elementor-element elementor-element-10890f4 e-con-full e-flex e-con e-child\" data-id=\"10890f4\" data-element_type=\"container\"><div class=\"elementor-element elementor-element-cbf3021 elementor-widget__width-initial elementor-widget elementor-widget-theme-site-logo elementor-widget-image\" data-id=\"cbf3021\" data-element_type=\"widget\" data-widget_type=\"theme-site-logo.default\"><div class=\"elementor-widget-container\">\n<a href=\"https://www.pwsglasgow.com\">\n<img data-lazyloaded=\"1\" src=\"https://www.pwsglasgow.com/wp-content/uploads/2024/03/pwslogo.png\" fetchpriority=\"high\" width=\"483\" height=\"150\" data-src=\"https://www.pwsglasgow.com/wp-content/uploads/2024/03/pwslogo.png\" class=\"attachment-1536x1536 size-1536x1536 wp-image-7 entered litespeed-loaded\" alt=\"\" data-srcset=\"https://www.pwsglasgow.com/wp-content/uploads/2024/03/pwslogo.png 483w, https://www.pwsglasgow.com/wp-content/uploads/2024/03/pwslogo-300x93.png 300w\" data-sizes=\"(max-width: 483px) 100vw, 483px\" data-ll-status=\"loaded\" sizes=\"(max-width: 483px) 100vw, 483px\" srcset=\"https://www.pwsglasgow.com/wp-content/uploads/2024/03/pwslogo.png 483w, https://www.pwsglasgow.com/wp-content/uploads/2024/03/pwslogo-300x93.png 300w\">\t\t\t\t</a></div></div></div><div class=\"elementor-element elementor-element-b8ddd55 e-con-full e-flex e-con e-child\" data-id=\"b8ddd55\" data-element_type=\"container\"><div class=\"elementor-element elementor-element-c3a6002 e-con-full elementor-hidden-tablet elementor-hidden-mobile e-flex e-con e-child\" data-id=\"c3a6002\" data-element_type=\"container\"><div class=\"elementor-element elementor-element-816228a elementor-widget__width-inherit elementor-widget elementor-widget-text-editor\" data-id=\"816228a\" data-element_type=\"widget\" data-widget_type=\"text-editor.default\"><div class=\"elementor-widget-container\"><p><span style=\"color: #000000;\"><a style=\"color: #000000;\" href=\"tel:07793 540885\">07793 540885</a></span><br><span style=\"color: #000000;\"><a style=\"color: #000000;\" href=\"mailto:info@pwsglasgow.com\">info@pwsglasgow.com</a></span></p></div></div></div><div class=\"elementor-element elementor-element-3f59a33 e-flex e-con-boxed e-con e-child\" data-id=\"3f59a33\" data-element_type=\"container\" data-settings=\"{&quot;background_background&quot;:&quot;clas"
+    "heroHtmlSample": "<div class=\"elementor-element elementor-element-d2091af e-flex e-con-boxed e-con e-parent\" data-id=\"d2091af\" data-element_type=\"container\" data-settings=\"{&quot;background_background&quot;:&quot;classic&quot;}\"><div class=\"e-con-inner\"><div class=\"elementor-element elementor-element-10890f4 e-con-full e-flex e-con e-child\" data-id=\"10890f4\" data-element_type=\"container\"><div class=\"elementor-element elementor-element-cbf3021 elementor-widget__width-initial elementor-widget elementor-widget-theme-site-logo elementor-widget-image\" data-id=\"cbf3021\" data-element_type=\"widget\" data-widget_type=\"theme-site-logo.default\"><div class=\"elementor-widget-container\">\n<a href=\"https://www.pwsglasgow.com\">\n<img data-lazyloaded=\"1\" src=\"https://www.pwsglasgow.com/wp-content/uploads/2024/03/pwslogo.png\" fetchpriority=\"high\" width=\"483\" height=\"150\" data-src=\"https://www.pwsglasgow.com/wp-content/uploads/2024/03/pwslogo.png\" class=\"attachment-1536x1536 size-1536x1536 wp-image-7 entered litespeed-loaded\" alt=\"\" data-srcset=\"https://www.pwsglasgow.com/wp-content/uploads/2024/03/pwslogo.png 483w, https://www.pwsglasgow.com/wp-content/uploads/2024/03/pwslogo-300x93.png 300w\" data-sizes=\"(max-width: 483px) 100vw, 483px\" data-ll-status=\"loaded\" sizes=\"(max-width: 483px) 100vw, 483px\" srcset=\"https://www.pwsglasgow.com/wp-content/uploads/2024/03/pwslogo.png 483w, https://www.pwsglasgow.com/wp-content/uploads/2024/03/pwslogo-300x93.png 300w\">\t\t\t\t</a></div></div></div><div class=\"elementor-element elementor-element-b8ddd55 e-con-full e-flex e-con e-child\" data-id=\"b8ddd55\" data-element_type=\"container\"><div class=\"elementor-element elementor-element-c3a6002 e-con-full elementor-hidden-tablet elementor-hidden-mobile e-flex e-con e-child\" data-id=\"c3a6002\" data-element_type=\"container\"><div class=\"elementor-element elementor-element-816228a elementor-widget__width-inherit elementor-widget elementor-widget-text-editor\" data-id=\"816228a\" data-element_type=\"widget\" data-widget_type=\"text-editor.default\"><div class=\"elementor-widget-container\"><p><span style=\"color: #000000;\"><a style=\"color: #000000;\" href=\"tel:07793 540885\">07793 540885</a></span><br><span style=\"color: #000000;\"><a style=\"color: #000000;\" href=\"mailto:info@pwsglasgow.com\">info@pwsglasgow.com</a></span></p></div></div></div><div class=\"elementor-element elementor-element-3f59a33 e-flex e-con-boxed e-con e-child\" data-id=\"3f59a33\" data-element_type=\"container\" data-settings=\"{&quot;background_background&quot;:&quot;clas",
+    "lighthouse": {
+      "performance": 92,
+      "accessibility": 89,
+      "bestPractices": 96,
+      "seo": 92,
+      "LCP": "2.9 s",
+      "CLS": "0",
+      "TBT": "0 ms",
+      "speedIndex": "2.2 s",
+      "pageWeight": "Total size was 272 KiB"
+    }
   }
 ]

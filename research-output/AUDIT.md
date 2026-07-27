@@ -18,22 +18,22 @@ Screenshots are in `screenshots/`. Full extracted data in `audit.json`.
 | sselectricalleeds-co-uk | **yes** | 0 | 0 | Lottie, Swiper, Elementor Motion | 6 |
 | gallagherelectricalltd-co-uk | **yes** | 0 | 0 | — | 40 |
 | bainselectrical-co-uk | **no** | 0 | 0 | Swiper | 136 |
-| pwsglasgow-com | **no** | 0 | 0 | — | 4 |
+| pwsglasgow-com | **no** | 0 | 0 | — | 7 |
 
 ## Platform and page speed
 
 | Site | Platform | Perf | A11y | BP | SEO | LCP | CLS |
 |---|---|---|---|---|---|---|---|
-| wyelectrical-co-uk | WordPress, Elementor, Divi | — | — | — | — | — | — |
-| quantum-electrical-co-uk | WordPress, Elementor, Divi, Squarespace | — | — | — | — | — | — |
-| certifiedelectricians-london | WordPress | — | — | — | — | — | — |
-| khlelectricalcontractors-co-uk | Elementor, Divi, Wix | — | — | — | — | — | — |
-| amaraelectrical-co-uk | WordPress, WPBakery | — | — | — | — | — | — |
-| scott-electrical-com | WordPress, Divi | — | — | — | — | — | — |
-| sselectricalleeds-co-uk | WordPress, Elementor, Divi | — | — | — | — | — | — |
-| gallagherelectricalltd-co-uk | WordPress | — | — | — | — | — | — |
-| bainselectrical-co-uk | WordPress, Divi | — | — | — | — | — | — |
-| pwsglasgow-com | WordPress, Elementor | — | — | — | — | — | — |
+| wyelectrical-co-uk | WordPress, Elementor, Divi | 42 | 92 | 75 | 85 | 7.3 s | 0.002 |
+| quantum-electrical-co-uk | WordPress, Elementor, Divi, Squarespace | 40 | 93 | 79 | 92 | 14.9 s | 0.022 |
+| certifiedelectricians-london | WordPress | 47 | 90 | 71 | 92 | 9.2 s | 0.196 |
+| khlelectricalcontractors-co-uk | Elementor, Divi, Wix | 69 | 92 | 100 | 100 | 3.6 s | 0 |
+| amaraelectrical-co-uk | WordPress, WPBakery | 46 | 94 | 75 | 92 | 4.3 s | 0.004 |
+| scott-electrical-com | WordPress, Divi | 15 | 76 | 75 | 85 | 23.7 s | 0.913 |
+| sselectricalleeds-co-uk | WordPress, Elementor, Divi | 45 | 89 | 79 | 100 | 9.0 s | 0.001 |
+| gallagherelectricalltd-co-uk | WordPress | 55 | 87 | 96 | 100 | 17.9 s | 0.001 |
+| bainselectrical-co-uk | WordPress, Divi | 24 | 79 | 75 | 85 | 17.1 s | 0.287 |
+| pwsglasgow-com | WordPress, Elementor | 92 | 89 | 96 | 92 | 2.9 s | 0 |
 
 ## Social proof and trust
 
@@ -48,7 +48,7 @@ Screenshots are in `screenshots/`. Full extracted data in `audit.json`.
 | sselectricalleeds-co-uk | Google Reviews embed, Checkatrade badge | — | — | NAPIT, TrustMark, ECA, SELECT | no | no |
 | gallagherelectricalltd-co-uk | Trustindex, Google Reviews embed | — | — | NICEIC, TrustMark, ECA, SELECT, MCS | yes | no |
 | bainselectrical-co-uk | Elfsight, Google Reviews embed | 5 Star | — | ECA, SELECT | yes | no |
-| pwsglasgow-com | Trustindex, Elfsight, Google Reviews embed | 5 stars | 398 reviews | NAPIT, ECA, SELECT, MCS, OZEV | no | yes |
+| pwsglasgow-com | Trustindex, Elfsight, Google Reviews embed | 5 Star, 5 stars | 0565 reviews, 398 reviews | NAPIT, ECA, SELECT, MCS, OZEV | no | yes |
 
 ## SEO fundamentals
 
@@ -63,7 +63,7 @@ Screenshots are in `screenshots/`. Full extracted data in `audit.json`.
 | sselectricalleeds-co-uk | 56 | 148 | 0 | Organization, ImageObject, WebSite, SearchAction, WebPage, Service, Offer | 0 | 6 | no |
 | gallagherelectricalltd-co-uk | 66 | 142 | 5 | WebPage, ReadAction, ImageObject, BreadcrumbList, ListItem, WebSite, SearchAction, EntryPoint, PropertyValueSpecification | 2 | 13 | yes |
 | bainselectrical-co-uk | 59 | 156 | 2 | Place, GeoCoordinates, PostalAddress, Electrician, Organization, ImageObject, WebSite, SearchAction, WebPage, Person, Article, Product, Brand, AggregateRating, Review, Rating | 3 | 6 | yes |
-| pwsglasgow-com | 54 | 156 | 1 | Person, Organization, ImageObject, WebSite, SearchAction, WebPage, Article | 1 | 16 | no |
+| pwsglasgow-com | 54 | 156 | 1 | Person, Organization, ImageObject, WebSite, SearchAction, WebPage, Article, Product, Brand, AggregateRating, Review, Rating | 1 | 16 | no |
 
 ## Design signals
 
@@ -72,13 +72,13 @@ Screenshots are in `screenshots/`. Full extracted data in `audit.json`.
 | wyelectrical-co-uk | Karla, Manrope, Hind | 36 | 0 | yes | 6250 | 1 |
 | quantum-electrical-co-uk | Rubik | 95 | 17 | yes | 3810 | 9 |
 | certifiedelectricians-london | Merriweather, Lato | 309 | 4 | yes | 4325 | 10 |
-| khlelectricalcontractors-co-uk | Arial, poppins-extralight, lato-light | 26 | 0 | yes | 4170 | 7 |
+| khlelectricalcontractors-co-uk | Arial, poppins-extralight, lato-light | 26 | 0 | yes | 4165 | 7 |
 | amaraelectrical-co-uk | Lato | 121 | 12 | yes | 5493 | 0 |
 | scott-electrical-com | Montserrat | 63 | 41 | yes | 5710 | 0 |
 | sselectricalleeds-co-uk | -apple-system, Varela Round | 45 | 31 | no | 2612 | 0 |
 | gallagherelectricalltd-co-uk | Poppins | 30 | 16 | no | 2128 | 0 |
 | bainselectrical-co-uk | PT Sans, Montserrat, Poppins | 28 | 17 | yes | 4472 | 8 |
-| pwsglasgow-com | Cabin, Poppins, Roboto | 15 | 6 | no | 2234 | 0 |
+| pwsglasgow-com | Cabin, Poppins, Roboto | 84 | 6 | no | 2794 | 0 |
 
 ## Per-site detail
 
@@ -108,7 +108,7 @@ Screenshots are in `screenshots/`. Full extracted data in `audit.json`.
 - **Internal paths:** 39 unique
 - **Location pages:** /services/emergency-electrician-london/, /locations/, /news/how-to-choose-an-electrician-in-london/
 - **Service pages:** /services/, /services/plumbing/, /services/emergency-plumber-london/, /services/heating-engineer-london/, /services/emergency-boiler-repair-london/, /services/boiler-repair-london/, /services/boiler-installation-london/, /services/boiler-service-london/, /services/underfloor-heating-london/, /services/electrical, /services/emergency-electrician-london/, /services/electrical-contractors-london/, /services/electrical-certificates/, /services/lutron-installer-london/, /services/heating/, /services/electrical/, /services/lutron-lighting/, /news/lutron-ra3-smart-lighting-installation-west-london/, /news/lutron-230v-led-strip-lighting-london/, /news/ive-noticed-some-faulty-wiring-in-my-house-what-should-i-do/
-- **Requests:** 134 (70 third-party)
+- **Requests:** 133 (69 third-party)
 
 ### https://certifiedelectricians.london/
 
@@ -122,7 +122,7 @@ Screenshots are in `screenshots/`. Full extracted data in `audit.json`.
 - **Internal paths:** 83 unique
 - **Location pages:** /areas-covered/, /domestic-electricians-in-london/, /emergency-electricians-london/, /commercial-electricians-in-london/, /areas-covered/beckton/, /areas-covered/bow/, /areas-covered/blackheath/, /areas-covered/bromley-by-bow/, /areas-covered/canary-wharf/, /areas-covered/canning-town/, /areas-covered/charlton/, /areas-covered/chingford/, /areas-covered/deptford/, /areas-covered/east-ham/, /areas-covered/east-london/, /areas-covered/forest-gate/, /areas-covered/greenwich/, /areas-covered/hackney/, /areas-covered/hither-green/, /areas-covered/isle-of-dogs/, /areas-covered/kidbrooke/, /areas-covered/ladywell/, /areas-covered/leyton/, /areas-covered/leytonstone/, /areas-covered/lewisham/
 - **Service pages:** /eicr-london/, /pat-testing-in-london/, /ev-charger-installation-london/, /lighting-installation-and-fitting-london/, /home-rewire-london/, /new-consumer-unit-installation-london/, /emergency-services/, /commercial-electrical-services/, /pat-testing-for-offices-in-london-keeping-your-staff-safe/, /ev-charger-installations-in-london-a-complete-homeowner-guide/, /do-landlords-need-an-eicr-in-london-a-complete-legal-guide-for-2026/
-- **Requests:** 78 (44 third-party)
+- **Requests:** 79 (45 third-party)
 
 ### https://www.khlelectricalcontractors.co.uk/
 
@@ -136,7 +136,7 @@ Screenshots are in `screenshots/`. Full extracted data in `audit.json`.
 - **Internal paths:** 64 unique
 - **Location pages:** /domestic-electrician-service, /rcd-tripping-electrician-manchester, /commercial-electrician-manchester, /area-covered, /emergency-electrician-preston, /emergency-electrician-macclesfield, /emergency-electrician-warrington, /emergency-electrician-bolton, /emergency-electrician-chorley, /emergency-electrician-knutsford, /emergency-electrician-oldham, /emergency-electrician-salford, /emergency-electrician-bury, /emergency-electrician-stockport, /emergency-electrician-widnes, /emergency-electrician-lymm, /emergency-electrician-cheadle-hulme, /emergency-electrician-wilmslow, /emergency-electrician-alderley-edge, /emergency-electrician-hale-barns, /emergency-electrician-altrincham, /emergency-electrician-didsbury, /emergency-electrician-prestwich, /emergency-electrician-timperley, /emergency-electrician-salford-quays
 - **Service pages:** /domestic-electrician-service, /house-repair-services, /lighting-installation-and-repair-service-manchester, /house-rewiring-manchester, /ev-charging-station-installation-service-manchester, /service/fuse-box-replacement-manchester, /eicr-certificate-manchester-for-landlords-electrical-safety, /service/socket-repair-manchester, /service/commercial-electrical-installation-manchester, /service/power-outage-electrician-manchester, /service/electric-heating-repair-manchester, /service/electric-heating-installation-manchester, /domesctic-electrician-service, /service/commercial-emergency-electrician-manchester, /service/commercial-eicr-manchester, /service/rcd-installation-manchester, /service/commercial-electrical-maintenance-manchester, /service/immersion-heater-repair-manchester, /service/wiring-upgrade-manchester, /service/partial-rewire-manchester, /service/commercial-rewiring-manchester, /service/circuit-breaker-tripping-electrician-manchester, /service/electric-shower-repair-manchester, /service/fault-finding-electrician-manchester, /service/storage-heater-installation-manchester
-- **Requests:** 202 (198 third-party)
+- **Requests:** 201 (197 third-party)
 
 ### https://www.amaraelectrical.co.uk/
 
@@ -164,7 +164,7 @@ Screenshots are in `screenshots/`. Full extracted data in `audit.json`.
 - **Internal paths:** 38 unique
 - **Location pages:** /commercial/commercial-electricians-leeds/, /areas-we-cover/, /residential/residential-electricians-leeds/
 - **Service pages:** /commercial/led-lighting-installation/, /commercial/commercial-rewiring-and-upgrades/, /commercial/eicr-reports/, /commercial/emergency-lighting-solutions/, /renewable/commercial-solar-solutions/, /solar-calculator/, /renewable/commercial-solar-financing/, /renewable/commercial-solar-faq/, /renewable/ev-charger-installation/, /renewable/ev-charging-installation-leeds/, /renewable/ev-charging-installation-ilkley/, /renewable/ev-charger-installation-harrogate/, /project/large-scale-warehouse-solar-installation-leeds/, /commercial/commercial-lighting/, /renewable/home-solar-installers/, /renewable/ev-charge-point-installation-leeds/, /tethered-vs-untethered-ev-chargers-which-is-best-for-your-home/, /ev-charger-installation-cost-in-yorkshire/, /can-my-home-electrical-supply-handle-an-ev-charger/, /renewable/solar-financing/
-- **Requests:** 148 (41 third-party)
+- **Requests:** 149 (42 third-party)
 
 ### https://www.sselectricalleeds.co.uk/
 
@@ -213,10 +213,10 @@ Screenshots are in `screenshots/`. Full extracted data in `audit.json`.
 - **Meta:** PWS Electrical is a trusted local Electrician in Glasgow. 5 Star rated electrical work for homes and businesses. Over 10 years experience. Get a free quote.
 - **H1:** Trusted Local Electrician in Glasgow
 - **H2s:** Electrical Services | Solar Installation | EV Chargers | EICR Certificates | Accredited Electrical Services | CONTACT US | CONTACT US | Why Choose a PWS Electrical & Solar Electrician?
-- **Schema:** Person, Organization, ImageObject, WebSite, SearchAction, WebPage, Article
-- **Hero colours:** rgba(255, 255, 255, 0) (17), rgb(255, 255, 255) (7), rgb(59, 151, 210) (1)
+- **Schema:** Person, Organization, ImageObject, WebSite, SearchAction, WebPage, Article, Product, Brand, AggregateRating, Review, Rating
+- **Hero colours:** rgba(255, 255, 255, 0) (17), rgb(255, 255, 255) (3), rgb(250, 250, 250) (1)
 - **Fonts:** Cabin, Poppins, Roboto
 - **Internal paths:** 40 unique
 - **Location pages:** /small-job-electrician.php
 - **Service pages:** /commercial-electrical-services.php, /car-park-lighting.php, /indoor-lighting-installation-glasgow.php, /garden-lighting-installer-glasgow.php, /landlord-electrical-safety-glasgow.php, /commercial-electrical-inspection-services.php, /home-electrical-inspection-services.php, /solar-products-glasgow.php, /solar-pv-and-battery-storage.php, /solar-battery-storage-glasgow.php, /commercial-ev-charging-installation.php, /easee-ev-charger-installers-in-glasgow.php, /hypervolt-ev-charger-installers-in-glasgow.php, /ohme-ev-charger-installers-in-glasgow.php, /pod-point-ev-charger-installers-in-glasgow.php, /solaredge-installers-in-glasgow.php
-- **Requests:** 14 (3 third-party)
+- **Requests:** 60 (40 third-party)
