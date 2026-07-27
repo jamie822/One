@@ -6,7 +6,7 @@ import CtaBand from '../components/CtaBand.astro';
 import Placeholder from '../components/Placeholder.astro';
 import Needed from '../components/Needed.astro';
 import Icon from '../components/Icon.astro';
-import { href } from '../lib/site.js';
+import { href, businessId } from '../lib/site.js';
 import { client } from '../data/client.js';
 
 const personSchema = {
@@ -14,13 +14,13 @@ const personSchema = {
   '@type': 'Person',
   name: client.owner.name,
   jobTitle: client.owner.role,
-  worksFor: { '@id': `${client.url}/#business` },
+  worksFor: { '@id': businessId },
 };
 ---
 <Layout
   path="/about/"
   title="About Swift Electrical & Security"
-  description="Swift Electrical & Security is run by Adil, a NICEIC registered electrician working across Bradford and West Yorkshire. Who turns up, what the registration actually means, and how we price the work."
+  description="Run by Adil, a NICEIC registered electrician and security installer covering Bradford and West Yorkshire. What the registration means and how we price work."
   crumbs={[{ name: 'Home', path: '/' }, { name: 'About', path: '/about/' }]}
   schemas={[personSchema]}
 >

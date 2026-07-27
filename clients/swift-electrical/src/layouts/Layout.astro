@@ -106,9 +106,42 @@ const allSchemas = [
     <link rel="sitemap" href={href('/sitemap-index.xml')} />
 
     <!-- Fonts are self-hosted. No third-party request, nothing render-blocking,
-         and the page cannot silently fall back if a CDN is slow or blocked. -->
+         and the page cannot silently fall back if a CDN is slow or blocked.
+
+         All ten woff2 files get fetched regardless, because every @font-face is
+         referenced by some rule that runs on every page. So preload is not
+         deciding WHETHER a font loads, only which four jump the queue — which
+         is precisely why the list has to stay short. Promote everything and you
+         have promoted nothing.
+
+         The four below were picked by measuring painted text area inside the
+         initial viewport at 1280x900 and 390x844, on the homepage, an area page
+         and a service page — not by reading the stylesheet:
+
+           Sora 800    118,464px²  the <h1>. This is the LCP element.
+           Inter 500    48k-143k   hero strapline; the housing-stock lead, which
+                                   is the largest single block on an area page.
+           Inter 400     28k-47k   hero sub. Above the fold on 3 of the 4.
+           Inter 600     8.7k-11k  every button, including the header CTA.
+
+         Deliberately NOT preloaded, and worth saying why rather than quietly
+         appending them:
+
+         · Sora 600 measures larger above the fold (18k) than Inter 600 does,
+           which looks like an omission until you check what is setting it: it
+           is almost entirely the "PHONE NUMBER NEEDED" placeholder markers.
+           That is scaffolding. It disappears the day Adil gives us a number, so
+           preloading for it would be optimising a state that must never ship.
+         · Sora 700 is 301px² on the homepage. It only looks significant on an
+           area page at exactly 900px tall, where the viewport clips the top of
+           the first <h2>. Not worth a fifth slot.
+         · IBM Plex Mono 400/500/600 are the trust bar and eyebrows — 3.8k at
+           most, and the metric-matched Plex Fallback in type.css already covers
+           the swap. -->
     <link rel="preload" as="font" type="font/woff2" href={href('/fonts/sora-latin-800-normal.woff2')} crossorigin />
     <link rel="preload" as="font" type="font/woff2" href={href('/fonts/inter-latin-400-normal.woff2')} crossorigin />
+    <link rel="preload" as="font" type="font/woff2" href={href('/fonts/inter-latin-500-normal.woff2')} crossorigin />
+    <link rel="preload" as="font" type="font/woff2" href={href('/fonts/inter-latin-600-normal.woff2')} crossorigin />
 
     {allSchemas.map((s) => (
       <script type="application/ld+json" set:html={JSON.stringify(s)} />
