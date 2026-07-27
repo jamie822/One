@@ -1,0 +1,165 @@
+/* Stacked Out — brand foundation.
+   Values taken verbatim from brand-pack/BRAND-GUIDE.md and colour/palette.css.
+   Nothing outside this palette, ever. Charcoal is the brand, not a "dark mode".
+
+   Fonts are self-hosted from the brand pack. Fontshare's CDN is unreachable from
+   the build environment, and a webfont that silently falls back is worse than one
+   that ships in the repo. */
+
+@font-face {
+  font-family: 'Clash Display';
+  src: url('/fonts/clash-display-600.woff2') format('woff2');
+  font-weight: 600; font-style: normal; font-display: swap;
+}
+@font-face {
+  font-family: 'Clash Display';
+  src: url('/fonts/clash-display-700.woff2') format('woff2');
+  font-weight: 700; font-style: normal; font-display: swap;
+}
+@font-face {
+  font-family: 'Satoshi';
+  src: url('/fonts/satoshi-400.woff2') format('woff2');
+  font-weight: 400; font-style: normal; font-display: swap;
+}
+@font-face {
+  font-family: 'Satoshi';
+  src: url('/fonts/satoshi-500.woff2') format('woff2');
+  font-weight: 500; font-style: normal; font-display: swap;
+}
+@font-face {
+  font-family: 'Satoshi';
+  src: url('/fonts/satoshi-700.woff2') format('woff2');
+  font-weight: 700; font-style: normal; font-display: swap;
+}
+
+:root {
+  /* ---- Palette. The whole thing. Adding an eighth colour is a brand breach. ---- */
+  --ground:      #08090b;              /* page background, the default state of everything */
+  --panel:       #0d0f13;              /* cards and raised surfaces sitting on the ground  */
+  --action:      #ffdd33;              /* buttons, prices, the thing you want clicked      */
+  --action-deep: #ffd60a;              /* hover / pressed                                  */
+  --incoming:    #3fe3ff;              /* links, new things, enquiries — anything arriving  */
+  --ink:         #f5f6f8;              /* body and headline text on dark                   */
+  --ink-muted:   #9aa1ab;              /* captions, labels, supporting lines               */
+  --edge:        rgba(255, 255, 255, .10);
+
+  /* HERO MOMENTS ONLY. One per page. Never body text, never twice. */
+  --hero-gradient: linear-gradient(100deg, #ffdd33, #3fe3ff);
+
+  /* ---- Type. Display carries headlines and, above all, numbers. ---- */
+  --font-display: 'Clash Display', 'Inter', system-ui, sans-serif;
+  --font-body:    'Satoshi', 'Inter', system-ui, sans-serif;
+
+  /* One scale, used consistently. 13 / 16 / 18 / 24 / 32 / 48 / 72 per the guide,
+     extended upward only for the hero number, which the guide explicitly wants
+     to "carry the section". */
+  --t-label: .8125rem;   /* 13 */
+  --t-body:  1rem;       /* 16 */
+  --t-lead:  1.125rem;   /* 18 */
+  --t-h4:    1.5rem;     /* 24 */
+  --t-h3:    2rem;       /* 32 */
+  --t-h2:    3rem;       /* 48 */
+  --t-h1:    4.5rem;     /* 72 */
+  --t-mega:  clamp(4.5rem, 12vw, 11rem);
+
+  /* ---- Geometry. Guide says pick two radii and stick to them. ---- */
+  --r-card: 16px;
+  --r-chip: 8px;
+
+  /* Generous vertical rhythm. Cramped dark layouts read as cheap. */
+  --s-1: 8px;  --s-2: 16px; --s-3: 24px; --s-4: 40px;
+  --s-5: 64px; --s-6: 96px; --s-7: 144px;
+
+  --measure: 65ch;
+  --shell: 1240px;
+}
+
+*, *::before, *::after { box-sizing: border-box; }
+
+html { -webkit-text-size-adjust: 100%; }
+
+body {
+  margin: 0;
+  background: var(--ground);
+  color: var(--ink);
+  font-family: var(--font-body);
+  font-size: var(--t-body);
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+h1, h2, h3, h4 {
+  font-family: var(--font-display);
+  font-weight: 700;
+  line-height: 1.02;
+  letter-spacing: -0.025em;
+  text-wrap: balance;
+  margin: 0;
+}
+
+p { margin: 0; max-width: var(--measure); }
+
+a { color: var(--incoming); text-decoration-thickness: 1px; text-underline-offset: 3px; }
+
+/* Guide §7: visible focus ring on every interactive element. */
+:where(a, button, input, textarea, select, [tabindex]):focus-visible {
+  outline: 2px solid var(--incoming);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+/* Tiny labels are the only ALL CAPS allowed, at .08em tracking. */
+.label {
+  font-family: var(--font-body);
+  font-size: var(--t-label);
+  font-weight: 500;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  color: var(--ink-muted);
+}
+
+/* Numbers are the brand's punctuation. */
+.figure {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -0.04em;
+  line-height: .9;
+}
+
+.shell { width: min(100% - 2 * var(--s-3), var(--shell)); margin-inline: auto; }
+
+/* The one signature gradient. Using this twice on a page is a brand breach —
+   it stops being a signature and becomes decoration. */
+.grad-text {
+  background: var(--hero-gradient);
+  -webkit-background-clip: text; background-clip: text;
+  color: transparent;
+}
+
+.btn {
+  display: inline-flex; align-items: center; gap: 10px;
+  font-family: var(--font-body); font-weight: 700; font-size: var(--t-body);
+  padding: 14px 26px; border-radius: var(--r-chip);
+  border: 1px solid transparent; cursor: pointer;
+  min-height: 44px;                     /* guide §4: cold hands, in a van */
+  text-decoration: none;
+  transition: background-color 160ms ease-out, transform 160ms ease-out, border-color 160ms ease-out;
+}
+.btn--action { background: var(--action); color: var(--ground); }
+.btn--action:hover { background: var(--action-deep); }
+.btn--ghost { background: transparent; color: var(--ink); border-color: var(--edge); }
+.btn--ghost:hover { border-color: var(--ink-muted); }
+.btn:active { transform: scale(.97); }
+
+@media (max-width: 640px) {
+  .btn { min-height: 48px; width: 100%; justify-content: center; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: .01ms !important; animation-iteration-count: 1 !important;
+    transition-duration: .01ms !important; scroll-behavior: auto !important;
+  }
+}
