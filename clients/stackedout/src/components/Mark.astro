@@ -1,0 +1,71 @@
+---
+// The Stacked Out mark: a spiral-bound wall diary, nearly full.
+// Five slots filled, one empty outline slot — the last slot going.
+//
+// The empty slot IS the idea. Never fill all six. Brand guide §2.
+//
+// Geometry is copied exactly from the guide's production SVG. Do not redraw it.
+// `variant="story"` is the guide's sanctioned alternative: four booked in yellow,
+// one just arrived in cyan, one free.
+interface Props {
+  size?: number;
+  variant?: 'gradient' | 'story';
+  rings?: boolean;      // guide: drop only at true favicon size, 16-32px
+  id?: string;          // unique gradient id when several marks share a page
+  class?: string;
+}
+const {
+  size = 72,
+  variant = 'gradient',
+  rings = true,
+  id = 'somark',
+  class: klass = '',
+} = Astro.props;
+
+const h = Math.round((size / 72) * 82);
+
+// Five booked slots. The sixth, at 46/55, is deliberately left open.
+const booked = [
+  { x: 12, y: 37 }, { x: 29, y: 37 }, { x: 46, y: 37 },
+  { x: 12, y: 55 }, { x: 29, y: 55 },
+];
+---
+<svg
+  viewBox="0 0 72 82" width={size} height={h}
+  class={`mark ${klass}`} role="img" aria-label="Stacked Out"
+>
+  <defs>
+    <linearGradient id={id} x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#ffdd33" />
+      <stop offset="1" stop-color="#3fe3ff" />
+    </linearGradient>
+  </defs>
+
+  {rings && (
+    <>
+      <circle cx="26" cy="9" r="3.6" fill="none" stroke="#c9ced6" stroke-width="4" />
+      <circle cx="46" cy="9" r="3.6" fill="none" stroke="#c9ced6" stroke-width="4" />
+    </>
+  )}
+
+  <rect x="6" y="12" width="60" height="64" rx="13" fill="#0d0f13"
+        stroke="rgba(255,255,255,.28)" stroke-width="4" />
+  <line x1="6" y1="30" x2="66" y2="30" stroke="rgba(255,255,255,.28)" stroke-width="3" />
+
+  {booked.map((s, i) => (
+    <rect
+      class="mark__slot" data-slot={i}
+      x={s.x} y={s.y} width="14" height="14" rx="3.5"
+      fill={variant === 'story' ? (i === 4 ? '#3fe3ff' : '#ffdd33') : `url(#${id})`}
+    />
+  ))}
+
+  <!-- The last free slot. Filling this breaks the brand. -->
+  <rect class="mark__slot mark__slot--free" data-slot="5"
+        x="46" y="55" width="14" height="14" rx="3.5"
+        fill="none" stroke="rgba(255,255,255,.35)" stroke-width="3" />
+</svg>
+
+<style>
+  .mark { display: block; height: auto; }
+</style>

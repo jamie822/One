@@ -1,0 +1,233 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Stacked Out — brand sheet</title>
+<style>
+  @font-face{font-family:'Clash Display';font-weight:600;src:url(type/clash-display-600.woff2) format('woff2');font-display:swap}
+  @font-face{font-family:'Clash Display';font-weight:700;src:url(type/clash-display-700.woff2) format('woff2');font-display:swap}
+  @font-face{font-family:'Satoshi';font-weight:400;src:url(type/satoshi-400.woff2) format('woff2');font-display:swap}
+  @font-face{font-family:'Satoshi';font-weight:500;src:url(type/satoshi-500.woff2) format('woff2');font-display:swap}
+  @font-face{font-family:'Satoshi';font-weight:700;src:url(type/satoshi-700.woff2) format('woff2');font-display:swap}
+
+  :root{
+    --ground:#08090b; --panel:#0d0f13;
+    --action:#ffdd33; --action-deep:#ffd60a; --incoming:#3fe3ff;
+    --ink:#f5f6f8; --ink-muted:#9aa1ab; --edge:rgba(255,255,255,.10);
+    --hero:linear-gradient(100deg,#ffdd33,#3fe3ff);
+    --display:'Clash Display',system-ui,sans-serif;
+    --body:'Satoshi',system-ui,sans-serif;
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{background:var(--ground);color:var(--ink);font-family:var(--body);
+       font-size:17px;line-height:1.6;-webkit-font-smoothing:antialiased}
+  .wrap{max-width:1080px;margin:0 auto;padding:64px 28px 120px}
+
+  h1{font-family:var(--display);font-weight:700;font-size:clamp(40px,7vw,76px);
+     line-height:1.02;letter-spacing:-.025em;text-wrap:balance}
+  h1 .grad{background:var(--hero);-webkit-background-clip:text;background-clip:text;
+           -webkit-text-fill-color:transparent}
+  h2{font-family:var(--display);font-weight:600;font-size:30px;letter-spacing:-.015em;
+     margin:0 0 6px}
+  h3{font-family:var(--display);font-weight:600;font-size:19px;margin:0 0 10px}
+  p{max-width:62ch}
+  .lede{color:var(--ink-muted);font-size:19px;margin-top:16px;max-width:56ch}
+  .eyebrow{font-size:12px;letter-spacing:.12em;text-transform:uppercase;
+           color:var(--ink-muted);font-weight:700}
+  section{margin-top:76px}
+  .sec-head{display:flex;align-items:baseline;gap:14px;padding-bottom:14px;
+            border-bottom:1px solid var(--edge);margin-bottom:28px}
+  .sec-head .n{font-family:var(--display);font-weight:700;font-size:15px;color:var(--action)}
+  .note{color:var(--ink-muted);font-size:15px;margin-top:14px}
+  code{font-family:ui-monospace,'SF Mono',Menlo,monospace;font-size:.88em;
+       background:var(--panel);border:1px solid var(--edge);border-radius:6px;padding:2px 7px}
+
+  /* ── colour ───────────────────────────────────────────── */
+  .swatches{display:grid;gap:14px;grid-template-columns:repeat(auto-fill,minmax(210px,1fr))}
+  .sw{border:1px solid var(--edge);border-radius:14px;overflow:hidden;background:var(--panel)}
+  .sw .chip{height:104px;display:flex;align-items:flex-end;padding:12px}
+  .sw .meta{padding:13px 15px 15px}
+  .sw .nm{font-family:var(--display);font-weight:600;font-size:16px}
+  .sw .hx{font-family:ui-monospace,Menlo,monospace;font-size:13px;color:var(--ink-muted);
+          margin-top:3px;text-transform:uppercase}
+  .sw .use{font-size:13.5px;color:var(--ink-muted);margin-top:8px;line-height:1.45}
+  .grad-band{margin-top:20px;height:92px;border-radius:14px;background:var(--hero);
+             display:flex;align-items:center;padding:0 26px}
+  .grad-band b{font-family:var(--display);font-weight:700;font-size:21px;color:#08090b}
+
+  /* ── logo ─────────────────────────────────────────────── */
+  .logos{display:grid;gap:16px;grid-template-columns:repeat(auto-fill,minmax(200px,1fr))}
+  .lg{border:1px solid var(--edge);border-radius:14px;background:var(--panel);
+      padding:26px;text-align:center}
+  .lg.light{background:#f5f6f8}
+  .lg img{height:104px;width:auto}
+  .lg .cap{font-size:13px;color:var(--ink-muted);margin-top:16px}
+  .lg.light .cap{color:#5b626c}
+  .lockup{border:1px solid var(--edge);border-radius:14px;overflow:hidden;margin-bottom:16px}
+  .lockup img{width:100%;display:block}
+
+  /* ── type ─────────────────────────────────────────────── */
+  .spec{display:grid;gap:18px;grid-template-columns:repeat(auto-fit,minmax(300px,1fr))}
+  .card{border:1px solid var(--edge);border-radius:14px;background:var(--panel);padding:24px}
+  .big-num{font-family:var(--display);font-weight:700;font-size:82px;line-height:.9;
+           color:var(--action);letter-spacing:-.03em}
+  .scale div{font-family:var(--display);font-weight:600;line-height:1.15;
+             border-bottom:1px solid var(--edge);padding:9px 0}
+  .scale span{font-family:var(--body);font-weight:400;font-size:12px;
+              color:var(--ink-muted);margin-left:12px;letter-spacing:.04em}
+
+  /* ── do / don't ───────────────────────────────────────── */
+  .rules{display:grid;gap:16px;grid-template-columns:repeat(auto-fit,minmax(290px,1fr))}
+  .rules ul{list-style:none;margin-top:6px}
+  .rules li{padding:7px 0 7px 26px;position:relative;font-size:15.5px;
+            border-bottom:1px solid var(--edge)}
+  .rules li:last-child{border-bottom:0}
+  .yes li::before{content:'✓';position:absolute;left:0;color:var(--action);font-weight:700}
+  .no  li::before{content:'✕';position:absolute;left:2px;color:#ff6b6b;font-weight:700}
+
+  .btnrow{display:flex;gap:12px;flex-wrap:wrap;margin-top:18px}
+  .btn{font-family:var(--display);font-weight:600;font-size:16px;border:0;cursor:pointer;
+       border-radius:12px;padding:14px 24px;min-height:44px;background:var(--action);color:#08090b}
+  .btn.sec{background:transparent;color:var(--ink);border:1px solid var(--edge)}
+  .btn.link{background:transparent;color:var(--incoming);padding-left:0}
+
+  footer{margin-top:90px;padding-top:26px;border-top:1px solid var(--edge);
+         color:var(--ink-muted);font-size:14px}
+  @media print{body{background:#fff;color:#000}.wrap{padding:0}}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header>
+    <p class="eyebrow">Brand pack · web design studio</p>
+    <h1>Websites for trades,<br><span class="grad">built by a trade.</span></h1>
+    <p class="lede">Everything needed to build the studio's site: colour, logo, type, layout,
+      voice. Every asset in this pack is a real file sitting beside this page.</p>
+  </header>
+
+  <section>
+    <div class="sec-head"><span class="n">01</span><h2>Colour</h2></div>
+    <div class="swatches">
+      <div class="sw"><div class="chip" style="background:#08090b;border-bottom:1px solid var(--edge)"></div>
+        <div class="meta"><div class="nm">Charcoal</div><div class="hx">#08090b</div>
+        <div class="use">The ground. The default state of everything.</div></div></div>
+      <div class="sw"><div class="chip" style="background:#0d0f13;border-bottom:1px solid var(--edge)"></div>
+        <div class="meta"><div class="nm">Panel</div><div class="hx">#0d0f13</div>
+        <div class="use">Cards and raised surfaces sitting on the ground.</div></div></div>
+      <div class="sw"><div class="chip" style="background:#ffdd33"></div>
+        <div class="meta"><div class="nm">Electric yellow</div><div class="hx">#ffdd33</div>
+        <div class="use">Action. Buttons, prices, the thing you want clicked. One per screen.</div></div></div>
+      <div class="sw"><div class="chip" style="background:#3fe3ff"></div>
+        <div class="meta"><div class="nm">Cyan</div><div class="hx">#3fe3ff</div>
+        <div class="use">Incoming. Links, new things, enquiries.</div></div></div>
+      <div class="sw"><div class="chip" style="background:#f5f6f8"></div>
+        <div class="meta"><div class="nm">Off white</div><div class="hx">#f5f6f8</div>
+        <div class="use">Body copy and headlines on dark.</div></div></div>
+      <div class="sw"><div class="chip" style="background:#9aa1ab"></div>
+        <div class="meta"><div class="nm">Muted</div><div class="hx">#9aa1ab</div>
+        <div class="use">Captions, labels, supporting lines.</div></div></div>
+    </div>
+    <div class="grad-band"><b>Signature gradient — hero moments only. One per page.</b></div>
+    <p class="note">Every ratio computed, not estimated. Off white on charcoal <b>18.4:1</b> ·
+      muted on charcoal <b>7.6:1</b> · yellow on charcoal <b>14.8:1</b> · cyan on charcoal
+      <b>12.9:1</b> · charcoal on a yellow button <b>14.8:1</b>. All AAA.
+      Yellow and cyan are grounds for dark text or text on dark — never yellow on white.</p>
+  </section>
+
+  <section>
+    <div class="sec-head"><span class="n">02</span><h2>The mark</h2></div>
+    <div class="lockup"><img src="logo/png/lockup-on-charcoal.png" alt="Stacked Out lockup"></div>
+    <div class="logos">
+      <div class="lg"><img src="logo/svg/mark-gradient.svg" alt="Gradient mark">
+        <div class="cap">Primary — gradient</div></div>
+      <div class="lg"><img src="logo/svg/mark-yellowcyan.svg" alt="Yellow and cyan mark">
+        <div class="cap">Story — four booked, one in, one free</div></div>
+      <div class="lg"><img src="logo/svg/mark-mono-white.svg" alt="Mono white mark">
+        <div class="cap">One colour — dark grounds</div></div>
+      <div class="lg light"><img src="logo/svg/mark-mono-black.svg" alt="Mono black mark">
+        <div class="cap">One colour — light grounds and print</div></div>
+    </div>
+    <p class="note">A spiral-bound wall diary, nearly full: five slots filled, one empty.
+      <b>The empty slot is the whole idea — never fill all six.</b> Clear space around the mark is
+      one diary cell. Keep the binding rings except at true favicon size. Wordmark minimum 16px
+      tall; below that, mark alone. Never stretch, recolour off-palette, or add effects.</p>
+  </section>
+
+  <section>
+    <div class="sec-head"><span class="n">03</span><h2>Type</h2></div>
+    <div class="spec">
+      <div class="card">
+        <h3>Clash Display — display</h3>
+        <div class="scale">
+          <div style="font-size:44px">Sentence case headlines<span>700</span></div>
+          <div style="font-size:26px">Section headings<span>600</span></div>
+        </div>
+        <p class="note">Weights 600 and 700. Headlines, the wordmark, and big numbers.</p>
+      </div>
+      <div class="card">
+        <h3>Satoshi — body</h3>
+        <p style="margin-top:8px">Short sentences. Full stops over commas. Real numbers and real
+          jobs, never percentages. The kind of writing a spark reading it on a scaffold at 7am
+          would nod at rather than smell marketing in.</p>
+        <p class="note">Weights 400, 500, 700. 16–18px, line-height 1.6, measure near 65 characters.</p>
+      </div>
+      <div class="card">
+        <h3>Numbers are the punctuation</h3>
+        <div class="big-num">£99</div>
+        <p class="note">A price, a turnaround, a count — set it in Clash Display at display size in
+          yellow and let it carry the section. It does more work than a paragraph, and it is the
+          most recognisable thing about the brand's layouts.</p>
+      </div>
+      <div class="card">
+        <h3>Buttons and links</h3>
+        <div class="btnrow">
+          <button class="btn">Get a price</button>
+          <button class="btn sec">See the work</button>
+          <button class="btn link">Or drop us a line →</button>
+        </div>
+        <p class="note">44px minimum on phone, 34px on desktop. Yellow for the thing you want
+          pressed, cyan for things arriving. Never both competing on one screen.</p>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <div class="sec-head"><span class="n">04</span><h2>Voice</h2></div>
+    <div class="rules">
+      <div class="card yes">
+        <h3>Do</h3>
+        <ul>
+          <li>Short sentences. Full stops over commas.</li>
+          <li>Real numbers and real jobs, never percentages.</li>
+          <li>Say the price. Trades distrust "get in touch for pricing".</li>
+          <li>"Sorted", "no bother", "rammed" — where they land naturally.</li>
+          <li>Honesty over polish. Three weeks means three weeks.</li>
+        </ul>
+      </div>
+      <div class="card no">
+        <h3>Never</h3>
+        <ul>
+          <li>Hyphens or dashes in customer-facing copy.</li>
+          <li>The words "jargon" or "fluff".</li>
+          <li>Exclamation marks in cold email.</li>
+          <li>Fake testimonials or invented numbers. Not once.</li>
+          <li>"Solutions", "leverage", "seamless", "elevate".</li>
+          <li>Stock photos of models in clean hard hats.</li>
+        </ul>
+      </div>
+    </div>
+    <p class="note"><b>The test:</b> would a spark reading this on a scaffold at 7am nod, or smell
+      marketing? If it smells like marketing, rewrite it. The audience is trades who have been sold
+      a bad website before, usually by someone who talked down to them.</p>
+  </section>
+
+  <footer>
+    Stacked Out brand pack · assets in <code>logo/</code>, <code>colour/</code>,
+    <code>type/</code> · full written guide in <code>BRAND-GUIDE.md</code> ·
+    re-render the PNGs with <code>python3 preview/_render.py</code>
+  </footer>
+</div>
+</body>
+</html>

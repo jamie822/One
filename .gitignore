@@ -23,3 +23,4 @@ clients/*/dist/
 # Agent scratch measurement scripts (never part of the deliverable)
 _*.mjs
 verify-tmp.mjs
+clients/stackedout/node_modules

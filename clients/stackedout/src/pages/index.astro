@@ -1,0 +1,90 @@
+---
+// Chooser. Not a design surface — deliberately plain so it cannot influence
+// the comparison. The three hero pages are the work.
+import Shell from '../layouts/Shell.astro';
+import { studio } from '../data/studio.js';
+
+const candidates = [
+  {
+    slug: 'diary',
+    n: '01',
+    label: 'The diary fills',
+    line: 'The mark itself, blown up and live. Slots fill as enquiries land, and the sixth never does.',
+  },
+  {
+    slug: 'board',
+    n: '02',
+    label: 'The board comes alive',
+    line: 'A consumer unit in the brand palette. Breakers flip, current runs the busbar, a fault traces and clears.',
+  },
+  {
+    slug: 'timeline',
+    n: '03',
+    label: '25 years, scrubbed',
+    line: 'The founder story as the hero rather than an About paragraph. Scroll-scrubbed, on the tools to the studio.',
+  },
+];
+---
+<Shell
+  title="Stacked Out — hero candidates"
+  variant="index"
+  blurb="Three hero directions for the Stacked Out studio site."
+>
+  <section class="pick shell">
+    <p class="label">Design spike</p>
+    <h1 class="pick__h">Three heroes. Pick one.</h1>
+    <p class="pick__lead">
+      Same brand system in all three, so the only variable is the idea. Every
+      fact on these pages is checkable: {studio.founder.yearsOnTools} years on the
+      tools, {studio.founder.yearsSelfEmployed} self-employed, and one live site.
+      Anything not supplied yet shows as a placeholder rather than a guess.
+    </p>
+
+    <ul class="pick__list">
+      {candidates.map((c) => (
+        <li class="pick__item">
+          <a class="pick__link" href={`/${c.slug}/`}>
+            <span class="figure pick__n">{c.n}</span>
+            <span class="pick__body">
+              <strong class="pick__label">{c.label}</strong>
+              <span class="pick__line">{c.line}</span>
+            </span>
+            <svg class="pick__arrow" viewBox="0 0 24 24" width="22" height="22" aria-hidden="true"
+                 fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+              <path d="M5 12h13M12 5l7 7-7 7" />
+            </svg>
+          </a>
+        </li>
+      ))}
+    </ul>
+  </section>
+</Shell>
+
+<style>
+  .pick { padding-block: var(--s-6) var(--s-7); }
+  .pick__h { font-size: var(--t-h2); margin-block: var(--s-2) var(--s-3); }
+  .pick__lead { font-size: var(--t-lead); color: var(--ink-muted); }
+
+  .pick__list { list-style: none; margin: var(--s-5) 0 0; padding: 0; display: grid; gap: 14px; }
+
+  .pick__link {
+    display: grid; grid-template-columns: auto 1fr auto; align-items: center; gap: var(--s-3);
+    padding: var(--s-3) var(--s-4); min-height: 44px;
+    background: var(--panel); border: 1px solid var(--edge); border-radius: var(--r-card);
+    color: var(--ink); text-decoration: none;
+    transition: border-color 160ms ease-out, transform 160ms ease-out;
+  }
+  .pick__link:hover { border-color: var(--ink-muted); transform: translateX(3px); }
+  .pick__link:hover .pick__arrow { color: var(--action); }
+
+  .pick__n { font-size: var(--t-h3); color: var(--ink-muted); }
+  .pick__body { display: grid; gap: 3px; }
+  .pick__label { font-family: var(--font-display); font-size: var(--t-h4); letter-spacing: -0.02em; }
+  .pick__line { color: var(--ink-muted); font-size: var(--t-body); }
+  .pick__arrow { color: var(--ink-muted); transition: color 160ms ease-out; }
+
+  @media (max-width: 640px) {
+    .pick__link { grid-template-columns: auto 1fr; padding: var(--s-3); }
+    .pick__arrow { display: none; }
+  }
+</style>
