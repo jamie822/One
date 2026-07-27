@@ -10,7 +10,8 @@ template, and 41 vendored skills.
 
 | If you want to… | Read |
 |---|---|
-| **Build a client site** | [`MASTER_PROMPT.md`](MASTER_PROMPT.md) — fill in Part 1, paste the whole file into a fresh session |
+| **Build a client site** | [`BUILD.md`](BUILD.md) — **the prompt.** Paste it with a Google Business Profile and go |
+| See the full spec for a finished site | [`MASTER_PROMPT.md`](MASTER_PROMPT.md) |
 | Understand the market | [`RESEARCH.md`](RESEARCH.md) |
 | Set a price or handle an objection | [`COMMERCIALS.md`](COMMERCIALS.md) |
 | Find and contact prospects | [`OUTREACH.md`](OUTREACH.md) |
@@ -57,7 +58,8 @@ routes, and they're also what works best on trades.
 ## Repo contents
 
 ```
-MASTER_PROMPT.md     The build brief. Fill in Part 1 per client.
+BUILD.md             THE PROMPT. Paste with a Google profile to start a build.
+MASTER_PROMPT.md     Full spec for a finished site.
 RESEARCH.md          Market study: competitors, anti-patterns, SEO, GBP.
 COMMERCIALS.md       Pricing, packaging, objection handling, payment terms.
 OUTREACH.md          Finding prospects, PECR/GDPR compliance, cadence.
@@ -77,12 +79,11 @@ src/ brand/ brand-assets/   The "Off The Tools" agency brand site (separate
 
 ## Building a client site
 
-```bash
-cp -r client-template ../clientname && cd ../clientname
-npm install && npm run dev
-```
-
-Then fill in `src/data/client.js` from Part 1 of `MASTER_PROMPT.md`.
+Open a fresh session in this repo, paste [`BUILD.md`](BUILD.md), and drop the
+client's Google Business Profile into the marked slot. It mines the profile —
+especially the reviews, which carry named staff, real job types, verified towns
+and the customer's own language — then comes back with a list of what it needs
+from the client before it builds anything.
 
 Adding a town to the `areas` array generates its page, adds it to the footer,
 home page, service pages and sitemap. Nothing else to edit.
