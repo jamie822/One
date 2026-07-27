@@ -58,8 +58,8 @@ const personSchema = {
         </p>
         <p class="muted">
           The security side is not an add-on. It is in the name, and two of the
-          seven reviews are about camera installs — one from a customer who has
-          used the company several times.
+          seven reviews are about camera installs, one of them from a customer who
+          has used the company several times.
         </p>
         <div class="ph" style="aspect-ratio:auto;padding:24px;margin-top:22px;text-align:left">
           <strong>Adil's own words needed here</strong>
@@ -74,41 +74,57 @@ const personSchema = {
   </section>
 
   <section class="section section--panel">
-    <div class="container container--narrow reveal">
-      <h2>Qualifications &amp; cover</h2>
-      <ul style="list-style:none;padding:0;display:grid;gap:14px;margin-top:20px">
-        <li>
-          <Icon name="shield" />
-          <span>
-            <strong>NICEIC Registered</strong>
+    <div class="container">
+      <div class="section__head reveal">
+        <h2>What the badge actually means</h2>
+        <p>
+          Awareness of the competent-person schemes has been measured at around
+          14%, so most people have no idea what NICEIC registration involves.
+          This is what it buys you.
+        </p>
+      </div>
+
+      <div class="creds">
+        <div class="cred reveal">
+          <span class="cred__ico"><Icon name="shield" /></span>
+          <h3>NICEIC registered</h3>
+          <p>
             An independent assessor inspects the work every year. It also means
-            we can self-certify to Building Control — so you get the compliance
+            we self-certify to Building Control, so you get the compliance
             certificate your solicitor asks for when you sell.
-            <br /><Needed label="ENROLMENT NUMBER NEEDED — so customers can check the register" />
-          </span>
-        </li>
-        <li>
-          <Icon name="check" />
-          <span>
-            <strong>Qualifications</strong>
-            <Needed label="2391? 18th Edition? ECS card?" />
-          </span>
-        </li>
-        <li>
-          <Icon name="check" />
-          <span>
-            <strong>Public liability insurance</strong>
-            <Needed label="COVER AMOUNT NEEDED" />
-          </span>
-        </li>
-        <li>
-          <Icon name="clock" />
-          <span>
-            <strong>Trading since</strong>
-            <Needed label="YEAR NEEDED — reviews go back at least 2 years" />
-          </span>
-        </li>
-      </ul>
+          </p>
+          <p style="margin-top:12px"><Needed label="ENROLMENT NUMBER — so you can check the register" /></p>
+        </div>
+
+        <div class="cred reveal" style="transition-delay:80ms">
+          <span class="cred__ico"><Icon name="clipboard" /></span>
+          <h3>Certified and notified</h3>
+          <p>
+            We test to BS 7671 and certify the work. Notifiable jobs, meaning new
+            circuits, board changes and anything in a bathroom, go to Building
+            Control instead of being skipped.
+          </p>
+        </div>
+
+        <div class="cred reveal" style="transition-delay:160ms">
+          <span class="cred__ico"><Icon name="check" /></span>
+          <h3>Qualifications</h3>
+          <p>The tickets behind the work, listed so you can see them rather than take them on trust.</p>
+          <p style="margin-top:12px"><Needed label="2391? 18th Edition? ECS card?" /></p>
+        </div>
+
+        <div class="cred reveal" style="transition-delay:240ms">
+          <span class="cred__ico"><Icon name="star" /></span>
+          <h3>Insured</h3>
+          <p>Public liability cover, with the figure stated rather than a vague "fully insured".</p>
+          <p style="margin-top:12px"><Needed label="COVER AMOUNT" /></p>
+        </div>
+      </div>
+
+      <div class="inline-cta reveal">
+        <p>Want the numbers before you book? Ask and we'll send them over.</p>
+        <a class="btn btn--act" href={href('/contact/')}>Ask us <Icon name="arrow" /></a>
+      </div>
     </div>
   </section>
 
@@ -116,15 +132,13 @@ const personSchema = {
     <div class="container container--narrow reveal">
       <h2>How we work</h2>
       <p>
-        We tell you what we have found before we do anything about it, and what
-        it will cost before we start. If we find something on an inspection that
-        needs putting right, that gets quoted separately and you are free to
-        take the quote elsewhere. Testing and fixing are two different jobs.
+        Testing and fixing are two different jobs. We keep them that way: you
+        get told what we found and what it will cost before anything starts.
       </p>
       <p class="muted">
-        We will not tell you something is urgent when it is not. An old fuse
-        board is worth knowing about; it is rarely an emergency, and anyone
-        telling you otherwise on the doorstep is selling rather than advising.
+        We will not tell you something is urgent when it is not. An old fuse board is worth
+        knowing about. It is rarely an emergency, and anyone telling you
+        otherwise on your doorstep is selling, not advising.
       </p>
     </div>
   </section>

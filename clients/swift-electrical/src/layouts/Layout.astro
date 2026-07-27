@@ -1,6 +1,7 @@
 ---
 import { client } from '../data/client.js';
-import { href, businessSchema, breadcrumbSchema, ratingLabel } from '../lib/site.js';
+import { href, businessSchema, breadcrumbSchema, ratingLabel, hasPhone } from '../lib/site.js';
+import Needed from '../components/Needed.astro';
 import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
 import '../styles/global.css';
@@ -61,6 +62,13 @@ const allSchemas = [businessSchema(), ...(crumbs ? [breadcrumbSchema(crumbs)] : 
   </head>
   <body>
     <a class="skip" href="#main">Skip to content</a>
+
+    <!-- The page's one authored motion moment: a live circuit down the page,
+         filling as you scroll. Decorative, so hidden from assistive tech. -->
+    <div class="spine" aria-hidden="true">
+      <div class="spine__fill" data-spine-fill></div>
+      <div class="spine__head" data-spine-head></div>
+    </div>
     <Header path={path} />
 
     {crumbs && crumbs.length > 1 && (
@@ -79,6 +87,15 @@ const allSchemas = [businessSchema(), ...(crumbs ? [breadcrumbSchema(crumbs)] : 
     )}
 
     <main id="main"><slot /></main>
+
+    <!-- Mobile action bar. Roughly 70% of this audience is on a phone, and
+         contact details outrank price and reviews as a trust factor. -->
+    <div class="callbar">
+      {hasPhone
+        ? <a class="btn btn--act" href={`tel:${client.phoneHref}`}>Call {client.phone}</a>
+        : <Needed label="PHONE NEEDED" />}
+      <a class="btn btn--ghost" href={href('/contact/')}>Get a price</a>
+    </div>
     <Footer />
 
     <script>
@@ -95,6 +112,26 @@ const allSchemas = [businessSchema(), ...(crumbs ? [breadcrumbSchema(crumbs)] : 
         const open = nav?.classList.toggle('is-open');
         toggle.setAttribute('aria-expanded', String(Boolean(open)));
       });
+
+      // Spine: fills as the page scrolls. rAF-throttled so the scroll handler
+      // never blocks; skipped entirely under reduced-motion.
+      const fill = document.querySelector('[data-spine-fill]');
+      const head = document.querySelector('[data-spine-head]');
+      if (fill && !matchMedia('(prefers-reduced-motion: reduce)').matches) {
+        let ticking = false;
+        const draw = () => {
+          const max = document.documentElement.scrollHeight - window.innerHeight;
+          const pct = max > 0 ? Math.min(1, window.scrollY / max) : 0;
+          const h = pct * window.innerHeight;
+          fill.style.height = h + 'px';
+          if (head) head.style.top = h + 'px';
+          ticking = false;
+        };
+        window.addEventListener('scroll', () => {
+          if (!ticking) { ticking = true; requestAnimationFrame(draw); }
+        }, { passive: true });
+        draw();
+      }
 
       // Scroll reveal. IntersectionObserver only — no scroll handler, so this
       // costs nothing on the main thread and cannot hurt INP.
