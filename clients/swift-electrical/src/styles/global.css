@@ -1,3 +1,7 @@
+/* Type system: faces, scale, tracking, leading, measure. Loaded first so the
+   tokens exist before anything below reaches for them. */
+@import './type.css';
+
 /* Self-hosted faces — see public/fonts. font-display:swap so text paints immediately. */
 @font-face{font-family:'Sora';src:url('/fonts/sora-latin-600-normal.woff2') format('woff2');font-weight:600;font-style:normal;font-display:swap}
 @font-face{font-family:'Sora';src:url('/fonts/sora-latin-700-normal.woff2') format('woff2');font-weight:700;font-style:normal;font-display:swap}
@@ -135,7 +139,16 @@ p { margin: 0 0 1rem; }
 
 .container { width: 100%; max-width: var(--maxw); margin: 0 auto; padding: 0 22px; }
 .container--narrow { max-width: 780px; }
+/* Two more container widths so a page can actually vary its measure: --wide for
+   the dense peak bands, --reading for long-form passages. */
+.container--wide { max-width: 1320px; }
+.container--reading { max-width: 720px; }
+
 .section { padding: clamp(56px, 8vw, 104px) 0; }
+/* Vertical pacing. One repeated padding value on every section is what makes a
+   page feel metronomic; these are the deliberate compress/release steps. */
+.section--tight { padding-block: clamp(28px, 3.4vw, 44px); }
+.section--air { padding-block: clamp(80px, 11vw, 156px); }
 .section--panel {
   background: linear-gradient(180deg, var(--bg-2), var(--panel) 45%, var(--bg-2));
   border-block: 1px solid var(--line);
@@ -733,3 +746,6 @@ body::after {
 }
 .est__note { color: var(--muted); font-size: .88rem; margin: 10px 0 20px; }
 .est__disc { font-size: .8rem; color: var(--muted); margin-top: 18px; line-height: 1.5; }
+
+/* Motion layer — loaded last so it can retune motion without touching tokens. */
+@import './motion.css';

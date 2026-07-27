@@ -1,0 +1,873 @@
+/* ==========================================================================
+   MOTION LAYER
+   Loaded last, after global.css, so it can retune motion without touching
+   the token or typography blocks.
+
+   Principles this file is held to:
+     - The h1 (LCP) is never animated, delayed or faded. Nothing here selects
+       .hero, .rise or h1.
+     - Nothing animates a layout property continuously. Reveals, hovers and
+       parallax are transform / opacity / filter / clip-path / mask only, so
+       CLS stays 0 and no frame does layout work.
+     - prefers-reduced-motion disables all of it and shows the static end
+       state (see the final block).
+     - Everything modern is behind @supports or degrades to "already visible".
+   ========================================================================== */
+
+/* --------------------------------------------------------------------------
+   1. MOTION TOKENS
+   Five curves, deliberately chosen, instead of the ad-hoc beziers scattered
+   through global.css. Strong ease-out for anything entering; ease-in-out for
+   things moving on screen. No ease-in anywhere — it delays the exact moment
+   the eye is on the element.
+   -------------------------------------------------------------------------- */
+:root {
+  --ease-out: cubic-bezier(0.23, 1, 0.32, 1);
+  --ease-in-out: cubic-bezier(0.77, 0, 0.175, 1);
+  --ease-drawer: cubic-bezier(0.32, 0.72, 0, 1);
+  /* Slight overshoot. Reserved for momentum — a press releasing, a dot
+     snapping home — never for something that merely faded in. */
+  --ease-spring: cubic-bezier(0.34, 1.4, 0.64, 1);
+
+  --d-press: 110ms;   /* press down: fast, so it feels direct */
+  --d-release: 260ms; /* release: slower, so the system's answer reads */
+  --d-hover: 240ms;
+  --d-reveal: 620ms;
+  --stagger: 55ms;
+}
+
+/* Pointer-tracked values. Registered with inherits:false so updating them
+   invalidates only the element itself, not its whole subtree — this is what
+   keeps the light-follow effects off the main thread's critical path. */
+@property --mx { syntax: '<length-percentage>'; inherits: false; initial-value: 50%; }
+@property --my { syntax: '<length-percentage>'; inherits: false; initial-value: 50%; }
+@property --magnet-x { syntax: '<length>'; inherits: false; initial-value: 0px; }
+@property --magnet-y { syntax: '<length>'; inherits: false; initial-value: 0px; }
+@property --lit { syntax: '<number>'; inherits: false; initial-value: 0; }
+
+/* --------------------------------------------------------------------------
+   2. THE REVEAL SYSTEM
+   Previously one identical fade-up on every block on the page. Now the
+   entrance is chosen by what the element *is*, so a heading, a list, a stat
+   strip and a framed image each arrive in their own way.
+
+   All of these are driven by the existing IntersectionObserver toggling
+   .is-in — no new observers, no new scroll work.
+   -------------------------------------------------------------------------- */
+
+/* Base: prose. Rises and pulls into focus, like a lamp finding its subject.
+   Everything more specific below overrides this. */
+.reveal {
+  opacity: 0;
+  transform: translate3d(0, 20px, 0);
+  filter: blur(6px);
+  transition:
+    opacity var(--d-reveal) var(--ease-out),
+    transform var(--d-reveal) var(--ease-out),
+    filter var(--d-reveal) var(--ease-out);
+  will-change: opacity, transform;
+}
+.reveal.is-in {
+  opacity: 1;
+  transform: none;
+  filter: none;
+  will-change: auto;
+}
+
+/* Directional. Redefined here so they land after the base rule. */
+.reveal--left  { transform: translate3d(-34px, 0, 0); }
+.reveal--right { transform: translate3d(34px, 0, 0); }
+.reveal--scale { transform: scale(0.96); }
+.reveal--left.is-in, .reveal--right.is-in, .reveal--scale.is-in { transform: none; }
+
+/* --- Section headings: a light wipe, not a fade -------------------------
+   A soft-edged mask travels left to right, the way a strip light throws
+   across a wall. No transform, no opacity — so headings read as *lit*
+   rather than as arriving, which distinguishes them from body copy.
+   Browsers without mask support simply show the heading. */
+.section__head.reveal,
+.est .est__grid > div:first-child > h2 {
+  opacity: 1;
+  transform: none;
+  filter: none;
+}
+.section__head.reveal {
+  -webkit-mask-image: linear-gradient(100deg, #000 38%, rgba(0, 0, 0, 0.4) 58%, transparent 70%);
+  mask-image: linear-gradient(100deg, #000 38%, rgba(0, 0, 0, 0.4) 58%, transparent 70%);
+  -webkit-mask-size: 280% 100%;
+  mask-size: 280% 100%;
+  -webkit-mask-position: 100% 0;
+  mask-position: 100% 0;
+  -webkit-mask-repeat: no-repeat;
+  mask-repeat: no-repeat;
+  transition: -webkit-mask-position 1.05s var(--ease-out), mask-position 1.05s var(--ease-out);
+}
+.section__head.reveal.is-in {
+  opacity: 1;
+  transform: none;
+  -webkit-mask-position: 0 0;
+  mask-position: 0 0;
+}
+
+/* --- Framed image: a clip wipe from the left ---------------------------- */
+.frame.reveal {
+  opacity: 1;
+  filter: none;
+  transform: none;
+  clip-path: inset(0 100% 0 0 round var(--radius-lg));
+  transition: clip-path 900ms var(--ease-out);
+}
+.frame.reveal.is-in { clip-path: inset(0 0 0 0 round var(--radius-lg)); }
+
+/* --- The two lead service tiles: directional, with depth ---------------- */
+.svc-hero.reveal {
+  filter: blur(4px);
+  transition:
+    opacity 760ms var(--ease-out),
+    transform 760ms var(--ease-out),
+    filter 760ms var(--ease-out),
+    border-color var(--d-hover) ease,
+    box-shadow var(--d-hover) ease;
+}
+.svc-hero.reveal--left  { transform: translate3d(-40px, 14px, 0) scale(0.97); }
+.svc-hero.reveal--right { transform: translate3d(40px, 14px, 0) scale(0.97); }
+.svc-hero.reveal.is-in { transform: none; filter: none; }
+
+/* --- Group containers ---------------------------------------------------
+   The wrapper stops animating; its children stagger instead. Cheaper than
+   observing each child and it reads as one gesture rather than N. */
+.svc-list.reveal,
+.stats.reveal,
+.faq.reveal,
+.grid.reveal,
+.reveal:has(> .pill),
+.reveal:has(.rev__track),
+.cta__inner.reveal {
+  opacity: 1;
+  transform: none;
+  filter: none;
+  transition: none;
+}
+
+/* Stagger indices. Pure CSS — no JS writes these. */
+.svc-list > *,
+.stats > *,
+.faq > details,
+.grid.reveal > *,
+.reveal:has(> .pill) > .pill,
+.rev__track > *,
+.cta__inner.reveal > * { --i: 0; }
+.svc-list > :nth-child(2), .stats > :nth-child(2), .faq > details:nth-child(2),
+.grid.reveal > :nth-child(2), .reveal:has(> .pill) > .pill:nth-child(2),
+.rev__track > :nth-child(2), .cta__inner.reveal > :nth-child(2) { --i: 1; }
+.svc-list > :nth-child(3), .stats > :nth-child(3), .faq > details:nth-child(3),
+.grid.reveal > :nth-child(3), .reveal:has(> .pill) > .pill:nth-child(3),
+.rev__track > :nth-child(3), .cta__inner.reveal > :nth-child(3) { --i: 2; }
+.svc-list > :nth-child(4), .stats > :nth-child(4), .faq > details:nth-child(4),
+.grid.reveal > :nth-child(4), .reveal:has(> .pill) > .pill:nth-child(4),
+.rev__track > :nth-child(4) { --i: 3; }
+.svc-list > :nth-child(5), .faq > details:nth-child(5),
+.grid.reveal > :nth-child(5), .reveal:has(> .pill) > .pill:nth-child(5),
+.rev__track > :nth-child(5) { --i: 4; }
+.svc-list > :nth-child(6), .faq > details:nth-child(6),
+.grid.reveal > :nth-child(6), .reveal:has(> .pill) > .pill:nth-child(6),
+.rev__track > :nth-child(6) { --i: 5; }
+.svc-list > :nth-child(7), .faq > details:nth-child(7),
+.reveal:has(> .pill) > .pill:nth-child(7), .rev__track > :nth-child(7) { --i: 6; }
+.faq > details:nth-child(n + 8),
+.reveal:has(> .pill) > .pill:nth-child(n + 8) { --i: 7; }
+
+/* Service rows: slide in along the circuit, from the spine side. */
+.svc-list.reveal > .svc-row {
+  opacity: 0;
+  transform: translate3d(-26px, 0, 0);
+  transition:
+    opacity 520ms var(--ease-out) calc(var(--i) * var(--stagger)),
+    transform 520ms var(--ease-out) calc(var(--i) * var(--stagger)),
+    background var(--d-hover) ease;
+}
+.svc-list.reveal.is-in > .svc-row { opacity: 1; transform: none; }
+
+/* Stats: rise and settle with a touch of overshoot — they are the one
+   celebratory moment on the page, and the count-up lands with them. */
+.stats.reveal > .stat {
+  opacity: 0;
+  transform: translate3d(0, 26px, 0) scale(0.94);
+  transition:
+    opacity 520ms var(--ease-out) calc(var(--i) * 70ms),
+    transform 620ms var(--ease-spring) calc(var(--i) * 70ms);
+}
+.stats.reveal.is-in > .stat { opacity: 1; transform: none; }
+
+/* FAQ rows: drop in from above, one after another. */
+.faq.reveal > details {
+  opacity: 0;
+  transform: translate3d(0, -14px, 0);
+  transition:
+    opacity 420ms var(--ease-out) calc(var(--i) * 45ms),
+    transform 420ms var(--ease-out) calc(var(--i) * 45ms);
+}
+.faq.reveal.is-in > details { opacity: 1; transform: none; }
+
+/* Card grids: scale up from the surface. */
+.grid.reveal > * {
+  opacity: 0;
+  transform: translate3d(0, 18px, 0) scale(0.97);
+  transition:
+    opacity 520ms var(--ease-out) calc(var(--i) * var(--stagger)),
+    transform 520ms var(--ease-out) calc(var(--i) * var(--stagger));
+}
+.grid.reveal.is-in > * { opacity: 1; transform: none; }
+
+/* Area pills: pop in like nodes energising along the circuit. */
+.reveal:has(> .pill) > .pill {
+  opacity: 0;
+  transform: translate3d(0, 10px, 0) scale(0.9);
+  transition:
+    opacity 340ms var(--ease-out) calc(var(--i) * 32ms),
+    transform 420ms var(--ease-spring) calc(var(--i) * 32ms),
+    border-color var(--d-hover) ease,
+    color var(--d-hover) ease;
+}
+.reveal:has(> .pill).is-in > .pill { opacity: 1; transform: none; }
+
+/* Review cards: scale only. A translate would extend the horizontal scroll
+   container and momentarily create a scrollbar. */
+.reveal:has(.rev__track) .rev__card {
+  opacity: 0;
+  transform: scale(0.95);
+  transition:
+    opacity 500ms var(--ease-out) calc(var(--i) * 60ms),
+    transform 500ms var(--ease-out) calc(var(--i) * 60ms),
+    border-color var(--d-hover) ease;
+}
+.reveal:has(.rev__track).is-in .rev__card { opacity: 1; transform: none; }
+
+/* CTA band: title, copy and buttons arrive in sequence. */
+.cta__inner.reveal > * {
+  opacity: 0;
+  transform: translate3d(0, 16px, 0);
+  transition:
+    opacity 520ms var(--ease-out) calc(var(--i) * 80ms),
+    transform 520ms var(--ease-out) calc(var(--i) * 80ms);
+}
+.cta__inner.reveal.is-in > * { opacity: 1; transform: none; }
+
+/* Credentials reveal individually — give them a stagger by position. */
+.cred.reveal:nth-child(2) { transition-delay: 70ms; }
+.cred.reveal:nth-child(3) { transition-delay: 140ms; }
+.cred.reveal:nth-child(4) { transition-delay: 210ms; }
+.cred.reveal:nth-child(n + 5) { transition-delay: 280ms; }
+
+/* Estimator and forms: one solid object arriving, not blurred prose. */
+.reveal:has(> .est),
+.form.reveal {
+  filter: none;
+  transform: translate3d(0, 22px, 0) scale(0.985);
+  transition:
+    opacity 700ms var(--ease-out),
+    transform 700ms var(--ease-out);
+}
+.reveal:has(> .est).is-in,
+.form.reveal.is-in { transform: none; }
+
+/* Inline CTAs: a small, confident pop. */
+.inline-cta.reveal {
+  filter: none;
+  transform: translate3d(0, 14px, 0) scale(0.98);
+  transition:
+    opacity 460ms var(--ease-out),
+    transform 520ms var(--ease-spring),
+    border-color var(--d-hover) ease;
+}
+.inline-cta.reveal.is-in { transform: none; }
+
+/* --------------------------------------------------------------------------
+   3. PRESS FEEDBACK
+   Nothing on this site had an :active state. Press is the single highest
+   frequency interaction there is, and it was silent.
+
+   Asymmetric on purpose: the press is fast (the interface must feel like it
+   heard you immediately), the release is slower (that is the system's reply).
+   -------------------------------------------------------------------------- */
+.btn,
+.est__opt,
+.rev__btn,
+.rev__dot,
+.nav-toggle,
+.pill,
+.card,
+.svc-hero,
+.svc-row,
+.faq summary {
+  transition-timing-function: var(--ease-out);
+  transition-duration: var(--d-release);
+  -webkit-tap-highlight-color: transparent;
+}
+
+.btn:active,
+.est__opt:active,
+.nav-toggle:active,
+.pill:active,
+.faq summary:active {
+  transform: translate3d(var(--magnet-x), var(--magnet-y), 0) scale(0.97);
+  transition-duration: var(--d-press);
+}
+.card:active, .svc-hero:active, .svc-row:active {
+  transform: scale(0.99);
+  transition-duration: var(--d-press);
+}
+.rev__btn:active { transform: scale(0.92); transition-duration: var(--d-press); }
+.rev__dot:active { transform: scale(0.8); transition-duration: var(--d-press); }
+
+/* Focus is motion too — the ring should arrive, not blink. */
+.btn:focus-visible,
+.est__opt:focus-visible,
+.rev__btn:focus-visible,
+.pill:focus-visible,
+.svc-row:focus-visible,
+.svc-hero:focus-visible,
+.card:focus-visible,
+.faq summary:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 3px;
+  transition: outline-offset 160ms var(--ease-out);
+}
+
+/* --------------------------------------------------------------------------
+   4. BUTTONS — magnetism and a light that follows the cursor
+   This client fits lighting. A cursor moving over a call to action should
+   drag a highlight across it and pull the button very slightly toward it.
+   The pull is capped at a few pixels: felt, not seen.
+   -------------------------------------------------------------------------- */
+.btn {
+  position: relative;
+  overflow: hidden;
+  isolation: isolate;
+  transform: translate3d(var(--magnet-x), var(--magnet-y), 0);
+  transition:
+    transform var(--d-release) var(--ease-out),
+    background var(--d-hover) ease,
+    border-color var(--d-hover) ease,
+    color var(--d-hover) ease,
+    box-shadow var(--d-hover) ease;
+}
+.btn > * { position: relative; z-index: 1; }
+
+/* The travelling highlight. Sits under the label, above the fill. */
+.btn--primary::after,
+.btn--act::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  border-radius: inherit;
+  background: radial-gradient(
+    140px circle at var(--mx) var(--my),
+    rgba(255, 255, 255, 0.32),
+    transparent 60%
+  );
+  opacity: 0;
+  transition: opacity var(--d-hover) var(--ease-out);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .btn:hover { transform: translate3d(var(--magnet-x), calc(var(--magnet-y) - 1px), 0); }
+  .btn--primary:hover::after,
+  .btn--act:hover::after { opacity: 1; }
+  /* The arrow leans toward where it is taking you. */
+  .btn:hover svg { transform: translate3d(3px, 0, 0); }
+}
+.btn svg { transition: transform var(--d-hover) var(--ease-out); }
+.btn:active { transition-duration: var(--d-press); }
+
+/* The action colour gets a warm bloom on hover — amber is the verb. */
+@media (hover: hover) and (pointer: fine) {
+  .btn--act:hover {
+    box-shadow:
+      0 14px 34px -10px color-mix(in srgb, var(--accent) 60%, transparent),
+      0 0 0 1px color-mix(in srgb, var(--accent) 45%, transparent);
+  }
+}
+
+/* --------------------------------------------------------------------------
+   5. SURFACES CATCH LIGHT
+   A pool of brand light follows the pointer across each card. Same idea as
+   the buttons, at surface scale. This is the depth the flat panels lacked.
+   -------------------------------------------------------------------------- */
+.card, .cred, .rev__card { position: relative; overflow: hidden; }
+.card > *, .cred > *, .rev__card > *, .svc-hero > * { position: relative; z-index: 1; }
+
+.card::before,
+.svc-hero::before,
+.cred::after,
+.rev__card::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  border-radius: inherit;
+  background: radial-gradient(
+    260px circle at var(--mx) var(--my),
+    color-mix(in srgb, var(--brand) 22%, transparent),
+    transparent 62%
+  );
+  opacity: 0;
+  transition: opacity 320ms var(--ease-out);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .card:hover::before,
+  .svc-hero:hover::before,
+  .cred:hover::after,
+  .rev__card:hover::before { opacity: 1; }
+
+  .card:hover { transform: translate3d(0, -4px, 0); }
+  .cred:hover { transform: translate3d(0, -3px, 0); border-color: var(--line-strong); }
+  .rev__card:hover { transform: translate3d(0, -4px, 0); }
+}
+.card, .cred, .rev__card {
+  transition:
+    transform var(--d-release) var(--ease-out),
+    border-color var(--d-hover) ease,
+    box-shadow var(--d-hover) ease;
+}
+
+/* Card icon reacts to its own card being hovered. */
+.card__icon { transition: transform var(--d-release) var(--ease-spring), background var(--d-hover) ease; }
+@media (hover: hover) and (pointer: fine) {
+  .card:hover .card__icon { transform: translate3d(0, -2px, 0) scale(1.08) rotate(-4deg); }
+  .card:hover .card__link { color: var(--accent); }
+}
+.card__link { transition: color var(--d-hover) ease; }
+
+/* --------------------------------------------------------------------------
+   6. SERVICE ROWS — animate transform, not padding
+   global.css transitioned padding-left on hover, which runs layout on every
+   pointer move across the list. Same look, moved onto the compositor.
+   -------------------------------------------------------------------------- */
+.svc-row { transition: background var(--d-hover) ease; }
+.svc-row > * { transition: transform var(--d-release) var(--ease-out); }
+.svc-row:hover { padding-left: 16px; }
+@media (hover: hover) and (pointer: fine) {
+  .svc-row:hover > *:not(.svc-row__arrow) { transform: translate3d(10px, 0, 0); }
+  .svc-row:hover .svc-row__ico {
+    transform: translate3d(10px, 0, 0) scale(1.06);
+    border-color: var(--line-strong);
+    color: var(--accent);
+  }
+}
+.svc-row__ico { transition: transform var(--d-release) var(--ease-out), border-color var(--d-hover) ease, color var(--d-hover) ease; }
+/* The circuit line down the left of a hovered row now glows as it draws. */
+.svc-row::before { box-shadow: 0 0 10px 1px color-mix(in srgb, var(--brand) 60%, transparent); }
+
+/* --------------------------------------------------------------------------
+   7. AREA PILLS — they were links with no interaction at all
+   -------------------------------------------------------------------------- */
+.pill {
+  position: relative;
+  overflow: hidden;
+  isolation: isolate;
+  transform: translate3d(0, 0, 0);
+  transition:
+    transform var(--d-release) var(--ease-out),
+    border-color var(--d-hover) ease,
+    color var(--d-hover) ease;
+}
+.pill::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background: color-mix(in srgb, var(--brand) 16%, transparent);
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 340ms var(--ease-out);
+}
+@media (hover: hover) and (pointer: fine) {
+  .pill:hover {
+    transform: translate3d(0, -2px, 0);
+    border-color: var(--brand);
+    color: var(--text);
+    text-decoration: none;
+  }
+  .pill:hover::before { transform: scaleX(1); }
+}
+
+/* --------------------------------------------------------------------------
+   8. HEADER & NAV
+   -------------------------------------------------------------------------- */
+.header {
+  transition:
+    border-color var(--d-hover) ease,
+    background var(--d-hover) ease,
+    backdrop-filter var(--d-hover) ease,
+    box-shadow var(--d-hover) ease;
+}
+.header.is-scrolled {
+  backdrop-filter: blur(18px) saturate(150%);
+  box-shadow: 0 12px 30px -22px rgba(0, 0, 0, 0.9);
+}
+/* A hairline of brand light draws across the header once you leave the top —
+   the same luminaire motif the sections use. */
+.header::after {
+  content: '';
+  position: absolute;
+  inset: auto 0 -1px 0;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--brand), transparent);
+  transform: scaleX(0);
+  transform-origin: center;
+  transition: transform 620ms var(--ease-out);
+  pointer-events: none;
+}
+.header.is-scrolled::after { transform: scaleX(1); }
+
+@media (min-width: 901px) {
+  .nav a:not(.btn) { position: relative; }
+  .nav a:not(.btn)::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: -6px;
+    height: 2px;
+    background: var(--brand);
+    box-shadow: 0 0 8px color-mix(in srgb, var(--brand) 70%, transparent);
+    transform: scaleX(0);
+    transform-origin: right;
+    transition: transform 300ms var(--ease-out);
+  }
+  .nav a:not(.btn):hover::after { transform: scaleX(1); transform-origin: left; }
+  .nav a:not(.btn)[aria-current='page']::after { transform: scaleX(1); }
+  .nav a:not(.btn):hover { text-decoration: none; }
+}
+
+/* Burger becomes a cross. */
+.nav-toggle span {
+  transition: transform 320ms var(--ease-out), opacity 200ms var(--ease-out);
+  transform-origin: center;
+}
+.nav-toggle[aria-expanded='true'] span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
+.nav-toggle[aria-expanded='true'] span:nth-child(2) { opacity: 0; transform: scaleX(0.2); }
+.nav-toggle[aria-expanded='true'] span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
+
+@media (max-width: 900px) {
+  .nav { transition: max-height 380ms var(--ease-drawer); }
+  .nav a { opacity: 0; transform: translate3d(0, -8px, 0); transition: opacity 260ms var(--ease-out), transform 260ms var(--ease-out); }
+  .nav.is-open a { opacity: 1; transform: none; }
+  .nav.is-open a:nth-child(2) { transition-delay: 40ms; }
+  .nav.is-open a:nth-child(3) { transition-delay: 70ms; }
+  .nav.is-open a:nth-child(4) { transition-delay: 100ms; }
+  .nav.is-open a:nth-child(5) { transition-delay: 130ms; }
+  .nav.is-open a:nth-child(6) { transition-delay: 160ms; }
+  .nav.is-open a:nth-child(n + 7) { transition-delay: 190ms; }
+}
+
+/* --------------------------------------------------------------------------
+   9. FAQ — the accordion snapped open with no bridge
+   ::details-content lets this be done in pure CSS where supported; elsewhere
+   the accordion behaves exactly as it does today.
+   The height change is user-initiated, so it is outside the CLS window.
+   -------------------------------------------------------------------------- */
+.faq summary { position: relative; padding-right: 38px; }
+
+/* Replace the +/− character swap (content is not animatable) with two bars
+   that actually cross-fade into a minus. */
+.faq summary::after {
+  content: '';
+  position: absolute;
+  right: 4px;
+  top: 50%;
+  width: 15px;
+  height: 2px;
+  margin-top: -1px;
+  background: var(--brand);
+  border-radius: 2px;
+  transition: background var(--d-hover) ease;
+}
+.faq summary::before {
+  content: '';
+  position: absolute;
+  right: 4px;
+  top: 50%;
+  width: 15px;
+  height: 2px;
+  margin-top: -1px;
+  background: var(--brand);
+  border-radius: 2px;
+  transform: rotate(90deg);
+  transition: transform 340ms var(--ease-spring), opacity 240ms var(--ease-out);
+}
+.faq details[open] summary::before { transform: rotate(0deg); opacity: 0; }
+.faq details[open] summary::after { background: var(--accent); }
+@media (hover: hover) and (pointer: fine) {
+  .faq summary:hover::after, .faq summary:hover::before { background: var(--accent); }
+  .faq summary:hover { color: var(--brand); }
+}
+.faq summary { transition: color var(--d-hover) ease; }
+
+@supports selector(::details-content) {
+  .faq { interpolate-size: allow-keywords; }
+  .faq details::details-content {
+    block-size: 0;
+    overflow: clip;
+    opacity: 0;
+    transition:
+      block-size 380ms var(--ease-drawer),
+      content-visibility 380ms allow-discrete,
+      opacity 260ms var(--ease-out);
+  }
+  .faq details[open]::details-content { block-size: auto; opacity: 1; }
+}
+
+/* --------------------------------------------------------------------------
+   10. REVIEWS CAROUSEL
+   -------------------------------------------------------------------------- */
+.rev__track { cursor: grab; }
+.rev__track.is-dragging { cursor: grabbing; scroll-snap-type: none; scroll-behavior: auto; }
+.rev__track.is-dragging .rev__card { transition: none; }
+
+.rev__btn {
+  transition:
+    background var(--d-hover) ease,
+    color var(--d-hover) ease,
+    border-color var(--d-hover) ease,
+    transform var(--d-release) var(--ease-spring);
+}
+.rev__btn svg { transition: transform var(--d-hover) var(--ease-out); }
+@media (hover: hover) and (pointer: fine) {
+  .rev__btn:hover { transform: scale(1.1); }
+  [data-rev-prev]:hover svg { transform: translate3d(-2px, 0, 0); }
+  [data-rev-next]:hover svg { transform: translate3d(2px, 0, 0); }
+}
+/* Was `transition: all` — animated unintended properties off the GPU. */
+.rev__dot {
+  transition:
+    width 380ms var(--ease-out),
+    background 300ms ease,
+    border-radius 380ms var(--ease-out),
+    transform var(--d-release) var(--ease-spring);
+}
+@media (hover: hover) and (pointer: fine) {
+  .rev__dot:hover { transform: scale(1.4); background: var(--accent); }
+  .rev__dot.is-on:hover { transform: scaleY(1.4); }
+}
+.rev__dot.is-on { box-shadow: 0 0 10px color-mix(in srgb, var(--accent) 70%, transparent); }
+
+/* --------------------------------------------------------------------------
+   11. ESTIMATOR
+   Selecting an option should feel like closing a circuit, and the price
+   should not teleport when it changes.
+   -------------------------------------------------------------------------- */
+.est__opt {
+  position: relative;
+  overflow: hidden;
+  isolation: isolate;
+  transform: translate3d(0, 0, 0);
+  transition:
+    background 240ms var(--ease-out),
+    color 240ms var(--ease-out),
+    border-color 240ms var(--ease-out),
+    box-shadow 320ms var(--ease-out),
+    transform var(--d-release) var(--ease-out);
+}
+.est__opt::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background: var(--brand);
+  transform: scaleY(0);
+  transform-origin: bottom;
+  transition: transform 300ms var(--ease-out);
+}
+.est__opt[aria-pressed='true']::before { transform: scaleY(1); }
+@media (hover: hover) and (pointer: fine) {
+  .est__opt:hover { transform: translate3d(0, -2px, 0); border-color: var(--brand); }
+}
+
+.est__fig {
+  font-variant-numeric: tabular-nums;
+  transition: transform 240ms var(--ease-out);
+}
+.est__fig.is-tick { animation: fig-tick 420ms var(--ease-out) both; }
+@keyframes fig-tick {
+  0%   { transform: translate3d(0, 0, 0) scale(1); text-shadow: none; }
+  30%  { transform: translate3d(0, -5px, 0) scale(1.05); text-shadow: 0 0 26px color-mix(in srgb, var(--accent) 80%, transparent); }
+  100% { transform: translate3d(0, 0, 0) scale(1); text-shadow: none; }
+}
+.est__note { transition: opacity 240ms var(--ease-out); }
+.est__note.is-tick { animation: note-tick 380ms var(--ease-out) both; }
+@keyframes note-tick {
+  0% { opacity: 0.25; transform: translate3d(0, 4px, 0); }
+  100% { opacity: 1; transform: none; }
+}
+
+.stat__n { font-variant-numeric: tabular-nums; }
+
+/* --------------------------------------------------------------------------
+   12. SCROLL-DRIVEN DECORATIVE PARALLAX
+   The light layers already in global.css are static. Tying them to a view()
+   timeline makes light pool and fall off as you move past a section — which
+   is what light does, and what this trade sells.
+
+   Entirely off the main thread, and entirely absent in browsers without
+   scroll-driven animation support.
+   -------------------------------------------------------------------------- */
+@supports (animation-timeline: view()) {
+  @media (prefers-reduced-motion: no-preference) {
+    /* The cyan pool at the head of a lit band drifts down and swells. */
+    .lit::after {
+      animation: light-pool linear both;
+      animation-timeline: view();
+      animation-range: entry 0% exit 100%;
+    }
+    @keyframes light-pool {
+      from { transform: translateX(-50%) translateY(-70px) scale(0.9); opacity: 0.3; }
+      50%  { transform: translateX(-50%) translateY(0) scale(1); opacity: 1; }
+      to   { transform: translateX(-50%) translateY(70px) scale(1.08); opacity: 0.35; }
+    }
+
+    /* The luminaire hairline switches on as the band arrives. */
+    .lit::before {
+      animation: strike linear both;
+      animation-timeline: view();
+      animation-range: entry 10% entry 90%;
+    }
+    @keyframes strike {
+      from { transform: translateX(-50%) scaleX(0); opacity: 0; }
+      to   { transform: translateX(-50%) scaleX(1); opacity: 1; }
+    }
+
+    /* Warm raking light rises at the foot of a band. */
+    .raked::after {
+      animation: rake linear both;
+      animation-timeline: view();
+      animation-range: entry 0% exit 100%;
+    }
+    @keyframes rake {
+      from { transform: translateY(60px); opacity: 0.15; }
+      50%  { transform: translateY(0); opacity: 1; }
+      to   { transform: translateY(-40px); opacity: 0.4; }
+    }
+
+    /* Every panel band's top hairline draws itself. */
+    .section--panel::before {
+      animation: draw-line linear both;
+      animation-timeline: view();
+      animation-range: entry 0% entry 80%;
+      transform-origin: center;
+    }
+    @keyframes draw-line {
+      from { transform: scaleX(0); opacity: 0; }
+      to   { transform: scaleX(1); opacity: 0.5; }
+    }
+
+    /* The CTA band sweeps a bar of light across itself on approach. */
+    .cta::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 46%;
+      height: 2px;
+      background: linear-gradient(90deg, transparent, var(--accent), transparent);
+      box-shadow: 0 0 24px 3px color-mix(in srgb, var(--accent) 55%, transparent);
+      pointer-events: none;
+      animation: sweep linear both;
+      animation-timeline: view();
+      animation-range: entry 0% cover 60%;
+    }
+    @keyframes sweep {
+      from { transform: translate3d(-110%, 0, 0); opacity: 0; }
+      35%  { opacity: 1; }
+      to   { transform: translate3d(330%, 0, 0); opacity: 0; }
+    }
+  }
+}
+
+/* --------------------------------------------------------------------------
+   13. CROSS-DOCUMENT VIEW TRANSITIONS
+   Short enough that navigation never feels delayed. Chrome only today;
+   everywhere else this is an ordinary navigation.
+   -------------------------------------------------------------------------- */
+@view-transition { navigation: auto; }
+::view-transition-old(root) { animation: vt-out 140ms linear both; }
+::view-transition-new(root) { animation: vt-in 280ms var(--ease-out) both; }
+@keyframes vt-out { to { opacity: 0; } }
+@keyframes vt-in { from { opacity: 0; transform: scale(0.995); } }
+/* The chrome persists across pages rather than cross-fading with the body. */
+.header { view-transition-name: site-header; }
+
+/* --------------------------------------------------------------------------
+   14. REDUCED MOTION — everything off, static end state visible
+   Explicit, not inherited: the reveal system sets opacity/transform/filter/
+   clip-path/mask as *state*, not as animation, so a global animation-duration
+   override would not be enough on its own.
+   -------------------------------------------------------------------------- */
+@media (prefers-reduced-motion: reduce) {
+  @view-transition { navigation: none; }
+
+  html { scroll-behavior: auto; }
+
+  *, *::before, *::after {
+    animation: none !important;
+    animation-timeline: none !important;
+    transition: none !important;
+    scroll-behavior: auto !important;
+  }
+
+  /* Every reveal variant, resolved to its end state. */
+  .reveal,
+  .reveal--left,
+  .reveal--right,
+  .reveal--scale,
+  .svc-hero.reveal,
+  .svc-hero.reveal--left,
+  .svc-hero.reveal--right,
+  .frame.reveal,
+  .section__head.reveal,
+  .inline-cta.reveal,
+  .form.reveal,
+  .reveal:has(> .est),
+  .svc-list.reveal > .svc-row,
+  .stats.reveal > .stat,
+  .faq.reveal > details,
+  .grid.reveal > *,
+  .reveal:has(> .pill) > .pill,
+  .reveal:has(.rev__track) .rev__card,
+  .cta__inner.reveal > *,
+  .nav a {
+    opacity: 1 !important;
+    transform: none !important;
+    filter: none !important;
+    clip-path: none !important;
+    transition-delay: 0ms !important;
+  }
+
+  .section__head.reveal {
+    -webkit-mask-image: none !important;
+    mask-image: none !important;
+  }
+
+  /* Decorative light layers hold their settled position. */
+  .lit::before { transform: translateX(-50%) scaleX(1) !important; opacity: 1 !important; }
+  .lit::after { transform: translateX(-50%) !important; opacity: 1 !important; }
+  .raked::after { transform: none !important; opacity: 1 !important; }
+  .section--panel::before { transform: none !important; opacity: 0.5 !important; }
+  .cta::before { display: none !important; }
+
+  /* No hover displacement, no pointer light, no magnetism. */
+  .card:hover, .cred:hover, .rev__card:hover, .svc-hero:hover,
+  .btn:hover, .pill:hover, .rev__btn:hover, .est__opt:hover,
+  .svc-row:hover > *, .card:hover .card__icon {
+    transform: none !important;
+  }
+  .card::before, .svc-hero::before, .cred::after, .rev__card::before,
+  .btn--primary::after, .btn--act::after { display: none !important; }
+
+  .rev__track { cursor: default; }
+}

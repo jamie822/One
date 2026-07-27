@@ -1,6 +1,7 @@
 ---
 import Layout from '../layouts/Layout.astro';
 import Hero from '../components/Hero.astro';
+import Band from '../components/Band.astro';
 import TrustBar from '../components/TrustBar.astro';
 import Reviews from '../components/Reviews.astro';
 import CtaBand from '../components/CtaBand.astro';
@@ -14,6 +15,14 @@ import { client, services, areas, faqs } from '../data/client.js';
 // The two the reviews actually evidence lead the section at full size.
 const lead = services.filter((s) => ['eicr-landlord-certificates', 'cctv-security'].includes(s.slug));
 const rest = services.filter((s) => !lead.includes(s));
+
+// The proof numbers, read as a ledger rail rather than four equal tiles.
+const ledger = [
+  { n: client.google.rating, l: 'Google rating' },
+  { n: client.google.reviewCount, l: 'Reviews, every one 5★' },
+  { n: '2', l: 'Trades under one roof' },
+  { n: '8pm', l: 'We answer until' },
+];
 
 const faqSchema = {
   '@context': 'https://schema.org',
@@ -52,17 +61,28 @@ const faqSchema = {
     </div>
   </Hero>
 
-  <div class="container"><TrustBar /></div>
+  <!-- ═══ COMPRESSION ═══════════════════════════════════════════════════════
+       Credentials as an instrument rail directly against the hero: no band, no
+       heading, no air. The page's first move after all that space is to clamp
+       shut. -->
+  <div class="railstrip">
+    <div class="container"><TrustBar /></div>
+  </div>
 
-  <!-- WHAT THE BUSINESS ACTUALLY IS -->
-  <section class="section">
-    <div class="container container--narrow">
-      <div class="reveal">
-        <h2>Two trades, one van</h2>
-        <p class="lead" style="color:var(--brand)">
+  <!-- ═══ RELEASE — editorial spread ════════════════════════════════════════
+       The statement hangs in the left margin and stays there while the argument
+       scrolls past it. Widest gutter on the page. -->
+  <Band tone="plain" class="section section--air">
+    <div class="container spread">
+      <div class="spread__aside reveal reveal--left">
+        <h2 class="spread__title">Two trades,<br />one van</h2>
+        <p class="spread__deck">
           Most people land here because someone gave them our name and they want
           to check we are real. So, briefly, this is what we do.
         </p>
+      </div>
+
+      <div class="spread__body reveal">
         <p class="lead">
           Swift Electrical &amp; Security does the wiring and the security. Most
           electricians stop at the consumer unit and hand you to a separate firm
@@ -83,18 +103,25 @@ const faqSchema = {
           the day you sell.
         </p>
       </div>
+    </div>
 
+    <!-- Breaks the text column and spans the full container: the passage ends
+         and the page asks for something. -->
+    <div class="container">
       <div class="inline-cta reveal">
         <p>Not sure which of those you need?</p>
         <a class="btn btn--act" href={href('/contact/')}>Describe the job <Icon name="arrow" /></a>
       </div>
     </div>
-  </section>
+  </Band>
 
-  <!-- SERVICES: asymmetric. The two the reviews evidence lead. -->
-  <section class="section section--panel lit">
-    <div class="container">
-      <div class="section__head reveal">
+  <!-- ═══ PEAK 1 — SERVICES ═════════════════════════════════════════════════
+       The widest, densest band on the page, drawn on the hero's own grid and
+       wired to it with circuit rails. Two unequal, offset tiles, then a hard
+       switch to a tight list. -->
+  <Band tone="panel" grid rails seam class="section svc">
+    <div class="container container--wide">
+      <div class="svc__head reveal">
         <h2>What we get called out for most</h2>
         <p>Ordered by what people book most.</p>
       </div>
@@ -123,31 +150,37 @@ const faqSchema = {
         ))}
       </div>
     </div>
-  </section>
+  </Band>
 
-  <!-- ESTIMATOR — answers the landlord's first question without a call -->
-  <section class="section lit">
-    <div class="container reveal">
+  <!-- ═══ PEAK 2 — THE PRICE ════════════════════════════════════════════════
+       The one thing on the page that answers a question without a phone call.
+       Given the most air, the brightest light, and the bolt behind it — mirrored
+       off the left edge so it bookends the hero. -->
+  <Band tone="deep" lit seam bolt="left" class="section section--air est-band">
+    <div class="container container--wide reveal reveal--scale">
       <Estimator />
     </div>
-  </section>
+  </Band>
 
-  <!-- PROOF -->
-  <section class="section raked">
-    <div class="container">
-      <div class="stats reveal">
-        <div class="stat"><div class="stat__n">{client.google.rating}</div><div class="stat__l">Google rating</div></div>
-        <div class="stat"><div class="stat__n">{client.google.reviewCount}</div><div class="stat__l">Reviews, every one 5&#9733;</div></div>
-        <div class="stat"><div class="stat__n">2</div><div class="stat__l">Trades under one roof</div></div>
-        <div class="stat"><div class="stat__n">8pm</div><div class="stat__l">We answer until</div></div>
-      </div>
+  <!-- The numbers are the base plate under that instrument, not a fifth peak:
+       one hairline rail, baseline-set, solder pad at every junction. -->
+  <Band tone="deep" class="proof">
+    <div class="ledger reveal">
+      {ledger.map((s) => (
+        <div class="ledger__cell">
+          <span class="ledger__n">{s.n}</span>
+          <span class="ledger__l">{s.l}</span>
+        </div>
+      ))}
     </div>
-  </section>
+  </Band>
 
-  <!-- THE OWNER -->
-  <section class="section section--panel">
-    <div class="container split">
-      <div class="frame reveal reveal--left">
+  <!-- ═══ PEAK 3 — THE PERSON ═══════════════════════════════════════════════
+       Runs off the left edge of the screen. Nothing else on the page bleeds
+       this way, so the one human moment is the one that breaks the grid. -->
+  <Band tone="plain" grid class="section section--air owner">
+    <div class="owner__spread">
+      <div class="owner__frame reveal reveal--left">
         <Placeholder
           src={client.owner.photo}
           alt={`${client.owner.name} of ${client.name}`}
@@ -156,9 +189,9 @@ const faqSchema = {
           variant="ph--portrait"
         />
       </div>
-      <div class="reveal reveal--right">
+      <div class="owner__body reveal reveal--right">
         <h2>You'll be dealing with Adil</h2>
-        <p class="lead">{client.owner.bio}</p>
+        <p class="owner__quote">{client.owner.bio}</p>
         <p class="muted">
           Three of the seven reviews name him. One customer had the power
           tripping constantly and had already had several electricians out.
@@ -166,44 +199,48 @@ const faqSchema = {
           lighting fault.
         </p>
         <p><Needed label="Adil's surname, years trading, qualifications" /></p>
-        <div style="display:flex;gap:12px;flex-wrap:wrap;margin-top:22px">
+        <div class="owner__actions">
           <a class="btn btn--act" href={href('/contact/')}>Get a price <Icon name="arrow" /></a>
           <a class="btn btn--ghost" href={href('/about/')}>More about us</a>
         </div>
       </div>
     </div>
-  </section>
+  </Band>
 
-  <!-- REVIEWS CAROUSEL -->
-  <section class="section raked">
-    <div class="container">
-      <div class="section__head reveal">
-        <h2>Seven reviews. Seven fives.</h2>
-        <p>Copied from Google word for word, including the typos.</p>
-      </div>
-      <div class="reveal"><Reviews /></div>
+  <!-- ═══ REVIEWS — bleeds off the right ════════════════════════════════════
+       The deliberate mirror of the owner block. The track running past the edge
+       is the structure saying "there are more of these". -->
+  <Band tone="panel" seam class="section reviews">
+    <div class="container reviews__head reveal">
+      <h2>Seven reviews. Seven fives.</h2>
+      <p>Copied from Google word for word, including the typos.</p>
     </div>
-  </section>
+    <div class="rev-bleed reveal reveal--right"><Reviews /></div>
+  </Band>
 
-  <!-- AREAS -->
-  <section class="section section--panel">
-    <div class="container">
-      <div class="section__head reveal">
+  <!-- ═══ COMPRESSION ═══════════════════════════════════════════════════════
+       Coverage is a fact, not an argument. Narrow, small type, tight padding —
+       the page's quietest beat, so the FAQ that follows can breathe. -->
+  <Band tone="plain" class="areas">
+    <div class="container container--narrow">
+      <div class="areas__head reveal">
         <h2>Where we work</h2>
         <p>Bradford and out across the Aire valley. Each area page says what we find in that housing stock.</p>
       </div>
-      <div class="reveal" style="display:flex;flex-wrap:wrap;gap:10px">
+      <div class="areas__field reveal">
         {areas.map((a) => (
           <a class="pill" href={href(`/areas/${a.slug}/`)}>{a.name}</a>
         ))}
       </div>
     </div>
-  </section>
+  </Band>
 
-  <!-- FAQ -->
-  <section class="section">
-    <div class="container container--narrow">
-      <div class="section__head reveal">
+  <!-- ═══ RELEASE — the close ═══════════════════════════════════════════════
+       The only centred alignment on the page. Everything converges before the
+       final ask. -->
+  <Band tone="plain" class="section section--air faq-band">
+    <div class="container container--reading">
+      <div class="section__head is-center reveal">
         <h2>Straight answers</h2>
         <p>Including the one about EICR codes that stops you being sold work you don't need.</p>
       </div>
@@ -220,7 +257,230 @@ const faqSchema = {
         <a class="btn btn--act" href={href('/contact/')}>Ask a question <Icon name="arrow" /></a>
       </div>
     </div>
-  </section>
+  </Band>
 
   <CtaBand title="Want a price?" />
 </Layout>
+
+<style>
+  /* =========================================================================
+     HOMEPAGE COMPOSITION
+     Page-scoped on purpose: these are the rhythm decisions for this one
+     surface, not system rules. The shared primitives they lean on
+     (.container--wide, .container--reading, .section--air/--tight) live in
+     global.css.
+
+     The pacing, top to bottom:
+       hero        release   full        lit
+       rail        clamp     full-bleed  hairline
+       spread      release   asymmetric  plain
+       services    PEAK      widest      grid + rails
+       estimator   PEAK      wide        lit + bolt
+       ledger      clamp     full-bleed  hairline
+       owner       PEAK      bleeds L    grid
+       reviews     medium    bleeds R    panel
+       areas       clamp     narrow      plain
+       faq         release   reading     centred
+     ========================================================================= */
+
+  /* --- Credential rail ---------------------------------------------------- */
+  .railstrip {
+    background: linear-gradient(180deg, color-mix(in srgb, var(--panel) 70%, transparent), transparent);
+    border-bottom: 1px solid var(--line);
+  }
+  .railstrip :global(.trustbar) {
+    border-top: 0;
+    border-bottom: 0;
+    padding: 13px 0;
+    gap: 12px 28px;
+    font-size: 0.9rem;
+  }
+
+  /* --- Editorial spread --------------------------------------------------- */
+  .spread {
+    display: grid;
+    grid-template-columns: minmax(0, 0.78fr) minmax(0, 1.22fr);
+    gap: clamp(28px, 7vw, 110px);
+    align-items: start;
+  }
+  .spread__aside { position: sticky; top: 104px; }
+  .spread__title {
+    font-size: clamp(2.3rem, 5.4vw, 3.9rem);
+    letter-spacing: -0.038em;
+    line-height: 1.02;
+    margin: 0 0 20px;
+  }
+  .spread__deck {
+    color: var(--brand);
+    font-size: clamp(1.02rem, 1.4vw, 1.14rem);
+    line-height: 1.6;
+    max-width: 32ch;
+    margin: 0;
+    padding-left: 16px;
+    border-left: 1px solid color-mix(in srgb, var(--brand) 45%, transparent);
+  }
+  .spread__body > :first-child { margin-top: 0; }
+  .spread__body p { max-width: 62ch; }
+  .spread__body .lead { margin-bottom: 26px; }
+  .spread__body .muted { margin-bottom: 18px; }
+
+  @media (max-width: 940px) {
+    .spread { grid-template-columns: 1fr; gap: 26px; }
+    .spread__aside { position: static; }
+    .spread__deck { max-width: none; }
+  }
+
+  /* --- PEAK 1: services --------------------------------------------------- */
+  .svc { padding-block: clamp(64px, 9vw, 124px); }
+  .svc__head { max-width: 22ch; margin-bottom: clamp(34px, 4.5vw, 56px); }
+  .svc__head h2 {
+    font-size: clamp(2.15rem, 4.6vw, 3.35rem);
+    letter-spacing: -0.035em;
+    margin-bottom: 12px;
+  }
+  .svc__head p { color: var(--muted); margin: 0; }
+
+  /* Unequal and offset. The most-booked tile is physically larger and sits
+     higher; the second steps down. Equal tiles were the flatness. */
+  .svc :global(.svc-lead) {
+    grid-template-columns: minmax(0, 1.22fr) minmax(0, 1fr);
+    gap: clamp(18px, 2.4vw, 30px);
+    align-items: start;
+    margin-bottom: clamp(30px, 4vw, 54px);
+  }
+  .svc :global(.svc-lead > :first-child) { min-height: 420px; }
+  .svc :global(.svc-lead > :last-child) { min-height: 330px; margin-top: clamp(0px, 5vw, 62px); }
+  .svc :global(.svc-lead > :first-child h3) { font-size: clamp(1.7rem, 3vw, 2.4rem); }
+
+  @media (max-width: 860px) {
+    .svc :global(.svc-lead > :first-child) { min-height: 300px; }
+    .svc :global(.svc-lead > :last-child) { min-height: 280px; margin-top: 0; }
+  }
+
+  /* --- PEAK 2: the price -------------------------------------------------- */
+  .est-band { padding-bottom: clamp(52px, 6.5vw, 96px); }
+  .est-band :global(.est) { padding: clamp(28px, 4.4vw, 54px); }
+  .est-band :global(.est__grid) { grid-template-columns: minmax(0, 1.25fr) minmax(0, 0.75fr); }
+  .est-band :global(.est__fig) { font-size: clamp(2.6rem, 5.6vw, 4rem); }
+  @media (max-width: 880px) {
+    .est-band :global(.est__grid) { grid-template-columns: 1fr; }
+  }
+
+  /* --- The ledger --------------------------------------------------------- */
+  .proof { padding-bottom: clamp(40px, 6vw, 72px); }
+  .ledger {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    border-block: 1px solid var(--line);
+    padding-inline: max(22px, calc((100% - 1320px) / 2 + 22px));
+  }
+  .ledger__cell {
+    display: flex;
+    align-items: baseline;
+    gap: 11px;
+    padding: 20px clamp(10px, 1.6vw, 22px);
+    border-left: 1px solid var(--line);
+    position: relative;
+  }
+  .ledger__cell:first-child { border-left: 0; padding-left: 0; }
+  /* Solder pad at every junction — the hero's pads, doing a job. */
+  .ledger__cell:not(:first-child)::before {
+    content: '';
+    position: absolute; left: -3px; top: -3px;
+    width: 5px; height: 5px; border-radius: 50%;
+    background: var(--brand);
+    box-shadow: 0 0 8px 1px color-mix(in srgb, var(--brand) 55%, transparent);
+  }
+  .ledger__n {
+    font-family: var(--font-display);
+    font-weight: 800;
+    font-size: clamp(1.45rem, 2.1vw, 1.85rem);
+    letter-spacing: -0.03em;
+    color: var(--brand);
+    line-height: 1;
+  }
+  .ledger__l { color: var(--muted); font-size: 0.86rem; line-height: 1.35; }
+
+  @media (max-width: 760px) {
+    .ledger { grid-template-columns: 1fr 1fr; }
+    .ledger__cell { padding: 16px 14px; }
+    .ledger__cell:nth-child(odd) { border-left: 0; padding-left: 0; }
+    .ledger__cell:nth-child(n + 3) { border-top: 1px solid var(--line); }
+    .ledger__cell:nth-child(3)::before { display: none; }
+  }
+
+  /* --- PEAK 3: the person, bleeding off the left edge --------------------- */
+  .owner__spread {
+    display: grid;
+    grid-template-columns: minmax(220px, 0.42fr) minmax(0, 1fr);
+    gap: clamp(26px, 5vw, 76px);
+    align-items: center;
+    /* % padding resolves against the band, so the right edge lands exactly on
+       the container gutter while the left column keeps running off-screen. */
+    padding-right: max(22px, calc((100% - var(--maxw)) / 2 + 22px));
+  }
+  .owner__frame {
+    border: 1px solid var(--line);
+    border-left: 0;
+    border-radius: 0 var(--radius-lg) var(--radius-lg) 0;
+    overflow: hidden;
+    background: var(--panel);
+    box-shadow: 24px 28px 70px -40px rgba(0, 0, 0, 0.95);
+  }
+  .owner__frame :global(img) { width: 100%; object-fit: cover; }
+  .owner__frame :global(.ph) { border: 0; border-radius: 0; }
+  .owner__body h2 {
+    font-size: clamp(2rem, 3.6vw, 2.9rem);
+    letter-spacing: -0.032em;
+    margin-bottom: 18px;
+  }
+  .owner__quote {
+    font-size: clamp(1.14rem, 1.8vw, 1.4rem);
+    line-height: 1.5;
+    color: var(--text);
+    max-width: 44ch;
+    margin-bottom: 20px;
+  }
+  .owner__body .muted { max-width: 56ch; }
+  .owner__actions { display: flex; gap: 12px; flex-wrap: wrap; margin-top: 24px; }
+
+  @media (max-width: 900px) {
+    .owner__spread {
+      grid-template-columns: 1fr;
+      padding-right: 22px;
+      padding-left: 22px;
+      gap: 30px;
+    }
+    .owner__frame {
+      border-left: 1px solid var(--line);
+      border-radius: var(--radius-lg);
+      margin-left: -22px;
+      margin-right: 30%;
+    }
+  }
+
+  /* --- Reviews, bleeding off the right ------------------------------------ */
+  .reviews { padding-block: clamp(56px, 7.5vw, 96px); }
+  .reviews__head { margin-bottom: 34px; max-width: 640px; }
+  .reviews__head h2 { margin-bottom: 10px; }
+  .reviews__head p { color: var(--muted); margin: 0; }
+  .rev-bleed { padding-left: max(22px, calc((100% - var(--maxw)) / 2 + 22px)); }
+  .rev-bleed :global(.rev__track) { padding-right: 22px; }
+
+  /* --- Areas: the page's quietest beat ------------------------------------ */
+  .areas { padding-block: clamp(38px, 5vw, 62px); }
+  .areas__head { display: flex; flex-wrap: wrap; align-items: baseline; gap: 6px 18px; margin-bottom: 18px; }
+  .areas__head h2 {
+    font-size: clamp(1.35rem, 2.2vw, 1.7rem);
+    letter-spacing: -0.02em;
+    margin: 0;
+    flex: 0 0 auto;
+  }
+  .areas__head p { color: var(--muted); font-size: 0.94rem; margin: 0; flex: 1 1 22ch; min-width: 0; }
+  .areas__field { display: flex; flex-wrap: wrap; gap: 8px; }
+
+  /* --- The close ---------------------------------------------------------- */
+  .faq-band .section__head { margin-bottom: 40px; }
+  .faq-band :global(.faq summary) { padding: 22px 0; }
+  .faq-band :global(.inline-cta) { margin-top: 40px; }
+</style>

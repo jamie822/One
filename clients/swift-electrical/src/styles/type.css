@@ -1,0 +1,219 @@
+/* ==========================================================================
+   TYPE — Swift Electrical & Security
+   --------------------------------------------------------------------------
+   Three voices, and each one has a job. If a piece of text does not belong
+   to one of these jobs, it is in the wrong voice.
+
+     Sora          DISPLAY   Headlines and the wordmark. Nothing else may
+                             use it. Scarcity is what makes it read as a
+                             display face instead of "the bold font".
+     Inter         TEXT      Sentences. Prose, decks, navigation, buttons,
+                             anything a person reads left to right.
+     IBM Plex Mono TECHNICAL Labels, certificate names, ratings, prices,
+                             counts. This trade runs on test results and
+                             paperwork, so the numbers get an instrument
+                             face with tabular figures and a slashed zero.
+
+   The site has no photography, so type carries the whole page. That means
+   the scale has to do the work photography would normally do: big intervals
+   at the top so a headline is an event, tight intervals in the reading range
+   so prose stays comfortable.
+   ========================================================================== */
+
+@font-face{font-family:'IBM Plex Mono';src:url('/fonts/ibm-plex-mono-latin-400-normal.woff2') format('woff2');font-weight:400;font-style:normal;font-display:swap}
+@font-face{font-family:'IBM Plex Mono';src:url('/fonts/ibm-plex-mono-latin-500-normal.woff2') format('woff2');font-weight:500;font-style:normal;font-display:swap}
+@font-face{font-family:'IBM Plex Mono';src:url('/fonts/ibm-plex-mono-latin-600-normal.woff2') format('woff2');font-weight:600;font-style:normal;font-display:swap}
+
+:root {
+  --face-display: 'Sora', system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  --face-text:    'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  --face-tech:    'IBM Plex Mono', ui-monospace, 'SF Mono', SFMono-Regular, Menlo, Consolas, monospace;
+
+  /* Back-compat aliases: existing rules still say --font-display / --font-body. */
+  --font-display: var(--face-display);
+  --font-body:    var(--face-text);
+
+  /* --- Scale ---------------------------------------------------------------
+     Desktop: 11 / 12.5 / 14 / 17 / 22 / 30 / 44.8 / 68.8 px
+     Ratios:    1.14  1.12  1.21  1.29  1.36  1.49   1.54
+     Tight through the reading sizes, opening as it climbs into display.
+     Every clamp reaches its ceiling at roughly a 940px viewport, so the
+     scale is settled before the desktop layout is.
+     ---------------------------------------------------------------------- */
+  --step--3: 0.6875rem;
+  --step--2: 0.78125rem;
+  --step--1: 0.875rem;
+  --step-0:  1.0625rem;
+  --step-1:  clamp(1.1875rem, 1.06rem + 0.56vw, 1.375rem);
+  --step-2:  clamp(1.4375rem, 1.16rem + 1.24vw, 1.875rem);
+  --step-3:  clamp(1.95rem,   1.42rem + 2.36vw, 2.8rem);
+  --step-4:  clamp(2.6rem,    1.60rem + 4.45vw, 4.3rem);
+
+  /* --- Optical tracking ----------------------------------------------------
+     Sora ships as three static weights, so there is no opsz axis to lean on.
+     This is the same correction done by hand: the larger the setting, the
+     tighter it is tracked, because counters and sidebearings drawn for text
+     sizes look like gaps at 69px. Small sizes get opened back out.
+     ---------------------------------------------------------------------- */
+  --track-4:  -0.038em;
+  --track-3:  -0.030em;
+  --track-2:  -0.022em;
+  --track-1:  -0.014em;
+  --track-0:  -0.006em;
+  --track--1:  0.000em;
+  --track--2:  0.008em;
+  --track--3:  0.014em;
+  --track-caps:    0.16em;   /* mono, uppercase, 11px */
+  --track-caps-lg: 0.13em;   /* mono, uppercase, 12.5px+ */
+
+  /* --- Leading -------------------------------------------------------------
+     Leading falls as size rises. A 69px headline set at 1.6 is a list of
+     lines; set at 1.05 it is one object.
+     ---------------------------------------------------------------------- */
+  --leading-display: 1.05;
+  --leading-title:   1.10;
+  --leading-sub:     1.20;
+  --leading-deck:    1.42;
+  --leading-body:    1.62;
+  --leading-ui:      1.45;
+  --leading-tech:    1.35;
+
+  /* --- Measure ------------------------------------------------------------- */
+  --measure:      68ch;
+  --measure-deck: 46ch;
+}
+
+/* Light text on a dark ground optically gains weight and closes up: the glow
+   of each stem bleeds into the counter next to it. Every dark-mode setting
+   therefore gets a hair of extra tracking that light mode does not need.
+   This is the single cheapest thing that stops dark type looking clogged. */
+[data-mode='dark']  { --optical: 0.005em; }
+[data-mode='light'] { --optical: 0em; }
+
+/* ==========================================================================
+   BASE
+   ========================================================================== */
+
+body {
+  font-family: var(--face-text);
+  font-size: var(--step-0);
+  font-weight: 400;
+  line-height: var(--leading-body);
+  letter-spacing: calc(var(--track-0) + var(--optical));
+  color: var(--text-2);
+  /* cv05 = l with a tail, cv08 = I with serifs. On a page full of EICR,
+     BS 7671, RCBO and IP65 the difference between I, l and 1 is not a
+     nicety. ss03 gives typographic rather than typewriter quotes. */
+  font-feature-settings: 'cv05' 1, 'cv08' 1, 'ss03' 1;
+  font-variant-numeric: proportional-nums;
+  text-rendering: optimizeLegibility;
+}
+
+/* ==========================================================================
+   DISPLAY  —  Sora. Headlines only.
+   ========================================================================== */
+
+h1, h2, h3, h4 {
+  font-family: var(--face-display);
+  font-weight: 700;
+  line-height: var(--leading-title);
+  letter-spacing: var(--track-2);
+  color: var(--text);
+  margin: 0 0 0.5em;
+  text-wrap: balance;
+}
+
+h1 {
+  font-size: var(--step-4);
+  font-weight: 800;
+  line-height: var(--leading-display);
+  letter-spacing: var(--track-4);
+}
+
+h2 {
+  font-size: var(--step-3);
+  letter-spacing: var(--track-3);
+  line-height: var(--leading-title);
+}
+
+h3 {
+  font-size: var(--step-2);
+  letter-spacing: var(--track-2);
+  line-height: var(--leading-sub);
+}
+
+h4 {
+  font-size: var(--step-1);
+  font-weight: 600;
+  letter-spacing: var(--track-1);
+  line-height: var(--leading-sub);
+}
+
+/* The page is about light falling on things. A headline is a lit surface, so
+   it is fractionally brighter at the top than at the foot — a few percent of
+   luminance, no hue shift. Not gradient text; shading. Solid colour is the
+   fallback and stays the accessible value either way. */
+@supports (-webkit-background-clip: text) or (background-clip: text) {
+  [data-mode='dark'] h1 {
+    background: linear-gradient(178deg, var(--text) 18%, var(--text-2) 96%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    -webkit-text-fill-color: transparent;
+  }
+}
+
+/* ==========================================================================
+   TEXT  —  Inter. Everything you read in sentences.
+   ========================================================================== */
+
+p {
+  margin: 0 0 1rem;
+  max-width: var(--measure);
+  text-wrap: pretty;
+}
+
+/* The deck. Currently the weakest link on the page: it was set in the same
+   weight and colour as body copy, one size up, which reads as a paragraph
+   that got lost rather than an opening statement. A deck is a distinct
+   register — brighter, half a weight up, and leaded tighter than body
+   because it is set larger. */
+.lead {
+  font-size: var(--step-1);
+  font-weight: 500;
+  line-height: var(--leading-deck);
+  letter-spacing: calc(var(--track-1) + var(--optical));
+  color: var(--text);
+  max-width: var(--measure-deck);
+}
+
+.muted { color: var(--muted); }
+.faint { color: var(--faint); }
+
+/* ==========================================================================
+   TECHNICAL  —  IBM Plex Mono. Labels, certificates, readouts.
+   --------------------------------------------------------------------------
+   Every micro-label on this site used to be the display face, shrunk and
+   letterspaced — which is what makes a page look like it has one idea in it.
+   Giving them their own face means a caption reads as a caption rather than
+   as a headline that lost an argument.
+   ========================================================================== */
+
+.eyebrow {
+  display: inline-block;
+  font-family: var(--face-tech);
+  font-size: var(--step--3);
+  font-weight: 600;
+  line-height: var(--leading-tech);
+  letter-spacing: var(--track-caps);
+  text-transform: uppercase;
+  color: var(--brand-ink);
+  margin-bottom: 14px;
+}
+
+/* Numbers are data. Data is set in figures that line up. */
+.stars, .rev__stars, .stat__n, .est__fig, .rev__meta, .trustbar__item,
+.crumbs, .footer__bottom, time, .est__label {
+  font-variant-numeric: tabular-nums;
+  font-feature-settings: 'zero' 1;
+}
