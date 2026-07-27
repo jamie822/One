@@ -1,5 +1,75 @@
 # UK Electrician Websites — Market Research & Build Playbook
 
+> **Updated 27 July 2026 after a live audit.** The original study was built from
+> Google's search index because outbound HTTPS was blocked. A GitHub Actions
+> runner has since inspected all ten sites directly. **Section 0 corrects what
+> the live data disproved.** Everything else stands, and most of it is now
+> confirmed rather than inferred.
+
+---
+
+## 0. Corrections from the live audit
+
+Raw data in `research-output/` — screenshots, `AUDIT.md`, `audit.json`.
+
+### Corrected: three of ten heroes do move
+
+The original study inferred from five independent city searches that no
+competitor had an animated hero. **That was wrong.** Measured by screenshotting
+each hero twice, two seconds apart, and diffing:
+
+| Hero moves | Sites |
+|---|---|
+| **Yes (3)** | Scott Electrical (Leeds) — full drone **video** hero; SS Electrical (Leeds); Gallagher (Birmingham) |
+| No (7) | WY Electrical, Quantum, Certified Electricians, KHL, Amara, Bains, PWS |
+
+Scott Electrical's is genuinely good: aerial footage over a solar
+installation, orange-on-charcoal, clean type, single clear CTA.
+
+**What survives the correction:** seven of ten still have a static hero, and
+animation libraries are loaded far more often than they're used —
+Lottie, Swiper, AOS and Elementor Motion appear on six sites, mostly driving
+carousels rather than a hero. Bains loads **136 CSS keyframe rules** and its
+hero doesn't move at all. So motion remains a differentiator, just not an empty
+field. Aim above Scott Electrical, not above nothing.
+
+### Corrected: the benchmark has case studies
+
+The original study reported no case-studies page on WY Electrical. **It has
+one** — "Case Studies" sits in the main nav, alongside Reviews and Locations.
+Scott Electrical and PWS have them too.
+
+### Confirmed and sharpened
+
+- **Every single one of the ten runs WordPress.** Mostly Elementor or Divi.
+  There is no modern stack anywhere in this competitive set.
+- **WY Electrical's hero is strong.** Real photography of a real electrician
+  mid-job, dark overlay, and the Google rating — **5.0 from 188 reviews** —
+  placed *above* the headline. That review-at-hero-level pattern is the single
+  most copyable thing in the study.
+- **Its brand colour is magenta**, not trade-blue. Genuinely distinctive.
+- **Schema is richer than search could show.** WY runs 27 types including
+  `Electrician`, `AggregateRating`, `Review`, `FAQPage` and `BreadcrumbList`.
+  Certified Electricians and Bains also carry `AggregateRating`. This is table
+  stakes, not an edge.
+- **Location page counts confirm the architecture finding:** Certified
+  Electricians 25 location paths, KHL 25, WY 22.
+- **Real weaknesses visible in the screenshots:** WY's cookie banner and chat
+  widget together cover roughly a third of the hero, obscuring the phone CTA.
+  Scott Electrical has **41 images with no alt text**; SS Electrical has 31 and
+  **no `<h1>` at all**; Gallagher has five `<h1>`s.
+
+### Two flaws in the audit tool itself
+
+- **The accreditation scan reports "SELECT" on all ten sites.** SELECT is the
+  Scottish trade body — implausible for Leeds and London firms. The regex is
+  matching `<select>` elements in the HTML. Ignore that column.
+- **Review-count parsing produces artefacts** like "0188 reviews" and "8439
+  reviews" where it has caught fragments of other numbers. Trust the
+  screenshots over that column.
+
+---
+
 Research conducted July 2026 across the benchmark site, twenty-one competitor
 electrician businesses in five major UK cities, cross-industry premium design,
 Google Business Profile and local SEO practice, technical SEO, and premium
@@ -14,7 +84,7 @@ price to UK electricians who currently have **no website at all**.
 ## 1. The finding that matters
 
 **No genuinely premium, design-led electrician website is ranking in any major UK
-city.**
+city.** *(Confirmed by the live audit — with the animated-hero caveat in §0.)*
 
 Three researchers worked London, Manchester and Leeds independently, without
 sight of each other's results. All three reached the same conclusion. A fourth
@@ -410,21 +480,25 @@ on cross-industry design, one on hero animation technique, three on Google and
 SEO practice, one on copywriting, one on tooling.
 
 **Outbound HTTPS was blocked in the research environment.** Every attempt to
-fetch a live page returned 403, including neutral control domains. All site
-findings are therefore reconstructed from Google's search index — page titles,
-meta descriptions, indexed URL structure — plus third-party review platforms,
-business registries and social profiles.
+fetch a live page returned 403, including neutral control domains. The original
+site findings were therefore reconstructed from Google's search index — page
+titles, meta descriptions, indexed URL structure — plus third-party review
+platforms, business registries and social profiles.
 
-This is reliable for **site architecture, URL patterns, review volumes,
-accreditations and copy tone**, all of which are visible in the index.
+**That gap has since been closed.** `.github/workflows/competitor-audit.yml`
+runs the inspection on a GitHub Actions runner, which has unrestricted internet,
+and commits screenshots and extracted signals back to `research-output/`. All
+ten sites now have desktop, mobile and full-page captures.
 
-It cannot verify **visual design, whether a hero is animated, photography
-authenticity, or real-world page speed**. Treat "no competitor has an animated
-hero" as a strong inference drawn from five independent city studies, not as a
-proven fact.
+### What the two methods each got right
 
-**Recommended follow-up:** a manual browser pass over
-`gallagherelectricalltd.co.uk`, `bainselectrical.co.uk`, `pwsglasgow.com`,
-`quantum-electrical.co.uk` and `khlelectricalcontractors.co.uk`. Those five had
-the richest indexed signal and would most reward a direct look before the swipe
-file is finalised.
+Search-index research proved **reliable** for site architecture, URL patterns,
+review volumes and copy tone — the live audit confirmed all of it, and the
+location-page counts matched closely.
+
+It proved **unreliable** for anything visual. It produced a false negative on
+animated heroes (§0), missed a case-studies page that sits in the main nav, and
+could not see that the benchmark's whole hero is built around a review count.
+
+The lesson for future competitor work: **never infer visual design from the
+search index.** Run the audit workflow instead.
