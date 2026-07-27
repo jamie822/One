@@ -15,7 +15,7 @@ export const client = {
   // --- Identity -------------------------------------------------------------
   name: 'Swift Electrical & Security',            // VERIFIED
   legalName: 'Swift Electrical & Security',       // NEEDED: registered name?
-  url: 'https://swiftelectrical.example',         // NEEDED: real domain
+  url: 'https://jamie822.github.io/One/',         // preview only — NEEDED: real domain
   tagline: 'Electrician and security installer, Bradford and West Yorkshire',
 
   // --- Brand ----------------------------------------------------------------
