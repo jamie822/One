@@ -50,21 +50,28 @@ jobs:
         with:
           node-version: '20'
 
+      # Install in a scratch dir, NOT the repo — npm install in the workspace
+      # would modify the repo's own package.json and leave unstaged changes
+      # that block the rebase-and-push at the end.
       - name: Install tooling
         run: |
+          mkdir -p "$RUNNER_TEMP/audit"
+          cd "$RUNNER_TEMP/audit"
           npm init -y >/dev/null 2>&1
-          npm install --no-audit --no-fund playwright cheerio >/dev/null 2>&1
+          npm install --no-audit --no-fund playwright cheerio lighthouse chrome-launcher >/dev/null 2>&1
           npx playwright install --with-deps chromium >/dev/null 2>&1
-          if [ "${{ inputs.lighthouse == false && 'false' || 'true' }}" = "true" ]; then
-            npm install --no-audit --no-fund lighthouse chrome-launcher >/dev/null 2>&1
-          fi
-          echo "installed"
+          echo "installed to $RUNNER_TEMP/audit"
 
       - name: Run audit
         env:
           INPUT_URLS: ${{ inputs.urls }}
           RUN_LH: ${{ inputs.lighthouse == false && 'false' || 'true' }}
-        run: node .github/scripts/audit.mjs
+        run: |
+          cp "$GITHUB_WORKSPACE/.github/scripts/audit.mjs" "$RUNNER_TEMP/audit/"
+          cd "$RUNNER_TEMP/audit"
+          OUT_DIR="$GITHUB_WORKSPACE/research-output" node audit.mjs
+          # Confirm the repo checkout is still clean apart from the results.
+          cd "$GITHUB_WORKSPACE" && git status --short
 
       - name: Commit results
         run: |

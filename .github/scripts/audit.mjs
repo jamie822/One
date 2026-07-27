@@ -25,7 +25,9 @@ const urls = (process.env.INPUT_URLS || '').trim()
   : DEFAULT_URLS;
 
 const RUN_LH = process.env.RUN_LH === 'true';
-const OUT = 'research-output';
+// Written into the repo checkout; the script itself runs from a scratch dir so
+// npm never touches the repo's own package.json.
+const OUT = process.env.OUT_DIR || 'research-output';
 const SHOTS = path.join(OUT, 'screenshots');
 await fs.mkdir(SHOTS, { recursive: true });
 
