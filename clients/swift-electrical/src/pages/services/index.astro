@@ -4,14 +4,25 @@ import Hero from '../../components/Hero.astro';
 import TrustBar from '../../components/TrustBar.astro';
 import CtaBand from '../../components/CtaBand.astro';
 import Icon from '../../components/Icon.astro';
-import { href, primaryArea } from '../../lib/site.js';
+import { href, primaryArea, itemListSchema } from '../../lib/site.js';
 import { client, services } from '../../data/client.js';
+
+const listed = services.map((s) => ({ name: s.title, path: `/services/${s.slug}/` }));
+
+/* Was advertising "EV chargers", which appears nowhere in client.js and nowhere
+   in the six services this site sells. Promising a service in the snippet that
+   the page does not deliver is the cheapest way there is to lose the click and
+   the trust behind it. The six below are the six that exist. */
+const metaDesc =
+  `EICRs and landlord certificates, fault finding, CCTV and alarms, lighting, ` +
+  `consumer units, rewiring. NICEIC registered, ${primaryArea.name} and ${client.address.region}.`;
 ---
 <Layout
   path="/services/"
   title="Electrical services"
-  description={`Rewires, EICRs, consumer units, EV chargers and fault finding across ${primaryArea.name} and ${client.address.region}.`}
+  description={metaDesc}
   crumbs={[{ name: 'Home', path: '/' }, { name: 'Services', path: '/services/' }]}
+  schemas={[itemListSchema(`Services from ${client.name}`, listed)]}
 >
   <Hero inner={true}>
     <p class="eyebrow">Services</p>

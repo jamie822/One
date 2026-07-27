@@ -16,7 +16,8 @@ import TrustBar from '../../components/TrustBar.astro';
 import Reviews from '../../components/Reviews.astro';
 import CtaBand from '../../components/CtaBand.astro';
 import Icon from '../../components/Icon.astro';
-import { href, serviceSchema } from '../../lib/site.js';
+import Needed from '../../components/Needed.astro';
+import { href, hasPhone, areaServiceSchema } from '../../lib/site.js';
 import { client, services, areas, caseStudies } from '../../data/client.js';
 
 export function getStaticPaths() {
@@ -26,23 +27,80 @@ export function getStaticPaths() {
 const { area } = Astro.props;
 const path = `/areas/${area.slug}/`;
 const jobHere = caseStudies.find((c) => c.area === area.slug);
-const others = areas.filter((a) => a.slug !== area.slug).slice(0, 6);
+// Was .slice(0, 6) of the seven other areas, which quietly orphaned one area
+// from every page in the cluster. Link all of them; seven pills is not a lot.
+const others = areas.filter((a) => a.slug !== area.slug);
+
+/* TITLE.
+   Bradford is flagged primary, and its old title — "Electrician in Bradford" —
+   was character-for-character the homepage's. Two URLs competing for one query
+   with one title is cannibalisation, and Google picks the winner, not us. The
+   homepage keeps the head term. This page takes the business's own framing,
+   which is also the honest one: it is the only page in the cluster whose
+   subject is the whole city rather than a district of it. */
+const title = area.primary
+  ? `${area.name} Electrician & Security Installer`
+  : `Electrician in ${area.name}`;
+
+/* DESCRIPTION.
+   Every area page previously shipped the same sentence with the town swapped —
+   "Swift Electrical & Security — electrical work in Bingley.  ", trailing double
+   space included, because travelNote and responsePromise are both still empty.
+   That is the meta-layer version of a doorway page, and it wasted the one thing
+   this cluster genuinely has: eight paragraphs of real, non-interchangeable
+   Bradford housing-stock knowledge sitting in client.js.
+
+   So the description is built from that paragraph, clipped on a sentence break
+   where one falls inside the budget and on a word boundary otherwise. Nothing is
+   written here that is not already on the page. */
+const DANGLERS =
+  /\s+(a|an|the|and|or|of|in|on|at|to|with|for|from|as|is|are|was|were|that|which|but|most|much|it|its|by|into|around|over|under|than|so|up|had|has|been|not|no|nor|if|when|where|while|there|their)$/i;
+
+function describe(a) {
+  const prefix = `NICEIC registered electrician covering ${a.name}. `;
+  const budget = 157 - prefix.length;
+  const stock = (a.housingStock || '').trim();
+  if (!stock) return `${prefix}${client.tagline}`.trim();
+  if (stock.length <= budget) return prefix + stock;
+
+  // A complete sentence always beats a truncated one, even a shorter complete
+  // sentence, so take a sentence break wherever one falls in the back two
+  // thirds of the budget.
+  const window = stock.slice(0, budget);
+  const lastStop = Math.max(window.lastIndexOf('. '), window.lastIndexOf('; '));
+  if (lastStop > budget * 0.35) return prefix + window.slice(0, lastStop + 1);
+
+  // Otherwise clip on a word boundary, then walk back off any trailing article,
+  // preposition or conjunction — "…through terraces in the…" reads as a fault,
+  // "…through terraces…" reads as an edit.
+  let tail = window.slice(0, window.lastIndexOf(' '));
+  let prev;
+  do { prev = tail; tail = tail.replace(/[,;:—-]$/, '').replace(DANGLERS, ''); } while (tail !== prev);
+  return `${prefix}${tail}…`;
+}
 ---
 <Layout
   path={path}
-  title={`Electrician in ${area.name}`}
-  description={`${client.name} — electrical work in ${area.name}. ${area.travelNote || ''} ${client.responsePromise}`}
+  title={title}
+  description={describe(area)}
   crumbs={[{ name: 'Home', path: '/' }, { name: 'Areas', path: '/areas/' }, { name: area.name, path }]}
-  schemas={[serviceSchema(services[0], area.name)]}
+  schemas={[areaServiceSchema(area)]}
 >
   <Hero inner={true}>
     <p class="eyebrow">{area.name}</p>
     <h1>Electrician in {area.name}</h1>
-    <p class="hero__sub">{area.travelNote}</p>
+    {/* travelNote is still NEEDED. Rendering it unconditionally shipped an
+        empty <p> on all eight pages. */}
+    {area.travelNote && <p class="hero__sub">{area.travelNote}</p>}
     <div class="hero__actions">
-      <a class="btn btn--primary btn--lg" href={`tel:${client.phoneHref}`}>
-        <Icon name="phone" /> {client.phone}
-      </a>
+      {/* phoneHref is empty, so this was `href="tel:"` wrapping an icon and
+          nothing else — a dead link with no accessible name, on every area
+          page. NAP has to degrade honestly, not fabricate a number. */}
+      {hasPhone
+        ? <a class="btn btn--primary btn--lg" href={`tel:${client.phoneHref}`}>
+            <Icon name="phone" /> {client.phone}
+          </a>
+        : <Needed label="PHONE NUMBER NEEDED — add to Google too" />}
       <a class="btn btn--ghost btn--lg" href={href('/contact/')}>Request a quote</a>
     </div>
   </Hero>

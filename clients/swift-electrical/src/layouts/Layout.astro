@@ -1,6 +1,6 @@
 ---
 import { client } from '../data/client.js';
-import { href, businessSchema, breadcrumbSchema, ratingLabel, hasPhone } from '../lib/site.js';
+import { href, absUrl, businessSchema, businessId, breadcrumbSchema, hasPhone } from '../lib/site.js';
 import Needed from '../components/Needed.astro';
 import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
@@ -16,15 +16,66 @@ const {
   schemas = [],
 } = Astro.props;
 
-const canonical = new URL(path, client.url).href;
+// Absolute and base-path-correct. `new URL(path, client.url)` used to throw the
+// "/One/" sub-path away, so every canonical on the site pointed at a host root
+// where nothing is served. See absUrl() in lib/site.js.
+const canonical = absUrl(path);
 
-// Rating in the title lifts click-through on every listing the client owns.
-// Only appended when the rating is genuine — see lib/site.js.
-const suffix = ratingLabel ? ` | ${client.name} · ${ratingLabel}` : ` | ${client.name}`;
-const fullTitle = title ? `${title}${suffix}` : `${client.name} — ${client.tagline}`;
+/* Titles.
+   The old suffix was " | Swift Electrical & Security · 5★ from 7 reviews" —
+   49 characters before the page had said anything. Every one of the 23 titles
+   came out over 60 and several over 95, so Google would have truncated or
+   rewritten the lot and the brand name, the part this audience is actually
+   checking, was the first thing cut. AUDIENCE.md §1: for most visitors the site
+   is a verification channel. They were given a name and are confirming it
+   exists, so the name has to survive into the SERP.
+
+   The rating is dropped from the title and kept where it persuades — the hero,
+   the trust bar and the description. What is left is a budget: full brand if it
+   fits in 60, short brand if that fits, page title alone if neither does. */
+const BRAND = client.name;
+const BRAND_SHORT = 'Swift Electrical';
+
+function composeTitle(t) {
+  if (!t) return `${BRAND} — ${client.tagline}`;
+  // Pages whose own title already names the business must not repeat it.
+  if (t.toLowerCase().includes(BRAND_SHORT.toLowerCase())) return t;
+  const long = `${t} | ${BRAND}`;
+  if (long.length <= 60) return long;
+  const short = `${t} | ${BRAND_SHORT}`;
+  return short.length <= 60 ? short : t;
+}
+
+const fullTitle = composeTitle(title);
 const metaDesc = description || client.tagline;
 
-const allSchemas = [businessSchema(), ...(crumbs ? [breadcrumbSchema(crumbs)] : []), ...schemas];
+// The 404 is the one page that must never be indexed. It was shipping
+// "index, follow" like everything else.
+const noindex = path === '/404/';
+
+/* Every block that references the business must reference the SAME node, or the
+   graph silently falls apart into unlinked fragments. about.astro hand-builds
+   `worksFor: { '@id': `${client.url}/#business` }`, and because client.url ends
+   in a slash that produced ".../One//#business" — one character away from the
+   real node and therefore pointing at nothing.
+
+   Normalising here rather than at each call site means no page can drift again,
+   whoever writes it. Only values that are already meant to be the business node
+   are touched: a string ending in "#business" and nothing else. */
+function normaliseIds(value) {
+  if (Array.isArray(value)) return value.map(normaliseIds);
+  if (value && typeof value === 'object') {
+    return Object.fromEntries(Object.entries(value).map(([k, v]) => [k, normaliseIds(v)]));
+  }
+  if (typeof value === 'string' && value.endsWith('#business')) return businessId;
+  return value;
+}
+
+const allSchemas = [
+  businessSchema(),
+  ...(crumbs ? [breadcrumbSchema(crumbs)] : []),
+  ...schemas,
+].map(normaliseIds);
 ---
 <!doctype html>
 <html
@@ -38,7 +89,7 @@ const allSchemas = [businessSchema(), ...(crumbs ? [breadcrumbSchema(crumbs)] : 
     <title>{fullTitle}</title>
     <meta name="description" content={metaDesc} />
     <link rel="canonical" href={canonical} />
-    <meta name="robots" content="index, follow" />
+    <meta name="robots" content={noindex ? 'noindex, follow' : 'index, follow'} />
 
     <meta property="og:type" content="website" />
     <meta property="og:site_name" content={client.name} />
@@ -46,7 +97,10 @@ const allSchemas = [businessSchema(), ...(crumbs ? [breadcrumbSchema(crumbs)] : 
     <meta property="og:description" content={metaDesc} />
     <meta property="og:url" content={canonical} />
     <meta property="og:locale" content="en_GB" />
-    <meta name="twitter:card" content="summary_large_image" />
+    {/* summary_large_image with no og:image renders as a broken card. The card
+        upgrades itself the moment client.heroImage lands. */}
+    <meta name="twitter:card" content={client.heroImage ? 'summary_large_image' : 'summary'} />
+    {client.heroImage && <meta property="og:image" content={absUrl(client.heroImage)} />}
 
     <link rel="icon" href={href('/favicon.svg')} type="image/svg+xml" />
     <link rel="sitemap" href={href('/sitemap-index.xml')} />

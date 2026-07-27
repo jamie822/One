@@ -8,7 +8,7 @@ import { client, caseStudies, areas } from '../../data/client.js';
 <Layout
   path="/case-studies/"
   title="Our work"
-  description={`Real jobs finished by ${client.name} — what the problem was, what we did, and what it cost.`}
+  description={`Real electrical and security jobs finished across ${areas[0].name} and ${client.address.region}: what the problem was, what we did about it, and what it cost.`}
   crumbs={[{ name: 'Home', path: '/' }, { name: 'Our Work', path: '/case-studies/' }]}
 >
   <Hero inner={true}>

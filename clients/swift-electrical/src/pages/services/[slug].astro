@@ -4,7 +4,8 @@ import Hero from '../../components/Hero.astro';
 import TrustBar from '../../components/TrustBar.astro';
 import CtaBand from '../../components/CtaBand.astro';
 import Icon from '../../components/Icon.astro';
-import { href, primaryArea, serviceSchema } from '../../lib/site.js';
+import Needed from '../../components/Needed.astro';
+import { href, hasPhone, primaryArea, serviceSchema } from '../../lib/site.js';
 import { client, services, areas, caseStudies } from '../../data/client.js';
 
 export function getStaticPaths() {
@@ -14,13 +15,22 @@ export function getStaticPaths() {
 const { service } = Astro.props;
 const path = `/services/${service.slug}/`;
 const related = caseStudies.filter((c) => c.service === service.slug).slice(0, 2);
+
+/* The description was `service.short` alone — 63 to 78 characters, roughly half
+   the space a SERP snippet gives you, and it left the strongest asset on the
+   page unused. `symptom` is written from the searcher's position and is the line
+   most likely to match what they actually typed. Pair the two, drop the symptom
+   if the pair overruns. */
+const withPlace = `${service.short} ${primaryArea.name} and ${client.address.region}.`;
+const paired = `${withPlace} ${service.symptom}`;
+const metaDesc = paired.length <= 158 ? paired : withPlace;
 ---
 <Layout
   path={path}
   title={`${service.title} in ${primaryArea.name}`}
-  description={service.short}
+  description={metaDesc}
   crumbs={[{ name: 'Home', path: '/' }, { name: 'Services', path: '/services/' }, { name: service.title, path }]}
-  schemas={[serviceSchema(service, primaryArea.name)]}
+  schemas={[serviceSchema(service)]}
 >
   <Hero inner={true}>
     <p class="eyebrow">{service.title}</p>
@@ -28,9 +38,12 @@ const related = caseStudies.filter((c) => c.service === service.slug).slice(0, 2
     <!-- Opens with the symptom, not the service. -->
     <p class="hero__sub">{service.symptom}</p>
     <div class="hero__actions">
-      <a class="btn btn--primary btn--lg" href={`tel:${client.phoneHref}`}>
-        <Icon name="phone" /> {client.phone}
-      </a>
+      {/* Same dead `tel:` link as the area pages had. */}
+      {hasPhone
+        ? <a class="btn btn--primary btn--lg" href={`tel:${client.phoneHref}`}>
+            <Icon name="phone" /> {client.phone}
+          </a>
+        : <Needed label="PHONE NUMBER NEEDED — add to Google too" />}
       <a class="btn btn--ghost btn--lg" href={href('/contact/')}>Request a quote</a>
     </div>
   </Hero>

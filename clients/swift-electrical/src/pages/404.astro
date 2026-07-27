@@ -1,6 +1,6 @@
 ---
 import Layout from '../layouts/Layout.astro';
-import { href } from '../lib/site.js';
+import { href, hasPhone } from '../lib/site.js';
 import { client } from '../data/client.js';
 ---
 <Layout path="/404/" title="Page not found" description="That page doesn't exist.">
@@ -10,7 +10,11 @@ import { client } from '../data/client.js';
       <p class="lead">That link's gone dead. Nothing to do with the wiring.</p>
       <div style="display:flex;gap:12px;justify-content:center;flex-wrap:wrap;margin-top:26px">
         <a class="btn btn--primary" href={href('/')}>Back to home</a>
-        <a class="btn btn--ghost" href={`tel:${client.phoneHref}`}>{client.phone}</a>
+        {/* phoneHref is empty, so this rendered as an empty button wrapping a
+            dead `tel:` — a link with no accessible name. */}
+        {hasPhone
+          ? <a class="btn btn--ghost" href={`tel:${client.phoneHref}`}>{client.phone}</a>
+          : <a class="btn btn--ghost" href={href('/contact/')}>Get in touch</a>}
       </div>
     </div>
   </section>

@@ -29,17 +29,20 @@ const socials = Object.entries(client.social).filter(([, v]) => v);
         </ul>
       </div>
 
+      {/* The two hub pages had no sitewide inbound link — every route into
+          /services/ and /areas/ went through the header nav alone. Linking the
+          headings puts both hubs one hop from every page in the site. */}
       <div>
-        <h2 class="footer__h">Services</h2>
+        <h2 class="footer__h"><a href={href('/services/')}>Services</a></h2>
         <ul>
           {services.map((s) => <li><a href={href(`/services/${s.slug}/`)}>{s.title}</a></li>)}
         </ul>
       </div>
 
       <div>
-        <h2 class="footer__h">Areas we cover</h2>
+        <h2 class="footer__h"><a href={href('/areas/')}>Areas we cover</a></h2>
         <ul>
-          {areas.slice(0, 8).map((a) => <li><a href={href(`/areas/${a.slug}/`)}>{a.name}</a></li>)}
+          {areas.map((a) => <li><a href={href(`/areas/${a.slug}/`)}>{a.name}</a></li>)}
         </ul>
       </div>
 

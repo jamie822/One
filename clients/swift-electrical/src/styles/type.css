@@ -24,10 +24,89 @@
 @font-face{font-family:'IBM Plex Mono';src:url('/fonts/ibm-plex-mono-latin-500-normal.woff2') format('woff2');font-weight:500;font-style:normal;font-display:swap}
 @font-face{font-family:'IBM Plex Mono';src:url('/fonts/ibm-plex-mono-latin-600-normal.woff2') format('woff2');font-weight:600;font-style:normal;font-display:swap}
 
+/* ==========================================================================
+   METRIC-MATCHED FALLBACKS — dimensionally neutral font swap
+   --------------------------------------------------------------------------
+   `font-display: swap` guarantees text paints immediately, and guarantees a
+   second layout when the real face lands. The whole page was stable except
+   the nav: it is the right-hand item of a space-between header, so it is
+   shrink-to-fit, and when Inter replaced the system fallback it lost 24px of
+   width and slid right. 0.000408 CLS, every run, with no scrolling.
+
+   These faces make the pre-swap render the same size as the post-swap one.
+   Three things to know about them:
+
+   1. They cost ZERO bytes. `local()` only, no `url()`. Nothing is fetched;
+      the browser just re-measures a font the machine already has.
+   2. Arial is pinned deliberately rather than leaving `system-ui` first.
+      system-ui is a different typeface on every OS, so it cannot be
+      corrected with one number. Arial is present on Windows and macOS, and
+      Liberation Sans is its metric clone on Linux, so one size-adjust is
+      correct on all three.
+   3. size-adjust is per weight. `local('Arial')` resolves to Arial REGULAR
+      whatever weight the @font-face declares, and a matched face is never
+      synthetically emboldened, so every ratio below is measured against
+      Arial Regular. Getting that wrong first time round is what left the
+      CTA 6px short: 600 had been fitted against Arial Bold. The trade is
+      that a 600/700 element renders un-emboldened for the few hundred ms
+      of the swap window. Dimensionally right beats tonally right there.
+
+   Every number below was measured in this engine against the real strings
+   on this page, not taken from a table. size-adjust is webfont-width /
+   fallback-width over all shrink-to-fit text at that weight. ascent and
+   descent come from the rendered line box, divided by their own size-adjust
+   because the overrides are a percentage of the already-adjusted em.
+   ========================================================================== */
+
+@font-face { font-family: 'Inter Fallback'; font-style: normal; font-weight: 400;
+  src: local('Arial'), local('Liberation Sans'), local('Helvetica');
+  size-adjust: 106.483%; ascent-override: 91.00%; descent-override: 22.63%; line-gap-override: 0%; }
+@font-face { font-family: 'Inter Fallback'; font-style: normal; font-weight: 500;
+  src: local('Arial'), local('Liberation Sans'), local('Helvetica');
+  size-adjust: 107.434%; ascent-override: 90.19%; descent-override: 22.43%; line-gap-override: 0%; }
+@font-face { font-family: 'Inter Fallback'; font-style: normal; font-weight: 600;
+  src: local('Arial'), local('Liberation Sans'), local('Helvetica');
+  size-adjust: 107.431%; ascent-override: 90.20%; descent-override: 22.43%; line-gap-override: 0%; }
+@font-face { font-family: 'Inter Fallback'; font-style: normal; font-weight: 700;
+  src: local('Arial'), local('Liberation Sans'), local('Helvetica');
+  size-adjust: 109.324%; ascent-override: 88.64%; descent-override: 22.04%; line-gap-override: 0%; }
+/* Sora 600 is fitted well below 700/800 on purpose. Every shrink-to-fit
+   thing set in Sora 600 on this site is a tracked uppercase label, and Sora's
+   caps are proportionally narrower against Arial than its lowercase is. Fitted
+   on mixed case it ran 8% wide and moved the hero action row by 17px. */
+@font-face { font-family: 'Sora Fallback'; font-style: normal; font-weight: 600;
+  src: local('Arial'), local('Liberation Sans'), local('Helvetica');
+  size-adjust: 104.830%; ascent-override: 92.53%; descent-override: 27.66%; line-gap-override: 0%; }
+@font-face { font-family: 'Sora Fallback'; font-style: normal; font-weight: 700;
+  src: local('Arial'), local('Liberation Sans'), local('Helvetica');
+  size-adjust: 114.136%; ascent-override: 84.99%; descent-override: 25.41%; line-gap-override: 0%; }
+@font-face { font-family: 'Sora Fallback'; font-style: normal; font-weight: 800;
+  src: local('Arial'), local('Liberation Sans'), local('Helvetica');
+  size-adjust: 114.961%; ascent-override: 84.38%; descent-override: 25.23%; line-gap-override: 0%; }
+
+/* Monospace advances are a fixed fraction of the em, so Plex and the Courier
+   New / Liberation Mono family already agree to within 0.02%. The overrides
+   are doing the work here, not the size-adjust: Plex sits on a much taller
+   line box (1.30em against 1.13em), so without them any mono text in a
+   `line-height: normal` context would jump vertically on swap. */
+@font-face { font-family: 'Plex Fallback'; font-style: normal; font-weight: 400;
+  src: local('Courier New'), local('Liberation Mono'), local('DejaVu Sans Mono');
+  size-adjust: 99.984%; ascent-override: 102.52%; descent-override: 27.50%; line-gap-override: 0%; }
+@font-face { font-family: 'Plex Fallback'; font-style: normal; font-weight: 500;
+  src: local('Courier New'), local('Liberation Mono'), local('DejaVu Sans Mono');
+  size-adjust: 99.984%; ascent-override: 102.52%; descent-override: 27.50%; line-gap-override: 0%; }
+@font-face { font-family: 'Plex Fallback'; font-style: normal; font-weight: 600;
+  src: local('Courier New'), local('Liberation Mono'), local('DejaVu Sans Mono');
+  size-adjust: 99.984%; ascent-override: 102.52%; descent-override: 27.50%; line-gap-override: 0%; }
+
 :root {
-  --face-display: 'Sora', system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
-  --face-text:    'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
-  --face-tech:    'IBM Plex Mono', ui-monospace, 'SF Mono', SFMono-Regular, Menlo, Consolas, monospace;
+  /* The adjusted fallback sits immediately behind each real face. The
+     generic names after it are the net for a machine that has none of the
+     local() candidates; they are uncorrected, but they are also unreachable
+     on any mainstream OS. */
+  --face-display: 'Sora', 'Sora Fallback', system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  --face-text:    'Inter', 'Inter Fallback', system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  --face-tech:    'IBM Plex Mono', 'Plex Fallback', ui-monospace, 'SF Mono', SFMono-Regular, Menlo, Consolas, monospace;
 
   /* Back-compat aliases: existing rules still say --font-display / --font-body. */
   --font-display: var(--face-display);

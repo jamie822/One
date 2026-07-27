@@ -3,20 +3,30 @@ import Layout from '../layouts/Layout.astro';
 import Hero from '../components/Hero.astro';
 import TrustBar from '../components/TrustBar.astro';
 import Icon from '../components/Icon.astro';
-import { href, hasPhone } from '../lib/site.js';
+import { href, hasPhone, contactPageSchema } from '../lib/site.js';
 import Needed from '../components/Needed.astro';
-import { client, services } from '../data/client.js';
+import { client, services, areas } from '../data/client.js';
+
+/* This shipped as "Call  or send an enquiry. " — 26 characters, two of them a
+   hole where the phone number should be, straight into the SERP. client.phone
+   and client.responsePromise are both still empty, so the description is now
+   built only from what we actually know: who covers where, and what they do. */
+const metaDesc = hasPhone
+  ? `Call ${client.phone} or send an enquiry. NICEIC registered electrician and security installer covering ${areas[0].name} and ${client.address.region}.`
+  : `Send an enquiry and tell us about the job. NICEIC registered electrician and security installer, ${areas[0].name}, ${areas[3].name}, ${areas[7].name} and the rest of ${client.address.region}.`;
 ---
 <Layout
   path="/contact/"
   title="Contact"
-  description={`Call ${client.phone} or send an enquiry. ${client.responsePromise}`}
+  description={metaDesc}
   crumbs={[{ name: 'Home', path: '/' }, { name: 'Contact', path: '/contact/' }]}
+  schemas={[contactPageSchema()]}
 >
   <Hero inner={true}>
     <p class="eyebrow">Contact</p>
     <h1>Get a price</h1>
-    <p class="hero__sub">{client.responsePromise}</p>
+    {/* responsePromise is still NEEDED — this was an empty paragraph. */}
+    {client.responsePromise && <p class="hero__sub">{client.responsePromise}</p>}
   </Hero>
 
   <div class="container"><TrustBar /></div>
