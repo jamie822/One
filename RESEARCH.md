@@ -12,6 +12,60 @@
 
 Raw data in `research-output/` — screenshots, `AUDIT.md`, `audit.json`.
 
+### The biggest finding in the whole study: nobody passes Core Web Vitals
+
+Lighthouse, mobile, all ten sites. Google's thresholds are **LCP under 2.5s, CLS
+under 0.1.**
+
+| Site | Perf | A11y | SEO | LCP | CLS |
+|---|---|---|---|---|---|
+| PWS (Glasgow) | 92 | 89 | 92 | **2.9s** | 0 |
+| KHL (Manchester) | 69 | 92 | 100 | 3.6s | 0 |
+| Gallagher (Birmingham) | 55 | 87 | 100 | 17.9s | 0.001 |
+| Certified Electricians (London) | 47 | 90 | 92 | 9.2s | 0.196 |
+| Amara (Manchester) | 46 | 94 | 92 | 4.3s | 0.004 |
+| SS Electrical (Leeds) | 45 | 89 | 100 | 9.0s | 0.001 |
+| **WY Electrical (benchmark)** | **42** | **92** | **85** | **7.3s** | **0.002** |
+| Bains (Glasgow) | 24 | 79 | 85 | 17.1s | 0.287 |
+| **Scott Electrical (Leeds)** | **15** | **76** | **85** | **23.7s** | **0.913** |
+
+**Not one site passes.** The best LCP in the entire competitive set is 2.9
+seconds, against a 2.5-second threshold. Six sites are over 7 seconds. Two are
+over 17.
+
+### And the site with the animated hero has the worst score in the set
+
+Scott Electrical runs the drone-video hero — the best-looking hero found
+anywhere. It costs them:
+
+- **Performance 15/100**
+- **LCP 23.7 seconds** — nearly ten times the threshold
+- **CLS 0.913** — nine times the threshold
+
+That is the single most useful data point in this research. **The one competitor
+who tried to build something visually ambitious destroyed their page speed doing
+it**, because they hung an autoplaying video on the LCP element inside a
+WordPress theme.
+
+This is exactly the trap `BUILD_PROCESS.md` Phase 4.3 exists to avoid: a hero
+that moves, with the motion behind CSS transforms and the LCP element left
+untouched and eager-loaded. You can have both. Nobody in this market currently
+does.
+
+**The competitive position, stated plainly:** every competitor is on WordPress,
+nine of ten are visibly slow, and the only one that's fast is also the plainest.
+A static Astro build that passes Core Web Vitals *and* has a live hero beats the
+entire set on both axes at once. That isn't a marketing claim — it's the
+measured gap.
+
+Two secondary points worth keeping:
+
+- **Accessibility is universally mediocre** — 76 to 94, nobody near 100. An
+  accessible site is an easy, cheap differentiator.
+- **The benchmark is mid-table.** WY Electrical's 42/100 and 7.3s LCP are better
+  than most but nowhere near passing. Its CLS of 0.002 is genuinely excellent
+  though — the layout is stable, it's just heavy.
+
 ### Corrected: three of ten heroes do move
 
 The original study inferred from five independent city searches that no
