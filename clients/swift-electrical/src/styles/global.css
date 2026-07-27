@@ -631,3 +631,105 @@ p { margin: 0 0 1rem; }
   .spine__fill, .spine__head { transition: none; }
   .svc-hero:hover, .rev__card:hover { transform: none; }
 }
+
+/* ==========================================================================
+   LIGHT AS THE MATERIAL
+   This client fits architectural lighting. Their Instagram is linear LED in
+   dark rooms, strip light raking across timber, floodlights on stone. So the
+   site should behave like lit space, not like a dark theme with a blue accent.
+   Light pools, spills from edges, and falls off. That is the depth that was
+   missing.
+   ========================================================================== */
+
+/* Film grain. The single fastest fix for the flat, digital, generated look —
+   real photography and real rooms have noise; flat gradients do not. */
+body::after {
+  content: '';
+  position: fixed; inset: 0; z-index: 1; pointer-events: none;
+  opacity: .05; mix-blend-mode: overlay;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.82' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='140' height='140' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+/* A luminaire: light spilling from the top edge of a section, the way a
+   cove light or a linear pendant actually throws. */
+.lit { position: relative; isolation: isolate; overflow: hidden; }
+.lit::before {
+  content: ''; position: absolute; z-index: -1;
+  top: -2px; left: 50%; transform: translateX(-50%);
+  width: min(680px, 82%); height: 2px;
+  background: linear-gradient(90deg, transparent, var(--brand), transparent);
+  box-shadow: 0 0 22px 2px color-mix(in srgb, var(--brand) 60%, transparent);
+}
+.lit::after {
+  content: ''; position: absolute; z-index: -2;
+  top: 0; left: 50%; transform: translateX(-50%);
+  width: min(900px, 96%); height: 340px;
+  background: radial-gradient(60% 100% at 50% 0%,
+    color-mix(in srgb, var(--brand) 17%, transparent), transparent 72%);
+  pointer-events: none;
+}
+
+/* Raking light: a low, warm wash across the foot of a band, like a floodlight
+   grazing stone. Uses the amber so the page is not lit by one colour. */
+.raked { position: relative; isolation: isolate; }
+.raked::after {
+  content: ''; position: absolute; inset: auto 0 0 0; height: 260px; z-index: -1;
+  background: linear-gradient(0deg,
+    color-mix(in srgb, var(--accent) 9%, transparent), transparent 78%);
+  pointer-events: none;
+}
+
+/* Surfaces catch light from above rather than sitting flat. */
+.card, .svc-hero, .rev__card, .cred, .stat {
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,.05),
+    0 1px 0 rgba(0,0,0,.4),
+    0 18px 40px -26px rgba(0,0,0,.9);
+}
+
+/* ==========================================================================
+   EICR ESTIMATOR
+   WY Electrical runs an instant EICR quote tool and it is one of the strongest
+   things on their site: it answers the first question a landlord has, without
+   a phone call. Nobody else in this competitor set has one.
+   ========================================================================== */
+.est {
+  position: relative; overflow: hidden;
+  border: 1px solid var(--line-strong); border-radius: 20px;
+  background:
+    radial-gradient(120% 90% at 0% 0%, color-mix(in srgb, var(--brand) 13%, transparent), transparent 58%),
+    linear-gradient(160deg, var(--panel-2), var(--panel));
+  padding: clamp(26px, 4vw, 44px);
+}
+.est__grid { display: grid; grid-template-columns: 1.15fr .85fr; gap: clamp(24px, 4vw, 48px); align-items: center; }
+@media (max-width: 880px) { .est__grid { grid-template-columns: 1fr; } }
+.est__q { margin-bottom: 24px; }
+.est__q > span {
+  display: block; font-family: var(--font-display); font-weight: 700;
+  font-size: .78rem; letter-spacing: .14em; text-transform: uppercase;
+  color: var(--muted); margin-bottom: 11px;
+}
+.est__opts { display: flex; flex-wrap: wrap; gap: 9px; }
+.est__opt {
+  font: inherit; font-family: var(--font-display); font-weight: 600; font-size: .93rem;
+  padding: 11px 17px; border-radius: 10px; cursor: pointer;
+  border: 1px solid var(--line-strong); background: transparent; color: var(--text);
+  transition: background .2s, color .2s, border-color .2s, transform .15s;
+}
+.est__opt:hover { border-color: var(--brand); transform: translateY(-1px); }
+.est__opt[aria-pressed='true'] {
+  background: var(--brand); border-color: var(--brand); color: #04222b;
+  box-shadow: 0 0 22px -6px color-mix(in srgb, var(--brand) 80%, transparent);
+}
+.est__out {
+  text-align: center; padding: 30px 22px; border-radius: 16px;
+  border: 1px solid var(--line); background: color-mix(in srgb, var(--bg) 55%, transparent);
+}
+.est__label { font-family: var(--font-display); font-size: .76rem; font-weight: 700; letter-spacing: .16em; text-transform: uppercase; color: var(--muted); }
+.est__fig {
+  font-family: var(--font-display); font-weight: 800; letter-spacing: -.03em;
+  font-size: clamp(2.4rem, 5vw, 3.4rem); line-height: 1.05; margin: 12px 0 4px;
+  color: var(--accent);
+}
+.est__note { color: var(--muted); font-size: .88rem; margin: 10px 0 20px; }
+.est__disc { font-size: .8rem; color: var(--muted); margin-top: 18px; line-height: 1.5; }

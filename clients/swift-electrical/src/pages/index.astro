@@ -7,6 +7,7 @@ import CtaBand from '../components/CtaBand.astro';
 import Placeholder from '../components/Placeholder.astro';
 import Needed from '../components/Needed.astro';
 import Icon from '../components/Icon.astro';
+import Estimator from '../components/Estimator.astro';
 import { href, hasRating, hasPhone } from '../lib/site.js';
 import { client, services, areas, faqs } from '../data/client.js';
 
@@ -91,7 +92,7 @@ const faqSchema = {
   </section>
 
   <!-- SERVICES: asymmetric. The two the reviews evidence lead. -->
-  <section class="section section--panel">
+  <section class="section section--panel lit">
     <div class="container">
       <div class="section__head reveal">
         <h2>What we get called out for most</h2>
@@ -124,8 +125,15 @@ const faqSchema = {
     </div>
   </section>
 
+  <!-- ESTIMATOR — answers the landlord's first question without a call -->
+  <section class="section lit">
+    <div class="container reveal">
+      <Estimator />
+    </div>
+  </section>
+
   <!-- PROOF -->
-  <section class="section">
+  <section class="section raked">
     <div class="container">
       <div class="stats reveal">
         <div class="stat"><div class="stat__n">{client.google.rating}</div><div class="stat__l">Google rating</div></div>
@@ -167,7 +175,7 @@ const faqSchema = {
   </section>
 
   <!-- REVIEWS CAROUSEL -->
-  <section class="section">
+  <section class="section raked">
     <div class="container">
       <div class="section__head reveal">
         <h2>Seven reviews. Seven fives.</h2>

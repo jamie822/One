@@ -1,0 +1,97 @@
+---
+// EICR ESTIMATOR
+//
+// WY Electrical (the benchmark) runs an instant EICR quote tool, and it is one
+// of the strongest conversion devices on their site: it answers a landlord's
+// first question without a phone call. Nobody else in the competitor set has
+// one.
+//
+// The bands below are NOT the client's prices. They are placeholders and are
+// labelled as such on the page. Swap them for Adil's real figures before this
+// goes live, or take the section out.
+import Icon from './Icon.astro';
+import { href } from '../lib/site.js';
+---
+<div class="est" data-est>
+  <div class="est__grid">
+    <div>
+      <h2 style="margin-bottom:8px">What will an EICR cost me?</h2>
+      <p class="muted" style="margin-bottom:26px">
+        The honest answer is that it depends on the property. Pick the two that
+        apply and you get a realistic range in a couple of seconds.
+      </p>
+
+      <div class="est__q">
+        <span>Property type</span>
+        <div class="est__opts" role="group" aria-label="Property type">
+          <button class="est__opt" type="button" data-k="type" data-v="1" aria-pressed="true">Flat</button>
+          <button class="est__opt" type="button" data-k="type" data-v="1.25" aria-pressed="false">Terrace</button>
+          <button class="est__opt" type="button" data-k="type" data-v="1.45" aria-pressed="false">Semi</button>
+          <button class="est__opt" type="button" data-k="type" data-v="1.75" aria-pressed="false">Detached</button>
+          <button class="est__opt" type="button" data-k="type" data-v="2.1" aria-pressed="false">HMO</button>
+        </div>
+      </div>
+
+      <div class="est__q">
+        <span>Bedrooms</span>
+        <div class="est__opts" role="group" aria-label="Bedrooms">
+          <button class="est__opt" type="button" data-k="beds" data-v="1" aria-pressed="true">1</button>
+          <button class="est__opt" type="button" data-k="beds" data-v="1.15" aria-pressed="false">2</button>
+          <button class="est__opt" type="button" data-k="beds" data-v="1.32" aria-pressed="false">3</button>
+          <button class="est__opt" type="button" data-k="beds" data-v="1.5" aria-pressed="false">4</button>
+          <button class="est__opt" type="button" data-k="beds" data-v="1.7" aria-pressed="false">5+</button>
+        </div>
+      </div>
+
+      <p class="est__disc">
+        A range, not a quote. If the board is buried behind a fitted wardrobe or
+        the circuits have never been labelled, it takes longer, and we would
+        rather tell you that on the phone than surprise you on the invoice.
+      </p>
+    </div>
+
+    <div class="est__out">
+      <div class="est__label">Likely range</div>
+      <div class="est__fig" data-est-out>£120 – £150</div>
+      <p class="est__note" data-est-time>Around 2 hours on site</p>
+      <a class="btn btn--act" href={href('/contact/')} style="width:100%;justify-content:center">
+        Get an exact price <Icon name="arrow" />
+      </a>
+      <p class="est__note" style="margin:14px 0 0;font-size:.8rem">
+        Remedials, if any, are quoted separately.
+      </p>
+    </div>
+  </div>
+</div>
+
+<script>
+  document.querySelectorAll('[data-est]').forEach((root) => {
+    // PLACEHOLDER BANDS — replace with the client's real pricing.
+    const BASE = 120, SPREAD = 0.25;
+    const state = { type: 1, beds: 1 };
+    const out  = root.querySelector('[data-est-out]');
+    const time = root.querySelector('[data-est-time]');
+
+    const money = (n) => '£' + (Math.round(n / 5) * 5);
+
+    function render() {
+      const mid = BASE * state.type * state.beds;
+      out.textContent = `${money(mid)} – ${money(mid * (1 + SPREAD))}`;
+      const hrs = Math.max(2, Math.round(1.4 * state.type * state.beds));
+      time.textContent = `Around ${hrs} hour${hrs > 1 ? 's' : ''} on site`;
+    }
+
+    root.querySelectorAll('.est__opt').forEach((btn) => {
+      btn.addEventListener('click', () => {
+        const k = btn.dataset.k;
+        root.querySelectorAll(`.est__opt[data-k="${k}"]`).forEach((b) =>
+          b.setAttribute('aria-pressed', String(b === btn))
+        );
+        state[k] = parseFloat(btn.dataset.v);
+        render();
+      });
+    });
+
+    render();
+  });
+</script>
