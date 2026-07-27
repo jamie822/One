@@ -115,20 +115,24 @@ out = f"""<title>{title} — preview</title>
    later rule wins. Emit these first and the client's accent silently loses to
    the template default. */
 :root {{ {inline_vars} }}
-/* preview shell */
-html,body{{margin:0;background:var(--bg,#0c0d10)}}
+/* preview shell.
+   The background falls through several token names because different client
+   projects name their ground differently (--bg on one, --ground on another).
+   Hardcoding one project's fallback here silently repaints another brand's
+   page in the wrong colour, which is exactly what it did once. */
+html,body{{margin:0;background:var(--bg,var(--ground,var(--surface,#0c0d10)))}}
 .rt[hidden]{{display:none}}
 .pv-note{{position:fixed;left:0;right:0;bottom:0;z-index:999;background:#111318;color:#a1a5ad;
   border-top:1px solid rgba(255,255,255,.12);font:500 12px/1.45 system-ui,sans-serif;
   padding:9px 16px;text-align:center}}
-.pv-note b{{color:#22c8ee}}
+.pv-note b{{color:var(--brand,var(--incoming,#22c8ee))}}
 body{{padding-bottom:42px}}
 </style>
 
 {''.join(sections)}
 
 <div class="pv-note">
-  Preview of a real 23-page build. Cyan dashed boxes are <b>facts still needed from the client</b> — nothing has been invented.
+  Preview of a real {len(pages)}-route build. Dashed boxes are <b>facts still needed from the client</b>. Nothing has been invented.
 </div>
 
 <script>

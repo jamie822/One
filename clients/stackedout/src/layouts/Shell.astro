@@ -79,6 +79,10 @@ const candidates = [
   .topbar__word {
     font-family: var(--font-display); font-weight: 700;
     font-size: var(--t-h4); letter-spacing: -0.03em;
+    /* Same Clash Display narrow-space problem as headings, but this is a span so
+       the h1-h4 rule in brand.css never reached it. Without this the wordmark reads
+       "StackedOut", which is the one spelling the brand guide forbids outright. */
+    word-spacing: 0.14em;
   }
 
   .switch { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }

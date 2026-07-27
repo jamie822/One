@@ -73,8 +73,10 @@ AI detection.**
 | 23 | `design-engineering` | UI polish, spacing, hierarchy |
 | 24 | `web-design-guidelines` | Interface best practice |
 | 25 | `apple-design` | Fluid, physical motion |
-| 26 | `css-animations` | Motion — try this first, zero JS |
-| 27 | `gsap` | Only if CSS genuinely cannot do it |
+| 26 | `modern-web-design` | Motion, micro-interaction and scrollytelling patterns. Native CSS first, zero JS |
+| 26b | `scroll-reveal-libraries` | The simple end of scroll motion, before reaching for a library |
+| 27 | `gsap-core` → `gsap-scrolltrigger` → `gsap-timeline` → `gsap-performance` | Only when native CSS genuinely cannot do it. `gsap-plugins` for Flip/SplitText, `gsap-react` / `gsap-frameworks` per stack, `gsap-utils` for helpers |
+| 27b | `motion-framer` · `animejs` · `lottie-animations` · `locomotive-scroll` · `animated-component-libraries` | Reach for these only with a stated reason |
 | 28 | `find-animation-opportunities` | Find what should move and doesn't |
 | 29 | `improve-animations` | Raise the motion bar |
 | 30 | `review-animations` | Audit the motion |
