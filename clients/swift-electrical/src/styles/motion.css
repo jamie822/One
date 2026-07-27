@@ -35,12 +35,29 @@
   /* Slight overshoot. Reserved for momentum — a press releasing, a dot
      snapping home — never for something that merely faded in. */
   --ease-spring: cubic-bezier(0.34, 1.4, 0.64, 1);
+  /* expo.out. Almost all of the distance is covered in the first third of the
+     duration, so an entrance arrives with authority and then settles, instead
+     of gliding in at a constant-looking rate. This is the curve the agreed
+     direction ("Modern Dark / Cinema") names, and it is what separates a
+     confident entrance from a polite one. Used for entrances only — hovers
+     and presses keep --ease-out, which is gentler at the start and therefore
+     better for something the pointer is already touching. */
+  --ease-expo: cubic-bezier(0.16, 1, 0.3, 1);
 
   --d-press: 110ms;   /* press down: fast, so it feels direct */
   --d-release: 260ms; /* release: slower, so the system's answer reads */
   --d-hover: 240ms;
-  --d-reveal: 620ms;
-  --stagger: 55ms;
+  --d-reveal: 660ms;
+  --stagger: 46ms;
+
+  /* Ambient loops.
+     apple-design §14 warns specifically against slow looping oscillation
+     "near 0.2 Hz / one cycle per 5s" — that band is the vestibular problem
+     zone. Everything here is 18-26s, i.e. 0.038-0.055 Hz, roughly four times
+     slower than the nearest edge of that range, and every one of them moves
+     opacity/scale only, never position across the viewport. */
+  --amb-slow: 26s;
+  --amb-mid: 19s;
 }
 
 /* Pointer-tracked values. Registered with inherits:false so updating them
@@ -65,12 +82,12 @@
    Everything more specific below overrides this. */
 html .reveal {
   opacity: 0;
-  transform: translate3d(0, 20px, 0);
-  filter: blur(6px);
+  transform: translate3d(0, 30px, 0);
+  filter: blur(8px);
   transition:
-    opacity var(--d-reveal) var(--ease-out),
-    transform var(--d-reveal) var(--ease-out),
-    filter var(--d-reveal) var(--ease-out);
+    opacity var(--d-reveal) var(--ease-expo),
+    transform var(--d-reveal) var(--ease-expo),
+    filter calc(var(--d-reveal) * 0.75) var(--ease-expo);
 }
 html .reveal.is-in {
   opacity: 1;
@@ -120,9 +137,9 @@ html .review.reveal {
 }
 
 /* Directional variants, retuned. */
-html .reveal--left  { transform: translate3d(-34px, 0, 0); }
-html .reveal--right { transform: translate3d(34px, 0, 0); }
-html .reveal--scale { transform: scale(0.96); }
+html .reveal--left  { transform: translate3d(-52px, 0, 0); }
+html .reveal--right { transform: translate3d(52px, 0, 0); }
+html .reveal--scale { transform: scale(0.94); }
 html .reveal--left.is-in,
 html .reveal--right.is-in,
 html .reveal--scale.is-in { transform: none; }
@@ -190,16 +207,16 @@ html .owner__frame.reveal.is-in > * { clip-path: inset(0 0 0 0); }
 
 /* --- The two lead service tiles: directional, with depth ---------------- */
 html .svc-hero.reveal {
-  filter: blur(4px);
+  filter: blur(5px);
   transition:
-    opacity 760ms var(--ease-out),
-    transform 760ms var(--ease-out),
-    filter 760ms var(--ease-out),
+    opacity 820ms var(--ease-expo),
+    transform 820ms var(--ease-expo),
+    filter 620ms var(--ease-expo),
     border-color var(--d-hover) ease,
     box-shadow var(--d-hover) ease;
 }
-html .svc-hero.reveal--left  { transform: translate3d(-40px, 14px, 0) scale(0.97); }
-html .svc-hero.reveal--right { transform: translate3d(40px, 14px, 0) scale(0.97); }
+html .svc-hero.reveal--left  { transform: translate3d(-64px, 22px, 0) scale(0.945); }
+html .svc-hero.reveal--right { transform: translate3d(64px, 22px, 0) scale(0.945); }
 html .svc-hero.reveal.is-in  { transform: none; filter: none; }
 
 /* --- Group containers ---------------------------------------------------
@@ -260,10 +277,10 @@ html .areas__field.reveal > .pill:nth-child(n + 8) { --i: 7; }
 /* Service rows slide in along the circuit, from the spine side. */
 html .svc-list.reveal > .svc-row {
   opacity: 0;
-  transform: translate3d(-26px, 0, 0);
+  transform: translate3d(-44px, 0, 0);
   transition:
-    opacity 520ms var(--ease-out) calc(var(--i) * var(--stagger)),
-    transform 520ms var(--ease-out) calc(var(--i) * var(--stagger)),
+    opacity 560ms var(--ease-expo) calc(var(--i) * var(--stagger)),
+    transform 560ms var(--ease-expo) calc(var(--i) * var(--stagger)),
     background var(--d-hover) ease;
 }
 html .svc-list.reveal.is-in > .svc-row { opacity: 1; transform: none; }
@@ -273,10 +290,10 @@ html .svc-list.reveal.is-in > .svc-row { opacity: 1; transform: none; }
 html .stats.reveal > .stat,
 html .ledger.reveal > .ledger__cell {
   opacity: 0;
-  transform: translate3d(0, 26px, 0) scale(0.94);
+  transform: translate3d(0, 38px, 0) scale(0.9);
   transition:
-    opacity 520ms var(--ease-out) calc(var(--i) * 70ms),
-    transform 620ms var(--ease-spring) calc(var(--i) * 70ms);
+    opacity 520ms var(--ease-expo) calc(var(--i) * 78ms),
+    transform 680ms var(--ease-spring) calc(var(--i) * 78ms);
 }
 html .stats.reveal.is-in > .stat,
 html .ledger.reveal.is-in > .ledger__cell { opacity: 1; transform: none; }
@@ -284,30 +301,30 @@ html .ledger.reveal.is-in > .ledger__cell { opacity: 1; transform: none; }
 /* FAQ rows drop in from above, one after another. */
 html .faq.reveal > details {
   opacity: 0;
-  transform: translate3d(0, -14px, 0);
+  transform: translate3d(0, -22px, 0);
   transition:
-    opacity 420ms var(--ease-out) calc(var(--i) * 45ms),
-    transform 420ms var(--ease-out) calc(var(--i) * 45ms);
+    opacity 460ms var(--ease-expo) calc(var(--i) * 52ms),
+    transform 460ms var(--ease-expo) calc(var(--i) * 52ms);
 }
 html .faq.reveal.is-in > details { opacity: 1; transform: none; }
 
 /* Card grids scale up off the surface. */
 html .grid.reveal > * {
   opacity: 0;
-  transform: translate3d(0, 18px, 0) scale(0.97);
+  transform: translate3d(0, 30px, 0) scale(0.955);
   transition:
-    opacity 520ms var(--ease-out) calc(var(--i) * var(--stagger)),
-    transform 520ms var(--ease-out) calc(var(--i) * var(--stagger));
+    opacity 560ms var(--ease-expo) calc(var(--i) * var(--stagger)),
+    transform 560ms var(--ease-expo) calc(var(--i) * var(--stagger));
 }
 html .grid.reveal.is-in > * { opacity: 1; transform: none; }
 
 /* Area pills pop in like nodes energising along the circuit. */
 html .areas__field.reveal > .pill {
   opacity: 0;
-  transform: translate3d(0, 10px, 0) scale(0.9);
+  transform: translate3d(0, 16px, 0) scale(0.82);
   transition:
-    opacity 340ms var(--ease-out) calc(var(--i) * 32ms),
-    transform 420ms var(--ease-spring) calc(var(--i) * 32ms),
+    opacity 360ms var(--ease-expo) calc(var(--i) * 38ms),
+    transform 480ms var(--ease-spring) calc(var(--i) * 38ms),
     border-color var(--d-hover) ease,
     color var(--d-hover) ease;
 }
@@ -317,10 +334,10 @@ html .areas__field.reveal.is-in > .pill { opacity: 1; transform: none; }
    container and momentarily spawn a scrollbar. */
 html .rev-bleed.reveal .rev__card {
   opacity: 0;
-  transform: scale(0.95);
+  transform: scale(0.9);
   transition:
-    opacity 500ms var(--ease-out) calc(var(--i) * 60ms),
-    transform 500ms var(--ease-out) calc(var(--i) * 60ms),
+    opacity 540ms var(--ease-expo) calc(var(--i) * 68ms),
+    transform 540ms var(--ease-expo) calc(var(--i) * 68ms),
     border-color var(--d-hover) ease;
 }
 html .rev-bleed.reveal.is-in .rev__card { opacity: 1; transform: none; }
@@ -328,10 +345,10 @@ html .rev-bleed.reveal.is-in .rev__card { opacity: 1; transform: none; }
 /* CTA band: title, copy and buttons arrive in sequence. */
 html .cta__inner.reveal > * {
   opacity: 0;
-  transform: translate3d(0, 16px, 0);
+  transform: translate3d(0, 26px, 0);
   transition:
-    opacity 520ms var(--ease-out) calc(var(--i) * 80ms),
-    transform 520ms var(--ease-out) calc(var(--i) * 80ms);
+    opacity 560ms var(--ease-expo) calc(var(--i) * 88ms),
+    transform 560ms var(--ease-expo) calc(var(--i) * 88ms);
 }
 html .cta__inner.reveal.is-in > * { opacity: 1; transform: none; }
 
@@ -343,14 +360,20 @@ html .cred.reveal:nth-child(n + 5) { transition-delay: 280ms; }
 
 /* Individually-revealed cards scale up off the surface. They carry their own
    inline transition-delay from the page templates, which is left intact. */
+/* Transform amplitude raised, opacity and filter deliberately NOT touched.
+   .card.reveal and .review.reveal are two of the three LCP-exempt container
+   patterns above: they are painted opaque in the first frame, and only stay
+   that way while nothing here reintroduces a paint-suppressing property. A
+   composited translate emits no new LCP candidate, so it is free — which is
+   why the whole amplitude increase on these three is spent on transform. */
 html .card.reveal,
 html .cred.reveal,
 html .review.reveal {
   filter: none;
-  transform: translate3d(0, 18px, 0) scale(0.97);
+  transform: translate3d(0, 30px, 0) scale(0.955);
   transition:
-    opacity 520ms var(--ease-out),
-    transform 520ms var(--ease-out),
+    opacity 560ms var(--ease-expo),
+    transform 560ms var(--ease-expo),
     border-color var(--d-hover) ease,
     box-shadow var(--d-hover) ease;
 }
@@ -362,10 +385,10 @@ html .review.reveal.is-in { transform: none; }
 html .reveal--scale,
 html .form.reveal {
   filter: none;
-  transform: translate3d(0, 22px, 0) scale(0.985);
+  transform: translate3d(0, 34px, 0) scale(0.965);
   transition:
-    opacity 700ms var(--ease-out),
-    transform 700ms var(--ease-out);
+    opacity 760ms var(--ease-expo),
+    transform 760ms var(--ease-expo);
 }
 html .reveal--scale.is-in,
 html .form.reveal.is-in { transform: none; }
@@ -373,13 +396,38 @@ html .form.reveal.is-in { transform: none; }
 /* Inline CTAs: a small, confident pop. */
 html .inline-cta.reveal {
   filter: none;
-  transform: translate3d(0, 14px, 0) scale(0.98);
+  transform: translate3d(0, 22px, 0) scale(0.96);
   transition:
-    opacity 460ms var(--ease-out),
-    transform 520ms var(--ease-spring),
+    opacity 480ms var(--ease-expo),
+    transform 560ms var(--ease-spring),
     border-color var(--d-hover) ease;
 }
 html .inline-cta.reveal.is-in { transform: none; }
+
+/* --- Reveal instantly, for focus ----------------------------------------
+   Applied by the focusin handler in Layout.astro for exactly one frame, so
+   that a reveal triggered by the keyboard SNAPS to its end state instead of
+   transitioning into it.
+
+   Adding .is-in alone was not enough. Measured by tabbing through all 70
+   stops on the homepage: with .is-in alone, 5 stops still had an effective
+   opacity of 0 at the moment focus landed, because .is-in only starts a
+   560ms fade — so the focus ring sat on something that was not there yet
+   for over half a second. After 700ms all 70 were fine, which is precisely
+   why this is easy to miss: it looks correct the instant you stop to check.
+
+   The subtree selector is why this has to come straight back off again. It
+   suppresses every transition inside the element, so if it were left on,
+   that whole section would permanently lose its hover and press feedback.
+   The handler removes it on the next frame, by which point the end state is
+   already committed and there is nothing left to animate. */
+html .reveal.is-in--now,
+html .reveal.is-in--now *,
+html .reveal.is-in--now *::before,
+html .reveal.is-in--now *::after {
+  transition-duration: 0s !important;
+  transition-delay: 0s !important;
+}
 
 /* --------------------------------------------------------------------------
    3. PRESS FEEDBACK
@@ -1029,6 +1077,402 @@ html .spine__head {
       35%  { opacity: 1; }
       to   { transform: translate3d(330%, 0, 0); opacity: 0; }
     }
+
+    /* ====================================================================
+       12b. HERO DEPTH
+       The hero is the largest and most valuable surface on the site and it
+       was the one place that did not respond to scroll at all: four
+       decorative layers, all pinned flat to the section, so scrolling past
+       it read as sliding a printed sheet away. Giving each layer its own
+       rate is what turns four coplanar images into a space with depth.
+
+       Every rule here obeys the Parallax (Standard) preset's constraints:
+       decorative layers only — never text, never an interactive control —
+       four layers maximum, background slowest and foreground fastest, and
+       the whole thing clipped, which .hero already does with its own
+       `overflow: hidden`.
+
+       WHY `translate` AND `scale` RATHER THAN `transform`
+       Two reasons, and both matter.
+
+       1. Hero.astro is owned by another agent and is not mine to edit. Its
+          <style> block is Astro-scoped, so `.hero__bolt` there resolves at
+          (0,2,0) — `.hero__bolt[data-astro-cid-…]` — and beats the (0,1,1)
+          of `html .hero__bolt` here. A `transform` declared in this file
+          would simply lose. `translate` is a *different property*, so there
+          is no contest to lose: it composes with whatever transform the
+          component declares, applied outside it, and the component keeps
+          full control of its own base position.
+       2. It lets two independent animations drive one element without
+          fighting. The parallax writes `translate`; the ambient loop in 12c
+          writes `scale`. Same element, two timelines, no clobbering — which
+          a single `transform` channel cannot do.
+
+       None of these four can become an LCP candidate: Chromium nominates
+       text, <img>, <video> posters and certain background-images, and these
+       are two CSS gradients and two inline <svg>s. So the LCP == FCP result
+       on the homepage is untouched by anything in this block, which is the
+       whole reason the hero could be given this much movement at all. */
+
+    /* Drawing paper, barely moving — it is the surface everything is on. */
+    html .hero__grid {
+      animation: hero-depth-1 linear both;
+      animation-timeline: view();
+      animation-range: cover 0% cover 100%;
+    }
+    @keyframes hero-depth-1 {
+      from { translate: 0 -14px; }
+      to   { translate: 0 14px; }
+    }
+
+    /* The wash of brand light sits just behind the type. */
+    html .hero__wash {
+      animation: hero-depth-2 linear both;
+      animation-timeline: view();
+      animation-range: cover 0% cover 100%;
+    }
+    @keyframes hero-depth-2 {
+      from { translate: 0 -30px; }
+      to   { translate: 0 30px; }
+    }
+
+    /* Circuit rails: mid-ground, and they fade at the extremes so the
+       hero hands over cleanly to the rail strip below it. */
+    html .hero__circuit {
+      animation: hero-depth-3 linear both;
+      animation-timeline: view();
+      animation-range: cover 0% cover 100%;
+    }
+    @keyframes hero-depth-3 {
+      from { translate: 0 -52px; opacity: 0.28; }
+      50%  { opacity: 0.5; }
+      to   { translate: 0 52px; opacity: 0.28; }
+    }
+
+    /* The bolt travels furthest and picks up a little rotation on the way,
+       so the parallax reads as an object standing in space rather than a
+       flat cut-out being slid. */
+    html .hero__bolt {
+      animation: hero-depth-4 linear both;
+      animation-timeline: view();
+      animation-range: cover 0% cover 100%;
+    }
+    @keyframes hero-depth-4 {
+      from { translate: 0 -78px; rotate: -2.5deg; }
+      to   { translate: 0 78px; rotate: 2.5deg; }
+    }
+
+    /* ====================================================================
+       12c. CURRENT — the scrubbed layer
+       The single biggest reason the page read as flat is that every piece
+       of motion on it was a one-shot: a reveal fired once, finished, and
+       the section was then inert for as long as the visitor looked at it.
+
+       Everything in this block is scroll-scrubbed instead, so it is moving
+       for the entire time a section is on screen and it moves at exactly
+       the rate the visitor is scrolling. That distinction is also the
+       answer to the "excessive motion" guideline: scroll-linked motion
+       cannot nag, because it only ever moves when the user does, and it
+       stops dead the instant they stop. It is also free — a view() timeline
+       runs off the main thread, so none of this can add a long task. */
+
+    /* --- Section headings get a rule that draws itself ------------------
+       The mask wipe these already carry is good but it is over in a second
+       and then the heading is a static object. This adds a hairline that
+       tracks scroll position across the whole time the heading is in view.
+       Absolutely positioned, so it cannot cost a pixel of layout or CLS. */
+    html .section__head,
+    html .svc__head,
+    html .areas__head,
+    html .reviews__head { position: relative; }
+
+    /* An OVERLINE, above the heading — not an underline below it. Two
+       separate constraints force this, and they close off every other
+       option:
+
+       1. It must sit inside the element's own box. These four heads carry
+          the luminaire mask a few rules above (mask-size: 280% 100%;
+          mask-repeat: no-repeat), and a mask image sized to the element's
+          box makes everything painted OUTSIDE that box fully transparent,
+          pseudo-elements included. A rule at `bottom: -14px` computes
+          perfectly — right width, right gradient, opacity 1, scaleX(1) —
+          and paints nothing at all: 676x2 at the correct coordinates, zero
+          pixels on screen. Nasty to debug, because every computed value
+          says it is visible. A transform to nudge it out is no escape
+          either; mask-clip crops the painted result, not the layout box.
+
+       2. Inside the box, the bottom edge is unusable. Measured across the
+          four heads on six pages: `padding-bottom` is 0 and the last child
+          ends exactly on the box edge on every single one, so a rule at
+          `bottom: 0` lands on the deck paragraph's descenders and reads as
+          a link underline on the last line rather than as a section rule.
+          Buying room would mean adding padding to a heading from the motion
+          layer — a spacing decision that belongs to whoever owns the
+          composition, not here.
+
+       The top edge has the space the bottom lacks: it falls in the h2's
+       leading, above the cap height, and needs no layout change at all. An
+       overline also suits this site better — it reads as the technical
+       drawing rule these sections are already composed on. */
+    html .section__head.reveal::after,
+    html .svc__head.reveal::after,
+    html .areas__head.reveal::after,
+    html .reviews__head.reveal::after {
+      content: '';
+      position: absolute;
+      left: 0;
+      right: 0;
+      top: 0;
+      height: 2px;
+      pointer-events: none;
+      background: linear-gradient(90deg, var(--brand), var(--accent) 62%, transparent);
+      box-shadow: 0 0 12px 1px color-mix(in srgb, var(--brand) 45%, transparent);
+      transform-origin: left;
+      animation: rule-draw linear both;
+      animation-timeline: view();
+      animation-range: entry 20% cover 42%;
+    }
+    /* Centred heads draw outward from the middle instead. */
+    html .section__head.is-center.reveal::after {
+      transform-origin: center;
+      background: linear-gradient(90deg, transparent, var(--brand) 40%, var(--accent) 60%, transparent);
+    }
+    @keyframes rule-draw {
+      from { transform: scaleX(0); opacity: 0; }
+      18%  { opacity: 1; }
+      to   { transform: scaleX(1); opacity: 1; }
+    }
+
+    /* --- The service list finally behaves like a circuit ----------------
+       The rows claim a circuit motif — each already has a brand-coloured
+       conductor down its left edge that lights on hover. Nothing tied them
+       together, so the claim was only ever made one row at a time.
+
+       This draws a single conductor down the whole list, scrubbed, so the
+       current runs the length of it as you read. The per-row hover line is
+       a different pseudo-element and is left completely alone. */
+    html .svc-list { position: relative; }
+    html .svc-list.reveal::before {
+      content: '';
+      position: absolute;
+      left: 0;
+      top: 0;
+      bottom: 0;
+      width: 2px;
+      pointer-events: none;
+      background: linear-gradient(180deg, var(--brand), var(--accent));
+      box-shadow: 0 0 14px 1px color-mix(in srgb, var(--brand) 50%, transparent);
+      transform-origin: top;
+      animation: current-run linear both;
+      animation-timeline: view();
+      animation-range: entry 30% cover 70%;
+    }
+    @keyframes current-run {
+      from { transform: scaleY(0); opacity: 0.5; }
+      to   { transform: scaleY(1); opacity: 1; }
+    }
+
+    /* --- REMOVED: current flowing along the band rails ------------------
+       This block used to scrub `stroke-dashoffset` along .band__rails path
+       and .band__bolt-edge, plus an opacity blip on the solder pads — the
+       most literally on-brand effect in the whole set, current visibly
+       running through the conductors as each band passed.
+
+       It is gone because it cannot be composited, and that is disqualifying
+       here rather than merely unfortunate.
+
+       `stroke-dashoffset` and the opacity of an SVG *child* are paint
+       properties. Chromium gives compositing layers to whole elements, not
+       to nodes inside an <svg>, so neither can be handed to the compositor:
+       every scrubbed frame repaints the path. .band__rails is absolutely
+       positioned at inset:0 with preserveAspectRatio="slice", so the
+       repainted area is the full size of the band — the largest raster
+       surface on the page — and it was doing that on the scroll path, on
+       three rail paths and a bolt edge, on a 4x-throttled phone.
+
+       That is precisely the shape of the regression this file already
+       carries a warning about: a scrolled backdrop-filter once cost 12
+       scroll long tasks and 691ms of blocking here. Re-introducing
+       large-area paint-per-scroll-frame to win a decorative effect would be
+       trading the one thing this site is actually good at for a detail most
+       visitors would never consciously notice.
+
+       The rule this leaves behind, for anything added later: animate whole
+       elements, never SVG children, and keep to transform and opacity.
+       Every effect that survives in this file obeys it.
+
+       The bands are not left inert — .band__rails and .band__bolt already
+       parallax and fade on their own view() timelines in section 12, and
+       those are whole-element transforms, so they are free. */
+
+    /* --- The CTA band blooms on approach --------------------------------
+       ::before is already the amber sweep. This is the warm floor that
+       rises under it, so the last thing on the page is also the brightest
+       and the visitor arrives at the ask rather than merely reaching it. */
+    html .cta::after {
+      content: '';
+      position: absolute;
+      inset: auto 0 0 0;
+      height: 300px;
+      z-index: -1;
+      pointer-events: none;
+      background: radial-gradient(64% 100% at 50% 100%,
+        color-mix(in srgb, var(--accent) 20%, transparent), transparent 72%);
+      animation: cta-bloom linear both;
+      animation-timeline: view();
+      animation-range: entry 0% cover 55%;
+    }
+    @keyframes cta-bloom {
+      from { transform: translate3d(0, 70px, 0) scale(0.85); opacity: 0; }
+      to   { transform: none; opacity: 1; }
+    }
+  }
+}
+
+/* --------------------------------------------------------------------------
+   12d. AMBIENT — the page is alive when nobody is touching it
+   Everything in 12/12b/12c is scroll-linked, which means a visitor who lands
+   and reads without scrolling still sees a still photograph. That was the
+   other half of "flat", and it is the half no amount of scroll work fixes.
+
+   Deliberately NOT inside the @supports block above: scroll-driven animation
+   is Chromium-and-Safari today, so if the ambient layer were gated the same
+   way, Firefox would get a completely inert page. This is time-based CSS,
+   supported everywhere, and it is what guarantees every browser sees a site
+   that breathes.
+
+   Three rules, and only three. The agreed direction asks for "ambient light
+   on slow oscillation"; the UX database's Animation/Excessive Motion rule
+   (High severity) caps meaningful movement at one or two elements per view.
+   Both are satisfied by keeping this to the hero pool, a 6px dot, and the
+   primary CTA — never more than one of which is prominent in any one view.
+
+   On the timings: see the --amb-* tokens. 19-26s is deliberately several
+   times slower than the 0.2 Hz band apple-design flags as the vestibular
+   problem zone, and every property here is compositor-only.
+   -------------------------------------------------------------------------- */
+@media (prefers-reduced-motion: no-preference) {
+  /* --- The lamps breathe ----------------------------------------------
+     AmbientField.astro (composition agent) supplies the page's light as
+     markup — up to three radial-gradient "blobs" per hero and per band —
+     and states plainly that nothing in it animates. Lighting it is this
+     file's job, so this is the seam between the two.
+
+     Animating their blobs rather than adding a competing light source of
+     my own is the whole point: one rule here lights the hero AND every
+     band that opted into an ambient field, in the positions and colours
+     they chose, without this file owning a single pixel of appearance.
+
+     The contract is respected exactly. They own placement via `translate`
+     (the -50%/-50% centring) and the --blob-* custom properties. This
+     touches `scale` and `opacity` only — two properties they never set,
+     both compositor-only — so neither file can clobber the other, and
+     re-aiming a lamp on their side needs no change on mine.
+
+     Each blob runs at a different period and a negative delay, so the
+     three are permanently out of phase. If they shared a period the hero
+     would visibly throb as one object; out of phase, the light merely
+     moves, which is what light in a room actually does.
+
+     SCOPED TO THE HERO, and the scoping is a performance decision, not a
+     taste one. `.ambient__blob` unqualified matched 18 elements on the
+     homepage — six ambient fields at three blobs each. An infinite
+     transform/opacity animation promotes its element to a compositing
+     layer and keeps it there for the life of the page, so that selector
+     was quietly holding 18 band-sized GPU layers open on a 390px phone,
+     for light that is barely perceptible outside the first screenful.
+
+     Restricting to `.hero__ambient` takes it to three, on the one surface
+     where "is this page alive?" is actually decided, and leaves the other
+     fifteen as the static gradients AmbientField intends them to be. The
+     bands are not flat as a result: they already carry parallax and cove
+     lighting from section 12, all of it scroll-linked and free. */
+  html .hero__ambient .ambient__blob {
+    animation: lamp var(--amb-slow) ease-in-out infinite;
+  }
+  html .hero__ambient .ambient__blob--b {
+    animation-duration: var(--amb-mid);
+    animation-delay: -7s;
+  }
+  html .hero__ambient .ambient__blob--c {
+    animation-duration: 22s;
+    animation-delay: -13s;
+  }
+  @keyframes lamp {
+    0%, 100% { scale: 1; opacity: 0.72; }
+    50%      { scale: 1.14; opacity: 1; }
+  }
+
+  /* The spine head is the live end of the page's one authored motion moment
+     and it was a static dot. `scale` composes with the translate3d the spine
+     script writes to `transform` every frame. */
+  html .spine__head {
+    animation: head-pulse 3.4s ease-in-out infinite;
+  }
+  @keyframes head-pulse {
+    0%, 100% { scale: 1; opacity: 0.85; }
+    50%      { scale: 1.45; opacity: 1; }
+  }
+
+  /* --- The primary CTA catches the light ------------------------------
+     The one element on every page whose job is to be pressed, and until now
+     it was completely inert until the pointer arrived. A slow sheen crossing
+     it is the standing invitation.
+
+     ::after on these two is already the pointer-tracked highlight, so this
+     uses ::before, and it pauses under the pointer — once the cursor is on
+     the button the pointer light is the better, more direct signal, and two
+     highlights at once is noise. Clipped by the `overflow: hidden` the
+     buttons already carry, and under `.btn > * { z-index: 1 }` so it can
+     never wash out the label. */
+  /* Scoped to the two `.btn--primary` positions, and nowhere else.
+     Unscoped, this matched five buttons on the homepage — header, hero,
+     two inline CTAs and the closing band — so five sheens crossed five
+     buttons on their own schedules, five permanent compositing layers, and
+     the eye had no idea which one to follow. A standing invitation only
+     works if there is one of it.
+
+     The header CTA is the live target: it is the only .btn--primary the
+     site currently renders, and it is on screen on every page at every
+     scroll position. The closing band is listed too but matches nothing
+     today — that button is the `tel:` link, and it is still a "PHONE
+     NUMBER NEEDED" placeholder because the client has not given us a
+     number. It will start working the day he does, which is the right
+     behaviour to pre-wire rather than a rule to add later and forget.
+
+     Every other button keeps press, magnetism and the pointer-tracked
+     light, which is already more feedback than most sites give any of
+     them. */
+  html .header .btn--primary::before,
+  html .cta .btn--primary::before {
+    content: '';
+    position: absolute;
+    top: -60%;
+    bottom: -60%;
+    width: 42px;
+    left: -60px;
+    z-index: 0;
+    pointer-events: none;
+    background: linear-gradient(90deg, transparent,
+      color-mix(in srgb, white 18%, transparent), transparent);
+    transform: skewX(-18deg);
+    animation: btn-sheen 11s var(--ease-in-out) infinite;
+  }
+  @keyframes btn-sheen {
+    /* The travel occupies the first ~18% of the cycle — about two seconds —
+       and the remaining ~82% is deliberately dead. The header CTA is on
+       screen the entire time somebody reads the page, so the thing to tune
+       for is not how good the glint looks but how often it interrupts: at
+       11s with this much dead time it is a slow catch of light roughly five
+       times a minute, not a button demanding attention. */
+    0%        { transform: translate3d(0, 0, 0) skewX(-18deg); opacity: 0; }
+    3%        { opacity: 1; }
+    15%       { opacity: 1; }
+    18%, 100% { transform: translate3d(300px, 0, 0) skewX(-18deg); opacity: 0; }
+  }
+  @media (hover: hover) and (pointer: fine) {
+    html .header .btn--primary:hover::before,
+    html .cta .btn--primary:hover::before { animation-play-state: paused; opacity: 0; }
   }
 }
 

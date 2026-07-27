@@ -254,7 +254,32 @@ const allSchemas = [
            This pass re-tests with getBoundingClientRect, which ignores
            clipping and therefore cannot deadlock. It unbinds itself as soon
            as every reveal has landed, so a settled page pays nothing. */
+        /* The furthest the fold line has ever reached, in DOCUMENT
+           coordinates. Hardening, not a fix for an observed defect — and
+           worth being precise about which, because the investigation that
+           produced it very nearly recorded the opposite.
+
+           A scripted scroll to the bottom of /areas/shipley/ and back left
+           `.cta__inner.reveal` at opacity 0 in 3 of 6 runs, which looked
+           exactly like a content-loss bug in the reveal system. It was not.
+           global.css sets `html { scroll-behavior: smooth }`, so the test's
+           `window.scrollTo` calls were being animated and continuously
+           retargeted, and the page only ever reached 2207px of a possible
+           4790. The elements had never been scrolled to. With the test
+           forcing instant scrolling, the original code was clean.
+
+           The reason the change stays is that the viewport-relative test
+           below is still genuinely amnesiac: it asks only where the element
+           is now. An element passed during a scroll faster than the
+           observer sampled it, on a page the visitor has since scrolled
+           back up, fails every subsequent test and stays hidden until they
+           happen to go down again. A high-water mark cannot forget. It
+           subsumes the old test — at rest, `seenTo` IS the current fold
+           line — so it is strictly more permissive and cannot regress
+           anything. Verified clean either way. */
+        let seenTo = 0;
         const rescue = () => {
+          seenTo = Math.max(seenTo, window.scrollY + window.innerHeight - 40);
           document.querySelectorAll('.reveal:not(.is-in)').forEach((el) => {
             const r = el.getBoundingClientRect();
             // Anything whose top has passed the fold line has been reached —
@@ -262,7 +287,7 @@ const allSchemas = [
             // scroll can carry past before the observer ever samples them.
             // Leaving one of those hidden is content loss, not a missed
             // animation, so the test is deliberately one-sided.
-            if (r.height && r.top < window.innerHeight - 40) el.classList.add('is-in');
+            if (r.height && r.top + window.scrollY < seenTo) el.classList.add('is-in');
           });
           if (!document.querySelector('.reveal:not(.is-in)')) {
             window.removeEventListener('scroll', onScroll);
@@ -278,6 +303,11 @@ const allSchemas = [
           queued = true;
           requestAnimationFrame(() => {
             queued = false;
+            // The high-water mark is updated on EVERY sampled frame, before
+            // the throttle, because it is the one piece of state that cannot
+            // be reconstructed later. The sweep itself can safely wait; a
+            // scroll position that has been and gone cannot.
+            seenTo = Math.max(seenTo, window.scrollY + window.innerHeight - 40);
             const now = performance.now();
             if (now - last < 150) return;
             last = now;
@@ -288,6 +318,40 @@ const allSchemas = [
         window.addEventListener('scrollend', rescue, { passive: true });
         setTimeout(rescue, 400);
         setTimeout(rescue, 1600);
+
+        /* Focus must never land on something that is still invisible.
+           Tabbing to a control below the fold scrolls it into view, but the
+           IntersectionObserver only reports on a later frame, so for one or
+           two frames the focus ring sits on an element at opacity 0 that is
+           also mid-transform. A sighted keyboard user sees the ring vanish.
+
+           `focusin` fires before that gap rather than after it, and it
+           bubbles, so one listener on the document covers every control on
+           the page. Resolving the reveal ancestor immediately closes the
+           gap at the only moment it can occur. The entrance is skipped
+           rather than played for this one element, which is the correct
+           trade: a keyboard user who has just arrived somewhere needs to
+           see it, not watch it animate in.
+
+           Deliberately inside the non-reduced-motion branch. The other
+           branch has already added .is-in to everything, so there is
+           nothing there for this to fix. */
+        document.addEventListener('focusin', (e) => {
+          const host = e.target instanceof Element ? e.target.closest('.reveal:not(.is-in)') : null;
+          if (!host) return;
+          // Order matters. .is-in--now suppresses transitions across the
+          // subtree, .is-in changes the state, and reading offsetWidth
+          // forces the browser to commit that state to the current frame
+          // while transitions are still off — so the section is simply
+          // there, rather than fading in underneath the focus ring.
+          host.classList.add('is-in--now');
+          host.classList.add('is-in');
+          void host.offsetWidth;
+          // Straight back off, or this subtree loses hover and press
+          // feedback for the rest of the page's life. The end state is
+          // already committed, so restoring transitions animates nothing.
+          requestAnimationFrame(() => host.classList.remove('is-in--now'));
+        });
       }
 
       /* ====================================================================

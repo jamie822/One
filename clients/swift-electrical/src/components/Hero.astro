@@ -5,17 +5,45 @@
 // and bleeding off the right edge, with current running through a circuit
 // field behind it. No photography needed — the brand carries it.
 //
+// WHAT CHANGED, AND WHAT DELIBERATELY DID NOT
+// The four marks the client liked are all still here and are all still the
+// same marks: the technical grid, the circuit rails, the solder pads, and the
+// bolt. None of them was replaced. What changed is the LIGHT they sit in and
+// the ORDER they sit in.
+//
+// The bolt used to read as a faint smudge for two compounding reasons, and
+// neither was the bolt's own colour. First, it sat at z-index -2, which put it
+// *underneath* .hero::before — the 92%-opaque scrim global.css lays over the
+// whole hero to protect text contrast. The mark was being painted over by the
+// page's own scrim. Second, there was nothing lit behind it, so a translucent
+// cyan shape was blending into a near-black ground at roughly its own value.
+//
+// So: the grid, the ambient field, the circuit and the bolt now all sit at
+// z-index -1, above that scrim, stacked in DOM order (paper -> light -> wiring
+// -> mark). The scrim still does its job for the text column on the left,
+// where the text actually is. And the bolt now has a lamp behind it and a
+// specular facet across it, so it reads as a piece of lit material instead of
+// a hole in the page.
+//
 // Performance rules still hold: the <h1> is the LCP element and is never
-// animated or delayed. Everything moving is transform/opacity only, sits
-// behind the text, and stops under prefers-reduced-motion.
+// animated or delayed. It arrives through <slot /> untouched — not wrapped,
+// not moved, not placed inside anything that defers paint. Everything moving
+// is transform/opacity/stroke-dashoffset only, sits behind the text, and stops
+// under prefers-reduced-motion.
 import { client } from '../data/client.js';
 import { href } from '../lib/site.js';
+import AmbientField from './AmbientField.astro';
 
 const { image = client.heroImage, inner = false } = Astro.props;
 ---
 <section class={`hero${inner ? ' hero--inner' : ''}`}>
   <div class="hero__grid" aria-hidden="true"></div>
   <div class="hero__wash" aria-hidden="true"></div>
+
+  {/* The gradient ground. Sits above .hero::before on purpose — see the note
+      at the top of this file. Without that ordering the light is painted out
+      by the scrim and the hero goes back to being flat. */}
+  <AmbientField tone={inner ? 'cool' : 'split'} class={`hero__ambient${inner ? ' hero__ambient--inner' : ''}`} blobs={inner ? 2 : 3} />
 
   {image && (
     <div class="hero__media has-photo">
@@ -25,20 +53,6 @@ const { image = client.heroImage, inner = false } = Astro.props;
 
   {!inner && (
     <>
-      <!-- The client's own bolt, oversized, bleeding off the right edge. -->
-      <svg class="hero__bolt" viewBox="0 0 200 300" aria-hidden="true" preserveAspectRatio="xMidYMid meet">
-        <defs>
-          <linearGradient id="boltFill" x1="0" y1="0" x2="0.4" y2="1">
-            <stop offset="0%"   stop-color="var(--brand)" stop-opacity="0.42" />
-            <stop offset="55%"  stop-color="var(--brand)" stop-opacity="0.16" />
-            <stop offset="100%" stop-color="var(--brand)" stop-opacity="0.04" />
-          </linearGradient>
-        </defs>
-        <path d="M132 8 30 168h62l-16 124 98-166h-62L132 8z" fill="url(#boltFill)" />
-        <path class="bolt-edge" d="M132 8 30 168h62l-16 124 98-166h-62L132 8z"
-              fill="none" stroke="var(--brand)" stroke-width="1.8" stroke-linejoin="round" />
-      </svg>
-
       <!-- Current running through a circuit field. Pure SVG, no JS. -->
       <svg class="hero__circuit" viewBox="0 0 1200 700" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
         <g fill="none" stroke="var(--brand)" stroke-width="1" stroke-linecap="square" stroke-linejoin="round">
@@ -54,6 +68,31 @@ const { image = client.heroImage, inner = false } = Astro.props;
           <circle class="pad pad--4" cx="970" cy="150" r="3.5" />
         </g>
       </svg>
+
+      <!-- The client's own bolt, oversized, genuinely bleeding off the right
+           edge now rather than floating just inside it. Same path data as the
+           logo, three passes: body, specular facet, live edge. -->
+      <svg class="hero__bolt" viewBox="0 0 200 300" aria-hidden="true" preserveAspectRatio="xMidYMid meet">
+        <defs>
+          <linearGradient id="boltFill" x1="0" y1="0" x2="0.42" y2="1">
+            <stop offset="0%"   stop-color="var(--brand)" stop-opacity="0.72" />
+            <stop offset="42%"  stop-color="var(--brand)" stop-opacity="0.38" />
+            <stop offset="100%" stop-color="var(--brand)" stop-opacity="0.13" />
+          </linearGradient>
+          {/* The facet. A sheet of material catches the light along one plane
+              and not the others; that single highlight is most of what makes
+              a shape read as solid rather than as a tint. */}
+          <linearGradient id="boltFacet" x1="0.1" y1="0" x2="0.9" y2="0.75">
+            <stop offset="0%"   stop-color="#ffffff" stop-opacity="0.20" />
+            <stop offset="38%"  stop-color="#ffffff" stop-opacity="0.05" />
+            <stop offset="70%"  stop-color="#ffffff" stop-opacity="0" />
+          </linearGradient>
+        </defs>
+        <path d="M132 8 30 168h62l-16 124 98-166h-62L132 8z" fill="url(#boltFill)" />
+        <path d="M132 8 30 168h62l-16 124 98-166h-62L132 8z" fill="url(#boltFacet)" />
+        <path class="bolt-edge" d="M132 8 30 168h62l-16 124 98-166h-62L132 8z"
+              fill="none" stroke="var(--brand)" stroke-width="2.2" stroke-linejoin="round" />
+      </svg>
     </>
   )}
 
@@ -63,31 +102,65 @@ const { image = client.heroImage, inner = false } = Astro.props;
 </section>
 
 <style>
-  /* Faint technical grid — reads as drawing paper, not decoration. */
+  /* Every decorative layer is pulled up to z-index -1 so it clears
+     .hero::before. They then stack purely in DOM order:
+       paper (grid) -> light (ambient) -> wiring (circuit) -> mark (bolt)
+     Content is untouched at z-index auto and still paints above all of it. */
+
+  /* Faint technical grid — reads as drawing paper, not decoration.
+     The mask is deliberately tight to the right: the grid is the sheet the
+     bolt is drawn on, and it must not creep across the text column, which is
+     the one place the scrim underneath is still doing real work. */
   .hero__grid {
-    position: absolute; inset: 0; z-index: -4; pointer-events: none;
+    position: absolute; inset: 0; z-index: -1; pointer-events: none;
     background-image:
-      linear-gradient(to right, color-mix(in srgb, var(--brand) 7%, transparent) 1px, transparent 1px),
-      linear-gradient(to bottom, color-mix(in srgb, var(--brand) 7%, transparent) 1px, transparent 1px);
+      linear-gradient(to right, color-mix(in srgb, var(--brand) 11%, transparent) 1px, transparent 1px),
+      linear-gradient(to bottom, color-mix(in srgb, var(--brand) 11%, transparent) 1px, transparent 1px);
     background-size: 64px 64px;
-    -webkit-mask-image: radial-gradient(115% 90% at 78% 26%, #000 12%, transparent 72%);
-    mask-image: radial-gradient(115% 90% at 78% 26%, #000 12%, transparent 72%);
+    -webkit-mask-image: radial-gradient(66% 84% at 84% 28%, #000 4%, transparent 70%);
+    mask-image: radial-gradient(66% 84% at 84% 28%, #000 4%, transparent 70%);
   }
 
+  /* Aim the hero's lamps: main source behind the bolt, amber counter-light
+     down by the CTA so the warm button has something to sit against, floor
+     bounce along the bottom edge where the spec rail overlaps. */
+  .hero :global(.hero__ambient .ambient__blob--a) { --blob-x: 78%; --blob-y: 26%; --blob-w: 94%; --blob-h: 118%; --blob-a: 26%; }
+  /* Amber, kept low: over a ground this dark, warm light past about 10% stops
+     reading as light and starts reading as a brown stain in the corner. */
+  .hero :global(.hero__ambient .ambient__blob--b) { --blob-x: 30%; --blob-y: 96%; --blob-w: 76%; --blob-h: 70%; --blob-a: 9%; }
+  .hero :global(.hero__ambient .ambient__blob--c) { --blob-x: 52%; --blob-y: 112%; --blob-w: 104%; --blob-h: 58%; --blob-a: 10%; }
+  /* Inner pages get the same lamp at a third of the power — enough that the
+     22 secondary pages stop being flat black too, quiet enough that they never
+     compete with the homepage. */
+  .hero :global(.hero__ambient--inner .ambient__blob--a) { --blob-x: 82%; --blob-y: 18%; --blob-w: 88%; --blob-h: 130%; --blob-a: 13%; }
+  .hero :global(.hero__ambient--inner .ambient__blob--b) { --blob-x: 8%;  --blob-y: 96%; --blob-w: 62%; --blob-h: 80%; --blob-a: 7%; }
+
   .hero__bolt {
-    position: absolute; z-index: -2; pointer-events: none;
-    right: 4%; top: 50%; transform: translateY(-50%) rotate(6deg);
-    height: 86%; width: auto;
-    filter: drop-shadow(0 0 90px color-mix(in srgb, var(--brand) 38%, transparent));
+    position: absolute; z-index: -1; pointer-events: none;
+    /* Was right:4% / height:86%, which left the mark floating just inside the
+       frame — the comment claimed a bleed the geometry never delivered. It now
+       actually runs off the edge, and it is large enough that the rich end of
+       the fill gradient covers the visible part rather than the thin tail.
+       Sized so the top point still clears the frame: crop the mark and it
+       stops being the client's bolt and becomes an abstract diagonal, which is
+       the one thing this element is not allowed to become. */
+    right: -6%; top: 50%; transform: translateY(-50%) rotate(7deg);
+    height: 90%; width: auto;
+    /* An offset shadow the mark casts onto the ground, then a tighter bloom.
+       The old single zero-offset 90px halo was decoration; this is a lit
+       object sitting above a surface. */
+    filter:
+      drop-shadow(0 26px 44px rgba(0, 0, 0, 0.72))
+      drop-shadow(0 0 34px color-mix(in srgb, var(--brand) 34%, transparent));
   }
   .bolt-edge {
     stroke-dasharray: 120 900;
     animation: charge 7s cubic-bezier(.5,0,.5,1) infinite;
-    opacity: .85;
+    opacity: .95;
   }
   @keyframes charge { to { stroke-dashoffset: -1020; } }
 
-  .hero__circuit { position: absolute; inset: 0; z-index: -3; pointer-events: none; opacity: .5; }
+  .hero__circuit { position: absolute; inset: 0; z-index: -1; pointer-events: none; opacity: .62; }
   .rail {
     stroke-dasharray: 90 1100;
     animation: run 9s linear infinite;
@@ -108,8 +181,17 @@ const { image = client.heroImage, inner = false } = Astro.props;
   }
 
   @media (max-width: 900px) {
-    .hero__bolt { right: -14%; height: 66%; opacity: .5; }
-    .hero__circuit { opacity: .3; }
+    /* The fill is far richer than it was, so the mobile bolt comes DOWN in
+       opacity, not up: on a 390px screen the text column and the bolt occupy
+       the same ground and the type has to win. */
+    .hero__bolt { right: -22%; height: 74%; opacity: .42; }
+    .hero__circuit { opacity: .34; }
+    .hero__grid {
+      -webkit-mask-image: radial-gradient(74% 60% at 88% 16%, #000 4%, transparent 72%);
+      mask-image: radial-gradient(74% 60% at 88% 16%, #000 4%, transparent 72%);
+    }
+    .hero :global(.hero__ambient .ambient__blob--a) { --blob-x: 86%; --blob-y: 16%; --blob-a: 20%; }
+    .hero :global(.hero__ambient .ambient__blob--b) { --blob-y: 96%; --blob-a: 11%; }
   }
 
   @media (prefers-reduced-motion: reduce) {

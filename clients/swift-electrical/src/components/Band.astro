@@ -8,6 +8,21 @@
 // is drawn on, the rails wire it to the one above, the bolt is a wall behind
 // the instrument. Nothing here moves: the hero and the spine own the motion,
 // so these stay still and stay cheap.
+//
+// Two marks are new, and they exist because the four above are all *drawing*
+// and none of them is *light*. A page built only from ink on paper is exactly
+// the page that got called flat. So:
+//
+//   `ambient`  puts a gradient ground inside the band, the same lamp the hero
+//              uses, so a section can emit light rather than only bear marks.
+//   `edge`     dissolves the band's own boundary into its neighbour. Bands
+//              butt-joined against each other are what makes a page read as a
+//              stack of coloured strips; a gradient edge makes the same
+//              sequence read as one continuous lit surface with events on it.
+//
+// Both are off by default, so no existing band changes unless it asks.
+import AmbientField from './AmbientField.astro';
+
 const {
   tone = 'plain',    // plain | panel | deep
   grid = false,
@@ -15,16 +30,26 @@ const {
   bolt = null,       // 'left' | 'right'
   lit = false,       // cove light along the top edge
   seam = false,      // hairline where the band meets the one above
+  ambient = false,   // true | 'brand' | 'warm' | 'split' | 'cool'
+  edge = false,      // 'top' | 'bottom' | 'both'
   class: cls = '',
   ...rest            // forwards the caller's scope attribute onto the root
 } = Astro.props;
 
-const cn = ['band', `band--${tone}`, lit && 'is-lit', seam && 'has-seam', cls]
+const cn = ['band', `band--${tone}`, lit && 'is-lit', seam && 'has-seam', ambient && 'has-ambient', cls]
   .filter(Boolean)
   .join(' ');
+
+const edgeTop = edge === 'top' || edge === 'both';
+const edgeBottom = edge === 'bottom' || edge === 'both';
 ---
 <section class={cn} {...rest}>
   {grid && <div class="band__grid" aria-hidden="true"></div>}
+
+  {ambient && <AmbientField tone={typeof ambient === 'string' ? ambient : 'brand'} class="band__ambient" />}
+
+  {edgeTop && <div class="grad-edge grad-edge--top" aria-hidden="true"></div>}
+  {edgeBottom && <div class="grad-edge grad-edge--bottom" aria-hidden="true"></div>}
 
   {rails && (
     <svg class="band__rails" viewBox="0 0 1440 720" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
@@ -81,20 +106,35 @@ const cn = ['band', `band--${tone}`, lit && 'is-lit', seam && 'has-seam', cls]
     mask-image: radial-gradient(120% 80% at 50% 0%, #000 6%, transparent 68%);
   }
 
+  /* Wiring and mark both sit ABOVE the band's ambient light, in DOM order,
+     for the same reason they do in the hero: a mark lit from behind reads as
+     an object, a mark painted under the light reads as a stain. This was the
+     single thing most wrong with the bolt on the old hero. */
   .band__rails {
-    position: absolute; inset: 0; z-index: -3; pointer-events: none;
-    color: var(--brand); opacity: 0.3;
+    position: absolute; inset: 0; z-index: -1; pointer-events: none;
+    color: var(--brand); opacity: 0.42;
   }
 
   .band__bolt {
-    position: absolute; z-index: -2; pointer-events: none;
+    position: absolute; z-index: -1; pointer-events: none;
     top: 50%; height: 96%; width: auto;
-    filter: drop-shadow(0 0 90px color-mix(in srgb, var(--brand) 20%, transparent));
+    /* Offset cast + tighter bloom, matching the hero. A zero-offset halo is
+       decoration; a shadow with an offset is an object above a surface. */
+    filter:
+      drop-shadow(0 22px 40px rgba(0, 0, 0, 0.6))
+      drop-shadow(0 0 30px color-mix(in srgb, var(--brand) 22%, transparent));
   }
   .band__bolt--left  { left: -7%;  transform: translateY(-50%) rotate(-7deg) scaleX(-1); }
   .band__bolt--right { right: -6%; transform: translateY(-50%) rotate(6deg); }
-  .band__bolt-fill { fill: color-mix(in srgb, var(--brand) 7%, transparent); }
-  .band__bolt-edge { stroke: color-mix(in srgb, var(--brand) 30%, transparent); }
+  .band__bolt-fill { fill: color-mix(in srgb, var(--brand) 13%, transparent); }
+  .band__bolt-edge { stroke: color-mix(in srgb, var(--brand) 46%, transparent); }
+
+  /* A band that emits light needs a slightly deeper floor to emit it against,
+     or the lamp just lifts the whole band uniformly and nothing has gained
+     any depth. Only applied where the band did not already choose a ground. */
+  .band--plain.has-ambient {
+    background: radial-gradient(150% 100% at 50% 50%, var(--sunk), transparent 76%);
+  }
 
   /* Cove light: a linear luminaire on the top edge, throwing down into the band.
      Shadow carries a real offset, not a zero-offset halo. */
