@@ -18,8 +18,8 @@ export const client = {
 
   // The one colour that drives the whole page. Swap this per client and the
   // canvas, aurora, core, buttons and accents all follow.
-  brand: '#22c8ee',
-  ground: '#080c10',
+  brand: '#4ade80',   // ES Elec green. One line to reskin the whole page.
+  ground: '#0b1310',
 
   town: 'Bradford',
   area: 'Bradford and West Yorkshire',

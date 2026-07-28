@@ -121,7 +121,19 @@
 .wc__sheet[data-sheet='0'],
 .wc__sheet[data-sheet='1'] { display: none; }
 .wc--live .wc__sheet[data-sheet='0'],
-.wc--live .wc__sheet[data-sheet='1'] { display: block; }
+.wc--live .wc__sheet[data-sheet='1'] { display: block; will-change: transform; }
+
+/* The face carries a whole month of type, and its clip-path is rewritten on every
+   frame of the peel. Without a layer of its own that is a full repaint of the grid
+   per frame — measurably the most expensive thing in the sequence. Promoted, the
+   clip becomes a compositor mask over a texture that is rasterised once. Only on
+   the sheets that actually turn: promoting the settled sheet buys nothing and
+   costs memory. */
+.wc--live .wc__sheet[data-sheet='0'] .wc__face,
+.wc--live .wc__sheet[data-sheet='1'] .wc__face {
+  will-change: transform, clip-path;
+  transform: translateZ(0);
+}
 
 .wc__punches {
   position: absolute;
@@ -300,12 +312,14 @@
   box-shadow: inset 0 0 clamp(60px, 7vw, 130px) rgba(0, 0, 0, .34);
 }
 
-/* The curl: mesh, its shading, and the shadow it casts. Drawn in the component. */
+/* The curl: mesh, its shading, and the shadow it casts. Drawn in the component,
+   which also sets left and width — the canvas covers only the corner the fold can
+   reach, not the whole sheet. */
 .wc__curl {
   position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
+  top: 0;
+  bottom: 0;
+  left: 0;
   pointer-events: none;
   backface-visibility: hidden;
   will-change: transform;

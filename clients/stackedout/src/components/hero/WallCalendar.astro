@@ -237,7 +237,7 @@ document.addEventListener('DOMContentLoaded', function () {
   // Mesh: facets across the fold, and along the roll. Heavily biased toward the
   // roll, because that is the direction the light falls off in — the shading barely
   // changes along the fold, but it swings the full way round it.
-  var NX = 30, NY = 40;
+  var NX = 26, NY = 34;
 
   // Shade a normal. The printed side is the same dark stock as the sheet and only
   // ever a little lighter or darker than it, because it is the same paper barely
@@ -269,11 +269,21 @@ document.addEventListener('DOMContentLoaded', function () {
     var r = this.sheet.getBoundingClientRect();
     this.W = Math.max(1, Math.round(r.width));
     this.H = Math.max(1, Math.round(r.height));
-    this.dpr = Math.min(window.devicePixelRatio || 1, 2);
-    this.cv.width  = Math.round(this.W * this.dpr);
-    this.cv.height = Math.round(this.H * this.dpr);
     // How far up and left the fold travels, and how tightly the paper rolls.
     this.FMAX = 0.26 * (this.W + this.H);
+    // The canvas covers only the part of the sheet the curl can ever reach — the
+    // fold's own travel plus the reach of the tongue folded back over it — and it
+    // is rasterised at 1.5x rather than at the display's ratio. Both are about the
+    // texture: a full-sheet canvas at 2x is three megapixels cleared, redrawn and
+    // handed to the compositor on every frame of the turn, for a shape that has no
+    // fine detail in it and occupies a third of the sheet.
+    this.x0 = Math.max(0, this.W - this.FMAX - this.H * 0.45);
+    this.cw = this.W - this.x0;
+    this.dpr = Math.min(window.devicePixelRatio || 1, 1.5);
+    this.cv.style.left  = this.x0 + 'px';
+    this.cv.style.width = this.cw + 'px';
+    this.cv.width  = Math.round(this.cw * this.dpr);
+    this.cv.height = Math.round(this.H * this.dpr);
     // Curl radius is a property of the stock, not of how far the fold has run, so
     // it is constant through the turn. It is also the one number that decides
     // whether any of this reads, and the constraint is not obvious: the reverse of
@@ -291,7 +301,7 @@ document.addEventListener('DOMContentLoaded', function () {
   Turn.prototype.pt = function (x, v, z, o) {
     var sx = this.W + (x + v) * SQ, sy = this.H + (v - x) * SQ;
     var k = PERSP / (PERSP - z);             // the curl stands off the sheet, so it grows
-    o[0] = (this.ox + (sx - this.ox) * k) * this.dpr;
+    o[0] = (this.ox + (sx - this.ox) * k - this.x0) * this.dpr;
     o[1] = (this.oy + (sy - this.oy) * k) * this.dpr;
   };
 

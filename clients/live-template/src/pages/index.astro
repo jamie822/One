@@ -35,7 +35,7 @@ const tel = has(c.phone) ? `tel:${c.phone.replace(/\s+/g, '')}` : null;
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet" />
-  <style set:html={`:root{--brand:${c.brand};--ground:${c.ground}}`}></style>
+  <style set:html={`:root{--green:${c.brand};--charcoal:${c.ground}}`}></style>
 </head>
 <body>
   <div class="scroll-progress" id="progress"></div>
@@ -109,15 +109,15 @@ const tel = has(c.phone) ? `tel:${c.phone.replace(/\s+/g, '')}` : null;
             <span class="spark s3"></span><span class="spark s4"></span>
           </div>
           <div class="chip chip-a">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d={ICON.camera}/></svg>
+            <span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d={ICON.camera}/></svg></span>
             <div><strong>CCTV &amp; alarms</strong><small>Same person as your electrics</small></div>
           </div>
           <div class="chip chip-b">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d={ICON.clipboard}/></svg>
+            <span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d={ICON.clipboard}/></svg></span>
             <div><strong>Landlord EICRs</strong><small>Certified and notified</small></div>
           </div>
           <div class="chip chip-c">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d={ICON.search}/></svg>
+            <span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d={ICON.search}/></svg></span>
             <div><strong>Fault finding</strong><small>Found, not guessed at</small></div>
           </div>
         </div>
@@ -183,7 +183,7 @@ const tel = has(c.phone) ? `tel:${c.phone.replace(/\s+/g, '')}` : null;
         <aside class="why-stats reveal-up">
           <div class="stat"><strong data-count={c.google.reviewCount}>0</strong><span>Google reviews, all five star</span></div>
           <div class="stat"><strong>{c.accreditation.split(' ')[0]}</strong><span>{has(c.accreditationNumber) ? `No. ${c.accreditationNumber}` : 'Enrolment number needed'}</span></div>
-          <div class="stat"><strong>{c.town}</strong><span>{c.area}</span></div>
+          <div class="stat"><strong>{c.town}</strong><span class="val">{c.area}</span></div>
           <div class="stat"><strong>{c.hours.replace('Open until ', 'To ')}</strong><span>Most days</span></div>
         </aside>
       </div>
@@ -250,11 +250,11 @@ const tel = has(c.phone) ? `tel:${c.phone.replace(/\s+/g, '')}` : null;
             </li>
             <li>
               <span class="ci"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d={ICON.pin}/></svg></span>
-              <div><small>Area covered</small><span>{c.area}</span></div>
+              <div><small>Area covered</small><span class="val">{c.area}</span></div>
             </li>
             <li>
               <span class="ci"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d={ICON.clock}/></svg></span>
-              <div><small>Hours</small><span>{c.hours}</span></div>
+              <div><small>Hours</small><span class="val">{c.hours}</span></div>
             </li>
           </ul>
         </div>
@@ -309,7 +309,7 @@ const tel = has(c.phone) ? `tel:${c.phone.replace(/\s+/g, '')}` : null;
     // Animated electrical grid: nodes on a lattice with a current running the links.
     document.querySelectorAll('canvas[data-grid]').forEach((cv) => {
       const ctx = cv.getContext('2d');
-      const brand = getComputedStyle(document.documentElement).getPropertyValue('--brand').trim() || '#22c8ee';
+      const brand = getComputedStyle(document.documentElement).getPropertyValue('--green').trim() || '#22c8ee';
       let w = 0, h = 0, nodes = [], links = [], raf = 0;
 
       const build = () => {
@@ -355,7 +355,7 @@ const tel = has(c.phone) ? `tel:${c.phone.replace(/\s+/g, '')}` : null;
 
     // Reveals
     const io = new IntersectionObserver((es) => es.forEach((e) => {
-      if (e.isIntersecting) { e.target.classList.add('is-in'); io.unobserve(e.target); }
+      if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); }
     }), { rootMargin: '0px 0px -8% 0px' });
     document.querySelectorAll('.reveal-up').forEach((el) => io.observe(el));
 
