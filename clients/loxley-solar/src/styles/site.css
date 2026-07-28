@@ -115,16 +115,20 @@
     0 0 200px 70px color-mix(in srgb, var(--sun-500) 15%, transparent);
   transform: translateY(9vh);
 }
-/* The rays: twelve tapiered-off spokes in a slow-turning ring around the disc. */
+/* The rays: eight wide, soft-edged beams in a slow-turning ring. Every edge
+   fades: angularly through the conic stops, radially through the mask, and
+   a light blur takes the last of the spike off. */
 .hero__bigsun i::before {
   content: '';
-  position: absolute; inset: -38%;
+  position: absolute; inset: -44%;
   border-radius: 50%;
   background: repeating-conic-gradient(
-    color-mix(in srgb, var(--sun-500) 88%, transparent) 0deg 5deg,
-    transparent 5deg 30deg);
-  -webkit-mask: radial-gradient(circle, transparent 40%, #000 41%, #000 57%, transparent 58%);
-  mask: radial-gradient(circle, transparent 40%, #000 41%, #000 57%, transparent 58%);
+    transparent 0deg 7deg,
+    color-mix(in srgb, var(--sun-500) 55%, transparent) 17deg 28deg,
+    transparent 38deg 45deg);
+  -webkit-mask: radial-gradient(circle, transparent 36%, #000 46%, #000 58%, transparent 72%);
+  mask: radial-gradient(circle, transparent 36%, #000 46%, #000 58%, transparent 72%);
+  filter: blur(7px);
 }
 @media (prefers-reduced-motion: no-preference) {
   html.js .hero__bigsun i::before { animation: rays-turn 120s linear infinite; }
