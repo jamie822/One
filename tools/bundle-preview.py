@@ -23,6 +23,19 @@ import html
 import base64
 import pathlib
 
+# An optional landing route. Without this a multi-route preview always opens on
+# "/", which sent a client to an old page and made finished work look unchanged.
+argv = [a for a in sys.argv[1:]]
+default_route = '/'
+for a in list(argv):
+    if a.startswith('--default='):
+        default_route = a.split('=', 1)[1]
+        argv.remove(a)
+        if not default_route.startswith('/'):
+            default_route = '/' + default_route
+        if not default_route.endswith('/'):
+            default_route += '/'
+
 dist = pathlib.Path('dist')
 css  = "\n".join(p.read_text() for p in sorted((dist/'_astro').glob('*.css')))
 
@@ -138,12 +151,14 @@ body{{padding-bottom:42px}}
 <script>
 (function(){{
   var routes = {json.dumps(list(pages.keys()))};
+  var LANDING = {json.dumps(default_route)};
+  var HOME = routes.indexOf(LANDING) >= 0 ? LANDING : routes[0];
   function norm(h){{
     h = (h || '').replace(/^#/, '');
-    if (!h) return '/';
+    if (!h) return HOME;
     if (!h.startsWith('/')) h = '/' + h;
     if (h !== '/' && !h.endsWith('/')) h += '/';
-    return routes.indexOf(h) >= 0 ? h : '/';
+    return routes.indexOf(h) >= 0 ? h : HOME;
   }}
   function show(r){{
     document.querySelectorAll('.rt').forEach(function(el){{
@@ -185,7 +200,7 @@ body{{padding-bottom:42px}}
 }})();
 </script>
 """
-dest = pathlib.Path(sys.argv[1]) if len(sys.argv) > 1 else pathlib.Path(f"/tmp/{pathlib.Path.cwd().name}-preview.html")
+dest = pathlib.Path(argv[0]) if argv else pathlib.Path(f"/tmp/{pathlib.Path.cwd().name}-preview.html")
 dest.write_text(out)
 print("written to", dest)
 print(f"{len(pages)} routes bundled -> {len(out)//1024} KB")

@@ -10,6 +10,7 @@ interface Props { title: string; variant: string; blurb: string; }
 const { title, variant, blurb } = Astro.props;
 
 const candidates = [
+  { slug: 'hero',     label: 'Calendar hero' },
   { slug: 'diary',    label: 'The diary fills' },
   { slug: 'board',    label: 'The board comes alive' },
   { slug: 'timeline', label: '25 years, scrubbed' },
