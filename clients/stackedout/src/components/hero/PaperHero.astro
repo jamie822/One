@@ -8,15 +8,11 @@
 // at any density, selectable, translatable, and above all CORRECT — real months,
 // real job types, and one free day ringed, which is the claim the brand rests on.
 //
-// THE MARK IS THE MASTHEAD. It and the wordmark are printed at the top of the
-// page, where a wall planner puts its title, with the month opposite and a brand
-// rule under both. The mark faces in from the left, its slots fill in sequence,
-// the word inks in after them, and the rule draws last.
-//
-// THE TURNS REPEAT. The clip loops and the diary swaps month behind each turn: the
-// printing fades as the corner lifts, the page changes while the sheet is in the
-// air, and the next month writes itself in as it settles. So it reads as a diary
-// being worked through rather than one page moving once.
+// EACH PAGE IS A WHOLE PRINTED SHEET. Masthead, month, day names and entries are
+// all inside one .ph__page, because that is what has to leave together when the
+// sheet turns. The first version had the masthead as a layer over the film, so the
+// paper rolled away and the logo sat there: printing stuck to the lens instead of
+// to the page. The fold in paper-hero.css is what carries it off now.
 //
 // Three months, and each has to fit the seven columns by five rows the photograph
 // is printed with. That is not automatic: August 2026 starts on a Saturday and
@@ -85,22 +81,31 @@ const DOWS = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
       <source src="/video/hero-turn.mp4" type="video/mp4" />
     </video>
 
-    {/* The printing. All three pages are in the document and one is shown at a
-        time, so a turn never waits on a render. */}
+    {/* All three sheets are in the document and one is shown at a time, so a turn
+        never waits on a render. data-first marks the sheet that is on the pad when
+        the page loads: it is the only one whose printing arrives by inking in,
+        because the other two arrive by being uncovered. */}
     <div class="ph__diary" data-diary>
-      <div class="ph__mast">
-        <Mark class="ph__mark" size={44} variant="story" id="ph-mark" />
-        <p class="ph__word">Stacked&nbsp;Out</p>
-        <span class="ph__rule" aria-hidden="true"></span>
-      </div>
-
       {PAGES.map((p, i) => (
-        <div class="ph__page" data-page={i} data-on={i === 0 ? 'true' : undefined} aria-hidden="true">
-          <p class="ph__month">
-            <span class="ph__month-n">{p.name}</span>
-            <span class="ph__month-y">{p.year}</span>
-          </p>
+        <div
+          class="ph__page"
+          data-page={i}
+          data-on={i === 0 ? 'true' : undefined}
+          data-first={i === 0 ? 'true' : undefined}
+          aria-hidden="true"
+        >
+          <div class="ph__mast">
+            <Mark class="ph__mark" size={44} variant="story" rings={false} id={`ph-mark-${i}`} />
+            <p class="ph__word">Stacked&nbsp;Out</p>
+            <p class="ph__month">
+              <span class="ph__month-n">{p.name}</span>
+              <span class="ph__month-y">{p.year}</span>
+            </p>
+            <span class="ph__rule"></span>
+          </div>
+
           <div class="ph__dows">{DOWS.map((d) => <span>{d}</span>)}</div>
+
           <div class="ph__grid">
             {p.cells.map((c, n) => (
               <div
@@ -126,12 +131,11 @@ const DOWS = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
   </div>
 
   {/* One statement of what the picture is doing, for anyone who cannot see it. The
-      pages themselves are aria-hidden: thirty five dates read aloud is noise, and
-      none of it is information the copy below does not already carry. The mark
-      keeps its own label, so the masthead still announces the studio. */}
+      sheets themselves are aria-hidden: thirty five dates read aloud is noise, and
+      none of it is information the copy below does not already carry. */}
   <p class="ph__sr">
-    A wall diary turning through {PAGES.map((p) => p.name).join(', ')} 2026, every
-    working day carrying a job, one day each month left free.
+    {studio.name}. A wall diary turning through {PAGES.map((p) => p.name).join(', ')} 2026,
+    every working day carrying a job, one day each month left free.
   </p>
 </div>
 
@@ -149,7 +153,7 @@ const DOWS = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
     var started = false;
 
     // The turn window, read off the delivered frames rather than guessed: the
-    // corner is lifting by 0.55s and the sheet underneath is settled by 2.45s.
+    // corner is lifting by 0.55s and the sheet underneath is flat by 2.45s.
     var TURN_IN = 0.55;
     var TURN_OUT = 2.45;
     var idx = 0;
@@ -161,25 +165,29 @@ const DOWS = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
       if (button) button.hidden = true;
     });
 
-    // timeupdate is enough. It fires several times a second and the only thing it
-    // drives is a fade — nothing is positioned per frame, so a requestAnimationFrame
-    // loop would cost more and buy nothing.
+    // timeupdate is enough. It fires several times a second and all it does is set
+    // two attributes; the fold itself is a CSS animation on the film's own timing,
+    // so nothing here runs per frame.
     film.addEventListener('timeupdate', function () {
       if (!pages.length) return;
       var inTurn = film.currentTime > TURN_IN && film.currentTime < TURN_OUT;
       if (inTurn === turning) return;
       turning = inTurn;
+
       if (inTurn) {
-        // Printing out while the paper moves. Ink stays with its own sheet.
-        diary.classList.add('is-turning');
+        // BOTH sheets are on screen through the turn, which is the whole point:
+        // the outgoing one is wiped away along the fold while the incoming one is
+        // uncovered along the same line. They are two halves of one edge.
+        var next = (idx + 1) % pages.length;
+        pages[idx].setAttribute('data-out', 'true');
+        pages[idx].removeAttribute('data-first');
+        pages[next].setAttribute('data-on', 'true');
+        pages[next].setAttribute('data-in', 'true');
       } else {
-        // Swap while the page is in the air. Advancing here rather than on the loop
-        // event is what makes the third turn show a third month, and re-setting
-        // data-on is what restarts the writing-in for the new page.
+        pages[idx].removeAttribute('data-out');
         pages[idx].removeAttribute('data-on');
         idx = (idx + 1) % pages.length;
-        pages[idx].setAttribute('data-on', 'true');
-        diary.classList.remove('is-turning');
+        pages[idx].removeAttribute('data-in');
       }
     });
 

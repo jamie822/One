@@ -1,10 +1,10 @@
 /* PAPER HERO — the photographic wall diary, and the printing on it.
 
-   Everything here is transform, opacity, background-position or a composited
-   filter: nothing animates a property that costs layout. The film is the only
-   heavy thing on the page and it is one element.
+   Everything here is transform, opacity, mask-position or a composited filter:
+   nothing animates a property that costs layout. The film is the only heavy thing
+   on the page and it is one element.
 
-   TWO THINGS THIS FILE IS DOING BEYOND LAYOUT.
+   THREE THINGS THIS FILE IS DOING BEYOND LAYOUT.
 
    One, it grades the film. The clip came back split toned, amber on the left and
    teal on the right, against a near black wall — handsome, and completely wrong
@@ -13,28 +13,45 @@
    brightness up, contrast down so the blacks come off the floor, and a warm wash
    over the top. Bright working daylight, not a moody studio.
 
-   Two, all the printing is registered to the printed grid instead of to the
-   frame, so the masthead, the month and the entries stay on the same part of the
-   photograph at every width. Tune .ph__diary's four percentages; everything else
-   hangs off them. */
+   Two, THE FOLD. The delivered turn was measured frame by frame: the bottom right
+   corner lifts at about 0.35s, the fold line rolls up and to the left across the
+   sheet at roughly 35 degrees above horizontal, and the sheet is gone by about
+   2.2s. So the printing is wiped along that same line at that same rate, and the
+   month underneath is uncovered along it. Both sheets are on screen at once during
+   a turn, which is what the frames show. Fading the printing out instead, which is
+   what this did first, reads as type stuck to the lens rather than ink on paper.
+
+   Three, the ink MULTIPLIES with the photograph. Ink absorbs light, so it has to
+   take the paper's own light and shade: warm on the lit left, cool towards the
+   right edge, darker in the shadow. One blend layer on the whole printing.
+
+   Registration: .ph__diary's four percentages own where the grid sits, measured off
+   the poster at 1440px. Tune those, not the layout. */
 
 .ph {
   --film-ar: 1344 / 576;
 
-  /* The whole reveal is keyed to the film's clock, not chosen for feel. The clip
-     holds for 0.55s, turns until 2.45s and is settled by 3.4s. So the printing
-     has one held frame to arrive in at the start, and it takes it: mark, then
-     the word, then the brand rule under both. */
+  /* The masthead band. The page box extends this far ABOVE the registration box,
+     so the printed grid stays exactly where it was measured. */
+  --mast-h: clamp(24px, 3.3vw, 58px);
+
+  /* The load reveal, keyed to the film's clock rather than chosen for feel. The
+     clip holds for 0.55s before the corner lifts, so the printing has one held
+     frame to arrive in and it takes it: mark, then the word, then the rule. */
   --t-mark: .06s;
-  --t-slot: .2s;
-  --t-ink:  .22s;
-  --t-rule: .62s;
-  --d-ink:  .52s;
+  --t-slot: .18s;
+  --t-ink:  .2s;
+  --t-rule: .58s;
+  --d-ink:  .5s;
+
+  /* The fold, from the frames: 1.6s from first lift to flat paper. */
+  --d-fold: 1.62s;
+  --ease-fold: cubic-bezier(.38, .12, .72, .88);
 
   /* Ink. Not black: a diary is written in biro, and the blue reads as written
-     rather than typeset once it is sitting on warm paper. */
-  --pen:      27 36 58;
-  --pen-soft: 38 48 72;
+     rather than typeset once it is multiplying into warm paper. */
+  --pen:      33 45 74;
+  --pen-soft: 48 60 88;
 
   position: relative;
   width: min(100% - 2 * var(--s-3), 1560px);
@@ -69,8 +86,8 @@
 }
 
 /* The grade. brightness lifts, the sub 1 contrast pulls the crushed blacks up off
-   the floor, and the tiny saturation trim stops the teal edge going electric once
-   it is brighter. One filter on one composited element. */
+   the floor, and the saturation trim stops the teal edge going electric once it is
+   brighter. One filter on one composited element. */
 .ph__film {
   display: block;
   width: 100%;
@@ -102,10 +119,10 @@
 }
 
 /* ---- The printing ------------------------------------------------------- */
-/* Registered to the grid that is actually printed in the frame, in percentages of
-   the stage, because both scale with the viewport. Measured off the poster at
-   1440px: the printed grid runs 16.2% to 87% across and 24% down to 84.5%.
-   Tune these four numbers, not the layout. */
+/* The registration box: where the grid printed in the photograph actually is, in
+   percentages of the stage, because both scale with the viewport. Measured off the
+   poster at 1440px — the printed grid runs 16.2% to 87% across, 24% down to 84.5%.
+   The masthead band sits above this box, added back by .ph__page. */
 .ph__diary {
   position: absolute;
   left: 16.2%;
@@ -114,33 +131,97 @@
   bottom: 15.5%;
   z-index: 2;
   pointer-events: none;
-  /* The whole printing fades while the sheet is in the air. Ink belongs to its
-     own sheet, so it cannot still be there once that sheet has left. */
-  transition: opacity 240ms var(--ease-ui);
+  /* Ink absorbs light. This is the single thing that stops the type reading as an
+     overlay: everything printed now picks up the raking light, the paper grain and
+     the shadow under the roll, because it is multiplying into them. */
+  mix-blend-mode: multiply;
 }
-.ph__diary.is-turning { opacity: 0; }
 
-/* ---- The masthead, printed at the top of the page ----------------------- */
-/* Anchored to the top of the printed grid rather than to the frame, so the mark,
-   the word and the month all sit in the band the paper leaves for a title, at
-   every width. This is the calendar's own header: the mark IS the diary. */
-.ph__mast {
+/* ---- A sheet ------------------------------------------------------------ */
+/* One printed page: masthead, month, day names, entries. The whole thing is what
+   leaves when the sheet turns, so the whole thing is one element. */
+.ph__page {
   position: absolute;
   left: 0;
   right: 0;
-  bottom: calc(100% + .5em);
+  top: calc(-1 * var(--mast-h));
+  bottom: 0;
+  display: grid;
+  grid-template-rows: var(--mast-h) auto 1fr;
+  opacity: 0;
+  visibility: hidden;
+}
+.ph__page[data-on] { opacity: 1; visibility: visible; }
+
+/* THE FOLD. The line the roll leaves runs about 34 degrees above horizontal in the
+   delivered frames, measured across the pad. A gradient's edge is PERPENDICULAR to
+   its axis, which is the trap here: 125deg looks like the right number and wipes
+   almost vertically. 146deg is the axis whose edge lies at 34 degrees. Up-left of
+   that edge the sheet is still flat; down-right of it the sheet has gone.
+
+   The outgoing sheet keeps the up-left side, the incoming sheet keeps the down-right
+   side, and both move together: two halves of one edge. The feather is the roll
+   itself — printing on paper that is already curving is not facing us any more. */
+/* --fold is the boundary's position along that axis, 0% at the top left corner and
+   100% at the bottom right. Registering it is what makes it interpolate: animating
+   mask-position instead, which was the first attempt, does not animate at all in
+   Chromium — it jumps to the end state, so both sheets swapped instantly and the
+   whole point was lost. */
+@property --fold {
+  syntax: '<percentage>';
+  inherits: false;
+  initial-value: 100%;
+}
+
+.ph__page[data-out],
+.ph__page[data-in] {
+  -webkit-mask-repeat: no-repeat;
+          mask-repeat: no-repeat;
+  -webkit-mask-size: 100% 100%;
+          mask-size: 100% 100%;
+}
+/* The outgoing sheet keeps the up-left side of the fold. */
+.ph__page[data-out] {
+  -webkit-mask-image: linear-gradient(146deg, #000 0 var(--fold), rgba(0, 0, 0, .32) calc(var(--fold) + 4%), transparent calc(var(--fold) + 9%));
+          mask-image: linear-gradient(146deg, #000 0 var(--fold), rgba(0, 0, 0, .32) calc(var(--fold) + 4%), transparent calc(var(--fold) + 9%));
+  animation: ph-fold-out var(--d-fold) var(--ease-fold) both;
+}
+/* The incoming sheet keeps the down-right side: the same edge, the other half. */
+.ph__page[data-in] {
+  -webkit-mask-image: linear-gradient(146deg, transparent 0 var(--fold), rgba(0, 0, 0, .32) calc(var(--fold) + 4%), #000 calc(var(--fold) + 9%));
+          mask-image: linear-gradient(146deg, transparent 0 var(--fold), rgba(0, 0, 0, .32) calc(var(--fold) + 4%), #000 calc(var(--fold) + 9%));
+  animation: ph-fold-in var(--d-fold) var(--ease-fold) both;
+}
+/* The opacity tail on the way out is a safety net, not styling: in an engine without
+   registered properties the mask is invalid and does nothing, and this is what still
+   takes the old sheet's printing off the paper. */
+@keyframes ph-fold-out {
+  from { --fold: 108%; opacity: 1; }
+  88%  { opacity: 1; }
+  to   { --fold: -11%; opacity: 0; }
+}
+@keyframes ph-fold-in {
+  from { --fold: 108%; }
+  to   { --fold: -11%; }
+}
+
+/* ---- The masthead, printed at the top of the sheet ---------------------- */
+/* Where a wall planner puts its title: the mark, the word, the month opposite, and
+   a rule under all three. It is a row of the sheet's own grid, so it turns with the
+   sheet instead of hovering over it. */
+.ph__mast {
+  position: relative;
   display: flex;
-  align-items: center;
+  align-items: flex-end;
   gap: clamp(6px, .78vw, 15px);
+  padding-bottom: .3em;
 }
 
 .ph__mark {
   flex: none;
-  width: clamp(15px, 1.72vw, 31px);
+  width: clamp(17px, 2.14vw, 38px);
   height: auto;
-  /* The mark's body is the guide's near black, which is what makes it read as a
-     printed block on the paper rather than a sticker. */
-  filter: drop-shadow(0 1px 2px rgba(24, 16, 4, .28));
+  align-self: center;
 }
 
 .ph__word {
@@ -148,74 +229,58 @@
   font-family: var(--font-display);
   font-weight: 700;
   font-size: clamp(17px, 2.36vw, 42px);
-  line-height: 1;
+  line-height: .88;
   letter-spacing: -.03em;
   /* Clash draws a narrow word space and the guide forbids "StackedOut". */
   word-spacing: .1em;
   /* Revealed by a hard edged gradient used as a text clip, slid right to left
-     across a 220% wide background: the word inks in from the left, the direction
-     a hand writes. On paper it inks in ink, not in brand colour — the colour is
-     the mark's job, below. */
+     across a 220% wide background: the word inks in from the left, the direction a
+     hand writes. It inks in ink, not in brand colour — yellow disappears on lit
+     paper, and the colour is the mark's job. */
   background-image: linear-gradient(100deg, rgb(var(--pen)) 0 50%, transparent 50%);
   background-size: 220% 100%;
   background-repeat: no-repeat;
-  background-position: 100% 0;
+  background-position: 0 0;
   -webkit-background-clip: text;
           background-clip: text;
   color: transparent;
 }
 
-/* THE one signature gradient on this page: a printer's rule under the masthead,
-   drawn left to right as the last move. Two stops, the brand's own. A hairline
-   is where a gradient can carry a brand on warm paper without either stop
-   disappearing into it. */
-.ph__rule {
-  position: absolute;
-  left: 0;
-  right: 0;
-  bottom: -.34em;
-  height: max(1.5px, .13vw);
-  border-radius: 2px;
-  background: linear-gradient(90deg, #f5c400 0%, #17b6d8 62%, rgba(23, 182, 216, .12) 100%);
-  transform: scaleX(0);
-  transform-origin: 0 50%;
-}
-
-/* The month, opposite the mark, in the same band. It belongs to the page rather
-   than the masthead, because it changes when the page does. */
+/* The month, opposite the mark. */
 .ph__month {
-  position: absolute;
-  right: 0;
-  bottom: calc(100% + .62em);
-  margin: 0;
+  margin: 0 0 0 auto;
   display: flex;
   align-items: baseline;
   gap: .34em;
   font-family: var(--font-display);
   font-weight: 700;
   letter-spacing: -.03em;
-  color: rgb(var(--pen) / .9);
+  line-height: .9;
+  color: rgb(var(--pen));
 }
-.ph__month-n { font-size: clamp(14px, 1.98vw, 35px); line-height: 1; }
+.ph__month-n { font-size: clamp(14px, 1.98vw, 35px); }
 .ph__month-y {
   font-size: clamp(8px, .74vw, 13px);
   font-weight: 600;
   letter-spacing: .04em;
-  color: rgb(var(--pen-soft) / .62);
+  color: rgb(var(--pen-soft) / .72);
 }
 
-/* ---- The page ----------------------------------------------------------- */
-.ph__page {
+/* THE one signature gradient on this page: a printer's rule under the masthead,
+   drawn left to right as the last move of the load. Two stops, the brand's own,
+   pitched deep because they are multiplying into paper. */
+.ph__rule {
   position: absolute;
-  inset: 0;
-  display: grid;
-  /* Day names in the band between the masthead and the first printed row. */
-  grid-template-rows: auto 1fr;
-  opacity: 0;
-  visibility: hidden;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: max(1.5px, .13vw);
+  border-radius: 2px;
+  background: linear-gradient(90deg, #e8bf00 0%, #12a7c8 62%, rgba(18, 167, 200, .1) 100%);
+  transform-origin: 0 50%;
 }
-.ph__page[data-on] { opacity: 1; visibility: visible; }
 
+/* ---- Day names and entries --------------------------------------------- */
 .ph__dows {
   display: grid;
   grid-template-columns: repeat(7, 1fr);
@@ -227,7 +292,7 @@
   font-size: clamp(6px, .58vw, 10px);
   letter-spacing: .1em;
   text-transform: uppercase;
-  color: rgb(var(--pen-soft) / .66);
+  color: rgb(var(--pen-soft) / .8);
   padding-left: .5em;
 }
 
@@ -254,39 +319,36 @@
   font-variant-numeric: tabular-nums;
   font-size: clamp(8px, .82vw, 15px);
   line-height: 1;
-  color: rgb(var(--pen) / .92);
+  color: rgb(var(--pen));
 }
 
-/* The job. Underlined in the accent: a hairline under 12px type is the one place
-   a written entry can carry brand colour without competing with the masthead. */
+/* The job. Underlined in the accent: a hairline under 12px type is the one place a
+   written entry can carry brand colour without competing with the masthead. */
 .ph__job {
   max-width: 100%;
   font-family: var(--font-body);
   font-weight: 600;
   font-size: clamp(6.5px, .66vw, 12px);
   line-height: 1.15;
-  color: rgb(var(--pen) / .88);
-  /* One line, clipped rather than wrapped: a wrapped entry would push the row,
-     and the rows are printed on the paper and cannot move. */
+  color: rgb(var(--pen));
+  /* One line, clipped rather than wrapped: a wrapped entry would push the row, and
+     the rows are printed on the paper and cannot move. */
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-  border-bottom: 1px solid color-mix(in srgb, #e0a600 74%, transparent);
+  border-bottom: 1px solid #d09b00;
 }
 
-/* The free day. Ringed by hand round the numeral, deliberately not a circle:
-   52/48 radii and a few degrees off square is what a pen does. align-items:start
-   on the cell is what keeps this a ring on the number instead of an ellipse
-   across the whole box. */
-.ph__cell--open .ph__date {
-  position: relative;
-  color: rgb(var(--pen));
-}
+/* The free day. Ringed by hand round the numeral, deliberately not a circle: 52/48
+   radii and a few degrees off square is what a pen does. align-items:start on the
+   cell is what keeps this a ring on the number instead of an ellipse across the
+   whole box. */
+.ph__cell--open .ph__date { position: relative; }
 .ph__cell--open .ph__date::after {
   content: '';
   position: absolute;
   inset: -38% -42%;
-  border: max(1.2px, .11vw) solid #0f93b4;
+  border: max(1.2px, .11vw) solid #0d7f9c;
   border-radius: 52% 48% 49% 51%;
   rotate: -7deg;
 }
@@ -298,58 +360,54 @@
   font-size: clamp(5.5px, .54vw, 9.5px);
   letter-spacing: .16em;
   text-transform: uppercase;
-  color: #0f93b4;
+  color: #0d7f9c;
   margin-top: .34em;
 }
 
-/* ---- The reveal --------------------------------------------------------- */
-/* Nothing moves until the script says the film is running. Without JavaScript
-   the poster is the hero and the printing is simply all there, which is what
-   .ph:not(.ph--live) settles. */
-.ph:not(.ph--live) .ph__word { background-position: 0 0; }
-.ph:not(.ph--live) .ph__rule { transform: scaleX(1); }
+/* ---- The load reveal ---------------------------------------------------- */
+/* Only the sheet that is on the pad at load inks itself in. The other two arrive by
+   being uncovered, which is what actually happens to a sheet underneath — its
+   printing was already on it. Without JavaScript the poster is the hero and the
+   printing is simply all there, which is what .ph:not(.ph--live) settles. */
+.ph__rule { transform: scaleX(1); }
 
-.ph--live .ph__mark {
+.ph--live .ph__page[data-first] .ph__mark {
   animation: ph-face .42s var(--ease-enter) var(--t-mark) both;
 }
-/* The colours following the mark in: five booked slots filling in sequence, then
-   the free one. This is the brand's own story told in the logo. */
-.ph--live .ph__mark .mark__slot {
+/* The colours following the mark in: the booked slots filling in sequence, then the
+   free one. The brand's own story, told in the logo. */
+.ph--live .ph__page[data-first] .ph__mark .mark__slot {
   animation: ph-fill .3s var(--ease-enter) both;
   animation-delay: calc(var(--t-slot) + var(--slot-i, 0) * 62ms);
   transform-box: fill-box;
   transform-origin: 50% 50%;
 }
-/* The mark's own slot order, read off its data attributes rather than nth-child,
-   because the free slot is the last element and has to stay last. */
+/* Slot order read off the mark's own data attributes rather than nth-child, because
+   the free slot is the last element and has to stay last. */
 .ph__mark [data-slot="0"] { --slot-i: 0; }
 .ph__mark [data-slot="1"] { --slot-i: 1; }
 .ph__mark [data-slot="2"] { --slot-i: 2; }
 .ph__mark [data-slot="3"] { --slot-i: 3; }
 .ph__mark [data-slot="4"] { --slot-i: 4; }
 .ph__mark [data-slot="5"] { --slot-i: 5.6; }
-.ph--live .ph__word {
+
+.ph--live .ph__page[data-first] .ph__word {
   animation: ph-sweep var(--d-ink) var(--ease-enter) var(--t-ink) both;
 }
-.ph--live .ph__rule {
+.ph--live .ph__page[data-first] .ph__rule {
   animation: ph-draw .46s var(--ease-enter) var(--t-rule) both;
 }
-
-/* Every entry writes itself in, per page, whenever that page comes up. Keying it
-   to [data-on] rather than to load is what makes the second and third months
-   write in too instead of just appearing. */
-.ph__page[data-on] .ph__month,
-.ph__page[data-on] .ph__date,
-.ph__page[data-on] .ph__job,
-.ph__page[data-on] .ph__free {
+/* The entries write themselves in, once, on the sheet that is already on the pad. */
+.ph__page[data-first] .ph__date,
+.ph__page[data-first] .ph__job,
+.ph__page[data-first] .ph__free {
   animation: ph-write .34s var(--ease-enter) both;
 }
-.ph__page[data-on] .ph__month { animation-duration: .5s; animation-delay: .08s; }
-.ph__page[data-on] .ph__date  { animation-delay: calc(.16s + var(--i, 0) * 9ms); }
-.ph__page[data-on] .ph__job   { animation-delay: calc(.22s + var(--i, 0) * 9ms); }
-.ph__page[data-on] .ph__free  { animation-delay: calc(.34s + var(--i, 0) * 9ms); }
-/* The ring is drawn last, after the day it is round has arrived. */
-.ph__page[data-on] .ph__cell--open .ph__date::after {
+.ph__page[data-first] .ph__date { animation-delay: calc(.16s + var(--i, 0) * 9ms); }
+.ph__page[data-first] .ph__job  { animation-delay: calc(.22s + var(--i, 0) * 9ms); }
+.ph__page[data-first] .ph__free { animation-delay: calc(.34s + var(--i, 0) * 9ms); }
+/* The ring is drawn last, after the day it goes round has arrived. */
+.ph__page[data-first] .ph__cell--open .ph__date::after {
   animation: ph-ring .42s var(--ease-enter) calc(.4s + var(--i, 0) * 9ms) both;
 }
 
@@ -363,20 +421,22 @@
 /* ---- Phone -------------------------------------------------------------- */
 @media (max-width: 720px) {
   .ph {
-    /* 21:9 at 390px is 167px tall and stops reading as a calendar at all. Crop to
-       a portrait-ish window taken from just below the top, so the binding and the
-       head of the grid are what survive the crop. */
+    /* 21:9 at 390px is 167px tall and stops reading as a calendar at all. Crop to a
+       portrait-ish window taken from just below the top, so the binding and the head
+       of the grid are what survive the crop. */
     --film-ar: 5 / 4;
+    --mast-h: 30px;
   }
   .ph__film { object-position: 50% 26%; }
   /* Same four numbers, re-measured for that crop. */
   .ph__diary { left: 9%; right: 7%; top: 33%; bottom: 12%; }
   .ph__word { font-size: clamp(17px, 5.6vw, 30px); }
-  .ph__mark { width: clamp(15px, 4.4vw, 24px); }
+  .ph__mark { width: clamp(17px, 5.2vw, 28px); }
   .ph__month-n { font-size: clamp(14px, 4.6vw, 26px); }
+  .ph__dows span { font-size: 5.5px; letter-spacing: .06em; }
   /* No room for words at 41px a cell: an ellipsised "Board sw..." is noise. The
-     entry becomes the stroke it was underlined with, so a booked day still reads
-     as booked and the ringed free day still reads as the exception. */
+     entry becomes the stroke it was underlined with, so a booked day still reads as
+     booked and the ringed free day still reads as the exception. */
   .ph__job {
     width: 64%;
     height: 0;
@@ -384,23 +444,18 @@
     color: transparent;
     border-bottom-width: 1.5px;
   }
-  .ph__dows span { font-size: 5.5px; letter-spacing: .06em; }
   .ph__free { display: none; }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  /* The script never adds ph--live under reduced motion, so most of this is a
-     guard rather than a repair. The page-change writing is not guarded by that
-     class, though, so it has to be turned off here. */
+  /* The script never adds ph--live under reduced motion, so most of this is a guard
+     rather than a repair. The fold and the writing are not gated by that class,
+     though, so they have to be turned off here. */
   .ph__word { animation: none; background-position: 0 0; }
-  .ph__rule { animation: none; transform: scaleX(1); }
-  .ph__diary { transition: none; }
-  .ph__mark, .ph__mark .mark__slot,
-  .ph__page[data-on] .ph__month,
-  .ph__page[data-on] .ph__date,
-  .ph__page[data-on] .ph__job,
-  .ph__page[data-on] .ph__free,
-  .ph__page[data-on] .ph__cell--open .ph__date::after { animation: none; }
+  .ph__page[data-out], .ph__page[data-in] { animation: none; }
+  .ph__mark, .ph__mark .mark__slot, .ph__rule,
+  .ph__date, .ph__job, .ph__free,
+  .ph__cell--open .ph__date::after { animation: none; }
 }
 
 /* ---- Off screen --------------------------------------------------------- */
