@@ -16,6 +16,7 @@
   font: 800 1.18rem var(--font-display);
   letter-spacing: -.02em;
   text-decoration: none;
+  white-space: nowrap;
 }
 .nav__links { display: flex; gap: clamp(14px, 2.2vw, 28px); margin-left: auto; list-style: none; padding: 0; }
 .nav__links a {
@@ -31,7 +32,9 @@
   text-decoration: none;
   white-space: nowrap;
 }
-.nav .btn { min-height: 40px; padding: 8px 18px; font-size: .9rem; }
+.nav .btn { min-height: 40px; padding: 8px 18px; font-size: .9rem; white-space: nowrap; }
+/* Narrow phones: hero, panel and sticky bar all carry the quote action. */
+@media (max-width: 600px) { .nav .btn--quote { display: none; } }
 
 .nav__menu { display: none; }
 @media (max-width: 880px) {
@@ -161,9 +164,9 @@ input[type="range"].est__slider {
   font-variant-numeric: tabular-nums;
   letter-spacing: -.02em;
 }
-.est__cell span { font-size: var(--t-label); color: var(--ink-soft); }
+.est__cell > span { font-size: var(--t-label); color: var(--ink-soft); }
 
-.est__arc { margin-top: 2px; }
+.est__arc { margin-top: 2px; margin-inline: auto; }
 .est__arc .track { stroke: var(--day-200); stroke-width: 6; fill: none; }
 .est__arc .fill { stroke: var(--sun-500); stroke-width: 6; fill: none; stroke-linecap: round;
   transition: stroke-dashoffset 500ms var(--ease-out); }
