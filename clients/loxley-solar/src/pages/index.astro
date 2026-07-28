@@ -35,27 +35,28 @@ FORM: brief-pinned by ledger 2026-07-28, zero shared axes with prior builds. -->
   title="Solar Panel Installation Sheffield | MCS | Loxley Solar"
   description={`MCS-certified solar and battery installer in Sheffield. Systems sized on your actual bills, payback maths in writing before you pay a deposit. Call ${client.phone}.`}
   current="/"
-  preloadImage="/img/solar-dusk.webp"
-  preloadSrcset="/img/solar-dusk-760.webp 760w, /img/solar-dusk-1100.webp 1100w, /img/solar-dusk.webp 1400w"
-  preloadSizes="100vw"
 >
-  <section class="hero hero--film pine" aria-labelledby="hero-h">
-    {/* The film: a Sheffield roof earning its keep at golden hour, sun glow
-        breathing, glints sparking off the panels. The estimator floats on
-        top as the working instrument. TEMP footage slot: a Higgsfield video
-        loop drops behind the same scrim when the connection is back. */}
+  <section class="hero hero--live" aria-labelledby="hero-h">
+    {/* No photograph: the scene is built. The sun travels its day-arc across
+        the hero, the glow breathes, glints spark on a drawn roofline, and
+        the estimator floats on it as the working instrument. */}
     <div class="hero__scene" aria-hidden="true">
-      <img
-        class="hero__film"
-        src="/img/solar-dusk.webp"
-        srcset="/img/solar-dusk-760.webp 760w, /img/solar-dusk-1100.webp 1100w, /img/solar-dusk.webp 1400w"
-        sizes="100vw"
-        alt=""
-        width="1400" height="781" fetchpriority="high" decoding="async"
-        data-film
-      />
-      <div class="hero__scrim"></div>
       <span class="hero__sunglow"></span>
+      <svg class="hero__dayarc" viewBox="0 0 1440 640" preserveAspectRatio="xMidYMax slice">
+        <path class="arc" d="M -60 600 Q 720 -120 1500 600" />
+        <circle class="daysun" r="11" />
+      </svg>
+      <svg class="hero__roofline" viewBox="0 0 1440 150" preserveAspectRatio="xMidYMax slice">
+        <path class="roof" d="M0 150 V 96 L 120 40 L 240 96 V 150 M 240 96 H 330 V 150 M 330 96 L 450 40 L 570 96 V 150 M 570 96 H 700 V 62 H 840 V 96 H 900 L 1020 40 L 1140 96 V 150 M 1140 96 H 1260 V 150 M 1260 96 L 1380 40 L 1460 78" />
+        <g class="panels">
+          <rect x="60" y="66" width="42" height="26" rx="2" transform="rotate(-25 81 79)" />
+          <rect x="380" y="66" width="42" height="26" rx="2" transform="rotate(-25 401 79)" />
+          <rect x="430" y="88" width="42" height="26" rx="2" transform="rotate(-25 451 101)" />
+          <rect x="950" y="66" width="42" height="26" rx="2" transform="rotate(-25 971 79)" />
+          <rect x="1000" y="88" width="42" height="26" rx="2" transform="rotate(-25 1021 101)" />
+          <rect x="1290" y="66" width="42" height="26" rx="2" transform="rotate(-25 1311 79)" />
+        </g>
+      </svg>
       <canvas class="hero__glints" data-glints></canvas>
     </div>
 
