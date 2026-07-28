@@ -31,3 +31,7 @@ __pycache__/
 
 # stray clone target
 hfs/
+
+# stray agent probe scripts
+clients/*/wc-*.mjs
+clients/*/_*.mjs
