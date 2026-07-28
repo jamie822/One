@@ -33,11 +33,16 @@ Also tagged in pages:
 - Three demo reviews on the home page (`index.astro`, marked `TEMP demo review`).
   **Never ship these live: invented reviews are illegal under the DMCC Act 2025.**
   Replace with real Google reviews (quoted verbatim, with permission) or remove the section.
+- "Read all 87 reviews on Google" links to bare google.com/maps; swap for the
+  client's real Google reviews URL (tagged `TEMP review link`)
 - The rewire blog post price table and figures (`blog/rewire-cost-leeds.astro`)
 - Solar figures and MCS status (`services.astro`, `index.astro`)
 - Hero, board and solar photographs are generated placeholders; swap for real
-  photos of the client's van, work and roof jobs
-- The one-working-hour response promise in the quote form
+  photos: the owner at the van (the About page needs a face), genuine job
+  photos, the real roof installs
+- The one-working-hour response promise in the quote form, and the
+  "emergencies jump the queue" promise in the hero and fault-finding card:
+  confirm the client actually offers both before go-live
 
 ## Form wiring at go-live
 

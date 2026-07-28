@@ -11,9 +11,9 @@ const year = 2026;
         <p style="color: var(--ink-soft); font-size: var(--t-small); max-width: 38ch; margin-top: 10px;">
           {client.role} covering {client.areas.slice(0, -1).join(', ')} and {client.areas.at(-1)}.
         </p>
-        <p style="margin-top: 14px;">
-          <a href={`tel:${tel}`} style="font-weight: 700; color: var(--ink);">{client.phone}</a><br />
-          <a href={`mailto:${client.email}`}>{client.email}</a>
+        <p style="margin-top: 8px;">
+          <a href={`tel:${tel}`} style="font-weight: 700; color: var(--ink); display: inline-block; padding-block: 6px;">{client.phone}</a><br />
+          <a href={`mailto:${client.email}`} style="display: inline-block; padding-block: 6px;">{client.email}</a>
         </p>
       </div>
       <nav aria-label="Services">
@@ -36,6 +36,7 @@ const year = 2026;
       </nav>
     </div>
     <div class="footer__meta">
+      <span>{client.address.street}, {client.town} {client.address.postcode} <!-- TEMP --></span>
       <span>{client.accreditation}, {client.accreditationNumber}</span>
       <span>{client.liabilityCover}</span>
       <span>{client.hours}</span>

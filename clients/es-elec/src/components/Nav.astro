@@ -41,7 +41,10 @@ const tel = client.phone.replace(/\s/g, '');
         <li><a href={href} aria-current={current === href ? 'page' : undefined}>{label}</a></li>
       ))}
     </ul>
-    <a class="nav__panel-tel" href={`tel:${tel}`}>{client.phone}</a>
+    <div class="nav__panel-acts">
+      <a class="nav__panel-tel" href={`tel:${tel}`}>{client.phone}</a>
+      <a class="nav__panel-quote" href="/#quote">Get a quote</a>
+    </div>
   </nav>
 
   <script is:inline>

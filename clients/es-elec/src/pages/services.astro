@@ -2,6 +2,7 @@
 // SERVICES: the hub. Seven anchored sections, each carrying its own keyword
 // H2, price, duration and the path that fits the job. Copy from COPY.md.
 import Base from '../layouts/Base.astro';
+import QuoteForm from '../components/QuoteForm.astro';
 import { client } from '../data/client.js';
 
 const tel = client.phone.replace(/\s/g, '');
@@ -59,7 +60,7 @@ const catalog = {
             before you spend anything. <!-- TEMP: MCS status + figures -->
           </p>
           <p class="svc__meta">From {fmt(svc.solar.from)} · 1 to 2 days on the roof, paperwork inside a fortnight</p>
-          <a class="btn btn--quote" href="/#quote">Get a quote</a>
+          <a class="btn btn--quote" href="#quote">Get a quote</a>
         </div>
         <figure class="svc__photo rise" style="--i:1">
           <img src="/img/solar-dusk-1100.webp" alt="Solar panels catching low sun on a Leeds semi" width="1600" height="900" loading="lazy" />
@@ -107,7 +108,7 @@ const catalog = {
           <span class="svc__card-label">Typical 3-bed, from</span>
           <strong class="svc__card-price">{fmt(svc.rewires.from)}</strong>
           <span class="svc__card-time">Five to eight working days, lived-in houses welcome</span>
-          <a class="btn btn--quote" href="/#quote">Get a quote</a>
+          <a class="btn btn--quote" href="#quote">Get a quote</a>
         </aside>
       </div>
     </section>
@@ -164,7 +165,7 @@ const catalog = {
         <aside class="svc__card rise" style="--i:1" aria-label="Fault finding price and booking">
           <span class="svc__card-label">From</span>
           <strong class="svc__card-price">{fmt(svc.fault.from)}</strong>
-          <span class="svc__card-time">Most faults found the same visit</span>
+          <span class="svc__card-time">Most faults found the same visit. Emergencies jump the queue. <!-- TEMP promise --></span>
           <a class="btn btn--call" href={`tel:${tel}`}>Call Eddie</a>
         </aside>
       </div>
@@ -184,21 +185,28 @@ const catalog = {
           <span class="svc__card-label">From</span>
           <strong class="svc__card-price">{fmt(svc.lighting.from)}</strong>
           <span class="svc__card-time">Priced per room or per garden, in writing</span>
-          <a class="btn btn--quote" href="/#quote">Get a quote</a>
+          <a class="btn btn--quote" href="#quote">Get a quote</a>
         </aside>
       </div>
     </section>
   </div>
 
-  <section class="section contact" aria-labelledby="cl-h">
+  <section class="section contact" id="quote" aria-labelledby="cl-h">
     <div class="wrap">
       <h2 id="cl-h" class="rise">Not listed? Ring anyway.</h2>
-      <p class="rise" style="color: var(--ink-soft); margin-top: var(--s-2);">
-        If it is wires, I have probably done it.
-      </p>
-      <div class="hero__acts rise" style="--i:1">
-        <a class="btn btn--call" href={`tel:${tel}`}>Call Eddie</a>
-        <a class="btn btn--quote" href="/#quote">Get a quote</a>
+      <div class="contact__grid">
+        <div class="rise contact__info">
+          <a class="contact__tel" href={`tel:${tel}`}>{client.phone}</a>
+          <p class="contact__hours">
+            If it is wires, I have probably done it. {client.hours}.
+          </p>
+          <ul class="contact__facts">
+            <li>Prefer email? <a href={`mailto:${client.email}`}>{client.email}</a></li>
+            <li>{client.accreditation}, number {client.accreditationNumber} <!-- TEMP --></li>
+            <li>{client.guarantee} and {client.liabilityCover} behind every job <!-- TEMP --></li>
+          </ul>
+        </div>
+        <QuoteForm />
       </div>
     </div>
   </section>

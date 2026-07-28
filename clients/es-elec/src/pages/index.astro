@@ -1,10 +1,13 @@
 ---
 // HOME. Copy comes from COPY.md verbatim; figures from client.js, TEMP-tagged.
 import Base from '../layouts/Base.astro';
+import QuoteForm from '../components/QuoteForm.astro';
 import { client } from '../data/client.js';
 
 const tel = client.phone.replace(/\s/g, '');
-const CYCLE = ['Rewires', 'Fuse boards', 'EICRs', 'EV chargers', 'Solar', 'Fault finding'];
+// Solar leads the ticker: it is the service the client wants more of, and the
+// first frame a visitor reads.
+const CYCLE = ['Solar', 'EV chargers', 'Rewires', 'Fuse boards', 'EICRs', 'Fault finding'];
 
 const fmt = (n) => '£' + n.toLocaleString('en-GB');
 const svc = Object.fromEntries(client.services.map((s) => [s.id, s]));
@@ -47,6 +50,12 @@ seed n/a: direction pinned by founder brief, not rolled. -->
           <a class="btn btn--call btn--lit" href={`tel:${tel}`}>Call Eddie</a>
           <a class="btn btn--quote" href="#quote">Get a quote</a>
         </div>
+        {client.emergency && (
+          <p class="hero__urgent">
+            <span class="hero__urgent-dot" aria-hidden="true"></span>
+            Something dead or tripping right now? Ring: emergencies jump the queue. <!-- TEMP promise -->
+          </p>
+        )}
       </div>
       <figure class="hero__photo">
         <img
@@ -187,7 +196,7 @@ seed n/a: direction pinned by founder brief, not rolled. -->
           </div>
           <a class="reviews__all" href="https://www.google.com/maps" rel="noopener">
             Read all {client.google.reviewCount} reviews on Google
-          </a>
+          </a><!-- TEMP review link: swap for the client's real Google reviews URL -->
         </div>
       </section>
 
@@ -246,71 +255,17 @@ seed n/a: direction pinned by founder brief, not rolled. -->
               {client.hours}. Out of hours, leave a message and I call back
               first thing.
             </p>
+            <p class="contact__areas">
+              Out daily across {client.areas.slice(0, -1).join(', ')} and
+              {' '}{client.areas.at(-1)}.
+            </p>
             <ul class="contact__facts">
               <li>Prefer email? <a href={`mailto:${client.email}`}>{client.email}</a></li>
               <li>{client.accreditation}, number {client.accreditationNumber} <!-- TEMP --></li>
               <li>{client.guarantee} and {client.liabilityCover} behind every job <!-- TEMP --></li>
             </ul>
           </div>
-          <form
-            class="rise"
-            style="--i:1"
-            method={client.conversion.formEndpoint ? 'post' : 'get'}
-            action={client.conversion.formEndpoint || `mailto:${client.email}`}
-            data-quote
-            data-endpoint={client.conversion.formEndpoint}
-            data-email={client.email}
-          >
-            <div class="field">
-              <label for="q-name">Name</label>
-              <input id="q-name" name="name" autocomplete="name" required />
-              <p class="err">Your name is missing.</p>
-            </div>
-            <div class="field">
-              <label for="q-phone">Phone</label>
-              <input id="q-phone" name="phone" type="tel" autocomplete="tel" required />
-              <p class="err">A phone number is how I reach you. Landline or mobile both fine.</p>
-            </div>
-            <div class="field">
-              <label for="q-postcode">Postcode</label>
-              <input id="q-postcode" name="postcode" autocomplete="postal-code" required />
-              <p class="err">The postcode tells me you are in reach.</p>
-            </div>
-            <div class="field">
-              <label for="q-job">What needs doing</label>
-              <textarea id="q-job" name="job" required></textarea>
-              <p class="err">A sentence is plenty.</p>
-            </div>
-            <button class="btn btn--call" type="submit">Get a quote</button>
-            <p class="confirm" data-confirm>You will hear from me within one working hour, Mon to Sat. <!-- TEMP promise --></p>
-          </form>
-          <script is:inline>
-            // Quote form. With a real endpoint it POSTs there; in demo mode it
-            // composes an email instead, so nothing typed here ever vanishes.
-            (function () {
-              var form = document.querySelector('[data-quote]');
-              if (!form) return;
-              form.setAttribute('novalidate', '');
-              form.addEventListener('submit', function (e) {
-                var bad = false;
-                form.querySelectorAll('.field').forEach(function (f) {
-                  var input = f.querySelector('input, textarea');
-                  if (input && !input.value.trim()) { f.setAttribute('data-bad', ''); bad = true; }
-                  else f.removeAttribute('data-bad');
-                });
-                if (bad) { e.preventDefault(); form.querySelector('[data-bad] input, [data-bad] textarea').focus(); return; }
-                if (form.dataset.endpoint) return; // real handler takes it from here
-                e.preventDefault();
-                var v = function (n) { return form.querySelector('[name=' + n + ']').value.trim(); };
-                var subject = 'Quote request from ' + v('name') + ' (' + v('postcode') + ')';
-                var body = 'Name: ' + v('name') + '\nPhone: ' + v('phone') + '\nPostcode: ' + v('postcode') + '\n\nJob:\n' + v('job');
-                var confirm = form.querySelector('[data-confirm]');
-                if (confirm) confirm.textContent = 'Your email app should open with everything filled in. If it does not, ring me instead.';
-                window.location.href = 'mailto:' + form.dataset.email +
-                  '?subject=' + encodeURIComponent(subject) + '&body=' + encodeURIComponent(body);
-              });
-            })();
-          </script>
+          <QuoteForm />
         </div>
       </div>
     </section>

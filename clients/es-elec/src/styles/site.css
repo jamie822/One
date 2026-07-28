@@ -92,10 +92,19 @@
   border-bottom: 1px solid var(--tungsten-800);
 }
 .nav__panel ul a[aria-current="page"] { color: var(--accent); }
+.nav__panel-acts {
+  display: flex; align-items: center; gap: 22px;
+  padding: 14px var(--s-3) 18px;
+}
 .nav__panel-tel {
-  display: block; padding: 14px var(--s-3) 18px;
   font: 700 1.05rem var(--font-body);
   color: var(--accent); text-decoration: none;
+  padding-block: 6px;
+}
+.nav__panel-quote {
+  font: 600 .95rem var(--font-body);
+  color: var(--ink); text-decoration: none;
+  padding-block: 6px;
 }
 @media (min-width: 861px) { .nav__panel { display: none; } }
 
@@ -169,6 +178,27 @@
   max-width: 44ch;
 }
 .hero__acts { display: flex; flex-wrap: wrap; gap: 14px; margin-top: var(--s-4); }
+
+/* The emergency line: one quiet sentence with a live amber point. */
+.hero__urgent {
+  display: flex; align-items: center; gap: 9px;
+  margin-top: var(--s-3);
+  font-size: var(--t-small); color: var(--ink-soft);
+}
+.hero__urgent-dot {
+  width: 7px; height: 7px; border-radius: 50%;
+  background: var(--amber-500);
+  box-shadow: 0 0 8px 1px color-mix(in srgb, var(--amber-500) 60%, transparent);
+  flex: none;
+}
+@media (prefers-reduced-motion: no-preference) {
+  /* Starts after first paint settles so it never muddies Speed Index. */
+  .hero__urgent-dot { animation: urgent-breathe 2.6s ease-in-out 3s infinite; }
+}
+@keyframes urgent-breathe {
+  0%, 100% { opacity: 1; }
+  50% { opacity: .45; }
+}
 
 .hero__photo {
   border-radius: var(--r-box);
@@ -352,6 +382,7 @@
 }
 .contact__tel:hover { color: var(--amber-300); }
 .contact__hours { margin-top: var(--s-2); color: var(--ink-soft); }
+.contact__areas { margin-top: var(--s-2); color: var(--ink-soft); font-size: var(--t-small); max-width: 42ch; }
 .contact__info { display: flex; flex-direction: column; }
 .contact__facts {
   list-style: none; padding: 0;
