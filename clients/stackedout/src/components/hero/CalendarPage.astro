@@ -1,0 +1,116 @@
+---
+// One page of the wall diary.
+//
+// Geometry is the Mark's, scaled up. Mark.astro draws six rounded slots, five
+// filled from one shared gradient and one left as an outline. This is the same
+// object at architectural scale: thirty slots on a Mon to Sat working month,
+// twenty nine filled and one left open. The open one is the brand, so it is
+// never filled.
+//
+// The final page renders TWICE. The base layer is the diary as printed: neutral
+// fills, off white ink. The wash layer sits on top with the signature gradient
+// and dark ink, revealed by a left to right wipe. Duplicating and clipping is
+// the only way to get a colour AND a text colour to change together cleanly;
+// timing two separate colour transitions never lands.
+//
+// Nothing in here is focusable and the whole diary is aria-hidden at the hero
+// root, so it is invisible to assistive tech by design. It is a picture.
+
+interface Props {
+  n: 1 | 2 | 3 | 4;
+  booked: number[];
+  isFinal?: boolean;
+  emptyIndex?: number;
+}
+const { n, booked, isFinal = false, emptyIndex = -1 } = Astro.props;
+
+const DAYS = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+
+// Real trade work. A spark should scan this and recognise his own week.
+// Illustrative job types, not a record of bookings: the hero says so in copy.
+const JOBS = [
+  'EICR',
+  'Board swap',
+  'EV charger',
+  'Solar PV',
+  'Rewire',
+  'Fault find',
+  'CU upgrade',
+  'Consumer unit',
+  'EICR remedials',
+];
+
+const COLS = 6;
+const ROWS = 5;
+const CELLS = COLS * ROWS;
+
+const bookedSet = new Set(booked);
+
+const cells = Array.from({ length: CELLS }, (_, i) => ({
+  i,
+  c: i % COLS,
+  r: Math.floor(i / COLS),
+  day: i + 1,
+  booked: bookedSet.has(i),
+  // The one open slot only exists on the settled page. On the earlier pages an
+  // unbooked day is just a quiet day; drawing an outline on twenty of them
+  // would spend the device that has to land once.
+  free: isFinal && i === emptyIndex,
+  job: JOBS[i % JOBS.length],
+}));
+---
+
+<div class="cal__page" data-page={n}>
+  <div class="cal__sheet">
+    <div class="cal__days" aria-hidden="true">
+      {DAYS.map((d) => <span class="cal__day">{d}</span>)}
+    </div>
+
+    <div class="cal__grid cal__grid--base">
+      {cells.map((cell) => (
+        <div
+          class:list={[
+            'cal__cell',
+            cell.booked && 'cal__cell--booked',
+            cell.free && 'cal__cell--free',
+          ]}
+          style={`--c:${cell.c};--r:${cell.r};--i:${cell.i}`}
+        >
+          <span class="cal__head">
+            {/* The phone drops the column heads and shows one working week as
+                rows, so each row has to name its own day. */}
+            <span class="cal__dow">{DAYS[cell.c]}</span>
+            <span class="cal__num">{cell.day}</span>
+          </span>
+          {cell.booked && <span class="cal__job">{cell.job}</span>}
+        </div>
+      ))}
+    </div>
+
+    {isFinal && (
+      <!-- Sweep two. Same wipe geometry, same easing, same direction as the
+           wordmark, started just before the wordmark finishes so it reads as
+           one gesture chasing the other. The open slot is absent from this
+           layer, so the colour passes straight over it and the base layer's
+           outline stays visible. That gap is the whole point. -->
+      <div class="cal__grid cal__grid--wash">
+        {cells.map((cell) =>
+          cell.booked ? (
+            <div
+              class="cal__cell cal__cell--booked"
+              style={`--c:${cell.c};--r:${cell.r};--i:${cell.i}`}
+            >
+              <span class="cal__head">
+                <span class="cal__dow">{DAYS[cell.c]}</span>
+                <span class="cal__num">{cell.day}</span>
+              </span>
+              <span class="cal__job">{cell.job}</span>
+            </div>
+          ) : (
+            <div class="cal__cell cal__cell--void" style={`--c:${cell.c};--r:${cell.r};--i:${cell.i}`}></div>
+          )
+        )}
+      </div>
+    )}
+  </div>
+</div>
