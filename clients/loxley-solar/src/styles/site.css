@@ -316,6 +316,8 @@ html:not(.js) .est [data-nojs-note] { display: block; }
 .article__body { display: grid; gap: var(--s-3); }
 .article__body h2 { font-size: 1.42rem; margin-top: var(--s-3); }
 
+.table-scroll { overflow-x: auto; }
+.table-scroll .costs { min-width: 560px; }
 .costs { border-collapse: collapse; width: 100%; font-size: var(--t-small); }
 .costs caption { caption-side: bottom; text-align: left; padding-top: 10px; color: var(--ink-soft); }
 .costs th, .costs td { text-align: left; padding: 12px 14px; }
