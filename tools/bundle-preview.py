@@ -26,15 +26,29 @@ import pathlib
 # An optional landing route. Without this a multi-route preview always opens on
 # "/", which sent a client to an old page and made finished work look unchanged.
 argv = [a for a in sys.argv[1:]]
+
+
+def norm_route(r):
+    if not r.startswith('/'):
+        r = '/' + r
+    if not r.endswith('/'):
+        r += '/'
+    return r
+
+
 default_route = '/'
+only = []
+keep_scripts = False
 for a in list(argv):
     if a.startswith('--default='):
-        default_route = a.split('=', 1)[1]
+        default_route = norm_route(a.split('=', 1)[1])
         argv.remove(a)
-        if not default_route.startswith('/'):
-            default_route = '/' + default_route
-        if not default_route.endswith('/'):
-            default_route += '/'
+    elif a.startswith('--only='):
+        only.append(norm_route(a.split('=', 1)[1]))
+        argv.remove(a)
+    elif a == '--scripts':
+        keep_scripts = True
+        argv.remove(a)
 
 dist = pathlib.Path('dist')
 css  = "\n".join(p.read_text() for p in sorted((dist/'_astro').glob('*.css')))
@@ -48,6 +62,33 @@ for f in sorted(dist.rglob('index.html')):
 
 if not pages:
     sys.exit("No built pages found. Run `npm run build` first.")
+
+if only:
+    missing = [r for r in only if r not in pages]
+    if missing:
+        sys.exit(f"No such route(s): {', '.join(missing)}. Built: {', '.join(pages)}")
+    pages = {r: pages[r] for r in only}
+    if default_route not in pages:
+        default_route = only[0]
+
+# -----------------------------------------------------------------------------
+# Scripts are stripped by default and that is the right default: the routing
+# below is hash based, so keeping every route's scripts in one document runs all
+# of them at once against a DOM where only one route is visible.
+#
+# It is also how a finished animated hero came out looking static. The Stacked
+# Out calendar is a GSAP timeline over a canvas, so with scripts gone the preview
+# showed the settled sheet and the page turn was simply absent — the preview was
+# lying about the build in the direction that matters most.
+#
+# So --scripts keeps them, and it requires exactly one route, because that is the
+# only case where "run the page's scripts" means what it says.
+# -----------------------------------------------------------------------------
+if keep_scripts and len(pages) != 1:
+    sys.exit(
+        "--scripts needs exactly one route, or every route's scripts run at once.\n"
+        f"Add --only=<route>. Built: {', '.join(pages)}"
+    )
 
 # -----------------------------------------------------------------------------
 # CRITICAL: the design tokens live on the <html> element, not in the stylesheet.
@@ -122,10 +163,32 @@ def inline_images(markup):
     # already self-contained and must be left alone.
     return re.sub(r'\b(src|href)=(["\'])(/[^"\']+)\2', sub, markup)
 
+def inline_scripts(markup):
+    """Turn <script src="/vendor/gsap.min.js"> into the code itself.
+
+    Same reason as the fonts and the images: a root relative src 404s out of a
+    single published file, and a hero whose animation library failed to load is
+    worse than one with no animation at all, because the markup is then sitting
+    in whatever state the timeline was meant to move it out of. defer is dropped
+    deliberately — these end up inline at the point they already occupied, in
+    document order, and the calendar's own script runs after them.
+    """
+    def sub(m):
+        url = m.group(1)
+        f = dist / url.lstrip('/')
+        if not f.exists():
+            return m.group(0)
+        return '<script>' + f.read_text() + '</script>'
+    return re.sub(r'<script[^>]*\bsrc=["\'](/[^"\']+\.js)["\'][^>]*>\s*</script>', sub, markup)
+
+
 def body_of(doc):
     m = re.search(r'<body[^>]*>(.*)</body>', doc, re.S)
     inner = m.group(1) if m else doc
-    inner = re.sub(r'<script(?![^>]*application/ld\+json).*?</script>', '', inner, flags=re.S)  # drop page scripts
+    if keep_scripts:
+        inner = inline_scripts(inner)
+    else:
+        inner = re.sub(r'<script(?![^>]*application/ld\+json).*?</script>', '', inner, flags=re.S)
     inner = re.sub(r'<script type="application/ld\+json".*?</script>', '', inner, flags=re.S)
     inner = inline_images(inner)
     return inner
