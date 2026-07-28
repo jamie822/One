@@ -1,524 +1,203 @@
-# Master Build Prompt — Electrician Client Website
+# MASTER PROMPT — the standing build order
 
-Fill in **Part 1** with the client's details, then paste the whole file as the
-opening prompt of a fresh Claude Code session. Parts 2 to 9 stay the same on
-every build.
-
-Anything left as `[ASK]` means: stop and ask the client before building. Do not
-invent it. Inventing a review count, an accreditation number or a case study is
-the one failure mode that damages the client and the reputation of the business.
+This file is the studio's memory. It encodes the founder's answers from the
+2026-07-28 planning session, verbatim in policy if not in wording. Every client
+build starts by reading this file and obeying it. When a policy here conflicts
+with an older document in this repo, this file wins.
 
 ---
 
-# PART 1 — CLIENT BRIEF (fill this in)
+## Part 0 — Who we are and the bar
 
-## Business
-- **Trading name (exact, canonical):** `[e.g. Hartley Electrical Ltd]`
-- **Companies House name if different:** `[...]`
-- **Owner's full name:** `[...]`
-- **Years trading:** `[...]`
-- **Year founded:** `[...]`
-- **Team size and names:** `[e.g. owner + 2 electricians: Dave, Sam]`
-- **Base town/city:** `[...]`
-- **Full address:** `[...]` (or "service area business, no public premises")
-- **Phone:** `[...]`
-- **Email:** `[...]`
-- **Opening hours:** `[...]`
-- **Emergency/out-of-hours?** `[yes/no + terms]`
+We are a premium studio building websites exclusively for UK electricians and
+solar installers. We only ship highly interactive, well built, high performing,
+extremely well converting websites. The site should take the client's breath
+away the first time they see it.
 
-## Accreditations and insurance
-- **Scheme:** `[NICEIC Approved Contractor / NAPIT / SELECT (Scotland) / ECA]`
-- **Enrolment or membership number:** `[ASK — do not guess]`
-- **Part P registered since:** `[...]`
-- **Other:** `[TrustMark / CHAS / MCS / OZEV / Which? Trusted Traders / SafeContractor]`
-- **Public liability cover:** `[e.g. £2m]`
-- **Qualifications:** `[e.g. City & Guilds 2391, 18th Edition, ECS Gold Card]`
+**The quality floor is the ES Elec template** (`clients/live-template`): live
+canvas hero, physical motion, count-ups, real trust architecture, one-line
+reskin. Every build must beat that floor, and the founder's stated test is
+that beating it takes real work.
 
-## Existing proof (use real figures only)
-- **Google Business Profile:** `[exists / does not exist / unclaimed]`
-- **Google rating and review count:** `[e.g. 4.9 from 63]` or `[none yet]`
-- **Other platforms:** `[Checkatrade 9.8/10 from 41, Facebook, Trustpilot...]`
-- **Three real customer quotes, with first name and town:** `[ASK]`
-- **Named repeat/commercial clients happy to be cited:** `[ASK]`
-- **Jobs completed (approx, honest):** `[...]`
-
-## Services (tick what they actually do)
-- [ ] Full and partial rewires
-- [ ] EICR / periodic inspection
-- [ ] Consumer unit upgrades
-- [ ] Fault finding
-- [ ] EV charger installation `[brands: e.g. Zappi, Pod Point, Ohme]`
-- [ ] Solar PV and battery storage
-- [ ] Smart lighting / home automation `[e.g. Rako, Lutron]`
-- [ ] Landlord certificates
-- [ ] PAT testing
-- [ ] Commercial / industrial
-- [ ] Fire alarms and emergency lighting
-- [ ] Outdoor and garden electrics
-- [ ] Other: `[...]`
-
-**Highest-margin service they want more of:** `[...]`
-**Work they want less of:** `[...]`
-
-## Locations (the ranking engine — get this right)
-List **8 to 15** towns, suburbs or districts, taken from where they have
-**actually worked**, not a radius on a map. Order by how much they want that
-work.
-
-1. `[primary town — the main target]`
-2. `[...]`
-3. `[...]`
-...
-
-**Named streets, estates, landmarks or developments they've worked on:** `[ASK]`
-These make location pages specific instead of templated. Get at least two per
-priority town.
-
-## Commercial verticals (skip if purely domestic)
-`[garages & dealerships / factories & warehouses / care homes & surgeries /
-schools / offices / retail / hospitality / letting agents & landlords]`
-
-## Brand
-- **Existing logo?** `[yes — attach / no — design one]`
-- **Van livery colours:** `[...]`
-- **Colour preference:** `[...]`  ← **never default to trade-blue**
-- **Sites they like:** `[...]`
-- **Sites they hate:** `[...]`
-
-## Photography (be honest about what exists)
-- **Owner headshot:** `[yes / no / phone photo only]`
-- **Team photo:** `[...]`
-- **Van:** `[...]`
-- **Completed work:** `[how many, what quality]`
-- **Before/after pairs:** `[...]`
-- **Professional shoot planned?** `[yes / no]`
-
-If photography is thin, say so here. The build adapts — see §5.3.
-
-## Domain and hosting
-- **Domain:** `[owned / needs registering: suggestions]`
-- **Existing website:** `[none / social only / old site to replace]`
-- **Email setup:** `[...]`
-- **Who owns the accounts?** `[client must own domain + GBP; agency gets delegated access]`
-
-## Commercials
-- **Package:** `[...]`
-- **Deadline:** `[...]`
-- **Ongoing SEO/maintenance?** `[yes / no]`
+**The knowledge base is `research/`**: `conversion-psychology.md` (evidence
+rules for CTAs, colour, trust, pricing) and `design-benchmarks.md` (the
+direction menu). Apply them; do not re-derive them per build.
 
 ---
 
-# PART 2 — THE STANDING BRIEF
+## Part 1 — Client intake
 
-You are building a website for a UK electrician who currently has **no web
-presence**. It is produced by a two-person partnership: an electrician of 13
-years and a web designer. The price point is reasonable, not bespoke-agency, so
-the build must be **efficient and repeatable** as well as excellent.
+Intake varies client to client. Some arrive with everything (brand, photos,
+accreditations, reviews); new starters arrive with nothing. **Neither blocks a
+build.** Collect what exists of:
 
-## What we know about this market
+- Trading name, owner name, town/base, service area
+- Phone, email, hours, emergency availability
+- Accreditations (NICEIC / NAPIT / MCS / ECA) and numbers
+- Insurance (public liability figure), years trading
+- Google Business Profile link, review rating and count
+- Photos: owner, van, work. Logo and brand colours if they exist
+- Services offered and the ones they WANT more of (that ranking shapes the page)
+- Their conversion preference (see Part 5)
 
-Research across twenty-one competitor electricians in London, Manchester, Leeds,
-Birmingham and Glasgow found that **no genuinely premium, design-led electrician
-website is ranking in any major UK city**. Every top competitor is a
-conventional trade build with keyword-stuffed titles, stock or absent
-photography, no case studies and no motion. Several have excellent
-reputations — one Glasgow firm has 500+ five-star reviews and runs on `.php`
-URLs.
-
-**But design alone does not rank.** The firms winning local search win on review
-volume and hyperlocal page coverage. A beautiful one-page site loses to an ugly
-forty-page one with 300 reviews.
-
-So: **design wins the sale and converts the visitor; local SEO architecture gets
-them found.** Deliver both, every time.
-
-See `RESEARCH.md` for the full study.
-
-## Non-negotiables
-
-1. Every claim carries a name, number, date or place.
-2. No two pages share a sentence.
-3. Real photography of the owner. If none exists, design around the gap
-   honestly — never use stock photos of models in hard hats.
-4. One canonical business name and NAP everywhere.
-5. One URL pattern. No near-duplicate pages.
-6. Mobile-first. LCP under 2.5s, INP under 200ms, CLS under 0.1.
-7. `prefers-reduced-motion` respected throughout.
-8. Never invent proof.
+Whatever is missing is filled per Part 6 and the build proceeds at full speed.
 
 ---
 
-# PART 3 — SKILLS TO USE
+## Part 2 — Operating policies (the founder's twelve answers)
 
-36 skills are vendored in `.claude/skills/` (see its README for the full map).
-Use them deliberately, in roughly this order.
-
-| Stage | Skill |
-|---|---|
-| **Audit the prospect** (pre-sale) | `prospect-audit` — turns cold outreach into three specific findings |
-| **Set the design direction** | **`impeccable`** — load before touching any layout. Then `design-taste` / `taste` for a second opinion, `aesthetic-anchors` to pick a colour direction that isn't trade-blue |
-| Brand and assets | `brandkit`, `graphic-design`, `imagegen-web` (per-section design refs), `image-to-code` |
-| Writing page copy | `copywriting`, `ogilvy` |
-| Tightening the client's own words | `copy-editing` |
-| Page flow, forms, CTAs | `cro` |
-| **De-slop every page** | **`stop-slop` → `avoid-ai-writing` → `humanizer` → `structural-humanizer`** — all four, see §7 |
-| Layout and UI polish | `frontend-design`, `design-engineering`, `web-design-guidelines`, `apple-design` |
-| Motion | `css-animations` first, `gsap` only if CSS can't do it. `find-animation-opportunities`, `improve-animations`, `review-animations` to raise the bar |
-| Location/industry page clusters | `programmatic-seo` |
-| GBP, NAP, citations | `seo-local` |
-| Titles, meta, headings, links | `seo-page` |
-| JSON-LD | `seo-schema` |
-| Core Web Vitals, indexing | `seo-technical` |
-| **Verify before handover** | `performance-audit`, `lighthouse-100`, `responsive-check`, `a11y-critic`, `a11y-test` |
-
-Browser-driven skills (`prospect-audit`, `responsive-check`, `a11y-test`,
-`lighthouse-100`) need network access to reach a live site. They work against a
-local dev server anywhere; auditing a prospect's live site needs a session with
-unrestricted outbound network.
-
----
-
-# PART 4 — SITE ARCHITECTURE
-
-Build exactly this structure. It mirrors what ranks, with the duplication
-problems stripped out.
-
-```
-/                             Home
-/about/                       Owner story, team, credentials
-/services/                    Hub
-  /services/<service>/        One page per service from Part 1
-/areas/                       Hub
-  /areas/<town>/              One page per town from Part 1 (8-15)
-/industries/                  Hub (only if commercial work)
-  /industries/<vertical>/     One page per vertical
-/case-studies/                Index
-  /case-studies/<slug>/       One page per real job (min 3)
-/reviews/                     All reviews, one place
-/contact/                     Form, phone, map, hours
-/privacy/ /terms/
-404
-```
-
-**URL rules**
-- Lowercase, hyphenated, trailing slash, consistent forever.
-- Never create two pages for the same intent. No `electrician-leeds` *and*
-  `electricians-leeds`. No `best-`, `cheap-` or numbered variants.
-- Location pages live only under `/areas/`. Services only under `/services/`.
+1. **Intake varies.** Full pack or nothing, we build either way.
+2. **No two websites the same.** Every design is different and unique. Same
+   high quality, never the same site. Uniqueness is enforced by Part 4.
+3. **Every client gets their own brand and colours.** Similar is tolerable,
+   identical is not.
+4. **No blanks, ever.** Missing facts get plausible industry-average temporary
+   values. See Part 6 for the go-live swap rule.
+5. **Base package = 4 pages**: Home, Services, About, Blog. Wider scope is a
+   wider price point (location pages, individual service pages, calculators).
+6. **Conversion pack, not a fixed CTA.** Each client picks from the pack
+   (Part 5); defaults come from the research doc when they have no preference.
+7. **Full auto.** No mid-build approval gates. The founder reviews the finished
+   preview link.
+8. **Templates first, then speed.** The studio builds a small number of 2-day
+   flagship templates. Client builds derive from a template in about an hour:
+   rebrand, recopy, repopulate, verify. Never ship a derivation that still
+   looks like its template (Part 4).
+9. **Imagery budget**: about £20 of generation credit per base-package client.
+   Bigger package, bigger budget. Spend it where photography is missing.
+10. **Definition of done: Lighthouse 100 in all four categories, minimum.**
+    Plus the verification gates in Part 7.
+11. **Delivery**: finished build goes to a temporary live shared link first.
+    Once the client pays, we host it (we own hosting).
+12. **The Stacked Out studio site is parked** until the flagship templates are
+    done.
 
 ---
 
-# PART 5 — PAGE SPECIFICATIONS
+## Part 3 — The build pipeline (managed, full auto)
 
-## 5.1 Home
+The agent acts as project manager and design director: it runs the installed
+skills as a team, routes work between them, and makes the calls. The skill
+order in CLAUDE.md remains the reference sequence; the agent compresses or
+parallelises it for derivations but never drops the non-negotiables.
 
-Order matters. This sequence is what converts.
+**Non-negotiable on every build, template or derivation:**
+- `impeccable` governs design (with `ui-ux-pro-max` dials set before visual work)
+- All four de-slop passes on every page of copy
+  (`stop-slop` → `avoid-ai-writing` → `humanizer` → `structural-humanizer`)
+- `seo-local` + `seo-page` before copy is drafted; `seo-schema` before ship
+  (`Electrician` type, GEO/AI-citability per `seo-geo`)
+- `cro` sets the page skeleton before design starts
+- `performance-audit` + `lighthouse-100` + `responsive-check` + `a11y-test`
+  as the exit gate
 
-1. **Hero** — live animation (see §6). Above the fold: what they do, where they
-   work, the Google rating with review count, a phone CTA and a quote CTA.
-   Headline names the town.
-2. **Trust bar** — accreditation badges linking to verifying registers, years
-   trading, insurance figure, review count.
-3. **Problem-led intro** — name the customer's actual problem before mentioning
-   the business. See §7.
-4. **Services grid** — real photography per card, not icons, if photos allow.
-5. **The owner** — photograph, name, years trading, one specific first-person
-   paragraph. This is the single biggest differentiator in the market.
-6. **Case studies** — three, with before/after, location and a real quote.
-7. **Reviews** — real ones, named electrician where the review names them.
-8. **Areas served** — links to every location page.
-9. **FAQ** — genuine questions the client actually gets asked.
-10. **Closing CTA** — phone, form, hours, response-time promise.
+**Template builds (2 days):** full pipeline, no compression, deep research
+applied, every phase rendered and looked at before moving on.
 
-## 5.2 Service pages (one per service)
+**Client derivations (1 hour):** start from the chosen template, then:
+brief → direction pick (Part 4) → rebrand tokens → recopy with client facts
+and area (de-slop all of it) → repopulate imagery within budget → verify
+(Part 7) → temp link. Anything that would push past the hour gets logged and
+done in the follow-up pass, not silently skipped.
 
-- H1: service + primary town.
-- Open with the symptom, not the service. ("The lights flicker when the shower
-  starts" beats "We offer fault-finding services".)
-- What's actually involved, step by step, in plain language.
-- What it typically costs, or an honest reason why it varies.
-- What certificate or paperwork they get, and when.
-- Photos of that specific work.
-- One case study of that job type.
-- FAQ specific to this service.
-- Links to the top three location pages.
-- `Service` JSON-LD.
-
-## 5.3 Location pages (one per town, 8-15)
-
-**These rank. They are also where every competitor produces slop.** Elite
-Electrical in Leeds runs five near-duplicate variants. KHL Manchester uses one
-title template across every suburb. Do not copy that.
-
-Each page needs, genuinely different per town:
-- H1: service + that town.
-- **A real reference to the place** — a named street, estate, development,
-  landmark or housing stock type. "Victorian terraces off Bishopthorpe Road"
-  beats "properties in the local area". Get these from the client.
-- **The housing stock and its actual electrical problems.** 1930s semis have
-  different issues from new-builds. This is the natural way to make each page
-  distinct, and it demonstrates real expertise.
-- A job actually done there, if there is one.
-- A review from that town, if there is one.
-- Travel time or coverage note.
-- Links to relevant services and neighbouring areas.
-
-**If you cannot write a genuinely distinct page for a town, do not create it.**
-Ten real pages beat thirty templated ones.
-
-## 5.4 Industry pages (commercial only)
-
-Per vertical: the compliance obligations that vertical actually has, typical
-scope, downtime and out-of-hours handling, relevant accreditations (CHAS,
-SafeContractor), a case study if one exists.
-
-## 5.5 Case studies (minimum three)
-
-Real jobs only. Each needs: a named client or an honest anonymisation
-("a landlord in Chapel Allerton"), the location, the date, the problem, what was
-done, what it cost or how long it took, before and after photos, and a direct
-customer quote.
-
-## 5.6 About
-
-The trust page. Owner's real name and photograph. First-person. How they got
-into the trade, what they were doing before, why they went out on their own.
-Named team members with photos and their specialisms. Qualifications with
-numbers. Insurance. What they refuse to do and why — a genuine opinion is worth
-more than a page of adjectives.
-
-## 5.7 Reviews
-
-Every review in one place, synced from third-party platforms where possible.
-Rating and count at the top. Name the electrician where the review does.
-
-## 5.8 Contact
-
-Phone as a tap-to-call link. Form with minimal fields. Hours including
-emergency terms. Google Map embed tied to the real GBP listing. Full NAP as
-text. A stated response-time promise the client can actually keep.
+**Render and look.** No build phase is judged from source. Screenshot desktop
+and mobile at every gate.
 
 ---
 
-# PART 6 — MOTION AND THE LIVE HERO
+## Part 4 — The uniqueness engine (no two sites the same)
 
-Every site ships with a live hero. It must not cost the client their rankings.
+Every build locks a **direction** before any code: one entry from the
+direction menu in `research/design-benchmarks.md`, adjusted by the
+`ui-ux-pro-max` dials (variance, motion, density).
 
-## Hard rules
+A direction is: palette + type pairing + hero concept + motion signature +
+layout rhythm. Two clients may share at most ONE of those five axes.
 
-- **Never animate, lazy-load or delay the LCP element.** Hero image gets
-  `loading="eager"` and `fetchpriority="high"`.
-- **CSS before JavaScript.** Reach for `css-animations` first. Only use `gsap`
-  when CSS genuinely cannot do it.
-- **Defer everything non-critical** — analytics, chat, review widgets. These are
-  the usual cause of INP failure.
-- **`prefers-reduced-motion: reduce` disables all motion** and shows the static
-  end state.
-- Reserve dimensions on everything so CLS stays at zero.
-
-## The house hero recipe
-
-Layered, and each layer degrades gracefully:
-
-1. A dark cinematic gradient base, tinted with the client's brand colour. Works
-   with no photography at all.
-2. The client's best photograph, if one exists, with a slow Ken Burns drift.
-   Pure CSS `transform`, GPU-composited, no layout cost.
-3. A subtle animated accent tied to the trade — a slow current pulse along a
-   circuit trace, drifting particles, or an SVG line-draw. Canvas or CSS, capped
-   in element count, paused when off-screen.
-4. Staggered text reveal on the headline and subhead. CSS only.
-5. A trust row that fades in last: rating, review count, accreditation marks.
-
-**Below the fold:** scroll reveals on section entry via `IntersectionObserver`.
-Nothing heavier.
-
-## Adapting to bad photography
-
-Most clients will supply phone photos or nothing.
-
-- **No usable photos:** gradient plus animated accent carries the hero.
-  Typography does the work. Book a shoot before launch if the budget allows.
-- **One decent owner photo:** cut it out, place it against the gradient, add
-  motion behind it.
-- **Phone photos of work:** grade them consistently — same treatment across all
-  — and use them small, in a grid, rather than large and full-bleed.
-- **Good photography:** let it lead. Full-bleed, minimal overlay, restrained
-  type.
+Keep the ledger honest: append every shipped build to
+`research/direction-ledger.md` (client, date, the five axes). Before starting
+a build, read the ledger and pick a direction that clears the rule above.
+Similar is tolerable, identical is failure.
 
 ---
 
-# PART 7 — COPY
+## Part 5 — The conversion pack
 
-## The de-slop pass — all four, in order
+The client chooses; when they have no preference, defaults follow
+`research/conversion-psychology.md`. The pack:
 
-Run every page through all four before it ships. One pass does not get there;
-each catches what the others miss.
+- **Call-first**: tel: links, sticky mobile call bar, callback widget
+- **WhatsApp-first**: wa.me deep links with prefilled message
+- **Form-first**: short form (name, phone, postcode, job), multi-step for solar
+- **Quote-first**: photo-upload quote request ("send us a photo of your fusebox")
+- **Booking**: calendar embed where the client runs one
+- **Emergency split**: separate urgent path (call now) and considered path
+  (survey/quote) on the same page
 
-1. **`stop-slop`** — filler, adverbs, passive voice, rule-of-three lists, em
-   dashes, pull-quote sentences.
-2. **`avoid-ai-writing`** — set the voice profile to match how the client
-   actually speaks (usually `blunt` or `casual` for a tradesperson), then run
-   iterate-to-convergence.
-3. **`humanizer`** — word and phrase level: inflated symbolism, promotional
-   language, vague attribution, negative parallelisms.
-4. **`structural-humanizer`** — the one people skip, and the one that matters
-   most. Removes moral-of-the-story closers, tidy single-track arcs and
-   unbroken linear structure. The StoryScope study found narrative structure
-   alone identifies AI text at 93.2% F1, and that professional stylistic
-   rewriting moved detection by only 1.6 points — meaning rewording alone does
-   not work.
-
-Then read it aloud. Anything the client would never say out loud gets cut.
-
-## Banned
-
-- "A family-owned business with over X years of experience providing quality
-  service" and every variant.
-- leverage, unlock, elevate, seamless, cutting-edge, best-in-class, delve.
-- "In today's fast-paced world", "Have you ever wondered".
-- Rule-of-three adjective lists. "Reliable, professional and affordable."
-- "Fully qualified and insured", "hundreds of happy customers", "we pride
-  ourselves on".
-
-## Required
-
-Every claim carries a name, number, date or place.
-
-| Slop | What to write instead |
-|---|---|
-| "Quality service you can trust." | "Full EIC certificate within 48 hours and a photo log of the board before we leave." |
-| "We leave a neat, professional job." | "Circuits labelled by room, cables run square along the joists, nothing held together with black tape." |
-| "Fully qualified and insured." | "NICEIC Approved Contractor #123456, Part P since 2011, £2m public liability." |
-| "Serving the local area." | "Victorian rewires off Bishopthorpe Road, EV chargers from Fulford to Haxby." |
-| "Hundreds of happy customers." | "1,240 jobs across North Yorkshire since 2011." |
-| "Same-day quotes available." | "Ask at 9am, know the price by lunchtime." |
-
-## Structure
-
-Lead with the customer's problem. Then the fix. Then the proof.
-
-**Voice:** the owner's, first person, as they would actually speak to a customer
-in their kitchen. Interview the client and use their real phrases. Read every
-page aloud — anything they would never say out loud gets cut.
-
-**Titles:** unique, front-loaded, 50-60 characters, service + location early.
-Put the rating in the title across the site where it is genuine
-("4.9★ from 63 reviews") — Quantum London does this sitewide and it lifts
-click-through everywhere.
-
-**Meta descriptions:** unique, 150-160 characters, written as ad copy.
+Domestic electrical leans call-first and urgent. Solar leans considered:
+form/booking with longer nurture copy. Both paths exist on every site; the
+pack choice decides which one leads.
 
 ---
 
-# PART 8 — TECHNICAL AND SEO
+## Part 6 — Temp data policy (no blanks, no lies at go-live)
 
-## Core Web Vitals
-LCP under 2.5s · INP under 200ms · CLS under 0.1. Field data at the 75th
-percentile, not a lab score. Test on mobile.
-
-## Structured data
-- `Electrician` (not generic `LocalBusiness`) on home and contact.
-- `Service` on every service page.
-- `BreadcrumbList` on service, location and industry pages.
-- **`AggregateRating` only against genuine third-party reviews.** Never mark up
-  self-collected testimonials against the client's own entity. Penalty risk.
-- `FAQPage` is fine, but Google removed FAQ rich results in 2025 — do not build
-  strategy around it.
-- Validate everything before launch.
-
-## On-page
-One H1 per page, non-skipping heading hierarchy, self-referencing canonicals,
-descriptive internal anchor text, real alt text on every photograph, WebP/AVIF
-with responsive `srcset`, HTTPS with no mixed content.
-
-## Images
-Correct rendered dimensions, compressed, lazy-loaded below the fold only.
+- Missing facts render as **plausible industry-average temporary values**, not
+  placeholders, not blanks. Examples: £2m public liability, "NICEIC registered",
+  round years-trading figures, from-prices at market rate for the region.
+- Every temp value is tagged in the data file with `// TEMP` so the swap list
+  is greppable in one command. The preview link may carry temps.
+- **Before paid go-live, all `// TEMP` values are swapped for the client's real
+  facts.** The go-live checklist is `grep -rn "TEMP" src/data/` returning zero.
+- **Reviews and testimonials are the one hard exception**: never publish
+  invented reviews, star ratings, or testimonials on a client's live site.
+  Fake consumer reviews are illegal in the UK (DMCC Act 2025) and carry real
+  liability for the client. Template demos may carry clearly-illustrative
+  review content; a paying client's live site carries their real reviews or a
+  reviews section that switches on later.
 
 ---
 
-# PART 9 — GOOGLE SETUP
+## Part 7 — Verification gates (definition of done)
 
-Often worth more than the website in the first ninety days. GBP signals carry
-roughly 32% of local pack ranking weight.
+A build is done when ALL of these pass, in this order:
 
-## Know this before you start
-
-**Google now auto-assigns the verification method.** Roughly eight in ten new
-trades profiles get **video verification**, and trades face extra spam scrutiny.
-Prepare the client for one continuous unedited take showing premises or vehicle,
-signage, tools, and proof they manage the business.
-
-## Sequence
-
-1. Search for an existing profile first. Duplicates cause suspensions.
-2. Register the **exact trading name only**. No keywords in the name field.
-3. Answer the business-model question correctly.
-4. Real verifiable address, hidden if service-area.
-5. Service areas by **town or postcode district**, not radius. Mirror the
-   location pages exactly.
-6. Primary category **Electrician**, then 2-4 accurate secondaries.
-7. Lock NAP format. Match the website character for character.
-8. Gather documents first: utility bill, insurance certificate, van livery
-   photos, scheme registration.
-9. **Verify the site in Search Console before GBP** — improves instant-verification odds.
-10. No edits during or immediately after verification.
-
-## Search Console
-DNS TXT verification where possible. Submit the sitemap. Add the agency as a
-delegated user, not a shared login. Request indexing on priority pages. Check
-coverage weekly for the first month.
-
-## Citations, in order
-1. Google Business Profile, Bing Places, Apple Business Connect, Facebook, Yell.
-2. Checkatrade, TrustATrader, Which? Trusted Traders.
-3. NICEIC Find a Contractor, NAPIT, TrustMark, ECA.
-4. Thomson Local, Foursquare, 192.com, FreeIndex, Yelp UK, Trustpilot.
-
-## Hand over to the client
-- How to post to GBP weekly, using the native CTA button.
-- How to ask for reviews after every job — and that **gating reviews is a
-  suspension trigger**.
-- To reply to every review within 48 hours.
-- To drip-feed photos rather than bulk-uploading.
+1. `impeccable critique` on the finished build scores ≥ 28/32 applicable
+   (Persuade surface) with zero P0s
+2. `responsive-check`: 360, 390, 768, 1024, 1440, 1920 clean
+3. `a11y-test`: axe-core zero critical/serious; WCAG 2.2 AA contrast
+4. `performance-audit` then `lighthouse-100`: **100/100/100/100** on Home,
+   and every other page ≥ 95 with no CWV failure
+5. The four de-slop passes confirmed run on every page
+6. Schema validates (`Electrician` / `Solar` types, correct NAP)
+7. Temp-data grep list generated and attached to the delivery note
+8. Rendered screenshots (desktop + mobile, every page) reviewed before the
+   link is sent
 
 ---
 
-# PART 10 — DEFINITION OF DONE
+## Part 8 — Delivery
 
-**Content**
-- [ ] Every page written, all four de-slop passes run, read aloud
-- [ ] No two pages share a sentence
-- [ ] Every claim has a name, number, date or place
-- [ ] Owner photographed and named on home and about
-- [ ] Three or more real case studies with photos
-- [ ] Real reviews, named electrician where applicable
-- [ ] Accreditation numbers verified with the client, not invented
+1. Build ships to a **temporary live shared link** (preview artifact or
+   staging URL) with the delivery note: what was built, direction used,
+   temp-data swap list, conversion pack fitted.
+2. Client pays → site moves to studio hosting, temps swapped (Part 6),
+   analytics + Search Console connected, go-live checklist run.
+3. Post-launch: GBP link-up and review pipeline are part of the base package
+   conversation.
 
-**Build**
-- [ ] All pages from §4 exist, no near-duplicates
-- [ ] Live hero, reduced-motion honoured
-- [ ] Mobile checked on a real device
-- [ ] LCP/INP/CLS pass on mobile
-- [ ] Forms tested end to end
-- [ ] Tap-to-call works
-- [ ] 404 styled
+---
 
-**SEO**
-- [ ] Unique title and meta per page
-- [ ] `Electrician`, `Service`, `BreadcrumbList` validated
-- [ ] Sitemap live and submitted
-- [ ] Canonicals, HTTPS, consistent NAP
+## Part 9 — Budgets and cadence
 
-**Google**
-- [ ] GBP verified and fully populated
-- [ ] Service areas mirror location pages
-- [ ] Search Console verified, sitemap submitted, agency delegated
-- [ ] Big-five citations live
-- [ ] Trade body citations claimed
+- **Template build**: 2 days, full pipeline, generation credits as needed
+  (flagships are marketing assets).
+- **Client base package**: ~1 hour build + verification, ~£20 generation
+  credit, 4 pages.
+- **Bigger packages**: more pages, more credit, more bespoke motion; still
+  one direction, still the same gates.
 
-**Handover**
-- [ ] Client owns domain and GBP
-- [ ] Review request process explained
-- [ ] GBP posting explained
-- [ ] Who to call when something breaks
+---
+
+*Written 2026-07-28 from the founder's planning answers. Change it only when
+the founder changes the policy.*

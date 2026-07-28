@@ -110,9 +110,11 @@ AI detection.**
 
 ## Other standing rules
 
-- **Never invent a fact.** No accreditation number, review count, testimonial,
-  case study, qualification or price unless the client supplied it. Unknowns
-  render as visible placeholders.
+- **No blanks.** Missing client facts render as plausible industry-average
+  temporary values tagged `// TEMP` in the data file, per MASTER_PROMPT.md
+  Part 6. All temps are swapped for real facts before paid go-live. The one
+  hard exception: never publish invented reviews, ratings or testimonials on
+  a client's live site (illegal under the UK DMCC Act 2025).
 - **Never animate the LCP element.**
 - **Client brand beats house preference.** If they have a logo and colours, use
   theirs.
