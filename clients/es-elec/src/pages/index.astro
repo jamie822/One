@@ -31,35 +31,15 @@ seed n/a: direction pinned by founder brief, not rolled. -->
   title="Electrician in Leeds | Rewires, EV & Solar | ES Elec"
   description={`NICEIC registered electrician in Leeds. Rewires, fuse boards, EICRs, EV chargers and solar, priced before work starts. Call Eddie on ${client.phone}.`}
   current="/"
-  preloadImage="/img/van-dusk-1080.webp"
-  preloadSrcset="/img/van-dusk-720.webp 720w, /img/van-dusk-1080.webp 1080w, /img/van-dusk.webp 1400w"
-  preloadSizes="100vw"
 >
-  <section class="hero hero--film">
-    {/* The whole hero is the film: the dusk street slow-pans, live current
-        runs the traces, embers drift off the work. Content sits in the
-        scrimmed left third. TEMP footage slot: when Higgsfield is back, a
-        generated dusk video loop drops in behind the same scrim. */}
+  <section class="hero hero--live">
+    {/* The scene is built, not photographed: amber aurora breathing over the
+        charcoal, a constellation of live points wiring themselves together,
+        a faint engineer's grid, and the core spinning on the right. */}
     <div class="hero__scene" aria-hidden="true">
-      <img
-        class="hero__film"
-        src="/img/van-dusk-1080.webp"
-        srcset="/img/van-dusk-720.webp 720w, /img/van-dusk-1080.webp 1080w, /img/van-dusk.webp 1400w"
-        sizes="100vw"
-        alt=""
-        width="1400" height="781" fetchpriority="high" decoding="async"
-        data-film
-      />
-      <div class="hero__scrim"></div>
-      <svg class="hero__traces" viewBox="0 0 1440 760" preserveAspectRatio="xMidYMid slice">
-        <path class="trace" d="M-20 640 H 300 Q 316 640 316 624 V 420 Q 316 404 332 404 H 700" />
-        <path class="trace" d="M1460 180 H 1080 Q 1064 180 1064 196 V 520 Q 1064 536 1048 536 H 820" />
-        <path class="trace" d="M-20 120 H 190 Q 206 120 206 136 V 300" />
-        <path class="pulse pulse--a" d="M-20 640 H 300 Q 316 640 316 624 V 420 Q 316 404 332 404 H 700" />
-        <path class="pulse pulse--b" d="M1460 180 H 1080 Q 1064 180 1064 196 V 520 Q 1064 536 1048 536 H 820" />
-        <path class="pulse pulse--c" d="M-20 120 H 190 Q 206 120 206 136 V 300" />
-      </svg>
-      <canvas class="hero__embers" data-embers></canvas>
+      <div class="hero__aurora"><span></span><span></span><span></span></div>
+      <div class="hero__gridlines"></div>
+      <canvas class="hero__mesh" data-mesh></canvas>
     </div>
 
     <div class="wrap hero__inner">
@@ -83,13 +63,30 @@ seed n/a: direction pinned by founder brief, not rolled. -->
           </p>
         )}
       </div>
-      <span class="hero__chip hero__chip--a" aria-hidden="true">
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M13 2 4 14h6l-2 8 9-12h-6z"/></svg>
-        NICEIC Approved <!-- TEMP -->
-      </span>
-      <span class="hero__chip hero__chip--b" aria-hidden="true">
-        Out across Leeds, {client.hours} <!-- TEMP -->
-      </span>
+
+      <div class="hero__stage" aria-hidden="true">
+        <div class="core">
+          <span class="core__ring core__ring--1"></span>
+          <span class="core__ring core__ring--2"></span>
+          <span class="core__ring core__ring--3"></span>
+          <span class="core__orbit core__orbit--1"><i></i></span>
+          <span class="core__orbit core__orbit--2"><i></i></span>
+          <span class="core__orbit core__orbit--3"><i></i></span>
+          <span class="core__orb">
+            <svg viewBox="0 0 100 100" width="46%" height="46%"><path d="M54 8 26 58h18l-7 34 34-50H50z" fill="#171001"/></svg>
+          </span>
+        </div>
+        <span class="hero__chip hero__chip--a">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M13 2 4 14h6l-2 8 9-12h-6z"/></svg>
+          NICEIC Approved <!-- TEMP -->
+        </span>
+        <span class="hero__chip hero__chip--b">
+          Priced before work starts
+        </span>
+        <span class="hero__chip hero__chip--c">
+          Out across Leeds, {client.hours} <!-- TEMP -->
+        </span>
+      </div>
     </div>
 
     <div class="hero__marquee" aria-hidden="true">
@@ -310,11 +307,11 @@ seed n/a: direction pinned by founder brief, not rolled. -->
   </div>
 
   <script is:inline>
-    // The embers: sparks off the night's work, drifting up through the hero.
-    // Starts after load so it never touches LCP; skips itself entirely under
-    // reduced motion; pauses when the tab is hidden.
+    // The constellation: live points drifting through the hero, wiring
+    // themselves to their neighbours. Starts after load so it never touches
+    // LCP; skips under reduced motion; pauses when the tab hides.
     window.addEventListener('load', function () {
-      var c = document.querySelector('[data-embers]');
+      var c = document.querySelector('[data-mesh]');
       if (!c || matchMedia('(prefers-reduced-motion: reduce)').matches) return;
       var x = c.getContext('2d');
       var dpr = Math.min(devicePixelRatio || 1, 2);
@@ -322,20 +319,18 @@ seed n/a: direction pinned by founder brief, not rolled. -->
       function size() { W = c.width = c.offsetWidth * dpr; H = c.height = c.offsetHeight * dpr; }
       size();
       addEventListener('resize', size);
-      var N = innerWidth < 800 ? 14 : 34;
-      function spawn(anywhere) {
-        return {
-          x: Math.random() * W,
-          y: anywhere ? Math.random() * H : H + 12,
-          r: (Math.random() * 1.5 + 0.6) * dpr,
-          v: (Math.random() * 0.4 + 0.16) * dpr,
-          ph: Math.random() * 6.28,
-          sway: (Math.random() * 0.5 + 0.15) * dpr,
-          a: Math.random() * 0.42 + 0.14,
-        };
-      }
+      var N = innerWidth < 800 ? 22 : 52;
+      var LINK = 130 * dpr;
       var ps = [];
-      for (var i = 0; i < N; i++) ps.push(spawn(true));
+      for (var i = 0; i < N; i++) {
+        ps.push({
+          x: Math.random() * W,
+          y: Math.random() * H,
+          vx: (Math.random() - 0.5) * 0.22 * dpr,
+          vy: (Math.random() - 0.5) * 0.22 * dpr,
+          r: (Math.random() * 1.3 + 0.7) * dpr,
+        });
+      }
       var running = true;
       document.addEventListener('visibilitychange', function () {
         running = !document.hidden;
@@ -344,16 +339,32 @@ seed n/a: direction pinned by founder brief, not rolled. -->
       function tick() {
         if (!running) return;
         x.clearRect(0, 0, W, H);
-        for (var i = 0; i < ps.length; i++) {
+        for (var i = 0; i < N; i++) {
           var p = ps[i];
-          p.y -= p.v;
-          p.ph += 0.008;
-          p.x += Math.sin(p.ph) * p.sway * 0.4;
-          if (p.y < -12) ps[i] = p = spawn(false);
-          x.globalAlpha = p.a;
-          x.fillStyle = '#ffb24d';
+          p.x += p.vx; p.y += p.vy;
+          if (p.x < 0 || p.x > W) p.vx *= -1;
+          if (p.y < 0 || p.y > H) p.vy *= -1;
+        }
+        x.strokeStyle = '#ffb24d';
+        x.lineWidth = 1;
+        for (var i = 0; i < N; i++) {
+          for (var j = i + 1; j < N; j++) {
+            var dx = ps[i].x - ps[j].x, dy = ps[i].y - ps[j].y;
+            var d = Math.sqrt(dx * dx + dy * dy);
+            if (d < LINK) {
+              x.globalAlpha = (1 - d / LINK) * 0.16;
+              x.beginPath();
+              x.moveTo(ps[i].x, ps[i].y);
+              x.lineTo(ps[j].x, ps[j].y);
+              x.stroke();
+            }
+          }
+        }
+        x.fillStyle = '#ffb24d';
+        for (var i = 0; i < N; i++) {
+          x.globalAlpha = 0.5;
           x.beginPath();
-          x.arc(p.x, p.y, p.r, 0, 6.29);
+          x.arc(ps[i].x, ps[i].y, ps[i].r, 0, 6.29);
           x.fill();
         }
         x.globalAlpha = 1;

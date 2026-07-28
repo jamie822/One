@@ -131,78 +131,132 @@
 @keyframes slot-in { from { opacity: 0; transform: scale(.4); } to { opacity: 1; transform: none; } }
 @keyframes ink-in  { from { background-position: 100% 0; } to { background-position: 0 0; } }
 
-/* ---- Hero: the film ---------------------------------------------------------
-   Full-bleed dusk street that slow-pans, current running the traces, embers
-   drifting up. The content lives in the scrimmed left third; a trust marquee
-   closes the frame. */
+/* ---- Hero: the live scene ------------------------------------------------
+   No photograph. Amber aurora breathing over the charcoal, a constellation
+   canvas wiring itself together, a faint engineer's grid, and the core
+   spinning beside the words. A trust marquee closes the frame. */
 .hero { position: relative; }
-.hero--film {
+.hero--live {
   overflow: hidden;
   display: flex; flex-direction: column; justify-content: center;
   min-height: min(92vh, 880px);
   min-height: min(92svh, 880px);
+  background:
+    radial-gradient(90rem 60rem at 78% 30%, color-mix(in srgb, var(--amber-500) 7%, transparent), transparent 60%),
+    var(--tungsten-950);
 }
 .hero__scene { position: absolute; inset: 0; }
-.hero__film {
-  position: absolute; inset: 0;
-  width: 100%; height: 100%; object-fit: cover;
-  transform-origin: 62% 42%;
+.hero__aurora span {
+  position: absolute;
+  width: 44vw; height: 44vw;
+  border-radius: 50%;
+  filter: blur(72px);
+  opacity: .5;
+}
+.hero__aurora span:nth-child(1) {
+  left: -12vw; top: -14vw;
+  background: radial-gradient(circle, color-mix(in srgb, var(--amber-500) 26%, transparent), transparent 62%);
+}
+.hero__aurora span:nth-child(2) {
+  right: -14vw; top: 6vw;
+  background: radial-gradient(circle, color-mix(in srgb, var(--amber-300) 20%, transparent), transparent 62%);
+}
+.hero__aurora span:nth-child(3) {
+  left: 26vw; bottom: -24vw;
+  background: radial-gradient(circle, color-mix(in srgb, #ff7a2f 16%, transparent), transparent 62%);
 }
 @media (prefers-reduced-motion: no-preference) {
-  html.js .hero__film {
-    opacity: 0;
-    animation: film-in 1s ease .15s forwards, kenburns 30s ease-in-out 1s infinite alternate;
-  }
+  html.js .hero__aurora span:nth-child(1) { animation: aurora-a 21s ease-in-out infinite alternate; }
+  html.js .hero__aurora span:nth-child(2) { animation: aurora-b 26s ease-in-out infinite alternate; }
+  html.js .hero__aurora span:nth-child(3) { animation: aurora-c 31s ease-in-out infinite alternate; }
 }
-@keyframes film-in { to { opacity: 1; } }
-@keyframes kenburns {
-  from { transform: scale(1) translateX(0); }
-  to   { transform: scale(1.1) translateX(-2.2%); }
-}
-.hero__scrim {
+@keyframes aurora-a { to { transform: translate(9vw, 6vw) scale(1.18); } }
+@keyframes aurora-b { to { transform: translate(-7vw, 8vw) scale(1.12); } }
+@keyframes aurora-c { to { transform: translate(6vw, -7vw) scale(1.22); } }
+
+.hero__gridlines {
   position: absolute; inset: 0;
-  background:
-    linear-gradient(90deg,
-      color-mix(in srgb, var(--tungsten-950) 94%, transparent) 0%,
-      color-mix(in srgb, var(--tungsten-950) 82%, transparent) 34%,
-      color-mix(in srgb, var(--tungsten-950) 38%, transparent) 62%,
-      color-mix(in srgb, var(--tungsten-950) 24%, transparent) 100%),
-    linear-gradient(0deg,
-      color-mix(in srgb, var(--tungsten-950) 92%, transparent) 0%,
-      transparent 26%),
-    linear-gradient(180deg,
-      color-mix(in srgb, var(--tungsten-950) 72%, transparent) 0%,
-      transparent 22%);
+  background-image:
+    linear-gradient(color-mix(in srgb, var(--amber-300) 5%, transparent) 1px, transparent 1px),
+    linear-gradient(90deg, color-mix(in srgb, var(--amber-300) 5%, transparent) 1px, transparent 1px);
+  background-size: 64px 64px;
+  mask-image: radial-gradient(90rem 55rem at 70% 40%, black, transparent 72%);
+  -webkit-mask-image: radial-gradient(90rem 55rem at 70% 40%, black, transparent 72%);
 }
-.hero__traces { position: absolute; inset: 0; width: 100%; height: 100%; }
-.hero__traces .trace { stroke: color-mix(in srgb, var(--amber-300) 16%, transparent); stroke-width: 1.5; fill: none; }
-.hero__traces .pulse {
-  stroke: var(--amber-500); stroke-width: 2; fill: none;
-  stroke-linecap: round;
-  stroke-dasharray: 90 1600;
-  filter: drop-shadow(0 0 6px color-mix(in srgb, var(--amber-500) 70%, transparent));
-  opacity: 0;
-}
-@media (prefers-reduced-motion: no-preference) {
-  .hero__traces .pulse { opacity: 1; animation: current 7.5s linear infinite; }
-  .hero__traces .pulse--b { animation-delay: 2.5s; }
-  .hero__traces .pulse--c { animation-delay: 5s; }
-}
-@keyframes current {
-  from { stroke-dashoffset: 1690; }
-  to   { stroke-dashoffset: 0; }
-}
-.hero__embers { position: absolute; inset: 0; width: 100%; height: 100%; }
+.hero__mesh { position: absolute; inset: 0; width: 100%; height: 100%; }
 
 .hero__inner {
   position: relative;
-  padding-block: clamp(4rem, 12vh, 7rem) clamp(4.6rem, 13vh, 7.6rem);
+  display: grid; gap: var(--s-4);
+  align-items: center;
+  padding-block: clamp(3.4rem, 10vh, 6rem) clamp(4rem, 11vh, 6.6rem);
 }
+@media (min-width: 980px) { .hero__inner { grid-template-columns: 7fr 5fr; } }
 .hero__copy { max-width: 640px; }
-.hero--film h1 {
-  font-size: clamp(2.4rem, 5.8vw, 5.4rem);
+.hero--live h1 {
+  font-size: clamp(2.4rem, 5.4vw, 5rem);
   max-width: 14ch;
-  text-shadow: 0 2px 30px rgba(22, 19, 15, .6);
+}
+
+/* The core: the site's own mark spun up into an instrument. */
+.hero__stage { position: relative; display: grid; place-items: center; min-height: 320px; }
+.core {
+  position: relative;
+  width: min(420px, 86%);
+  aspect-ratio: 1;
+}
+.core__ring {
+  position: absolute; border-radius: 50%;
+}
+.core__ring--1 { inset: 0; border: 1px solid color-mix(in srgb, var(--amber-300) 34%, transparent); }
+.core__ring--2 { inset: 11%; border: 1px dashed color-mix(in srgb, var(--amber-300) 30%, transparent); }
+.core__ring--3 { inset: 24%; border: 1px solid color-mix(in srgb, var(--amber-300) 20%, transparent); }
+@media (prefers-reduced-motion: no-preference) {
+  html.js .core__ring--2 { animation: core-spin 36s linear infinite; }
+}
+@keyframes core-spin { to { transform: rotate(360deg); } }
+
+.core__orbit { position: absolute; border-radius: 50%; }
+.core__orbit--1 { inset: 0; }
+.core__orbit--2 { inset: 11%; }
+.core__orbit--3 { inset: 24%; }
+.core__orbit i {
+  position: absolute;
+  left: 50%; top: -4px;
+  width: 8px; height: 8px; margin-left: -4px;
+  border-radius: 50%;
+  background: var(--amber-500);
+  box-shadow: 0 0 10px 2px color-mix(in srgb, var(--amber-500) 65%, transparent);
+}
+@media (prefers-reduced-motion: no-preference) {
+  html.js .core__orbit--1 { animation: core-spin 17s linear infinite; }
+  html.js .core__orbit--2 { animation: core-spin 12s linear infinite reverse; }
+  html.js .core__orbit--3 { animation: core-spin 23s linear infinite; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .core__orbit--1 { transform: rotate(40deg); }
+  .core__orbit--2 { transform: rotate(160deg); }
+  .core__orbit--3 { transform: rotate(280deg); }
+}
+.core__orb {
+  position: absolute; inset: 33%;
+  border-radius: 50%;
+  display: grid; place-items: center;
+  background: radial-gradient(circle at 38% 32%, #ffd9a0, var(--amber-500) 58%, #d97e0a);
+  box-shadow:
+    0 0 60px 8px color-mix(in srgb, var(--amber-500) 42%, transparent),
+    0 0 140px 30px color-mix(in srgb, var(--amber-500) 16%, transparent);
+}
+@media (prefers-reduced-motion: no-preference) {
+  html.js .core__orb { animation: orb-breathe 4.4s ease-in-out infinite alternate; }
+}
+@keyframes orb-breathe {
+  from { transform: scale(1); }
+  to   { transform: scale(1.05); }
+}
+@media (max-width: 979px) {
+  .hero__stage { min-height: 0; margin-top: var(--s-3); }
+  .core { width: min(300px, 74%); }
 }
 .hero__hl {
   background: linear-gradient(100deg, var(--amber-300), var(--amber-500) 55%, #ffd9a0);
@@ -225,11 +279,13 @@
   -webkit-backdrop-filter: blur(8px);
 }
 .hero__chip svg { color: var(--amber-300); }
-.hero__chip--a { right: 8%; top: 24%; }
-.hero__chip--b { right: 16%; bottom: 20%; }
+.hero__chip--a { left: -4%; top: 12%; }
+.hero__chip--b { right: -6%; top: 46%; }
+.hero__chip--c { left: 6%; bottom: 6%; }
 @media (prefers-reduced-motion: no-preference) {
   html.js .hero__chip--a { animation: chip-float 7s ease-in-out infinite alternate; }
   html.js .hero__chip--b { animation: chip-float 8.5s ease-in-out infinite alternate-reverse; }
+  html.js .hero__chip--c { animation: chip-float 9.5s ease-in-out 1s infinite alternate; }
 }
 @keyframes chip-float {
   from { transform: translateY(-7px); }
