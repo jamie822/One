@@ -1,122 +1,235 @@
 ---
-// One page of the wall diary.
+// One sheet of the wall calendar.
 //
-// Geometry is the Mark's, scaled up. Mark.astro draws six rounded slots, five
-// filled from one shared gradient and one left as an outline. This is the same
-// object at architectural scale: thirty slots on a Mon to Sat working month,
-// twenty nine filled and one left open. The open one is the brand, so it is
-// never filled.
+// It is a printed sheet, not a set of controls. The month name is the largest
+// thing on it, the grid is defined by hairline rules rather than by fills, and a
+// booking is a line of writing in a square rather than a chip. That inversion is
+// the whole of the founder's note: "This does not look like a calendar, it looks
+// like buttons on a desktop."
 //
-// The final page renders TWICE. The base layer is the diary as printed: neutral
-// fills, off white ink. The wash layer sits on top with the signature gradient
-// and dark ink, revealed by a left to right wipe. Duplicating and clipping is
-// the only way to get a colour AND a text colour to change together cleanly;
-// timing two separate colour transitions never lands.
+// THE SHEET IS SEGMENTED. Four horizontal bands: the month header, then three
+// pairs of week rows. They are DIRECT children of the sheet, which is what puts
+// them in its perspective, and each is hinged on its OWN top edge and placed at
+// the running end of the band above it, so the four rotations chain into a curve.
+// Real paper does not pivot like a trapdoor; the free edge lifts first and the
+// sheet bows through the arc. Every band also carries a back face at the same
+// angle plus 180deg, so the reverse of the sheet is genuinely visible as it goes
+// over the top.
 //
-// Nothing in here is focusable and the whole diary is aria-hidden at the hero
-// root, so it is invisible to assistive tech by design. It is a picture.
+// Dates are real. The grid is a true Monday start month laid out from the actual
+// weekday of the 1st, so the numerals sit in the columns a printed calendar would
+// put them in, the lead in and trail out squares are the ones that really do
+// belong to the months either side, and a month that needs six rows gets six.
+// Job types are illustrative and the hero says so in copy.
 
 interface Props {
-  n: 1 | 2 | 3 | 4;
+  /** Sheet depth in the pad. 1 and 2 turn, 3 is the settled sheet. */
+  n: 1 | 2 | 3;
+  year: number;
+  /** 0 based, as Date wants it. */
+  month: number;
+  /** Day numbers that carry an entry. */
   booked: number[];
+  /** The one deliberately open day. Only ever set on the settled sheet. */
+  openDay?: number;
   isFinal?: boolean;
-  emptyIndex?: number;
 }
-const { n, booked, isFinal = false, emptyIndex = -1 } = Astro.props;
+const { n, year, month, booked, openDay = 0, isFinal = false } = Astro.props;
 
-const DAYS = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+const MONTHS = [
+  'January', 'February', 'March', 'April', 'May', 'June',
+  'July', 'August', 'September', 'October', 'November', 'December',
+];
+const DAYS = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
 
-// Real trade work. A spark should scan this and recognise his own week.
-// Illustrative job types, not a record of bookings: the hero says so in copy.
+// Real trade work, written the way a spark writes it into a square. Illustrative
+// job types, not a record of bookings: the caption in the hero says so.
 const JOBS = [
-  'EICR',
-  'Board swap',
-  'EV charger',
-  'Solar PV',
-  'Rewire',
-  'Fault find',
-  'CU upgrade',
-  'Consumer unit',
-  'EICR remedials',
+  'EICR', 'Board swap', 'EV charger', 'Solar PV', 'Rewire',
+  'Fault find', 'CU upgrade', 'Consumer unit', 'EICR remedials',
 ];
 
-const COLS = 6;
-const ROWS = 5;
-const CELLS = COLS * ROWS;
+const dayCount = new Date(Date.UTC(year, month + 1, 0)).getUTCDate();
+// Monday start, so Sunday's 0 becomes 6 and the lead in is honest.
+const lead = (new Date(Date.UTC(year, month, 1)).getUTCDay() + 6) % 7;
 
 const bookedSet = new Set(booked);
+const jobFor = (day: number) => JOBS[(day + n * 3) % JOBS.length];
 
-const cells = Array.from({ length: CELLS }, (_, i) => ({
-  i,
-  c: i % COLS,
-  r: Math.floor(i / COLS),
-  day: i + 1,
-  booked: bookedSet.has(i),
-  // The one open slot only exists on the settled page. On the earlier pages an
-  // unbooked day is just a quiet day; drawing an outline on twenty of them
-  // would spend the device that has to land once.
-  free: isFinal && i === emptyIndex,
-  job: JOBS[i % JOBS.length],
-}));
+// Six rows always, printed whether the month fills them or not, which is what a
+// printed sheet does and what keeps the band geometry identical on every sheet.
+const ROWS = 6;
+const COLS = 7;
+
+const cells = Array.from({ length: ROWS * COLS }, (_, i) => {
+  const day = i - lead + 1;
+  const inMonth = day >= 1 && day <= dayCount;
+  return {
+    col: i % COLS,
+    day,
+    inMonth,
+    sunday: i % COLS === 6,
+    booked: inMonth && bookedSet.has(day),
+    open: inMonth && isFinal && day === openDay,
+    job: jobFor(day),
+  };
+});
+
+const rows = Array.from({ length: ROWS }, (_, r) => cells.slice(r * COLS, r * COLS + COLS));
+// Band 0 is the header. Bands 1 to 3 carry two week rows each.
+const bands = [rows.slice(0, 2), rows.slice(2, 4), rows.slice(4, 6)];
+
+// The phone shows one working week as ruled lines rather than a seven column
+// month, which is unreadable at 390px. Same dates, same entries, same open day,
+// spread two lines per band so the curl and both sweeps survive down there.
+// Rendered as its own set of lines rather than reflowed out of the month, because
+// the week has to sit across three bands and the month puts it inside one.
+const weekStart = lead === 0 ? 1 : 8 - lead;   // the Monday of the first full week
+const week = Array.from({ length: 6 }, (_, k) => {
+  const day = weekStart + k;
+  return {
+    l: k,
+    dow: DAYS[k],
+    day,
+    booked: bookedSet.has(day),
+    open: isFinal && day === openDay,
+    job: jobFor(day),
+  };
+});
+const weekBands = [week.slice(0, 2), week.slice(2, 4), week.slice(4, 6)];
 ---
 
-<div class="cal__page" data-page={n}>
-  <div class="cal__sheet">
-    <div class="cal__days" aria-hidden="true">
-      {DAYS.map((d) => <span class="cal__day">{d}</span>)}
+<div class="cal__sheet" data-sheet={n}>
+  {/* ---- Band 0: the month. The largest typography on the sheet, which is what a
+       wall calendar's header is and what this hero had none of. ---- */}
+  <div class="cal__band" data-band="0" style="--b:0">
+    <div class="cal__head">
+      <span class="cal__month">{MONTHS[month]}</span>
+      <span class="cal__year">{year}</span>
     </div>
+    <div class="cal__dows">
+      {DAYS.map((d) => <span class="cal__dow">{d}</span>)}
+    </div>
+  </div>
+  <div class="cal__back" data-band="0" style="--b:0">
+    {/* Show through: the month printed on the other side of the sheet, read
+        backwards, at the strength paper actually lets through. */}
+    <span class="cal__ghost-month">{MONTHS[month]}</span>
+  </div>
 
-    <div class="cal__grid cal__grid--base">
-      {cells.map((cell) => (
-        <div
-          class:list={[
-            'cal__cell',
-            cell.booked && 'cal__cell--booked',
-            cell.free && 'cal__cell--free',
-          ]}
-          style={`--c:${cell.c};--r:${cell.r};--i:${cell.i}`}
-        >
-          <span class="cal__head">
-            {/* The phone drops the column heads and shows one working week as
-                rows, so each row has to name its own day. */}
-            <span class="cal__dow">{DAYS[cell.c]}</span>
-            <span class="cal__num">{cell.day}</span>
-          </span>
-          {cell.booked && <span class="cal__job">{cell.job}</span>}
+  {/* ---- Bands 1 to 3: the printed grid. Two week rows each, plus the phone's
+       working week, which is display:none above 720px. ---- */}
+  {bands.map((bandRows, bi) => (
+    <div class="cal__band" data-band={bi + 1} style={`--b:${bi + 1}`}>
+      {bandRows.map((row) => (
+        <div class="cal__row">
+          {row.map((cell) => (
+            <div
+              class:list={[
+                'cal__cell',
+                !cell.inMonth && 'cal__cell--void',
+                cell.sunday && 'cal__cell--sun',
+                cell.open && 'cal__cell--open',
+              ]}
+              style={`--c:${cell.col}`}
+            >
+              {cell.inMonth && <span class="cal__num">{cell.day}</span>}
+              {cell.booked && (
+                <span class="cal__entry">
+                  <span class="cal__job">{cell.job}</span>
+                  <span class="cal__tick"></span>
+                </span>
+              )}
+            </div>
+          ))}
+        </div>
+      ))}
+      <div class="cal__week">
+        {weekBands[bi].map((d) => (
+          <div
+            class:list={['cal__line', !d.booked && !d.open && 'cal__line--void', d.open && 'cal__line--open']}
+            style={`--l:${d.l}`}
+          >
+            <span class="cal__line-dow">{d.dow}</span>
+            <span class="cal__num">{d.day}</span>
+            {d.booked && (
+              <span class="cal__entry">
+                <span class="cal__job">{d.job}</span>
+                <span class="cal__tick"></span>
+              </span>
+            )}
+          </div>
+        ))}
+      </div>
+    </div>
+  ))}
+  {bands.map((_, bi) => <div class="cal__back" data-band={bi + 1} style={`--b:${bi + 1}`}></div>)}
+
+  {isFinal && (
+    <!-- SWEEP TWO, the signature gradient, on the settled sheet only.
+
+         THIS BLOCK MUST STAY IN REGISTER WITH THE ONE ABOVE. It is the same bands
+         at the same offsets holding the same squares in the same order, so the two
+         copies are the same box to the pixel and cannot drift apart. The only
+         differences are the --lit class on a square that has an entry, and the
+         mask on the wrapper. Duplicating and clipping is the only way to move a
+         fill and a text colour together; timing two separate colour transitions
+         never lands. Change one loop, change the other.
+
+         The bands here need no 3D of their own, because the settled sheet never
+         turns, which is why they can live inside a wrapper while the printed bands
+         above have to be direct children of the sheet to inherit its perspective. -->
+    <div class="cal__wash">
+      {bands.map((bandRows, bi) => (
+        <div class="cal__band" data-band={bi + 1} style={`--b:${bi + 1}`}>
+          {bandRows.map((row) => (
+            <div class="cal__row">
+              {row.map((cell) => (
+                <div
+                  class:list={[
+                    'cal__cell',
+                    !cell.inMonth && 'cal__cell--void',
+                    cell.sunday && 'cal__cell--sun',
+                    cell.open && 'cal__cell--open',
+                    cell.booked && 'cal__cell--lit',
+                  ]}
+                  style={`--c:${cell.col}`}
+                >
+                  {cell.inMonth && <span class="cal__num">{cell.day}</span>}
+                  {cell.booked && (
+                    <span class="cal__entry">
+                      <span class="cal__job">{cell.job}</span>
+                      <span class="cal__tick"></span>
+                    </span>
+                  )}
+                </div>
+              ))}
+            </div>
+          ))}
+          <div class="cal__week">
+            {weekBands[bi].map((d) => (
+              <div
+                class:list={[
+                  'cal__line',
+                  !d.booked && !d.open && 'cal__line--void',
+                  d.open && 'cal__line--open',
+                  d.booked && 'cal__line--lit',
+                ]}
+                style={`--l:${d.l}`}
+              >
+                <span class="cal__line-dow">{d.dow}</span>
+                <span class="cal__num">{d.day}</span>
+                {d.booked && (
+                  <span class="cal__entry">
+                    <span class="cal__job">{d.job}</span>
+                    <span class="cal__tick"></span>
+                  </span>
+                )}
+              </div>
+            ))}
+          </div>
         </div>
       ))}
     </div>
-
-    {isFinal && (
-      <!-- Sweep two, second half. This layer and .cal__word-grad above it are
-           the same wash: identical mask, identical size, identical travel,
-           identical curve, identical delay, so one vertical edge crosses the
-           wordmark and the month at the same x in the same frame and lays the
-           colour into both. It starts 140ms before the wordmark's white ink
-           sweep has finished, so it reads as one gesture chasing the other
-           rather than two events.
-
-           The open slot is absent from this layer, so the colour passes
-           straight over it and the base layer's outline stays visible. That gap
-           is the whole point. -->
-      <div class="cal__grid cal__grid--wash">
-        {cells.map((cell) =>
-          cell.booked ? (
-            <div
-              class="cal__cell cal__cell--booked"
-              style={`--c:${cell.c};--r:${cell.r};--i:${cell.i}`}
-            >
-              <span class="cal__head">
-                <span class="cal__dow">{DAYS[cell.c]}</span>
-                <span class="cal__num">{cell.day}</span>
-              </span>
-              <span class="cal__job">{cell.job}</span>
-            </div>
-          ) : (
-            <div class="cal__cell cal__cell--void" style={`--c:${cell.c};--r:${cell.r};--i:${cell.i}`}></div>
-          )
-        )}
-      </div>
-    )}
-  </div>
+  )}
 </div>
