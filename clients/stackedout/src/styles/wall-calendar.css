@@ -36,6 +36,14 @@
   position: relative;
   padding: 0 0 clamp(18px, 2.4vw, 34px);
   isolation: isolate;
+  /* clip, not hidden, and only on one axis. A sheet rotated inside a 1600px
+     perspective projects far wider than its box while it is turning: measured
+     -244..1684 on a 1440 viewport, so 244px of horizontal scrollbar for the four
+     seconds the sequence runs. overflow: hidden would also cap the vertical, and
+     the whole point is that the page swings up above the wire. overflow-x: clip is
+     the one value that clips a single axis without turning the box into a scroll
+     container or forcing the other axis to auto. */
+  overflow-x: clip;
 }
 
 /* ---- Binding ------------------------------------------------------------- */
