@@ -237,7 +237,7 @@ document.addEventListener('DOMContentLoaded', function () {
   // Mesh: facets across the fold, and along the roll. Heavily biased toward the
   // roll, because that is the direction the light falls off in — the shading barely
   // changes along the fold, but it swings the full way round it.
-  var NX = 20, NY = 40;
+  var NX = 30, NY = 40;
 
   // Shade a normal. The printed side is the same dark stock as the sheet and only
   // ever a little lighter or darker than it, because it is the same paper barely
@@ -301,6 +301,11 @@ document.addEventListener('DOMContentLoaded', function () {
     ctx.clearRect(0, 0, this.cv.width, this.cv.height);
 
     this.rot = gsap.getProperty(this.sheet, 'rotationX') || 0;
+    // Past about 75 degrees the curl is edge-on: a whole roll of paper squashed
+    // into a forty-pixel band, which reads as a grey slab laid over the binding
+    // rather than as paper. Retire it and let the reverse of the sheet carry the
+    // top of the arc, which is the only thing that should be visible up there.
+    this.cv.style.opacity = clamp((96 - this.rot) / 21, 0, 1).toFixed(3);
     var F = this.peel * this.FMAX;           // length of the fold's legs from the corner
     var d = F * SQ;                          // perpendicular distance corner to fold
     var C = W + H - F;
@@ -311,9 +316,9 @@ document.addEventListener('DOMContentLoaded', function () {
     // the peel, deepens as the page rises off the wall, and goes as the page
     // clears out of the light.
     if (this.lit) {
-      this.lit.style.opacity = (clamp(this.peel * 2.6, 0, 1) *
-                               (0.34 + 0.66 * clamp(this.rot / 26, 0, 1)) *
-                               clamp((162 - this.rot) / 56, 0, 1)).toFixed(3);
+      this.lit.style.opacity = ((0.16 * clamp(this.peel * 2.2, 0, 1) +
+                                 0.62 * clamp(this.rot / 26, 0, 1)) *
+                                clamp((162 - this.rot) / 56, 0, 1)).toFixed(3);
     }
     if (d < 3) return;
 
@@ -502,8 +507,8 @@ document.addEventListener('DOMContentLoaded', function () {
       // page is standing on its crease, then ease-in past it — the one place an
       // ease-in belongs, because past vertical it is gravity and not the hand.
       tl.to(t.sheet, { rotationX: 92, duration: D * 0.45, ease: 'power1.out' }, D * 0.33);
-      tl.to(t.sheet, { rotationX: 178, duration: D * 0.22, ease: 'power2.in' }, D * 0.78);
-      tl.to(t.sheet, { autoAlpha: 0, duration: D * 0.13, ease: 'none' }, D * 0.87);
+      tl.to(t.sheet, { rotationX: 172, duration: D * 0.22, ease: 'power2.in' }, D * 0.78);
+      tl.to(t.sheet, { autoAlpha: 0, duration: D * 0.11, ease: 'none' }, D * 0.89);
       tl.eventCallback('onUpdate', function () { t.needs = true; });
       return tl;
     }

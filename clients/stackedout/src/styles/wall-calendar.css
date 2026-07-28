@@ -96,9 +96,12 @@
      Changing one means changing PERSP in the component. */
   perspective: 1600px;
   perspective-origin: 50% 34%;
-  /* The page swings up past the wire and is gone. Clipping it at the binding is
-     what the binding is for, and it also keeps the cast shadow off the headline. */
-  overflow: hidden;
+  /* The page swings up past the wire and is gone behind the pad, which is what a
+     top-bound calendar does. Clipped rather than overflow-hidden, and open at the
+     top by about the depth of the binding: closed at the top and the reverse of
+     the page is never seen at all, because everything past vertical is above the
+     wire. Sides and bottom stay closed so nothing travels over the headline. */
+  clip-path: inset(-9% 0 0 0);
 }
 
 /* The sheet is only a hinge now: no paper on it, because the paper has two sides
@@ -287,7 +290,11 @@
      vertical. On the faces, never on .wc__sheet. */
   transform: rotateY(180deg);
   backface-visibility: hidden;
-  background: linear-gradient(172deg, #aeb5bf 0%, #6f767f 32%, #3b4048 100%);
+  /* Darkest at the bound edge, lightest at the free one: the wire and the pad
+     behind it shade the head of the sheet, and the loose edge is what actually
+     catches the light. It matters which way round, because the head of the sheet
+     is the part that crosses the binding on the way over. */
+  background: linear-gradient(172deg, #3b4048 0%, #4d545e 42%, #6f767f 76%, #aeb5bf 100%);
   border: 1px solid var(--rule);
   border-top: none;
   box-shadow: inset 0 0 clamp(60px, 7vw, 130px) rgba(0, 0, 0, .34);
@@ -315,9 +322,9 @@
   will-change: opacity;
   background: linear-gradient(
     208deg,
-    rgba(0, 0, 0, .66) 0%,
-    rgba(0, 0, 0, .26) 36%,
-    transparent 68%
+    rgba(0, 0, 0, .58) 0%,
+    rgba(0, 0, 0, .22) 38%,
+    transparent 72%
   );
 }
 

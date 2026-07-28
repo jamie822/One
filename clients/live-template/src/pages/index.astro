@@ -1,0 +1,422 @@
+---
+import '../styles/live.css';
+import { client as c } from '../data/client.js';
+
+// SVG only. The reference build used emoji for every icon; ui-ux-pro-max's
+// pre-delivery checklist bans it, and rightly — emoji render differently on every
+// OS, cannot take the brand colour, and read as clip art at 20px.
+const ICON = {
+  clipboard: 'M9 4h6v3H9zM7 6h2m6 0h2a2 2 0 0 1 2 2v11a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2M9 12h6M9 16h4',
+  search:    'M11 19a8 8 0 1 0 0-16 8 8 0 0 0 0 16zm10 2-4.35-4.35',
+  camera:    'M4 8h3l1.5-2h7L17 8h3a1 1 0 0 1 1 1v9a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V9a1 1 0 0 1 1-1zm8 9a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7z',
+  board:     'M4 4h16v16H4zM8 8v3M12 8v3M16 8v3M8 15h8',
+  bulb:      'M9 18h6M10 21h4M12 3a6 6 0 0 0-3 11v2h6v-2a6 6 0 0 0-3-11z',
+  socket:    'M6 4h12a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2zm3 6v2m6-2v2m-5 5h4',
+  check:     'M4 12.5 9 17.5 20 6.5',
+  phone:     'M5 4h4l2 5-2.5 1.5a12 12 0 0 0 5 5L15 13l5 2v4a1 1 0 0 1-1 1A16 16 0 0 1 4 5a1 1 0 0 1 1-1z',
+  mail:      'M3 6h18v12H3zM3 6l9 7 9-7',
+  pin:       'M12 21s7-6.3 7-11a7 7 0 1 0-14 0c0 4.7 7 11 7 11zm0-8.5a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5z',
+  clock:     'M12 21a9 9 0 1 0 0-18 9 9 0 0 0 0 18zm0-13v5l4 2',
+  arrow:     'M5 12h14M13 6l6 6-6 6',
+  bolt:      'M13 2 4 14h6l-1 8 9-12h-6l1-8z',
+};
+
+const has = (v) => v !== null && v !== undefined && v !== '';
+const tel = has(c.phone) ? `tel:${c.phone.replace(/\s+/g, '')}` : null;
+---
+<!doctype html>
+<html lang="en-GB">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>{c.name} — {c.role} in {c.town}</title>
+  <meta name="description" content={`${c.name}, ${c.accreditation}, working across ${c.area}. ${c.services.slice(0,3).map(s=>s.title).join(', ')}.`} />
+  <meta name="theme-color" content={c.ground} />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet" />
+  <style set:html={`:root{--brand:${c.brand};--ground:${c.ground}}`}></style>
+</head>
+<body>
+  <div class="scroll-progress" id="progress"></div>
+
+  <header class="site-header" id="top">
+    <div class="container header-inner">
+      <a class="brand" href="#top">
+        <svg viewBox="0 0 100 100" width="40" height="40" aria-hidden="true">
+          <rect width="100" height="100" rx="24" fill={c.brand} />
+          <path d="M54 12 30 56h16l-6 32 30-46H52z" fill={c.ground} />
+        </svg>
+        <span class="brand-text"><strong>{c.shortName}</strong><small>{c.strap}</small></span>
+      </a>
+      <nav class="main-nav" id="nav" aria-label="Primary">
+        <button class="nav-toggle" id="navToggle" aria-expanded="false" aria-controls="nav-menu" aria-label="Menu">
+          <span></span><span></span><span></span>
+        </button>
+        <ul id="nav-menu">
+          <li><a href="#services">Services</a></li>
+          <li><a href="#why">Why us</a></li>
+          <li><a href="#about">About</a></li>
+          <li><a href="#reviews">Reviews</a></li>
+          <li><a class="nav-cta" href="#contact" data-magnetic>Get a price</a></li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+    <section class="hero">
+      <canvas class="hero-canvas" data-grid aria-hidden="true"></canvas>
+      <div class="aurora" aria-hidden="true"><span></span><span></span><span></span></div>
+      <div class="hero-grid-overlay" aria-hidden="true"></div>
+
+      <div class="container hero-inner">
+        <div>
+          <p class="eyebrow reveal-up"><span class="dot"></span> {c.accreditation} · Insured · {c.town}</p>
+          <h1 class="reveal-up">
+            <span class="line">{c.role}</span>
+            <span class="line">in <span class="grad">{c.town}.</span></span>
+          </h1>
+          <p class="lead reveal-up">
+            {c.name} is run by {c.owner}, working across {c.area}. Electrics and
+            security from the same person, and you will know the price before we start.
+          </p>
+          <div class="hero-actions reveal-up">
+            <a class="btn btn-primary" href="#contact" data-magnetic>
+              <span>Get a price</span>
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d={ICON.arrow} stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </a>
+            {tel
+              ? <a class="btn btn-ghost" href={tel} data-magnetic>Call {c.phone}</a>
+              : <span class="needed">Phone number needed — add to Google too</span>}
+          </div>
+          <div class="hero-stats reveal-up">
+            {c.stats.map((s) => (
+              <div class="hstat"><strong data-count={s.count} data-suffix={s.suffix}>0</strong><span>{s.label}</span></div>
+            ))}
+          </div>
+        </div>
+
+        <div class="hero-visual" aria-hidden="true">
+          <div class="core">
+            <div class="core-ring ring1"></div>
+            <div class="core-ring ring2"></div>
+            <div class="core-ring ring3"></div>
+            <div class="core-orb">
+              <svg viewBox="0 0 100 100"><path d="M54 8 26 58h18l-7 34 34-50H50z" fill={c.ground} /></svg>
+            </div>
+            <span class="spark s1"></span><span class="spark s2"></span>
+            <span class="spark s3"></span><span class="spark s4"></span>
+          </div>
+          <div class="chip chip-a">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d={ICON.camera}/></svg>
+            <div><strong>CCTV &amp; alarms</strong><small>Same person as your electrics</small></div>
+          </div>
+          <div class="chip chip-b">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d={ICON.clipboard}/></svg>
+            <div><strong>Landlord EICRs</strong><small>Certified and notified</small></div>
+          </div>
+          <div class="chip chip-c">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d={ICON.search}/></svg>
+            <div><strong>Fault finding</strong><small>Found, not guessed at</small></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="marquee" aria-hidden="true">
+        <div class="marquee-track">
+          {Array.from({ length: 2 }).map(() => (
+            <>
+              <span>{c.accreditation}</span><span class="sep">/</span>
+              <span>Tested to BS 7671</span><span class="sep">/</span>
+              <span>Notified to Building Control</span><span class="sep">/</span>
+              <span>Price before we start</span><span class="sep">/</span>
+              <span>Electrics and security</span><span class="sep">/</span>
+              <span>{c.area}</span><span class="sep">/</span>
+            </>
+          ))}
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="services">
+      <div class="container">
+        <div class="section-head reveal-up">
+          <p class="kicker">What we get called out for</p>
+          <h2>Electrical and security work</h2>
+          <p class="section-sub">The six things this business is asked for most. If it is electrical or security, ask.</p>
+        </div>
+        <div class="grid services">
+          {c.services.map((s) => (
+            <article class={`service reveal-up${s.featured ? ' featured' : ''}`} data-tilt>
+              {s.featured && <span class="badge">In the name</span>}
+              <span class="service-ico">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d={ICON[s.icon]}/></svg>
+              </span>
+              <h3>{s.title}</h3>
+              <p>{s.body}</p>
+              <span class="service-arrow" aria-hidden="true">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d={ICON.arrow}/></svg>
+              </span>
+            </article>
+          ))}
+        </div>
+      </div>
+    </section>
+
+    <section class="section section-alt" id="why">
+      <div class="container why-grid">
+        <div class="reveal-up">
+          <p class="kicker">Why {c.shortName}</p>
+          <h2>A spark you can actually get hold of</h2>
+          <p class="section-sub">{c.owner} does the work and answers the phone. That is the whole promise.</p>
+          <ul class="check-list">
+            {c.promises.map(([t, b]) => (
+              <li>
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d={ICON.check}/></svg>
+                <span><strong>{t}</strong>{b}</span>
+              </li>
+            ))}
+          </ul>
+          <a class="btn btn-primary" href="#contact" data-magnetic><span>Get a price</span></a>
+        </div>
+        <aside class="why-stats reveal-up">
+          <div class="stat"><strong data-count={c.google.reviewCount}>0</strong><span>Google reviews, all five star</span></div>
+          <div class="stat"><strong>{c.accreditation.split(' ')[0]}</strong><span>{has(c.accreditationNumber) ? `No. ${c.accreditationNumber}` : 'Enrolment number needed'}</span></div>
+          <div class="stat"><strong>{c.town}</strong><span>{c.area}</span></div>
+          <div class="stat"><strong>{c.hours.replace('Open until ', 'To ')}</strong><span>Most days</span></div>
+        </aside>
+      </div>
+    </section>
+
+    <section class="section" id="about">
+      <div class="container about-grid">
+        <div class="about-photo reveal-up">
+          {has(c.ownerPhoto)
+            ? <img src={c.ownerPhoto} alt={`${c.owner}, ${c.role}`} />
+            : <div class="photo-ph"><strong>Photo of {c.owner} needed</strong><small>A phone photo on a job beats anything stock. This is the highest-trust image on the site.</small></div>}
+        </div>
+        <div class="reveal-up">
+          <p class="kicker">Who turns up</p>
+          <h2>You will be dealing with {c.owner}</h2>
+          <p class="section-sub">
+            Customers keep mentioning the same two things: he explains what he has
+            found before doing anything about it, and his price is the one people come
+            back to after being quoted elsewhere.
+          </p>
+          <p style="margin-top:16px;color:var(--muted)">
+            The security side is not an add-on. It is in the name, and two of the
+            reviews are about camera installs.
+          </p>
+          <p style="margin-top:18px"><span class="needed">Surname, years trading and qualifications needed</span></p>
+        </div>
+      </div>
+    </section>
+
+    <section class="section section-alt" id="reviews">
+      <div class="container">
+        <div class="section-head reveal-up">
+          <p class="kicker">Word for word</p>
+          <h2>{c.google.reviewCount} reviews. {c.google.reviewCount} fives.</h2>
+          <p class="section-sub">Not many. Copied off Google exactly as written, typos included.</p>
+        </div>
+        <div class="grid reviews">
+          {c.reviews.map((r) => (
+            <blockquote class="review reveal-up">
+              <div class="stars" aria-label={`${r.stars} out of 5`}>{'★'.repeat(r.stars)}</div>
+              <p>{r.body}</p>
+              <cite>{r.who}</cite>
+            </blockquote>
+          ))}
+        </div>
+      </div>
+    </section>
+
+    <section class="section contact" id="contact">
+      <canvas class="contact-canvas" data-grid aria-hidden="true"></canvas>
+      <div class="container contact-grid">
+        <div class="reveal-up">
+          <p class="kicker">Get in touch</p>
+          <h2>Want a price?</h2>
+          <p class="section-sub">Tell us what the problem is and we will tell you what it will cost before we start.</p>
+          <ul class="contact-list">
+            <li>
+              <span class="ci"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d={ICON.phone}/></svg></span>
+              <div><small>Call</small>{tel ? <a href={tel}>{c.phone}</a> : <span class="needed">Phone needed</span>}</div>
+            </li>
+            <li>
+              <span class="ci"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d={ICON.mail}/></svg></span>
+              <div><small>Email</small><a href={`mailto:${c.email}`}>{c.email}</a></div>
+            </li>
+            <li>
+              <span class="ci"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d={ICON.pin}/></svg></span>
+              <div><small>Area covered</small><span>{c.area}</span></div>
+            </li>
+            <li>
+              <span class="ci"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d={ICON.clock}/></svg></span>
+              <div><small>Hours</small><span>{c.hours}</span></div>
+            </li>
+          </ul>
+        </div>
+
+        <form class="contact-form reveal-up" method="post" action="#">
+          <p class="needed">Form endpoint needed before launch</p>
+          <div class="field"><label for="n">Name</label><input id="n" name="name" type="text" autocomplete="name" required placeholder="Your name" /></div>
+          <div class="field-row">
+            <div class="field"><label for="p">Phone</label><input id="p" name="phone" type="tel" autocomplete="tel" placeholder="Best number" /></div>
+            <div class="field"><label for="e">Email</label><input id="e" name="email" type="email" autocomplete="email" placeholder="you@email.com" /></div>
+          </div>
+          <div class="field">
+            <label for="s">What do you need?</label>
+            <select id="s" name="service">
+              <option>General enquiry</option>
+              {c.services.map((s) => <option>{s.title}</option>)}
+            </select>
+          </div>
+          <div class="field"><label for="m">Details</label><textarea id="m" name="message" rows="4" placeholder="What is happening, and where"></textarea></div>
+          <button class="btn btn-primary btn-block" type="submit" data-magnetic><span>Send enquiry</span></button>
+        </form>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container footer-inner">
+      <a class="brand" href="#top">
+        <svg viewBox="0 0 100 100" width="34" height="34" aria-hidden="true">
+          <rect width="100" height="100" rx="22" fill={c.brand} /><path d="M54 12 30 56h16l-6 32 30-46H52z" fill={c.ground} />
+        </svg>
+        <span class="brand-text"><strong>{c.shortName}</strong><small>{c.role} · {c.owner}</small></span>
+      </a>
+      <nav class="footer-nav" aria-label="Footer">
+        <a href="#services">Services</a><a href="#why">Why us</a><a href="#about">About</a>
+        <a href="#reviews">Reviews</a><a href="#contact">Contact</a>
+        {has(c.social.instagram) && <a href={c.social.instagram}>Instagram</a>}
+      </nav>
+      <p class="footer-meta">
+        © <span id="yr"></span> {c.name}. {c.accreditation} · {c.area}<br />
+        Cyan dashed markers are facts still needed from the client. Nothing here is invented.
+      </p>
+    </div>
+  </footer>
+
+  {tel && <a class="call-bar" href={tel}>Tap to call — free quote</a>}
+
+  <script>
+    // ---- Live layer. Everything degrades to a static, readable page without it.
+    const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    // Animated electrical grid: nodes on a lattice with a current running the links.
+    document.querySelectorAll('canvas[data-grid]').forEach((cv) => {
+      const ctx = cv.getContext('2d');
+      const brand = getComputedStyle(document.documentElement).getPropertyValue('--brand').trim() || '#22c8ee';
+      let w = 0, h = 0, nodes = [], links = [], raf = 0;
+
+      const build = () => {
+        const dpr = Math.min(devicePixelRatio || 1, 2);
+        w = cv.clientWidth; h = cv.clientHeight;
+        cv.width = w * dpr; cv.height = h * dpr;
+        ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+        const step = w < 720 ? 96 : 132;
+        nodes = []; links = [];
+        for (let y = step / 2; y < h + step; y += step) {
+          for (let x = step / 2; x < w + step; x += step) {
+            nodes.push({ x: x + (Math.random() - .5) * step * .4, y: y + (Math.random() - .5) * step * .4 });
+          }
+        }
+        nodes.forEach((n, i) => nodes.forEach((m, j) => {
+          if (j <= i) return;
+          const d = Math.hypot(n.x - m.x, n.y - m.y);
+          if (d < step * 1.25) links.push({ a: n, b: m, t: Math.random(), v: (0.12 + Math.random() * 0.3) / d });
+        }));
+      };
+
+      const frame = () => {
+        ctx.clearRect(0, 0, w, h);
+        ctx.lineWidth = 1;
+        ctx.strokeStyle = 'rgba(255,255,255,.055)';
+        links.forEach((l) => { ctx.beginPath(); ctx.moveTo(l.a.x, l.a.y); ctx.lineTo(l.b.x, l.b.y); ctx.stroke(); });
+        // the current: a bright dot travelling each link
+        links.forEach((l) => {
+          l.t += l.v; if (l.t > 1) l.t -= 1;
+          const x = l.a.x + (l.b.x - l.a.x) * l.t, y = l.a.y + (l.b.y - l.a.y) * l.t;
+          ctx.beginPath(); ctx.fillStyle = brand; ctx.globalAlpha = .55;
+          ctx.arc(x, y, 1.6, 0, Math.PI * 2); ctx.fill(); ctx.globalAlpha = 1;
+        });
+        ctx.fillStyle = 'rgba(255,255,255,.16)';
+        nodes.forEach((n) => { ctx.beginPath(); ctx.arc(n.x, n.y, 1.2, 0, Math.PI * 2); ctx.fill(); });
+        raf = requestAnimationFrame(frame);
+      };
+
+      build();
+      if (reduce) { ctx.clearRect(0, 0, w, h); } else { frame(); }
+      addEventListener('resize', () => { cancelAnimationFrame(raf); build(); if (!reduce) frame(); }, { passive: true });
+    });
+
+    // Reveals
+    const io = new IntersectionObserver((es) => es.forEach((e) => {
+      if (e.isIntersecting) { e.target.classList.add('is-in'); io.unobserve(e.target); }
+    }), { rootMargin: '0px 0px -8% 0px' });
+    document.querySelectorAll('.reveal-up').forEach((el) => io.observe(el));
+
+    // Count-ups. Only the number animates; the suffix is printed immediately.
+    document.querySelectorAll('[data-count]').forEach((el) => {
+      const target = parseFloat(el.dataset.count);
+      const suffix = el.dataset.suffix || '';
+      const io2 = new IntersectionObserver((es) => es.forEach((e) => {
+        if (!e.isIntersecting) return;
+        io2.disconnect();
+        if (reduce) { el.textContent = target + suffix; return; }
+        const t0 = performance.now(), dur = 1100;
+        const tick = (t) => {
+          const p = Math.min(1, (t - t0) / dur);
+          const eased = 1 - Math.pow(1 - p, 3);
+          el.textContent = Math.round(target * eased) + suffix;
+          if (p < 1) requestAnimationFrame(tick);
+        };
+        requestAnimationFrame(tick);
+      }));
+      io2.observe(el);
+    });
+
+    // Card tilt and magnetic buttons — pointer only, so a tap never leaves a
+    // card stuck at an angle on a phone.
+    if (matchMedia('(hover: hover) and (pointer: fine)').matches && !reduce) {
+      document.querySelectorAll('[data-tilt]').forEach((el) => {
+        el.addEventListener('pointermove', (ev) => {
+          const r = el.getBoundingClientRect();
+          const x = (ev.clientX - r.left) / r.width - .5, y = (ev.clientY - r.top) / r.height - .5;
+          el.style.transform = `perspective(760px) rotateY(${x * 5}deg) rotateX(${-y * 5}deg) translateY(-3px)`;
+        });
+        el.addEventListener('pointerleave', () => { el.style.transform = ''; });
+      });
+      document.querySelectorAll('[data-magnetic]').forEach((el) => {
+        el.addEventListener('pointermove', (ev) => {
+          const r = el.getBoundingClientRect();
+          el.style.transform = `translate(${((ev.clientX - r.left) / r.width - .5) * 7}px, ${((ev.clientY - r.top) / r.height - .5) * 7}px)`;
+        });
+        el.addEventListener('pointerleave', () => { el.style.transform = ''; });
+      });
+    }
+
+    // Scroll progress
+    const bar = document.getElementById('progress');
+    if (bar) addEventListener('scroll', () => {
+      const max = document.documentElement.scrollHeight - innerHeight;
+      bar.style.transform = `scaleX(${max > 0 ? scrollY / max : 0})`;
+    }, { passive: true });
+
+    // Mobile nav
+    const nav = document.getElementById('nav'), tg = document.getElementById('navToggle');
+    tg?.addEventListener('click', () => {
+      const open = nav.classList.toggle('is-open');
+      tg.setAttribute('aria-expanded', String(open));
+    });
+    nav?.querySelectorAll('a').forEach((a) => a.addEventListener('click', () => {
+      nav.classList.remove('is-open'); tg?.setAttribute('aria-expanded', 'false');
+    }));
+
+    document.getElementById('yr').textContent = String(new Date().getFullYear());
+  </script>
+</body>
+</html>
