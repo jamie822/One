@@ -326,11 +326,17 @@ document.addEventListener('DOMContentLoaded', function () {
     var C = W + H - F;
     this.face.style.clipPath = polyCss(faceClip(W, H, C), 0);
     this.back.style.clipPath = polyCss(faceClip(W, H, C), W);
-    // The sheet below is now in the fold's shade, and that is what makes the
-    // opened corner read as a second plane rather than as a hole. It comes in with
-    // the peel, deepens as the page rises off the wall, and goes as the page
-    // clears out of the light.
+    // The sheet below is now in the fold's shade, and that is what makes the opened
+    // corner read as a second plane rather than as a hole. The shadow is a band
+    // hugging the bottom of the sheet, slid up to sit under the lifting page's own
+    // bottom edge — so it travels across the month below as the page rises, instead
+    // of being a fixed wash that spends the swing hidden behind the page casting it.
+    // Where that edge lands is the same projection the mesh uses: rotate the sheet's
+    // bottom corner about the top edge, then divide through the perspective.
     if (this.lit) {
+      var th = this.rot * Math.PI / 180;
+      var f = 0.34 + (Math.cos(th) - 0.34) * (PERSP / (PERSP - H * Math.sin(th)));
+      this.lit.style.transform = 'translate3d(0,' + ((clamp(f, -0.2, 1) - 1) * 100).toFixed(2) + '%,0)';
       this.lit.style.opacity = ((0.16 * clamp(this.peel * 2.2, 0, 1) +
                                  0.62 * clamp(this.rot / 26, 0, 1)) *
                                 clamp((162 - this.rot) / 56, 0, 1)).toFixed(3);
@@ -467,6 +473,12 @@ document.addEventListener('DOMContentLoaded', function () {
     }
   }
 
+  Turn.prototype.promote = function (on) {
+    this.sheet.style.willChange = on ? 'transform' : 'auto';
+    this.face.style.willChange = on ? 'transform, clip-path' : 'auto';
+    if (this.lit) this.lit.style.willChange = on ? 'transform, opacity' : 'auto';
+  };
+
   // One blurred silhouette of rows [j0, j1] of the mesh, projected to the sheet.
   Turn.prototype.shadowPass = function (P, j0, j1, blur, alpha) {
     var ctx = this.ctx, o = [0, 0], i, p;
@@ -525,6 +537,13 @@ document.addEventListener('DOMContentLoaded', function () {
       tl.to(t.sheet, { rotationX: 172, duration: D * 0.22, ease: 'power2.in' }, D * 0.78);
       tl.to(t.sheet, { autoAlpha: 0, duration: D * 0.11, ease: 'none' }, D * 0.89);
       tl.eventCallback('onUpdate', function () { t.needs = true; });
+      // The sheet and its face are promoted to their own compositor layers for the
+      // duration of the turn, which is the whole reason the peel holds its frame
+      // rate. Once the page is gone they are two idle layers the size of the hero,
+      // held for the rest of the session. Hand them back, and take them again if
+      // the timeline is ever run backwards.
+      tl.eventCallback('onComplete', function () { t.promote(false); });
+      tl.eventCallback('onReverseComplete', function () { t.promote(true); });
       return tl;
     }
 
@@ -553,6 +572,7 @@ document.addEventListener('DOMContentLoaded', function () {
     window.addEventListener('resize', onResize);
 
     return function () {
+      for (var i = 0; i < turns.length; i++) turns[i].promote(false);
       window.removeEventListener('resize', onResize);
       clearTimeout(rz);
       root.classList.remove('wc--live');
