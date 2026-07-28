@@ -1,0 +1,337 @@
+/* Stacked Out — the site itself.
+
+   brand.css owns the palette, the type scale, the buttons and the focus ring.
+   Nothing here invents a colour, a radius or an easing curve; everything below
+   composes the tokens already declared there.
+
+   MOTION. The brand guide's motion section was rewritten to two standards: client
+   builds hold to 120-200ms, and the studio's own site is the showreel and is
+   exempt. Three things bind on both, and they bind here:
+     1. reduced motion is honoured absolutely,
+     2. the LCP element is never animated,
+     3. motion is scroll-linked wherever it can be.
+   So every reveal below is animation-timeline: view(), which runs off the main
+   thread and is driven by scroll position rather than a clock. It is wrapped in
+   @supports, because without support the same @keyframes would run once on load
+   as an ordinary timed animation and could leave content mid-fade on a browser
+   that never scrolls it. Unsupported means fully visible, which is the correct
+   failure.
+
+   ONE GRADIENT. It is the 25 in "Who I am". Do not add a second.
+   ONE EYEBROW PER THREE SECTIONS. Six sections, so two: "The work" and
+   "How it goes". Every other section leads on its headline alone. */
+
+/* ---- Navigation ---------------------------------------------------------- */
+/* One desktop line, 64px tall. No agency bar eating the viewport. */
+.nav {
+  position: sticky; top: 0; z-index: 90;
+  display: flex; align-items: center; gap: var(--s-3);
+  height: 64px;
+  padding-inline: clamp(16px, 3vw, 32px);
+  background: color-mix(in srgb, var(--ground) 84%, transparent);
+  -webkit-backdrop-filter: blur(10px);
+          backdrop-filter: blur(10px);
+  border-bottom: 1px solid var(--edge);
+}
+.nav__brand {
+  display: inline-flex; align-items: center; gap: 10px;
+  color: var(--ink); text-decoration: none; margin-right: auto;
+}
+.nav__word {
+  font-family: var(--font-display); font-weight: 700;
+  font-size: var(--t-h4); letter-spacing: -.03em;
+  /* Clash draws a narrow word space; without this the mark reads "StackedOut",
+     which is the one spelling the guide forbids outright. */
+  word-spacing: .14em;
+}
+
+.nav__links { display: flex; align-items: center; gap: 4px; }
+.nav__link {
+  display: inline-flex; align-items: center; min-height: 34px;
+  padding: 7px 12px; border-radius: var(--r-chip);
+  font-size: var(--t-label); font-weight: 500;
+  color: var(--ink-muted); text-decoration: none;
+  transition: color 160ms var(--ease-ui), background-color 160ms var(--ease-ui);
+}
+.nav__link:hover { color: var(--ink); background: var(--panel); }
+
+.nav__cta { padding: 9px 18px; min-height: 38px; font-size: var(--t-label); }
+
+@media (max-width: 900px) {
+  /* Condense rather than wrap to two lines. The anchors are a convenience; the
+     sections are all on one page and the CTA is the thing that matters. */
+  .nav__links { display: none; }
+}
+@media (max-width: 640px) {
+  .nav { height: auto; padding-block: 10px; }
+  .nav__cta { width: auto; min-height: 44px; }
+}
+
+/* ---- Section furniture --------------------------------------------------- */
+.sec { padding-block: var(--s-6); }
+.sec + .sec { border-top: 1px solid var(--edge); }
+.sec__h { font-size: var(--t-h2); max-width: 22ch; }
+.sec__lead {
+  margin-top: var(--s-2);
+  font-size: var(--t-lead); color: var(--ink-muted);
+}
+
+@supports (animation-timeline: view()) {
+  .rise {
+    animation: rise linear both;
+    animation-timeline: view();
+    /* Finish by the time the block is a third up the viewport, so the reader is
+       never reading something still moving. */
+    animation-range: entry 5% cover 26%;
+  }
+  @keyframes rise {
+    from { opacity: 0; transform: translateY(18px); }
+    to   { opacity: 1; transform: none; }
+  }
+}
+
+/* A fact the founder has not supplied yet. Visible on purpose: the guide's rule
+   is that a missing number is shown as missing, never filled with a plausible
+   one. These come out the moment the real value lands in studio.js. */
+.needs {
+  display: inline-flex; align-items: center; gap: 7px;
+  padding: 4px 10px; border-radius: var(--r-chip);
+  font-family: var(--font-body); font-size: var(--t-label); font-weight: 700;
+  letter-spacing: .06em; text-transform: uppercase;
+  color: var(--incoming);
+  border: 1px dashed color-mix(in srgb, var(--incoming) 45%, transparent);
+  background: color-mix(in srgb, var(--incoming) 8%, transparent);
+}
+
+/* ---- 2. The work — asymmetric two cell grid ------------------------------ */
+.work__grid {
+  display: grid; gap: var(--s-3);
+  grid-template-columns: 7fr 5fr;
+  margin-top: var(--s-4);
+}
+.work__card {
+  display: flex; flex-direction: column;
+  padding: var(--s-3);
+  background: var(--panel);
+  border: 1px solid var(--edge); border-radius: var(--r-card);
+}
+
+/* The screenshot slot. NOT a div dressed up as a browser window: a fake product
+   shot is a tell, and this one would also be a fake of a real site that exists.
+   So it is an empty framed plate with the shot's exact intended dimensions on it,
+   and it stays that way until a real capture of wyelectrical.co.uk is dropped in
+   at /img/. The frame is doing honest work in the meantime: it holds the space,
+   so nothing shifts when the image arrives. */
+.work__plate {
+  position: relative;
+  aspect-ratio: 16 / 10;
+  border-radius: calc(var(--r-card) - 4px);
+  border: 1px solid var(--edge);
+  background:
+    repeating-linear-gradient(
+      -45deg,
+      transparent 0 9px,
+      color-mix(in srgb, var(--ink) 4%, transparent) 9px 10px
+    ),
+    var(--ground);
+  /* align-content as well as place-items. Without it the rows stretch to fill the
+     plate and the chip and its note end up at opposite ends of a 490px box, which
+     reads as two unrelated bits of text rather than one label. */
+  display: grid; place-items: center; align-content: center; gap: var(--s-2);
+  padding: var(--s-3); text-align: center;
+}
+.work__plate img { width: 100%; height: 100%; object-fit: cover; border-radius: inherit; }
+.work__plate-note { color: var(--ink-muted); font-size: var(--t-label); max-width: 34ch; }
+
+.work__meta { display: flex; flex-wrap: wrap; gap: var(--s-1) var(--s-3); margin-top: var(--s-3); }
+.work__k { display: grid; gap: 2px; }
+.work__k dt { font-size: var(--t-label); color: var(--ink-muted); }
+.work__k dd { margin: 0; font-family: var(--font-display); font-weight: 700; font-size: var(--t-h4); letter-spacing: -.02em; }
+
+.work__name { font-size: var(--t-h3); margin-top: var(--s-3); }
+.work__body { color: var(--ink-muted); margin-top: var(--s-2); }
+.work__link { margin-top: auto; padding-top: var(--s-3); font-weight: 700; }
+
+/* The open cell. This is the mark's sixth slot, at page scale: five booked, one
+   free. Leaving it visibly empty is the brand's own device, so the one genuine
+   gap in the portfolio gets to carry the idea instead of being papered over. */
+.work__open {
+  /* Top aligned with the button pushed down, not space-between. space-between over
+     three children in a card as tall as its neighbour opened a 260px void between
+     the numeral and the heading. */
+  display: flex; flex-direction: column; gap: var(--s-2);
+  padding: var(--s-3);
+  border: 1px dashed color-mix(in srgb, var(--ink) 18%, transparent);
+  border-radius: var(--r-card);
+  background: transparent;
+}
+.work__open-n { font-size: var(--t-h1); color: color-mix(in srgb, var(--ink) 22%, transparent); }
+.work__open-h { font-size: var(--t-h4); margin-top: var(--s-2); }
+.work__open-p { color: var(--ink-muted); margin-top: var(--s-1); font-size: var(--t-body); }
+.work__open > :last-child { margin-top: auto; }
+
+@media (max-width: 860px) {
+  .work__grid { grid-template-columns: 1fr; }
+}
+
+/* ---- 3. What it costs — centred single focus ----------------------------- */
+.cost { text-align: center; }
+.cost__in { display: grid; justify-items: center; gap: var(--s-3); }
+.cost__h { font-size: var(--t-h2); max-width: 26ch; }
+/* The empty price. Currency set in the display face, then three drawn slots at the
+   proportions of its numerals, so the whole thing scans as an unfilled number
+   rather than as a withheld one. */
+.cost__slot {
+  display: flex; align-items: flex-end; justify-content: center;
+  gap: .1em;
+  font-size: var(--t-mega); line-height: .82;
+  margin: 0;
+}
+.cost__cur { color: color-mix(in srgb, var(--ink) 30%, transparent); }
+.cost__digit {
+  /* Clash Display sets its numerals close to .56em advance at .7em cap height, so
+     the slots sit on the same optical grid the real price will. */
+  width: .56em; height: .68em;
+  border: 2px dashed color-mix(in srgb, var(--ink) 17%, transparent);
+  border-radius: .1em;
+}
+.cost__p { color: var(--ink-muted); font-size: var(--t-lead); text-align: center; }
+.cost__rules {
+  list-style: none; margin: 0; padding: 0;
+  display: flex; flex-wrap: wrap; justify-content: center; gap: var(--s-2);
+  max-width: 74ch;
+}
+.cost__rules li {
+  padding: 10px 16px; border: 1px solid var(--edge); border-radius: var(--r-chip);
+  font-size: var(--t-label); color: var(--ink);
+}
+
+/* ---- 4. How it goes — numbered vertical rail ----------------------------- */
+.proc__list {
+  list-style: none; margin: var(--s-4) 0 0; padding: 0;
+  max-width: 76ch;
+}
+.proc__step {
+  position: relative;
+  display: grid; grid-template-columns: 76px 1fr; gap: var(--s-3);
+  padding-block: var(--s-3);
+  border-top: 1px solid var(--edge);
+}
+.proc__step:last-child { border-bottom: 1px solid var(--edge); }
+.proc__n {
+  font-size: var(--t-h3);
+  color: var(--action);
+  /* The rail: a hairline dropping from each numeral to the next. Drawn on the
+     numeral rather than the row so it lines up with the digit, not the gutter. */
+}
+.proc__n::after {
+  content: ''; position: absolute; top: calc(var(--s-3) + 2.2rem); bottom: 0; left: 12px;
+  width: 1px; background: var(--edge);
+}
+.proc__step:last-child .proc__n::after { display: none; }
+.proc__t { font-family: var(--font-display); font-weight: 700; font-size: var(--t-h4); letter-spacing: -.02em; }
+.proc__b { color: var(--ink-muted); margin-top: 6px; }
+
+@media (max-width: 560px) {
+  .proc__step { grid-template-columns: 52px 1fr; gap: var(--s-2); }
+  .proc__n::after { left: 9px; }
+}
+
+/* ---- 5. Who I am — offset split ------------------------------------------ */
+.who__grid {
+  display: grid; gap: var(--s-4) var(--s-5);
+  grid-template-columns: 1.15fr .85fr;
+  align-items: start;
+  margin-top: var(--s-4);
+}
+.who__figs { display: flex; gap: var(--s-4); flex-wrap: wrap; }
+.who__fig { display: grid; gap: 4px; }
+.who__n { font-size: clamp(3.5rem, 8vw, 6.5rem); }
+/* Flat yellow, deliberately not the signature gradient. The gradient on this page
+   is spent on the current trail photograph, which is the same two brand colours as
+   actual light rather than as clipped text. Using it here as well would be the
+   second signature on one page, which the guide calls a breach. */
+.who__n--action { color: var(--action); }
+.who__cap { font-size: var(--t-label); color: var(--ink-muted); max-width: 16ch; }
+.who__body { margin-top: var(--s-3); color: var(--ink-muted); }
+.who__body strong { color: var(--ink); font-weight: 700; }
+.who__body + .who__body { margin-top: var(--s-2); }
+
+/* The byline. A real photograph or nothing: guide §6 rules out stock, and a stock
+   founder on a page whose whole argument is "I actually do this" is the one lie
+   that would undo the rest of it. So the slot is named in words rather than framed
+   as an empty portrait box, which would leave a hole in the layout for something
+   that may never be supplied. */
+.who__by {
+  margin-top: var(--s-4); padding-top: var(--s-3);
+  border-top: 1px solid var(--edge);
+  display: grid; gap: var(--s-1); justify-items: start;
+}
+.who__by-note { color: var(--ink-muted); font-size: var(--t-label); max-width: 46ch; }
+
+/* The photograph. object-fit with a declared width and height, so the intrinsic
+   ratio is known at parse time and the box never resizes on decode. */
+.who__media { margin: 0; }
+.who__media img {
+  display: block; width: 100%; height: auto;
+  border-radius: var(--r-card);
+  border: 1px solid var(--edge);
+}
+
+@media (max-width: 860px) {
+  .who__grid { grid-template-columns: 1fr; }
+  /* Photograph first on a phone is wrong here: the numbers are the argument and
+     they should not be pushed under a 780px tall image. Source order already puts
+     the copy first, so nothing to reorder — just cap the image. */
+  .who__media img { max-height: 52vh; object-fit: cover; }
+}
+
+/* ---- The signature gradient, full bleed ---------------------------------- */
+/* Not a section: a transition. Full bleed on purpose, so the light runs edge to
+   edge and reads as one continuous conductor rather than a picture in a frame. */
+.trail {
+  display: block;
+  border-block: 1px solid var(--edge);
+  /* Tall enough to read as light, short enough that it is a transition and not a
+     section the reader has to scroll past. */
+  max-height: 300px; overflow: hidden;
+}
+.trail img {
+  display: block; width: 100%; height: auto;
+  /* The ribbon sits below centre in the frame, so the crop is taken from the
+     middle rather than the top. */
+  object-fit: cover; object-position: 50% 50%;
+}
+@media (max-width: 640px) {
+  /* On a phone the full 21:9 crop leaves the ribbon a few pixels tall. Crop harder
+     and keep the height, so what is left is still recognisably a trail of light. */
+  .trail { max-height: 160px; }
+  .trail img { height: 160px; }
+}
+
+/* ---- 6. Get in touch — full width band ---------------------------------- */
+.contact {
+  border-top: 1px solid var(--edge);
+  padding-block: var(--s-6);
+  /* Tinted rather than another panel card, so the band reads as the end of the
+     page rather than one more section. */
+  background:
+    radial-gradient(120% 140% at 50% 0%, color-mix(in srgb, var(--action) 6%, transparent), transparent 62%),
+    var(--ground);
+}
+.contact__in { display: grid; justify-items: center; gap: var(--s-3); text-align: center; }
+.contact__h { font-size: var(--t-h2); max-width: 24ch; }
+.contact__p { color: var(--ink-muted); font-size: var(--t-lead); }
+.contact__mail {
+  font-family: var(--font-display); font-weight: 700;
+  font-size: clamp(1.1rem, 2.4vw, var(--t-h4)); letter-spacing: -.02em;
+  /* Long address, small screen: break at the @ rather than overflow. */
+  overflow-wrap: anywhere;
+}
+.contact__note { font-size: var(--t-label); color: var(--ink-muted); max-width: 46ch; }
+
+/* ---- Footer -------------------------------------------------------------- */
+.foot { border-top: 1px solid var(--edge); padding-block: var(--s-4) var(--s-5); }
+.foot__in { display: grid; gap: var(--s-1); }
+.foot__line { font-size: var(--t-label); color: var(--ink); max-width: 70ch; }
+.foot__line--muted { color: var(--ink-muted); }

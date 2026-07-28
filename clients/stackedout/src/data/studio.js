@@ -33,9 +33,12 @@ export const studio = {
     ownSite: {
       url: 'https://wyelectrical.co.uk',
       label: 'WY Electrical',
-      claim: 'Built and ranked in West Yorkshire',
+      trade: 'Electrical contractor, West Yorkshire',
+      // The claim states only what is checkable: he built it and it is his own
+      // business. It deliberately does NOT say "ranked" — that needs the evidence
+      // below, and until that arrives a ranking claim would be invented.
+      claim: 'Built and run by me',
       // NEEDED — a checkable position, e.g. "map pack, top 3 for electrician Wakefield".
-      // Do not write a ranking claim without one.
       rankingEvidence: '',
     },
     clientSites: [],                         // NEEDED — none yet. Do not invent one.

@@ -156,8 +156,18 @@ const LOOPS = 26;      // wire loops across the head
       </div>
     ))}
 
-    <!-- The light that crosses the finished sheet, left to right, once. -->
-    <div class="wc__gleam"></div>
+    <!-- The light that crosses the finished sheet, left to right, once.
+         The wrapper is load bearing, not decoration. The gleam is a wide band that
+         starts and finishes outside the sheet, so it has to travel further than the
+         paper is wide. The pad clips its own children with clip-path rather than
+         overflow, because the sheets have to be free to swing up above the wire,
+         and clip-path is a paint operation: it hides the band but the band still
+         counts toward the document's scrollable width. That measured 965px of
+         horizontal overflow on a 390px screen. Wrapping just the gleam in its own
+         overflow: hidden layer contains it without putting a lid on the sheets. -->
+    <div class="wc__gleamwrap">
+      <div class="wc__gleam"></div>
+    </div>
   </div>
 </div>
 
@@ -554,6 +564,23 @@ document.addEventListener('DOMContentLoaded', function () {
       for (var i = 0; i < turns.length; i++) {
         if (turns[i].needs) { turns[i].render(); turns[i].needs = false; }
       }
+    });
+    // Retire the two turned sheets out of layout, not just out of sight.
+    // autoAlpha finishes them on visibility: hidden, which stops them painting but
+    // leaves them in the box tree — and each one is left holding an inline
+    // rotationX of 172deg inside a 1600px perspective, so its projected box is
+    // about 33px wider than the pad at each edge. Measured: 1449px of scrollable
+    // width on a 1440px viewport, which is a horizontal scrollbar on the finished
+    // hero. display: none takes them out of the overflow calculation entirely.
+    // Reversing the timeline puts them back, because the review handles below are
+    // the only thing that ever runs it backwards.
+    tl.eventCallback('onComplete', function () {
+      turns[0].sheet.style.display = 'none';
+      turns[1].sheet.style.display = 'none';
+    });
+    tl.eventCallback('onReverseComplete', function () {
+      turns[0].sheet.style.display = '';
+      turns[1].sheet.style.display = '';
     });
     turns[0].render(); turns[1].render();
     // Handles for frame-by-frame review. The calendar is aria-hidden decoration

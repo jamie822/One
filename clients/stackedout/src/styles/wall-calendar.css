@@ -11,7 +11,13 @@
    transform and opacity on a handful of layers. */
 
 .wc {
-  --pad-w: min(100%, 1560px);
+  /* Same gutter as the copy underneath, so the calendar and the headline share an
+     edge instead of the calendar running to the viewport and the text stopping
+     short of it. The gutter also absorbs the sheets' perspective projection: a
+     sheet rotated inside a 1600px perspective projects about 4px wider than its
+     layout box at each edge, which was measured as real horizontal overflow when
+     the pad ran to a full 100%. */
+  --pad-w: min(100% - 2 * var(--s-3), 1560px);
   --sheet-ar: 1.52;                 /* landscape, the way these hang */
   --paper: #12151a;                 /* a shade off --panel, so the sheet reads lit */
   --paper-lo: #0b0d11;
@@ -35,7 +41,11 @@
 /* ---- Binding ------------------------------------------------------------- */
 .wc__wire {
   display: block;
-  width: 100%;
+  /* Pad width, not viewport width. The pad carries a gutter now, and a wire running
+     past the paper it is meant to be binding reads as a decorative strip rather
+     than as the binding. */
+  width: var(--pad-w);
+  margin-inline: auto;
   height: clamp(26px, 2.9vw, 44px);
   margin-bottom: -6px;
   position: relative;
@@ -87,9 +97,13 @@
   position: relative;
   width: var(--pad-w);
   margin-inline: auto;
-  /* Height leads. A hero has to fit the fold with the headline, so the sheet takes
-     the smaller of a comfortable viewport share and its own natural proportion. */
-  height: min(58vh, 62vw);
+  /* Height leads. A hero has to fit the fold WITH the headline and the button, and
+     58vh did not: measured on a 1440 by 900 viewport the lead paragraph sat at
+     883px, so on any 13 inch laptop the call to action fell off the bottom. The
+     hero fitting the first viewport is not a preference, it is the rule the
+     headline exists to serve. 50vh leaves the h1, the button and the address all
+     above the fold at 800px and the calendar is still the largest thing on it. */
+  height: min(50vh, 56vw);
   /* Deep enough that the fold has somewhere to go, shallow enough that the sheet
      does not distort at the edges. The canvas mesh divides by the same 1600, so
      the curl standing off the paper grows by exactly what the scene would grow it.
@@ -345,10 +359,18 @@
 }
 
 /* ---- Sweep two: the light across the finished sheet -------------------- */
+/* Contains the gleam's travel. See the note on .wc__gleamwrap in the component. */
+.wc__gleamwrap {
+  position: absolute;
+  inset: 0;
+  z-index: 6;
+  pointer-events: none;
+  overflow: hidden;
+}
+
 .wc__gleam {
   position: absolute;
   inset: -2% -55%;
-  z-index: 6;
   pointer-events: none;
   opacity: 0;
   background: linear-gradient(
@@ -371,24 +393,50 @@
 /* ---- Phone: a working week, not a squashed month ----------------------- */
 @media (max-width: 720px) {
   .wc { --sheet-ar: .82; }
+  /* The phone sheet is a list of seven day rows at 46px plus the masthead, so it
+     needs about 420px. The desktop rule resolved to min(50vh, 56vw) = 218px on a
+     390 by 844 screen and clipped the week through the middle of a row. Height is
+     driven by what the sheet has to hold here, not by a share of the viewport. */
+  /* Five rows plus the masthead is about 300px, so that is the floor. Leaving it
+     purely proportional clipped the last row through the middle on a 360px screen,
+     and a calendar cut through a date is the thing that made this read as buttons
+     rather than paper in the first place. */
+  .wc__pad { height: max(300px, min(58vh, 80vw)); }
+  /* The strap says "web design for electricians and solar installers" and the h1
+     directly underneath says the same thing in a sentence. At 390px it wrapped to
+     two lines and collided with the wordmark, so on a phone the wordmark keeps the
+     masthead to itself. */
+  .wc__strap { display: none; }
   .wc__month { font-size: clamp(34px, 11vw, 52px); }
   .wc__dows { display: none; }
   .wc__week { display: none; }
   .wc__grid { gap: 0; }
-  /* Show one working week as rows, five booked and one open, which is the mark
-     unrolled. Weeks 3 of the month reads as a full week at this size. */
-  .wc__week:nth-child(3) { display: block; }
-  .wc__week:nth-child(3) .wc__day {
+  /* One working week as rows: Monday to Friday of the second week, which is the
+     3rd to the 7th. Four booked and the 7th open with the ring round it, so the
+     phone hero is the mark unrolled rather than a squashed month.
+     The second week specifically, because it is the only one whose Monday to Friday
+     contains the open day. Week three's free day is the Sunday, and dropping the
+     weekend to fit five rows would have dropped the whole point with it. */
+  .wc__week:nth-child(2) { display: block; }
+  .wc__week:nth-child(2) .wc__day {
     display: grid;
     grid-template-columns: clamp(26px, 9vw, 40px) 1fr;
     align-items: center;
     gap: clamp(8px, 3vw, 14px);
     border-left: none;
     border-bottom: 1px solid var(--rule);
-    min-height: 46px;
+    /* 42, not 46. Seven of these plus the masthead have to fit the sheet, and the
+       sheet plus the headline plus the button have to fit the first viewport on a
+       390 by 844 screen. Measured: at 46px the button finished 15px below the fold.
+       Not a touch target — the calendar is aria-hidden decoration and nothing in
+       it is interactive — so the 44px minimum does not apply here. */
+    min-height: 42px;
     padding: 0 2px;
   }
-  .wc__week:nth-child(3) .wc__day--blank { display: none; }
+  .wc__week:nth-child(2) .wc__day--blank { display: none; }
+  /* Saturday and Sunday off the phone view. Five rows fit the sheet and still fit
+     the fold with the headline and the button underneath; seven did not. */
+  .wc__week:nth-child(2) .wc__day:nth-child(n+6) { display: none; }
   .wc__date { font-size: clamp(13px, 4vw, 17px); }
   .wc__job { font-size: clamp(12px, 3.8vw, 15px); }
 }
@@ -407,12 +455,28 @@
   .wc__lit { opacity: 0; }
 }
 
+/* Short phone. A 360 by 740 screen has 100px less to give than a 390 by 844 one,
+   and the headline and lead do not get shorter to match, so the sheet has to. Five
+   rows at 36px still reads as a week and the button comes back above the fold.
+   Height query as well as width: this is about how tall the viewport is, not how
+   wide, and a 720px tall landscape phone needs the same treatment. */
+@media (max-width: 720px) and (max-height: 780px) {
+  .wc__pad { height: max(232px, min(52vh, 66vw)); }
+  .wc__week:nth-child(2) .wc__day { min-height: 36px; }
+  /* Four rows, not five, and the Monday is the one that goes. Tuesday to Friday,
+     the 4th to the 7th, so the list still finishes on the open day with the ring
+     round it. Dropping a row off the end instead would have dropped the open day,
+     and the open day is the whole idea. */
+  .wc__week:nth-child(2) .wc__day:first-child { display: none; }
+  .wc__month { font-size: clamp(27px, 8.6vw, 40px); }
+}
+
 /* ---- The copy that sits under the calendar ------------------------------ */
 .wcp { padding-bottom: clamp(40px, 5vw, 80px); }
 
 .wcp__copy {
   width: min(100% - 2 * var(--s-3), 1560px);
-  margin: clamp(30px, 3.6vw, 64px) auto 0;
+  margin: clamp(22px, 2.6vw, 44px) auto 0;
   display: grid;
   grid-template-columns: minmax(0, 1.35fr) minmax(0, .65fr);
   gap: clamp(20px, 3vw, 56px);
