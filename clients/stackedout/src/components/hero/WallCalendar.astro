@@ -1,0 +1,153 @@
+---
+// WALL CALENDAR — the hero.
+//
+// The turn starts at the BOTTOM RIGHT CORNER, which is how a hand actually turns a
+// wall calendar. A fold line runs at 45 degrees and travels diagonally up and left
+// across the sheet; the lifted part rotates about that fold line and shows its own
+// reverse. When the fold has crossed the whole sheet the page has turned, and the
+// month underneath is revealed.
+//
+// This is one transform per sheet driven by one registered custom property, so the
+// whole peel composites on a single layer. Zero JS.
+//
+// Binding is real twin loop wire-o: a slanted wire through rectangular punch holes,
+// which is what these calendars are actually bound with. Drawn in SVG so it stays
+// crisp instead of reading as a row of typed letter o.
+import { studio } from '../../data/studio.js';
+
+// Real months, so the grid is honest: a real August 2026 starts on a Saturday.
+// Job labels are illustrative trade work, never a claim about bookings.
+const MONTHS = [
+  {
+    name: 'June', year: 2026, startDow: 1, days: 30,
+    jobs: { 2: 'Rewire', 5: 'CU upgrade', 9: 'Fault find', 12: 'Solar PV', 17: 'EICR', 23: 'Board swap', 26: 'EV charger' },
+    open: null,
+  },
+  {
+    name: 'July', year: 2026, startDow: 3, days: 31,
+    jobs: { 1: 'EICR', 3: 'Board swap', 6: 'Consumer unit', 8: 'Solar PV', 10: 'Fault find', 14: 'EV charger',
+            16: 'EICR remedials', 20: 'Rewire', 22: 'CU upgrade', 24: 'Solar PV', 28: 'EICR', 30: 'Board swap' },
+    open: null,
+  },
+  {
+    name: 'August', year: 2026, startDow: 6, days: 31,
+    jobs: { 1: 'Board swap', 3: 'Solar PV', 4: 'Rewire', 5: 'Fault find', 6: 'CU upgrade', 8: 'EICR remedials',
+            10: 'Board swap', 11: 'EV charger', 12: 'Solar PV', 13: 'Rewire', 14: 'Fault find', 15: 'CU upgrade',
+            17: 'EICR remedials', 18: 'EICR', 19: 'Board swap', 20: 'EV charger', 21: 'Solar PV', 22: 'Rewire',
+            24: 'CU upgrade', 25: 'Consumer unit', 26: 'EICR remedials', 27: 'EICR', 28: 'Board swap',
+            29: 'EV charger', 31: 'Rewire' },
+    open: 7,          // the one day left. The brand's empty slot, at hero scale.
+  },
+];
+
+const DOW = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+
+// Lay a month out into 7-column weeks, with lead-in blanks.
+function weeksOf(m) {
+  const cells = [];
+  for (let i = 1; i < m.startDow; i++) cells.push(null);
+  for (let d = 1; d <= m.days; d++) cells.push(d);
+  while (cells.length % 7) cells.push(null);
+  const weeks = [];
+  for (let i = 0; i < cells.length; i += 7) weeks.push(cells.slice(i, i + 7));
+  return weeks;
+}
+
+const LOOPS = 26;      // wire loops across the head
+---
+<div class="wc" aria-hidden="true">
+  <!-- Twin loop wire binding. One <use> per loop so the geometry is authored once. -->
+  <svg class="wc__wire" viewBox={`0 0 ${LOOPS * 40} 62`} preserveAspectRatio="none">
+    <defs>
+      <linearGradient id="wcWire" x1="0" y1="0" x2="0.2" y2="1">
+        <stop offset="0"    stop-color="#e8ebef" />
+        <stop offset="0.36" stop-color="#aeb5bf" />
+        <stop offset="0.62" stop-color="#6f767f" />
+        <stop offset="1"    stop-color="#3b4048" />
+      </linearGradient>
+      <!-- One loop: down the back, over the head, and through the punch hole.
+           Slanted, because twin loop wire is fed on a diagonal. -->
+      <path id="wcLoop" d="M5 50 C 2 18, 11 5, 21 5 C 31 5, 33 19, 29 50"
+            fill="none" stroke="url(#wcWire)" stroke-width="5" stroke-linecap="round" />
+    </defs>
+    {Array.from({ length: LOOPS }).map((_, i) => (
+      <use href="#wcLoop" x={i * 40} y="0" />
+    ))}
+  </svg>
+
+  <!-- The head board the sheets hang from. Supplier name sits here, modest, the way
+       it does on a calendar a firm gives away. -->
+  <div class="wc__head">
+    <span class="wc__brand">{studio.name}</span>
+    <span class="wc__strap">Web design for electricians and solar installers</span>
+  </div>
+
+  <div class="wc__pad">
+    {MONTHS.map((m, i) => (
+      <div class="wc__sheet" data-sheet={i} style={`--i:${i}`}>
+        <div class="wc__punches">
+          {Array.from({ length: LOOPS }).map(() => <span class="wc__punch" />)}
+        </div>
+
+        <!-- FACE. The printed side. -->
+        <div class="wc__face">
+          <div class="wc__masthead">
+            <h2 class="wc__month">{m.name}</h2>
+            <span class="wc__year">{m.year}</span>
+          </div>
+          <div class="wc__dows">
+            {DOW.map((d) => <span class="wc__dow">{d}</span>)}
+          </div>
+          <div class="wc__grid">
+            {weeksOf(m).map((wk) => (
+              <div class="wc__week">
+                {wk.map((d) => (
+                  <div class={`wc__day${d === null ? ' wc__day--blank' : ''}${d === m.open ? ' wc__day--open' : ''}`}>
+                    {d !== null && <span class="wc__date">{d}</span>}
+                    {d !== null && m.jobs[d] && <span class="wc__job">{m.jobs[d]}</span>}
+                  </div>
+                ))}
+              </div>
+            ))}
+          </div>
+        </div>
+
+        <!-- FLAP. A copy of the same face, clipped to the folded triangle and
+             rotated about the fold line, so it reads as the sheet itself lifting
+             rather than a separate object sliding over it. -->
+        <div class="wc__flap">
+          <div class="wc__flap-inner">
+            <div class="wc__masthead">
+              <h2 class="wc__month">{m.name}</h2>
+              <span class="wc__year">{m.year}</span>
+            </div>
+            <div class="wc__dows">
+              {DOW.map((d) => <span class="wc__dow">{d}</span>)}
+            </div>
+            <div class="wc__grid">
+              {weeksOf(m).map((wk) => (
+                <div class="wc__week">
+                  {wk.map((d) => (
+                    <div class={`wc__day${d === null ? ' wc__day--blank' : ''}`}>
+                      {d !== null && <span class="wc__date">{d}</span>}
+                      {d !== null && m.jobs[d] && <span class="wc__job">{m.jobs[d]}</span>}
+                    </div>
+                  ))}
+                </div>
+              ))}
+            </div>
+          </div>
+          <!-- The reverse of the paper. Unprinted, with the faint show-through of
+               the printing on the other side. -->
+          <div class="wc__reverse"></div>
+        </div>
+
+        <!-- Shadow the lifting corner throws onto the sheet below. -->
+        <div class="wc__cast"></div>
+      </div>
+    ))}
+
+    <!-- The light that crosses the finished sheet, left to right, once. -->
+    <div class="wc__gleam"></div>
+  </div>
+</div>

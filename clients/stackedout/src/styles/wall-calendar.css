@@ -1,0 +1,448 @@
+/* WALL CALENDAR — the hero.
+   Everything here is transform and opacity on a small number of layers, so the
+   peel composites rather than repaints. Zero JS.
+
+   THE TURN. A hand turns a wall calendar by the bottom right corner, so that is
+   where this starts. A fold line at 45 degrees travels diagonally up and left
+   across the sheet. --fold is the length of the fold's legs from the corner: at 0
+   the sheet is flat, and once --fold passes the sheet's width plus its height the
+   fold has crossed everything and the page has turned. The lifted part rotates
+   about that fold line, which is what makes it read as the sheet bending rather
+   than a shape sliding over it.
+
+   WHY THE OLD ONE WAS WRONG. It hinged the whole sheet on its top edge, which is a
+   trapdoor, not a page. No amount of easing fixes the wrong axis. */
+
+@property --fold {
+  syntax: '<length>';
+  inherits: true;
+  initial-value: 0px;
+}
+@property --sy {
+  syntax: '<number>';
+  inherits: true;
+  initial-value: 1;
+}
+
+.wc {
+  --pad-w: min(100%, 1560px);
+  --sheet-ar: 1.52;                 /* landscape, the way these hang */
+  --paper: #12151a;                 /* a shade off --panel, so the sheet reads lit */
+  --paper-lo: #0b0d11;
+  --rule: rgba(255, 255, 255, .085);
+  --rule-hi: rgba(255, 255, 255, .16);
+  --pen: rgba(255, 255, 255, .34);  /* the ring round a free day */
+
+  /* One clock for the whole hero. Slow, because paper is slow. */
+  --t1: .55s;   /* first turn starts  */
+  --t2: 2.35s;  /* second turn starts */
+  --dur: 1.62s; /* a hand takes about this long */
+  --t-word: 4.35s;
+  --t-wash: 4.85s;
+  --d-wash: 1.15s;
+
+  position: relative;
+  padding: 0 0 clamp(18px, 2.4vw, 34px);
+  isolation: isolate;
+}
+
+/* ---- Binding ------------------------------------------------------------- */
+.wc__wire {
+  display: block;
+  width: 100%;
+  height: clamp(26px, 2.9vw, 44px);
+  margin-bottom: -6px;
+  position: relative;
+  z-index: 5;
+  filter: drop-shadow(0 3px 5px rgba(0, 0, 0, .55));
+}
+
+.wc__head {
+  position: relative;
+  z-index: 3;
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--s-3);
+  width: var(--pad-w);
+  margin-inline: auto;
+  padding: clamp(4px, .5vw, 9px) clamp(14px, 1.6vw, 26px) clamp(7px, .8vw, 12px);
+  border-bottom: 1px solid var(--rule);
+}
+.wc__brand {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: clamp(19px, 1.55vw, 27px);
+  letter-spacing: -.028em;
+  word-spacing: .14em;
+  /* Sweep one: the name inks in left to right. */
+  background: linear-gradient(100deg, var(--ink) 0 50%, transparent 50%) no-repeat;
+  background-size: 220% 100%;
+  background-position: 100% 0;
+  -webkit-background-clip: text;
+          background-clip: text;
+  color: transparent;
+  animation: wc-ink var(--dur) var(--ease-enter) var(--t-word) forwards;
+}
+.wc__strap {
+  font-size: clamp(9px, .68vw, 11.5px);
+  font-weight: 500;
+  letter-spacing: .09em;
+  text-transform: uppercase;
+  color: var(--ink-muted);
+  opacity: 0;
+  animation: wc-fade .8s var(--ease-ui) calc(var(--t-word) + .5s) forwards;
+}
+@keyframes wc-ink { to { background-position: 0 0; } }
+@keyframes wc-fade { to { opacity: 1; } }
+
+/* ---- The pad of sheets --------------------------------------------------- */
+.wc__pad {
+  position: relative;
+  width: var(--pad-w);
+  margin-inline: auto;
+  /* Height leads. A hero has to fit the fold with the headline, so the sheet takes
+     the smaller of a comfortable viewport share and its own natural proportion. */
+  height: min(58vh, 62vw);
+  /* Deep enough that the fold has somewhere to go, shallow enough that the sheet
+     does not distort at the edges. */
+  perspective: 2400px;
+  perspective-origin: 72% 82%;
+}
+
+.wc__sheet {
+  position: absolute;
+  inset: 0;
+  transform-style: preserve-3d;
+  background: linear-gradient(178deg, var(--paper) 0%, var(--paper-lo) 100%);
+  border: 1px solid var(--rule);
+  border-top: none;
+  /* Sheets sit in a pad: the one on top is index 3. */
+  z-index: calc(3 - var(--i));
+  box-shadow: 0 1px 0 rgba(255, 255, 255, .04) inset;
+}
+
+/* The two sheets that turn. Each drives --fold, and the flap reads it. */
+.wc__sheet[data-sheet='0'] { --fold: 0px; animation: wc-turn var(--dur) var(--ease-ui) var(--t1) forwards; }
+.wc__sheet[data-sheet='1'] { --fold: 0px; animation: wc-turn var(--dur) var(--ease-ui) var(--t2) forwards; }
+
+/* Asymmetric on purpose: the corner is pinched off the sheet quickly, slows at the
+   balance point where the paper is standing up, then gravity takes it. */
+/* Asymmetric on purpose. The corner is pinched off the wall quickly, slows at the
+   balance point where the paper is standing on its crease, then gravity takes it. */
+@keyframes wc-turn {
+  0%   { --fold: 0vw;   --sy: -1; }
+  100% { --fold: 190vw; --sy: -1; }
+}
+
+/* Once turned, the sheet is behind the pad and out of the way. */
+.wc__sheet[data-sheet='0'] { animation-fill-mode: forwards; }
+
+.wc__punches {
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  display: flex;
+  justify-content: space-around;
+  padding: 5px clamp(6px, .7vw, 12px) 0;
+  pointer-events: none;
+  z-index: 2;
+}
+.wc__punch {
+  width: clamp(7px, .62vw, 11px);
+  height: clamp(9px, .78vw, 14px);
+  border-radius: 2px;
+  /* A punched hole is the dark of what is behind, with a lit lower lip where the
+     paper's thickness catches the light. */
+  background: #05070a;
+  box-shadow: 0 1px 0 rgba(255, 255, 255, .13);
+}
+
+/* ---- The printed face --------------------------------------------------- */
+.wc__face,
+.wc__flap-inner {
+  position: absolute;
+  inset: 0;
+  padding: clamp(16px, 1.9vw, 34px) clamp(14px, 1.7vw, 30px) clamp(10px, 1.2vw, 20px);
+  display: flex;
+  flex-direction: column;
+}
+
+.wc__masthead {
+  display: flex;
+  align-items: baseline;
+  gap: clamp(8px, .9vw, 16px);
+  padding-bottom: clamp(8px, 1vw, 16px);
+}
+.wc__month {
+  /* Editorial, not shouty. 600 rather than 700, tracking opened back up: at display
+     size the brand's -.025em closes the counters and the word turns into a slab. */
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: clamp(38px, 4.5vw, 82px);
+  line-height: .84;
+  letter-spacing: -.012em;
+  color: var(--ink);
+  margin: 0;
+}
+.wc__year {
+  font-family: var(--font-body);
+  font-weight: 500;
+  font-variant-numeric: tabular-nums;
+  font-size: clamp(12px, .95vw, 17px);
+  letter-spacing: .1em;
+  color: var(--ink-muted);
+}
+
+.wc__dows {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  border-bottom: 1px solid var(--rule-hi);
+  padding-bottom: clamp(4px, .5vw, 8px);
+}
+.wc__dow {
+  font-size: clamp(8.5px, .62vw, 11px);
+  font-weight: 500;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  color: var(--ink-muted);
+  padding-left: 2px;
+}
+
+.wc__grid { flex: 1; display: flex; flex-direction: column; }
+.wc__week {
+  flex: 1;
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  border-bottom: 1px solid var(--rule);
+}
+.wc__week:last-child { border-bottom: none; }
+
+.wc__day {
+  position: relative;
+  padding: clamp(4px, .5vw, 9px) clamp(4px, .5vw, 9px) 0;
+  display: flex;
+  flex-direction: column;
+  gap: clamp(2px, .28vw, 5px);
+  /* Column rules drawn as a border, not as a box round each cell. A calendar is
+     ruled paper; it is not a grid of containers. */
+  border-left: 1px solid var(--rule);
+}
+.wc__day:first-child { border-left: none; }
+.wc__day--blank { background: rgba(0, 0, 0, .16); }
+
+.wc__date {
+  font-family: var(--font-body);
+  font-weight: 500;
+  font-variant-numeric: tabular-nums;
+  font-size: clamp(10px, .78vw, 14px);
+  letter-spacing: .01em;
+  color: var(--ink-muted);
+  position: relative;
+  width: max-content;
+}
+
+/* A booking is written in. No box, no chip, no fill. */
+.wc__job {
+  font-family: var(--font-body);
+  font-weight: 400;
+  font-size: clamp(9px, .74vw, 13px);
+  line-height: 1.25;
+  color: color-mix(in srgb, var(--ink) 74%, transparent);
+  padding-bottom: 2px;
+  border-bottom: 1.5px solid var(--action);
+  width: max-content;
+  max-width: 100%;
+  /* Printed from the start. Sweep two only changes the colour of the rule under each
+     entry, stepped across the seven columns from one ramp, so the light arriving is
+     what reads rather than the writing appearing. */
+  border-bottom-color: var(--rule-hi);
+  transition: border-bottom-color .5s var(--ease-ui);
+}
+.wc__sheet[data-sheet='2'] .wc__job {
+  animation: wc-colour .01s linear calc(var(--t-wash) + .35s) forwards;
+}
+@keyframes wc-colour { to { border-bottom-color: var(--col, var(--action)); } }
+.wc__day:nth-child(1)  .wc__job { --col: #ffdd33; }
+.wc__day:nth-child(2)  .wc__job { --col: #e7e254; }
+.wc__day:nth-child(3)  .wc__job { --col: #cfe775; }
+.wc__day:nth-child(4)  .wc__job { --col: #a9e79f; }
+.wc__day:nth-child(5)  .wc__job { --col: #82e6c4; }
+.wc__day:nth-child(6)  .wc__job { --col: #61e5e2; }
+.wc__day:nth-child(7)  .wc__job { --col: #3fe3ff; }
+
+/* THE ONE OPEN DAY. Ringed round the number in pen, off true, because nothing
+   drawn by hand is level. Never a bordered rectangle: that is an input field. */
+.wc__day--open .wc__date { color: var(--ink); font-weight: 700; }
+.wc__day--open .wc__date::after {
+  content: '';
+  position: absolute;
+  left: 50%; top: 48%;
+  width: clamp(20px, 1.9vw, 31px);
+  height: clamp(20px, 1.9vw, 31px);
+  translate: -50% -50%;
+  border: 1.5px solid var(--pen);
+  border-radius: 52% 48% 49% 51%;
+  rotate: -8deg;
+}
+
+/* ---- The flap: the part of the sheet that is lifted -------------------- */
+.wc__flap {
+  position: absolute;
+  inset: 0;
+  transform-style: preserve-3d;
+  z-index: 4;
+  /* The folded triangle, growing from the bottom right corner. */
+  clip-path: polygon(
+    calc(100% - var(--fold)) 100%,
+    100% 100%,
+    100% calc(100% - var(--fold))
+  );
+  /* The origin sits on the crease's midpoint, so the paper turns on the fold rather
+     than about the corner. */
+  transform-origin: calc(100% - var(--fold) / 2) calc(100% - var(--fold) / 2);
+  transform: rotate(-45deg) scaleY(var(--sy)) rotate(45deg);
+}
+
+.wc__flap-inner { opacity: 0; }
+.wc__sheet[data-sheet='0'] .wc__reverse,
+.wc__sheet[data-sheet='1'] .wc__reverse { opacity: 1; }
+@keyframes wc-hide { from { opacity: 1; } to { opacity: 0; } }
+@keyframes wc-show { from { opacity: 0; } to { opacity: 1; } }
+.wc__reverse {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  /* Unprinted stock, slightly cooler than the face, with a light falloff toward the
+     crease and the faintest show-through of the other side. */
+  background:
+    /* the crease catches the light first, and hardest */
+    linear-gradient(225deg, rgba(255, 255, 255, .34) 0%, rgba(255, 255, 255, .07) 9%, transparent 30%),
+    linear-gradient(212deg, #3d444f 0%, #2a313b 38%, #1b2027 100%);
+  box-shadow:
+    inset 0 0 90px rgba(0, 0, 0, .42),
+    -6px 6px 26px rgba(0, 0, 0, .55);
+}
+
+/* The shadow the lifted corner throws down onto the sheet beneath. Travels with
+   the fold, softening as the paper rises. */
+.wc__cast {
+  position: absolute;
+  inset: 0;
+  z-index: 3;
+  pointer-events: none;
+  opacity: 0;
+  background: radial-gradient(
+    120% 120% at 100% 100%,
+    rgba(0, 0, 0, .62) 0%,
+    rgba(0, 0, 0, .3) 32%,
+    transparent 62%
+  );
+  clip-path: polygon(
+    calc(100% - var(--fold)) 100%,
+    100% 100%,
+    100% calc(100% - var(--fold))
+  );
+}
+.wc__sheet[data-sheet='0'] .wc__cast { animation: wc-cast var(--dur) var(--ease-ui) var(--t1) forwards; }
+.wc__sheet[data-sheet='1'] .wc__cast { animation: wc-cast var(--dur) var(--ease-ui) var(--t2) forwards; }
+@keyframes wc-cast {
+  0%   { opacity: 0; }
+  18%  { opacity: .9; }
+  70%  { opacity: .45; }
+  100% { opacity: 0; }
+}
+
+/* The top sheet never turns. */
+.wc__sheet[data-sheet='2'] .wc__flap,
+.wc__sheet[data-sheet='2'] .wc__cast { display: none; }
+
+/* ---- Sweep two: the light across the finished sheet -------------------- */
+.wc__gleam {
+  position: absolute;
+  inset: -2% -55%;
+  z-index: 6;
+  pointer-events: none;
+  opacity: 0;
+  background: linear-gradient(
+    100deg,
+    transparent 36%,
+    rgba(255, 221, 51, .11) 45%,
+    rgba(245, 246, 248, .2) 50%,
+    rgba(63, 227, 255, .12) 55%,
+    transparent 64%
+  );
+  animation: wc-gleam var(--d-wash) var(--ease-ui) var(--t-wash) forwards;
+}
+@keyframes wc-gleam {
+  0%   { opacity: 0; transform: translate3d(-44%, 0, 0); }
+  15%  { opacity: 1; }
+  85%  { opacity: 1; }
+  100% { opacity: 0; transform: translate3d(44%, 0, 0); }
+}
+
+/* ---- Phone: a working week, not a squashed month ----------------------- */
+@media (max-width: 720px) {
+  .wc { --sheet-ar: .82; }
+  .wc__month { font-size: clamp(34px, 11vw, 52px); }
+  .wc__dows { display: none; }
+  .wc__week { display: none; }
+  .wc__grid { gap: 0; }
+  /* Show one working week as rows, five booked and one open, which is the mark
+     unrolled. Weeks 3 of the month reads as a full week at this size. */
+  .wc__week:nth-child(3) { display: block; }
+  .wc__week:nth-child(3) .wc__day {
+    display: grid;
+    grid-template-columns: clamp(26px, 9vw, 40px) 1fr;
+    align-items: center;
+    gap: clamp(8px, 3vw, 14px);
+    border-left: none;
+    border-bottom: 1px solid var(--rule);
+    min-height: 46px;
+    padding: 0 2px;
+  }
+  .wc__week:nth-child(3) .wc__day--blank { display: none; }
+  .wc__date { font-size: clamp(13px, 4vw, 17px); }
+  .wc__job { font-size: clamp(12px, 3.8vw, 15px); }
+}
+
+/* ---- Reduced motion: the settled sheet, after the light has passed ----- */
+@media (prefers-reduced-motion: reduce) {
+  .wc__sheet[data-sheet='0'],
+  .wc__sheet[data-sheet='1'] { display: none; }
+  .wc__brand { animation: none; background-position: 0 0; }
+  .wc__strap,
+  .wc__job { animation: none; opacity: 1; }
+  .wc__gleam { animation: none; opacity: 0; }
+  .wc__cast { animation: none; opacity: 0; }
+}
+
+/* ---- The copy that sits under the calendar ------------------------------ */
+.wcp { padding-bottom: clamp(40px, 5vw, 80px); }
+
+.wcp__copy {
+  width: min(100% - 2 * var(--s-3), 1560px);
+  margin: clamp(30px, 3.6vw, 64px) auto 0;
+  display: grid;
+  grid-template-columns: minmax(0, 1.35fr) minmax(0, .65fr);
+  gap: clamp(20px, 3vw, 56px);
+  align-items: start;
+}
+.wcp__h {
+  font-size: clamp(28px, 3.05vw, 54px);
+  line-height: 1.0;
+  max-width: 22ch;
+}
+.wcp__lead {
+  margin-top: clamp(12px, 1.2vw, 20px);
+  font-size: var(--t-lead);
+  color: var(--ink-muted);
+  max-width: 46ch;
+}
+.wcp__act { display: grid; gap: clamp(8px, .9vw, 14px); justify-items: start; }
+.wcp__mail { font-size: var(--t-body); color: var(--ink-muted); }
+.wcp__note { font-size: var(--t-label); color: var(--ink-muted); max-width: 34ch; }
+
+@media (max-width: 860px) {
+  .wcp__copy { grid-template-columns: 1fr; }
+  .wcp__act { justify-items: stretch; }
+}

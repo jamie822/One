@@ -1,14 +1,41 @@
 ---
-// Hero candidate 04 — "The wall calendar". This route shows the hero and nothing
-// else, deliberately: it is the piece being judged.
+// Hero — "The wall calendar". This route shows the hero and nothing else,
+// deliberately: it is the piece being judged.
 import Shell from '../layouts/Shell.astro';
-import CalendarHero from '../components/hero/CalendarHero.astro';
-import '../styles/hero-calendar.css';
+import WallCalendar from '../components/hero/WallCalendar.astro';
+import { studio } from '../data/studio.js';
+import '../styles/wall-calendar.css';
+
+const mailto = `mailto:${studio.contact.email}`;
 ---
 <Shell
   title="Websites for electricians and solar installers. Stacked Out"
   variant="hero"
   blurb="A printed wall calendar at hero scale. Websites for electricians and solar installers, built by a spark with 25 years on the tools."
 >
-  <CalendarHero />
+  <section class="wcp">
+    <WallCalendar />
+
+    <div class="wcp__copy">
+      <div>
+        <!-- Never animated. This is the LCP element. -->
+        <h1 class="wcp__h">
+          Websites for electricians and solar installers, built by a spark.
+        </h1>
+        <p class="wcp__lead">
+          {studio.founder.yearsOnTools} years on the tools, {studio.founder.yearsSelfEmployed} of
+          them working for myself. I build them now because the marketing lot never
+          understood the trade.
+        </p>
+      </div>
+
+      <div class="wcp__act">
+        <a class="btn btn--action" href={mailto}>Book yours in</a>
+        <p class="wcp__mail">{studio.contact.email}</p>
+        <p class="wcp__note">
+          The calendar is illustrative. Real job types, not a record of bookings.
+        </p>
+      </div>
+    </div>
+  </section>
 </Shell>
