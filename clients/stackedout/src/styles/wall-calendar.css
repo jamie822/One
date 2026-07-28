@@ -1,28 +1,14 @@
 /* WALL CALENDAR — the hero.
-   Everything here is transform and opacity on a small number of layers, so the
-   peel composites rather than repaints. Zero JS.
 
-   THE TURN. A hand turns a wall calendar by the bottom right corner, so that is
-   where this starts. A fold line at 45 degrees travels diagonally up and left
-   across the sheet. --fold is the length of the fold's legs from the corner: at 0
-   the sheet is flat, and once --fold passes the sheet's width plus its height the
-   fold has crossed everything and the page has turned. The lifted part rotates
-   about that fold line, which is what makes it read as the sheet bending rather
-   than a shape sliding over it.
+   THE TURN lives in WallCalendar.astro, because the curl is a shaded mesh in a
+   canvas and the swing is a GSAP timeline. What is here is the paper: the sheet
+   hinge, the printed face, the unprinted reverse, and the shadow the page throws
+   on the sheet below. See the note at the top of the component for why the curl
+   cannot be a CSS transform.
 
-   WHY THE OLD ONE WAS WRONG. It hinged the whole sheet on its top edge, which is a
-   trapdoor, not a page. No amount of easing fixes the wrong axis. */
-
-@property --fold {
-  syntax: '<length>';
-  inherits: true;
-  initial-value: 0px;
-}
-@property --sy {
-  syntax: '<number>';
-  inherits: true;
-  initial-value: 1;
-}
+   The stylesheet still owns everything that is not the turn — the binding, the
+   grid, the ink sweep on the name, and the light wash — and all of that is
+   transform and opacity on a handful of layers. */
 
 .wc {
   --pad-w: min(100%, 1560px);
@@ -105,38 +91,34 @@
      the smaller of a comfortable viewport share and its own natural proportion. */
   height: min(58vh, 62vw);
   /* Deep enough that the fold has somewhere to go, shallow enough that the sheet
-     does not distort at the edges. */
-  perspective: 2400px;
-  perspective-origin: 72% 82%;
+     does not distort at the edges. The canvas mesh divides by the same 1600, so
+     the curl standing off the paper grows by exactly what the scene would grow it.
+     Changing one means changing PERSP in the component. */
+  perspective: 1600px;
+  perspective-origin: 50% 34%;
+  /* The page swings up past the wire and is gone. Clipping it at the binding is
+     what the binding is for, and it also keeps the cast shadow off the headline. */
+  overflow: hidden;
 }
 
+/* The sheet is only a hinge now: no paper on it, because the paper has two sides
+   and each needs its own backface. It turns about the wire at its top edge. */
 .wc__sheet {
   position: absolute;
   inset: 0;
   transform-style: preserve-3d;
-  background: linear-gradient(178deg, var(--paper) 0%, var(--paper-lo) 100%);
-  border: 1px solid var(--rule);
-  border-top: none;
+  transform-origin: 50% 0;
   /* Sheets sit in a pad: the one on top is index 3. */
   z-index: calc(3 - var(--i));
-  box-shadow: 0 1px 0 rgba(255, 255, 255, .04) inset;
 }
 
-/* The two sheets that turn. Each drives --fold, and the flap reads it. */
-.wc__sheet[data-sheet='0'] { --fold: 0px; animation: wc-turn var(--dur) var(--ease-ui) var(--t1) forwards; }
-.wc__sheet[data-sheet='1'] { --fold: 0px; animation: wc-turn var(--dur) var(--ease-ui) var(--t2) forwards; }
-
-/* Asymmetric on purpose: the corner is pinched off the sheet quickly, slows at the
-   balance point where the paper is standing up, then gravity takes it. */
-/* Asymmetric on purpose. The corner is pinched off the wall quickly, slows at the
-   balance point where the paper is standing on its crease, then gravity takes it. */
-@keyframes wc-turn {
-  0%   { --fold: 0vw;   --sy: -1; }
-  100% { --fold: 190vw; --sy: -1; }
-}
-
-/* Once turned, the sheet is behind the pad and out of the way. */
-.wc__sheet[data-sheet='0'] { animation-fill-mode: forwards; }
+/* The two sheets that turn are never served: without JavaScript, and under
+   reduced motion, the hero is the settled August sheet, which is where the
+   sequence lands anyway. The timeline opts them in. */
+.wc__sheet[data-sheet='0'],
+.wc__sheet[data-sheet='1'] { display: none; }
+.wc--live .wc__sheet[data-sheet='0'],
+.wc--live .wc__sheet[data-sheet='1'] { display: block; }
 
 .wc__punches {
   position: absolute;
@@ -158,13 +140,20 @@
 }
 
 /* ---- The printed face --------------------------------------------------- */
-.wc__face,
-.wc__flap-inner {
+.wc__face {
   position: absolute;
   inset: 0;
   padding: clamp(16px, 1.9vw, 34px) clamp(14px, 1.7vw, 30px) clamp(10px, 1.2vw, 20px);
   display: flex;
   flex-direction: column;
+  /* The paper lives here rather than on the sheet, so that the reverse can be a
+     face of its own and each can hide its own back. Never on .wc__sheet: that is
+     the 3D container, and backface-visibility there culls the children with it. */
+  background: linear-gradient(178deg, var(--paper) 0%, var(--paper-lo) 100%);
+  border: 1px solid var(--rule);
+  border-top: none;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, .04);
+  backface-visibility: hidden;
 }
 
 .wc__masthead {
@@ -285,76 +274,52 @@
   rotate: -8deg;
 }
 
-/* ---- The flap: the part of the sheet that is lifted -------------------- */
-.wc__flap {
+/* ---- The reverse of the page -------------------------------------------
+   The one light thing on the whole hero, and deliberately so: the printed face
+   is #12151a, and a reverse a couple of hundredths lighter than that is why
+   earlier attempts at this turn were invisible rather than subtle. These are the
+   wire's own four gradient stops — unprinted calendar stock is metallic grey,
+   and that ramp is already on the page in the binding. */
+.wc__back {
   position: absolute;
   inset: 0;
-  transform-style: preserve-3d;
-  z-index: 4;
-  /* The folded triangle, growing from the bottom right corner. */
-  clip-path: polygon(
-    calc(100% - var(--fold)) 100%,
-    100% 100%,
-    100% calc(100% - var(--fold))
-  );
-  /* The origin sits on the crease's midpoint, so the paper turns on the fold rather
-     than about the corner. */
-  transform-origin: calc(100% - var(--fold) / 2) calc(100% - var(--fold) / 2);
-  transform: rotate(-45deg) scaleY(var(--sy)) rotate(45deg);
+  /* Turned to face the other way, so it is only visible once the page is past
+     vertical. On the faces, never on .wc__sheet. */
+  transform: rotateY(180deg);
+  backface-visibility: hidden;
+  background: linear-gradient(172deg, #aeb5bf 0%, #6f767f 32%, #3b4048 100%);
+  border: 1px solid var(--rule);
+  border-top: none;
+  box-shadow: inset 0 0 clamp(60px, 7vw, 130px) rgba(0, 0, 0, .34);
 }
 
-.wc__flap-inner { opacity: 0; }
-.wc__sheet[data-sheet='0'] .wc__reverse,
-.wc__sheet[data-sheet='1'] .wc__reverse { opacity: 1; }
-@keyframes wc-hide { from { opacity: 1; } to { opacity: 0; } }
-@keyframes wc-show { from { opacity: 0; } to { opacity: 1; } }
-.wc__reverse {
+/* The curl: mesh, its shading, and the shadow it casts. Drawn in the component. */
+.wc__curl {
   position: absolute;
   inset: 0;
-  opacity: 0;
-  /* Unprinted stock, slightly cooler than the face, with a light falloff toward the
-     crease and the faintest show-through of the other side. */
-  background:
-    /* the crease catches the light first, and hardest */
-    linear-gradient(225deg, rgba(255, 255, 255, .34) 0%, rgba(255, 255, 255, .07) 9%, transparent 30%),
-    linear-gradient(212deg, #3d444f 0%, #2a313b 38%, #1b2027 100%);
-  box-shadow:
-    inset 0 0 90px rgba(0, 0, 0, .42),
-    -6px 6px 26px rgba(0, 0, 0, .55);
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  backface-visibility: hidden;
+  will-change: transform;
 }
 
-/* The shadow the lifted corner throws down onto the sheet beneath. Travels with
-   the fold, softening as the paper rises. */
-.wc__cast {
+/* The shadow the page above throws down here as it swings away. It belongs to the
+   sheet being revealed, not to the one moving, so it stays flat while the page
+   goes over — and it is only ever visible through the hole the peel has opened. */
+.wc__lit {
   position: absolute;
   inset: 0;
-  z-index: 3;
   pointer-events: none;
   opacity: 0;
-  background: radial-gradient(
-    120% 120% at 100% 100%,
-    rgba(0, 0, 0, .62) 0%,
-    rgba(0, 0, 0, .3) 32%,
-    transparent 62%
-  );
-  clip-path: polygon(
-    calc(100% - var(--fold)) 100%,
-    100% 100%,
-    100% calc(100% - var(--fold))
+  will-change: opacity;
+  background: linear-gradient(
+    208deg,
+    rgba(0, 0, 0, .66) 0%,
+    rgba(0, 0, 0, .26) 36%,
+    transparent 68%
   );
 }
-.wc__sheet[data-sheet='0'] .wc__cast { animation: wc-cast var(--dur) var(--ease-ui) var(--t1) forwards; }
-.wc__sheet[data-sheet='1'] .wc__cast { animation: wc-cast var(--dur) var(--ease-ui) var(--t2) forwards; }
-@keyframes wc-cast {
-  0%   { opacity: 0; }
-  18%  { opacity: .9; }
-  70%  { opacity: .45; }
-  100% { opacity: 0; }
-}
-
-/* The top sheet never turns. */
-.wc__sheet[data-sheet='2'] .wc__flap,
-.wc__sheet[data-sheet='2'] .wc__cast { display: none; }
 
 /* ---- Sweep two: the light across the finished sheet -------------------- */
 .wc__gleam {
@@ -405,15 +370,18 @@
   .wc__job { font-size: clamp(12px, 3.8vw, 15px); }
 }
 
-/* ---- Reduced motion: the settled sheet, after the light has passed ----- */
+/* ---- Reduced motion: the settled sheet, after the light has passed -----
+   Same state the sequence ends in, arrived at without the journey. The timeline
+   is gated on the same query in gsap.matchMedia, so .wc--live is never added and
+   the two turning sheets stay out of the document's paint entirely. */
 @media (prefers-reduced-motion: reduce) {
-  .wc__sheet[data-sheet='0'],
-  .wc__sheet[data-sheet='1'] { display: none; }
+  .wc--live .wc__sheet[data-sheet='0'],
+  .wc--live .wc__sheet[data-sheet='1'] { display: none; }
   .wc__brand { animation: none; background-position: 0 0; }
   .wc__strap,
   .wc__job { animation: none; opacity: 1; }
   .wc__gleam { animation: none; opacity: 0; }
-  .wc__cast { animation: none; opacity: 0; }
+  .wc__lit { opacity: 0; }
 }
 
 /* ---- The copy that sits under the calendar ------------------------------ */
