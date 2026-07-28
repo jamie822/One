@@ -70,7 +70,7 @@ a { color: inherit; text-decoration-thickness: 1px; text-underline-offset: 3px; 
   outline-offset: 3px;
   border-radius: 3px;
 }
-.pine :focus-visible { outline-color: var(--sun-500); }
+.pine :focus-visible { outline-color: var(--pine-band-ink); }
 
 .skip {
   position: absolute; left: -999px; top: 0; z-index: 100;

@@ -36,6 +36,9 @@ Also tagged in pages:
 
 - Three demo reviews on the home page (`TEMP demo review`). **Never ship
   live: invented reviews are illegal under the DMCC Act 2025.**
+- The blog launches with one post; write 2 or 3 more before go-live so the
+  advice section reads established (battery sizing and export tariffs are
+  already teed up by the services copy)
 - Blog post prices, benefit figures and VAT note
 - The one-working-day response promise (form confirm line and contact)
 - The "About one roof in five, we do" claim: confirm or cut

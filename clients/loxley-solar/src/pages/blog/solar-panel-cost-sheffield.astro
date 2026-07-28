@@ -27,7 +27,7 @@ const table = [
   ['Small terrace', '6', '£4,400 to £5,200', '£390 to £470'],
   ['Semi, the common case', '10', '£5,900 to £7,500', '£640 to £790'],
   ['Large semi or detached', '12', '£7,200 to £8,600', '£770 to £940'],
-  ['Big detached, dual aspect', '14+', '£8,200 to £9,500+', '£900 to £1,100'],
+  ['Big detached, dual aspect', '14+', '£8,200 to £9,500+', '£900 to £1,100+'],
 ];
 ---
 <Base
@@ -56,12 +56,7 @@ const table = [
         </p>
 
         <div class="table-scroll">
-        <table class="costs">
-          <caption>
-            Installed, incl. scaffolding, MCS certificate, DNO and export
-            registration. Your written quote is the real number; this table
-            is for orientation.
-          </caption>
+        <table class="costs" aria-describedby="costs-note">
           <thead>
             <tr>
               <th scope="col">System</th>
@@ -77,6 +72,11 @@ const table = [
           </tbody>
         </table>
         </div>
+        <p class="table-note" id="costs-note">
+          Installed, incl. scaffolding, MCS certificate, DNO and export
+          registration. Your written quote is the real number; this table is
+          for orientation.
+        </p>
 
         <h2>What moves the price</h2>
         <p>

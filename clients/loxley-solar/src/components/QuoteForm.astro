@@ -29,6 +29,10 @@ import { client } from '../data/client.js';
     <p class="err">The postcode tells us your roof is in reach.</p>
   </div>
   <div class="field">
+    <label for="q-email">Email <span class="opt">(optional, if you would rather not talk on the phone)</span></label>
+    <input id="q-email" name="email" type="email" autocomplete="email" />
+  </div>
+  <div class="field">
     <label for="q-bill">Average monthly bill <span class="opt">(optional, sharpens the estimate)</span></label>
     <input id="q-bill" name="bill" inputmode="numeric" />
   </div>
@@ -59,7 +63,9 @@ import { client } from '../data/client.js';
       var v = function (n) { var el = form.querySelector('[name=' + n + ']'); return el ? el.value.trim() : ''; };
       var subject = 'Quote request from ' + v('name') + ' (' + v('postcode') + ')';
       var body = 'Name: ' + v('name') + '\nPhone: ' + v('phone') + '\nPostcode: ' + v('postcode') +
-        (v('bill') ? '\nMonthly bill: ' + v('bill') : '') + '\n\nJob:\n' + v('job');
+        (v('email') ? '\nEmail: ' + v('email') : '') +
+        (v('bill') ? '\nMonthly bill: ' + v('bill') : '') +
+        (v('estimate') ? '\nEstimator: ' + v('estimate') : '') + '\n\nJob:\n' + v('job');
       var confirm = form.querySelector('[data-confirm]');
       if (confirm) confirm.textContent = 'Your email app should open with everything filled in. If it does not, ring us instead.';
       window.location.href = 'mailto:' + form.dataset.email +

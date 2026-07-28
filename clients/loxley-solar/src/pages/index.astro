@@ -42,7 +42,7 @@ FORM: brief-pinned by ledger 2026-07-28, zero shared axes with prior builds. -->
         <p class="kicker">{client.accreditation} · {client.town} <!-- TEMP --></p>
         <h1 id="hero-h">Solar panels for Sheffield roofs, sized on your bills.</h1>
         <p class="hero__sub">
-          Move the sliders and watch the numbers. When they look right, send
+          Move the slider and watch the numbers. When they look right, send
           us two energy bills and we turn the estimate into a written quote
           with the workings shown.
         </p>
@@ -81,8 +81,8 @@ FORM: brief-pinned by ledger 2026-07-28, zero shared axes with prior builds. -->
           your own, or just send the form: we run the numbers either way.
         </p>
 
-        <svg class="est__arc" viewBox="0 0 200 108" width="200" height="108" role="img"
-             aria-label="Yield arc: how much of the best-case generation your setup reaches">
+        {/* Decorative reinforcement of the figures below, which carry the data. */}
+        <svg class="est__arc" viewBox="0 0 200 108" width="200" height="108" aria-hidden="true">
           <path class="track" d="M 20 100 A 80 80 0 0 1 180 100" />
           <path class="fill" d="M 20 100 A 80 80 0 0 1 180 100"
                 stroke-dasharray="251.3" stroke-dashoffset={off0} data-arc />
@@ -95,7 +95,7 @@ FORM: brief-pinned by ledger 2026-07-28, zero shared axes with prior builds. -->
             <span>generation a year</span>
           </div>
           <div class="est__cell">
-            <strong class="est__n">£<span data-out="value">{val0}</span></strong>
+            <strong class="est__n">£<span data-out="value">{val0.toLocaleString('en-GB')}</span></strong>
             <span>off your bills a year</span>
           </div>
           <div class="est__cell">
@@ -294,7 +294,7 @@ FORM: brief-pinned by ledger 2026-07-28, zero shared axes with prior builds. -->
         var payback = (price / value).toFixed(1);
         panelsOut.textContent = n + ' panels';
         outs.gen.textContent = gen.toLocaleString('en-GB');
-        outs.value.textContent = value;
+        outs.value.textContent = value.toLocaleString('en-GB');
         outs.payback.textContent = payback;
         outs.price.textContent = '£' + (Math.round(price / 100) * 100).toLocaleString('en-GB');
         slider.style.setProperty('--pct', ((n - 6) / 10) * 100 + '%');
@@ -303,6 +303,23 @@ FORM: brief-pinned by ledger 2026-07-28, zero shared axes with prior builds. -->
         var a = Math.PI * (1 - frac);
         sun.setAttribute('cx', 100 + 80 * Math.cos(a));
         sun.setAttribute('cy', 100 - 80 * Math.sin(a));
+
+        // Carry the tuned estimate into the quote form so it survives the
+        // scroll: a hidden line for the enquiry, a placeholder as the cue.
+        var form = document.querySelector('[data-quote]');
+        if (form) {
+          var summary = n + ' panels, ' + facing() + ' facing: about ' +
+            gen.toLocaleString('en-GB') + ' kWh and £' + value.toLocaleString('en-GB') + ' a year (your estimator settings)';
+          var hidden = form.querySelector('[name=estimate]');
+          if (!hidden) {
+            hidden = document.createElement('input');
+            hidden.type = 'hidden'; hidden.name = 'estimate';
+            form.appendChild(hidden);
+          }
+          hidden.value = summary;
+          var ta = form.querySelector('textarea');
+          if (ta && !ta.value) ta.placeholder = 'e.g. ' + n + ' panels on a ' + facing() + '-facing roof, as per the estimator';
+        }
       }
       slider.addEventListener('input', update);
       box.querySelectorAll('[data-facing] input').forEach(function (r) { r.addEventListener('change', update); });
