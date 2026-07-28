@@ -1,0 +1,195 @@
+---
+// SERVICES: the hub. Seven anchored sections, each carrying its own keyword
+// H2, price, duration and the path that fits the job. Copy from COPY.md.
+import Base from '../layouts/Base.astro';
+import { client } from '../data/client.js';
+
+const tel = client.phone.replace(/\s/g, '');
+const fmt = (n) => '£' + n.toLocaleString('en-GB');
+const svc = Object.fromEntries(client.services.map((s) => [s.id, s]));
+
+const breadcrumbs = {
+  '@context': 'https://schema.org',
+  '@type': 'BreadcrumbList',
+  itemListElement: [
+    { '@type': 'ListItem', position: 1, name: 'Home', item: 'https://eselec.co.uk/' },
+    { '@type': 'ListItem', position: 2, name: 'Services', item: 'https://eselec.co.uk/services/' },
+  ],
+};
+const catalog = {
+  '@context': 'https://schema.org',
+  '@type': 'OfferCatalog',
+  name: 'Electrical services in Leeds',
+  provider: { '@id': 'https://eselec.co.uk/#business' },
+  itemListElement: client.services.map((s) => ({
+    '@type': 'Offer',
+    itemOffered: { '@type': 'Service', name: s.name },
+    priceSpecification: { '@type': 'PriceSpecification', price: s.from, priceCurrency: 'GBP', description: 'from' },
+  })),
+};
+---
+<Base
+  title="Electrical Services Leeds | EICR, Rewires, EV, Solar"
+  description="Fixed and from-prices for electrical work in Leeds: EICRs from £140, fuse boards from £520, rewires, EV chargers, solar. Written quotes before work starts."
+  current="/services/"
+  schema={[breadcrumbs, catalog]}
+>
+  <section class="section" style="padding-bottom: var(--s-4);">
+    <div class="wrap">
+      <h1>Electrical services in Leeds</h1>
+      <p class="hero__sub" style="margin-top: var(--s-2);">
+        The from-prices below come from jobs quoted this year. The written
+        quote you get before work starts is the number you pay.
+      </p>
+    </div>
+  </section>
+
+  <div class="paper">
+    <section id="solar" class="section svc" aria-labelledby="solar-h">
+      <div class="wrap svc__grid">
+        <div class="rise">
+          <h2 id="solar-h">Solar panels and battery storage in Leeds</h2>
+          <p>
+            Panels, batteries, and the paperwork that makes them pay: MCS
+            certification for export payments and DNO notification included.
+            Systems sized on your last year of bills rather than a national
+            average. Typical 10-panel install: £6,000 to £8,000. Payback
+            conversation up front, in writing, including export income at
+            current SEG rates. If your roof faces the wrong way, I will say so
+            before you spend anything. <!-- TEMP: MCS status + figures -->
+          </p>
+          <p class="svc__meta">From {fmt(svc.solar.from)} · 1 to 2 days on the roof, paperwork inside a fortnight</p>
+          <a class="btn btn--quote" href="/#quote">Get a quote</a>
+        </div>
+        <figure class="svc__photo rise" style="--i:1">
+          <img src="/img/solar-dusk.webp" alt="Solar panels catching low sun on a Leeds semi" width="1600" height="900" loading="lazy" />
+        </figure>
+      </div>
+    </section>
+
+    <section id="ev" class="section svc" aria-labelledby="ev-h">
+      <div class="wrap">
+        <div class="rise" style="max-width: 720px;">
+          <h2 id="ev-h">EV charger installation, from {fmt(svc.ev.from)}</h2>
+          <p>
+            Supply and fit of a 7kW home charger, certified and notified. I
+            check your fuse board can take it before quoting, so the price
+            covers the whole job instead of growing on the day. Grant paperwork
+            handled where you qualify. <!-- TEMP price -->
+          </p>
+          <p class="svc__meta">Half a day</p>
+          <a class="btn btn--call" href={`tel:${tel}`}>Call Eddie</a>
+        </div>
+      </div>
+    </section>
+
+    <section id="rewires" class="section svc" aria-labelledby="rw-h">
+      <div class="wrap">
+        <div class="rise" style="max-width: 720px;">
+          <h2 id="rw-h">House rewires in Leeds, priced room by room</h2>
+          <p>
+            A rewire is the biggest electrical job a house ever gets, and it is
+            the one where quotes grow. Mine is priced room by room before a
+            floorboard lifts, so you can see what each part costs and cut cloth
+            accordingly. Living through it? I put the rooms back together at
+            the end of each day. Typical 3-bed full rewire: from
+            {' '}{fmt(svc.rewires.from)}, five to eight working days. <!-- TEMP -->
+          </p>
+          <p class="svc__meta">
+            Wondering what yours would cost?
+            <a href="/blog/rewire-cost-leeds/">Real 2026 rewire prices for Leeds houses</a>
+          </p>
+          <a class="btn btn--quote" href="/#quote">Get a quote</a>
+        </div>
+      </div>
+    </section>
+
+    <section id="boards" class="section svc" aria-labelledby="bd-h">
+      <div class="wrap svc__grid">
+        <figure class="svc__photo rise">
+          <img src="/img/board-hands.webp" alt="Wiring a modern consumer unit, neat parallel cables" width="1200" height="900" loading="lazy" />
+        </figure>
+        <div class="rise" style="--i:1">
+          <h2 id="bd-h">Fuse board replacement, from {fmt(svc.boards.from)}</h2>
+          <p>
+            Old board out, new board in with RCBOs, so one fault trips one
+            circuit instead of the whole house. Tested circuit by circuit,
+            certificate issued and Building Control notified. Done in a day,
+            power back on by teatime. <!-- TEMP price -->
+          </p>
+          <a class="btn btn--call" href={`tel:${tel}`}>Call Eddie</a>
+        </div>
+      </div>
+    </section>
+
+    <section id="eicr" class="section svc" aria-labelledby="ei-h">
+      <div class="wrap">
+        <div class="rise" style="max-width: 720px;">
+          <h2 id="ei-h">EICRs in Leeds, from {fmt(svc.eicr.from)}</h2>
+          <p>
+            Legally required for rented homes in England every five years. You
+            get the report in plain English with photos of anything that failed
+            and a fixed price to put it right, not a scare list. Landlords with
+            more than one property: ask about batch pricing. <!-- TEMP price -->
+          </p>
+          <p class="svc__meta">2 to 4 hours depending on circuits</p>
+          <a class="btn btn--call" href={`tel:${tel}`}>Call Eddie</a>
+        </div>
+      </div>
+    </section>
+
+    <section id="fault" class="section svc" aria-labelledby="ff-h">
+      <div class="wrap">
+        <div class="rise" style="max-width: 720px;">
+          <h2 id="ff-h">Electrical fault finding, from {fmt(svc.fault.from)}</h2>
+          <p>
+            Tripping RCDs, dead sockets, lights that flicker when the shower
+            runs. I trace faults with test gear and method, so you pay for the
+            finding and the fix instead of a pile of parts you never needed.
+            The invoice tells you which was which. <!-- TEMP price -->
+          </p>
+          <a class="btn btn--call" href={`tel:${tel}`}>Call Eddie</a>
+        </div>
+      </div>
+    </section>
+
+    <section id="lighting" class="section svc" aria-labelledby="lt-h">
+      <div class="wrap">
+        <div class="rise" style="max-width: 720px;">
+          <h2 id="lt-h">Lighting, indoors and out, from {fmt(svc.lighting.from)}</h2>
+          <p>
+            Kitchen downlights that do not dazzle, garden lighting that
+            survives a Leeds winter, dimming that works with LEDs instead of
+            buzzing at them. <!-- TEMP price -->
+          </p>
+          <a class="btn btn--quote" href="/#quote">Get a quote</a>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <section class="section contact" aria-labelledby="cl-h">
+    <div class="wrap">
+      <h2 id="cl-h" class="rise">Not listed? Ring anyway.</h2>
+      <p class="rise" style="color: var(--ink-soft); margin-top: var(--s-2);">
+        If it is wires, I have probably done it.
+      </p>
+      <div class="hero__acts rise" style="--i:1">
+        <a class="btn btn--call" href={`tel:${tel}`}>Call Eddie</a>
+        <a class="btn btn--quote" href="/#quote">Get a quote</a>
+      </div>
+    </div>
+  </section>
+</Base>
+
+<style>
+  .svc { padding-block: clamp(2.6rem, 5vw, 4.4rem); }
+  .svc + .svc { border-top: 1px solid var(--edge); }
+  .svc__grid { display: grid; gap: var(--s-4); align-items: center; }
+  @media (min-width: 900px) { .svc__grid { grid-template-columns: 1fr 1fr; } }
+  .svc__photo { border-radius: var(--r-box); overflow: hidden; border: 1px solid var(--edge); margin: 0; }
+  .svc__photo img { width: 100%; height: 100%; object-fit: cover; }
+  .svc__meta { font-size: var(--t-small); color: var(--ink-soft); margin-block: 12px 18px; }
+  .svc h2 { max-width: 22ch; }
+  .svc p { margin-top: var(--s-2); }
+</style>

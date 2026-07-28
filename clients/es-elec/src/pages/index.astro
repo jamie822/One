@@ -1,3 +1,278 @@
 ---
+// HOME. Copy comes from COPY.md verbatim; figures from client.js, TEMP-tagged.
+import Base from '../layouts/Base.astro';
+import { client } from '../data/client.js';
+
+const tel = client.phone.replace(/\s/g, '');
+const CYCLE = ['Rewires', 'Fuse boards', 'EICRs', 'EV chargers', 'Solar', 'Fault finding'];
+
+const fmt = (n) => '£' + n.toLocaleString('en-GB');
+const svc = Object.fromEntries(client.services.map((s) => [s.id, s]));
+
+const stars = Array.from({ length: 5 });
 ---
-<h1>stub</h1>
+<!-- DIRECTION CONTRACT
+THESIS: the electrician who prices before work starts, staged as a lit workshop
+at night; refuses the trade-blue hero-metric template.
+OWN-WORLD: Tungsten. Warm charcoal ground, filament amber reserved for
+conversion, Clash Display over Satoshi, one conductor line drawn by scroll,
+paper-lit middle sections between dark bookends.
+STORY: arrive at night needing help, see the promise and the price culture,
+read proof on paper in daylight, leave by phone or form.
+FIRST VIEWPORT: left, kinetic service line over a two-line H1 and 18-word sub,
+Call Eddie (lit) beside Get a quote; right, the van at dusk photograph.
+Trust bar closes the viewport.
+FORM: brief-pinned Tungsten (ledger 2026-07-28), kinetic-type masthead staging,
+seed n/a: direction pinned by founder brief, not rolled. -->
+<Base
+  title="Electrician in Leeds | Rewires, EV & Solar | ES Elec"
+  description={`NICEIC registered electrician in Leeds. Rewires, fuse boards, EICRs, EV chargers and solar, priced before work starts. Call Eddie on ${client.phone}.`}
+  current="/"
+  preloadImage="/img/van-dusk.webp"
+>
+  <section class="hero">
+    <div class="wrap hero__grid">
+      <div>
+        <p class="hero__cycle" aria-hidden="true">
+          {CYCLE.map((w, n) => <span style={`--n:${n}`}>{w}</span>)}
+        </p>
+        <h1>The Leeds electrician who prices the job before it starts.</h1>
+        <p class="hero__sub">
+          No surprises on the invoice. The bloke who answers the phone quotes
+          the job and does the work.
+        </p>
+        <div class="hero__acts">
+          <a class="btn btn--call btn--lit" href={`tel:${tel}`}>Call Eddie</a>
+          <a class="btn btn--quote" href="#quote">Get a quote</a>
+        </div>
+      </div>
+      <figure class="hero__photo">
+        <img
+          src="/img/van-dusk.webp" alt="Work van at dusk on a street of red brick terraces in Leeds"
+          width="1600" height="900" fetchpriority="high"
+        />
+        <figcaption>Out across Leeds, {client.hours}. <!-- TEMP image: generated placeholder --></figcaption>
+      </figure>
+    </div>
+  </section>
+
+  <section class="trust" aria-label="Credentials">
+    <div class="wrap trust__row">
+      <p class="trust__item">
+        <strong>
+          <span class="trust__stars" aria-hidden="true">
+            {stars.map(() => (
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2l2.9 6.6 7.1.7-5.4 4.8 1.6 7L12 17.5 5.8 21l1.6-7L2 9.3l7.1-.7z"/></svg>
+            ))}
+          </span>
+          {client.google.rating}
+        </strong>
+        <span>from {client.google.reviewCount} Google reviews</span>
+      </p>
+      <p class="trust__item"><strong>NICEIC</strong><span>Approved Contractor</span></p>
+      <p class="trust__item"><strong>£2m</strong><span>public liability</span></p>
+      <p class="trust__item"><strong>Since {client.founded}</strong><span>trading in Leeds</span></p>
+    </div>
+  </section>
+
+  <div style="position: relative;">
+    <div class="conductor" aria-hidden="true"></div>
+
+    <section class="section work" aria-labelledby="work-h">
+      <div class="wrap">
+        <h2 id="work-h" class="rise">What I can sort for you</h2>
+        <div class="work__grid">
+          <a class="work__cell work__cell--lead rise" style="--i:0" href="/services/#solar">
+            <span class="work__img">
+              <img src="/img/solar-dusk.webp" alt="" width="800" height="450" loading="lazy" />
+            </span>
+            <span class="work__body">
+              <h3>Solar and battery</h3>
+              <p>Sized on a year of your bills, with the payback maths in writing.</p>
+              <span class="from">From {fmt(svc.solar.from)}</span>
+            </span>
+          </a>
+          <a class="work__cell rise" style="--i:1" href="/services/#ev">
+            <h3>EV chargers</h3>
+            <p>Fitted, certified, grant paperwork handled.</p>
+            <span class="from">From {fmt(svc.ev.from)}</span>
+          </a>
+          <a class="work__cell rise" style="--i:2" href="/services/#rewires">
+            <h3>Rewires</h3>
+            <p>Priced room by room before a floorboard lifts.</p>
+            <span class="from">From {fmt(svc.rewires.from)}</span>
+          </a>
+          <a class="work__cell rise" style="--i:3" href="/services/#boards">
+            <h3>Fuse boards</h3>
+            <p>Swapped in a day, certificate in your hand.</p>
+            <span class="from">From {fmt(svc.boards.from)}</span>
+          </a>
+          <a class="work__cell rise" style="--i:4" href="/services/#eicr">
+            <h3>EICRs</h3>
+            <p>Booked this week, report in plain English.</p>
+            <span class="from">From {fmt(svc.eicr.from)}</span>
+          </a>
+          <a class="work__cell rise" style="--i:5" href="/services/#fault">
+            <h3>Fault finding</h3>
+            <p>Traced with test gear, fixed the same visit where parts allow.</p>
+            <span class="from">From {fmt(svc.fault.from)}</span>
+          </a>
+          <a class="work__cell rise" style="--i:6" href="/services/#lighting">
+            <h3>Lighting</h3>
+            <p>Design and fitting, indoors and out.</p>
+            <span class="from">From {fmt(svc.lighting.from)}</span>
+          </a>
+        </div>
+      </div>
+    </section>
+
+    <div class="paper">
+      <section class="section" aria-labelledby="proof-h">
+        <div class="wrap">
+          <h2 id="proof-h" class="rise">Priced before it starts. Certified when it's done.</h2>
+          <p class="rise" style="margin-top: var(--s-3); color: var(--ink-soft);">
+            Every job gets a written price before work begins. If I open a wall
+            and find a horror, we talk before anything changes. Every notifiable
+            job is registered with Building Control and you get the certificate.
+          </p>
+          <div class="proof__cols">
+            <div class="proof__point rise" style="--i:0">
+              <strong>Same person, start to finish</strong>
+              <p>The one who quotes is the one on the tools.</p>
+            </div>
+            <div class="proof__point rise" style="--i:1">
+              <strong>Written price first</strong>
+              <p>The number you agree is the number you pay.</p>
+            </div>
+            <div class="proof__point rise" style="--i:2">
+              <strong>Certificates, always</strong>
+              <p>NICEIC registered, Part P notified, tested to BS 7671.</p>
+            </div>
+            <div class="proof__point rise" style="--i:3">
+              <strong>Tidy</strong>
+              <p>Dust sheets down, rubbish gone, sockets wiped.</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="section" aria-labelledby="rev-h" style="padding-top: 0;">
+        <div class="wrap">
+          <h2 id="rev-h" class="rise">Word for word</h2>
+          <div class="reviews__grid">
+            <article class="review review--lead rise">
+              <p class="stars" aria-label="Five stars">
+                {stars.map(() => (
+                  <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2l2.9 6.6 7.1.7-5.4 4.8 1.6 7L12 17.5 5.8 21l1.6-7L2 9.3l7.1-.7z"/></svg>
+                ))}
+              </p>
+              <blockquote>Found the intermittent fault two other firms had guessed at. Charged the hour he quoted.</blockquote>
+              <footer>Dawn, Horsforth. Fault finding, June 2026 <!-- TEMP demo review --></footer>
+            </article>
+            <div class="reviews__side">
+              <article class="review rise" style="--i:1">
+                <blockquote>Rewire of our 3-bed while we were in it. Rooms back together each night, price never moved.</blockquote>
+                <footer>Marcus, Garforth. Full rewire, April 2026 <!-- TEMP demo review --></footer>
+              </article>
+              <article class="review rise" style="--i:2">
+                <blockquote>Fitted the charger three days after I rang. Sorted the paperwork for the grant too.</blockquote>
+                <footer>Priya, Headingley. EV charger, May 2026 <!-- TEMP demo review --></footer>
+              </article>
+            </div>
+          </div>
+          <a class="reviews__all" href="https://www.google.com/maps" rel="noopener">
+            Read all {client.google.reviewCount} reviews on Google
+          </a>
+        </div>
+      </section>
+
+      <section class="section" aria-labelledby="area-h" style="padding-top: 0;">
+        <div class="wrap">
+          <h2 id="area-h" class="rise">Leeds and the towns around it</h2>
+          <p class="rise" style="margin-top: var(--s-2); color: var(--ink-soft);">
+            Based in {client.town}, out daily across {client.areas.slice(1, -1).join(', ')} and
+            {' '}{client.areas.at(-1)}. If you are just outside that, ring anyway.
+            The answer is usually yes.
+          </p>
+        </div>
+      </section>
+
+      <section class="section" aria-labelledby="solar-h" style="padding-top: 0;">
+        <div class="wrap">
+          <h2 id="solar-h" class="rise">Thinking about solar? Do the maths first.</h2>
+          <div class="solar__grid">
+            <figure class="solar__photo rise">
+              <img src="/img/solar-dusk.webp" alt="Solar panels on a red brick semi at golden hour" width="1600" height="900" loading="lazy" />
+            </figure>
+            <div class="rise" style="--i:1">
+              <p>
+                Most 10-panel systems on a Leeds semi come in between £6,000 and
+                £8,000 installed. Payback lives or dies on sizing the system to
+                how you use electricity. Send me two bills and I will tell you
+                straight whether your roof is worth it, including when the
+                answer is no. <!-- TEMP figures -->
+              </p>
+              <svg class="flow" viewBox="0 0 410 58" width="410" height="58" role="img"
+                   aria-label="Energy flows from the roof panels through the battery to the house">
+                <path d="M8 46 C 90 46, 120 12, 208 12 S 330 46, 402 46" />
+                <circle class="dot" r="3.5" />
+                <circle class="dot" r="3.5" />
+                <circle class="dot" r="3.5" />
+                <text x="4" y="34">PANELS</text>
+                <text x="182" y="30">BATTERY</text>
+                <text x="368" y="34">HOUSE</text>
+              </svg>
+              <div style="margin-top: var(--s-3);">
+                <a class="btn btn--quote" href="#quote">Get a quote</a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+    </div>
+
+    <section class="section contact" id="quote" aria-labelledby="contact-h">
+      <div class="wrap">
+        <h2 id="contact-h" class="rise">Ring now, or get a written price by tomorrow.</h2>
+        <div class="contact__grid">
+          <div class="rise">
+            <a class="contact__tel" href={`tel:${tel}`}>{client.phone}</a>
+            <p class="contact__hours">
+              {client.hours}. Out of hours, leave a message and I call back
+              first thing.
+            </p>
+            <ul class="contact__facts">
+              <li>Prefer email? <a href={`mailto:${client.email}`}>{client.email}</a></li>
+              <li>{client.accreditation}, number {client.accreditationNumber} <!-- TEMP --></li>
+              <li>{client.guarantee} and {client.liabilityCover} behind every job <!-- TEMP --></li>
+            </ul>
+          </div>
+          <form class="rise" style="--i:1" method="post" action="/enquiry" data-quote>
+            <div class="field">
+              <label for="q-name">Name</label>
+              <input id="q-name" name="name" autocomplete="name" required />
+              <p class="err">Your name is missing.</p>
+            </div>
+            <div class="field">
+              <label for="q-phone">Phone</label>
+              <input id="q-phone" name="phone" type="tel" autocomplete="tel" required />
+              <p class="err">A phone number is how I reach you. Landline or mobile both fine.</p>
+            </div>
+            <div class="field">
+              <label for="q-postcode">Postcode</label>
+              <input id="q-postcode" name="postcode" autocomplete="postal-code" required />
+              <p class="err">The postcode tells me you are in reach.</p>
+            </div>
+            <div class="field">
+              <label for="q-job">What needs doing</label>
+              <textarea id="q-job" name="job" required></textarea>
+              <p class="err">A sentence is plenty.</p>
+            </div>
+            <button class="btn btn--call" type="submit">Get a quote</button>
+            <p class="confirm">You will hear from me within one working hour, Mon to Sat. <!-- TEMP promise --></p>
+          </form>
+        </div>
+      </div>
+    </section>
+  </div>
+</Base>

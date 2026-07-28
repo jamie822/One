@@ -1,0 +1,370 @@
+/* ES ELEC v2 — the page system: nav, hero, sections, conductor, motion.
+
+   The signature is the CONDUCTOR: one amber line that starts under the hero's
+   CTAs and runs down the page, drawn by scroll. Everything else moves once,
+   quietly, and only where movement carries meaning. All motion is transform,
+   opacity or background-position; nothing animates layout. */
+
+/* ---- Nav ---------------------------------------------------------------- */
+.nav {
+  position: sticky; top: 0; z-index: 50;
+  background: var(--tungsten-950);   /* solid: paper headings ghosted through a mix */
+  border-bottom: 1px solid var(--tungsten-800);
+}
+.nav__row {
+  display: flex; align-items: center; gap: var(--s-3);
+  min-height: 68px;
+}
+.nav__brand {
+  display: inline-flex; align-items: center; gap: 11px;
+  font: 700 1.28rem var(--font-display);
+  letter-spacing: -.02em;
+  text-decoration: none;
+}
+.nav__links {
+  display: flex; gap: clamp(14px, 2.4vw, 30px);
+  margin-left: auto;
+  list-style: none; padding: 0;
+}
+.nav__links a {
+  font: 500 .95rem var(--font-body);
+  color: var(--ink-soft);
+  text-decoration: none;
+  transition: color 150ms var(--ease-ui);
+}
+.nav__links a:hover, .nav__links a[aria-current="page"] { color: var(--ink); }
+.nav__tel {
+  font: 700 .95rem var(--font-body);
+  color: var(--ink);
+  text-decoration: none;
+  white-space: nowrap;
+}
+.nav .btn { min-height: 42px; padding: 9px 20px; font-size: .92rem; }
+@media (max-width: 860px) {
+  .nav__links, .nav__tel { display: none; }  /* sticky bar carries mobile actions */
+}
+
+/* The lockup's load-in: the mark faces in from the left and its slots fill
+   in sequence, then the wordmark inks. Brand story, told once, in the nav. */
+.nav__brand .mark { opacity: 0; animation: mark-in .5s var(--ease-out) .1s both; }
+.nav__brand .mark rect[data-slot] {
+  opacity: 0; transform: scale(.4);
+  transform-box: fill-box; transform-origin: 50% 50%;
+  animation: slot-in .32s var(--ease-out) both;
+}
+.nav__brand .mark [data-slot="a"] { animation-delay: .34s; }
+.nav__brand .mark [data-slot="b"] { animation-delay: .46s; }
+.nav__brand .mark [data-slot="c"] { animation-delay: .58s; }
+.nav__brand .name {
+  background-image: linear-gradient(100deg, var(--ink) 0 50%, transparent 50%);
+  background-size: 220% 100%; background-repeat: no-repeat;
+  background-position: 100% 0;
+  -webkit-background-clip: text; background-clip: text;
+  color: transparent;
+  animation: ink-in .5s var(--ease-out) .5s both;
+}
+@keyframes mark-in { from { opacity: 0; transform: translateX(-16px); } to { opacity: 1; transform: none; } }
+@keyframes slot-in { from { opacity: 0; transform: scale(.4); } to { opacity: 1; transform: none; } }
+@keyframes ink-in  { from { background-position: 100% 0; } to { background-position: 0 0; } }
+
+/* ---- Hero ---------------------------------------------------------------- */
+.hero { position: relative; }
+.hero__grid {
+  display: grid; gap: var(--s-4);
+  padding-block: clamp(2.6rem, 6vh, 4.6rem) clamp(2.2rem, 5vh, 3.6rem);
+  align-items: center;
+}
+@media (min-width: 980px) {
+  .hero__grid { grid-template-columns: 7fr 5fr; }
+}
+
+/* The kinetic line: six services take turns above the headline. Each word
+   arrives with one filament settle (two dim steps, then steady), sized to
+   stay under three flashes a second. */
+.hero__cycle {
+  position: relative;   /* the cycling words stack absolutely inside it */
+  display: block;
+  font: 700 var(--t-label) var(--font-body);
+  letter-spacing: .15em; text-transform: uppercase;
+  color: var(--accent);
+  min-height: 1.3em;
+  margin-bottom: var(--s-2);
+}
+.hero__cycle span {
+  position: absolute;
+  opacity: 0;
+  animation: cycle 14.4s linear infinite;
+  animation-delay: calc(var(--n) * 2.4s);
+}
+@keyframes cycle {
+  0%      { opacity: 0; }
+  .8%     { opacity: .35; }
+  1.6%    { opacity: 1; }
+  2.4%    { opacity: .55; }
+  3.2%    { opacity: 1; }   /* settled */
+  15.5%   { opacity: 1; }
+  16.6%   { opacity: 0; }
+  100%    { opacity: 0; }
+}
+.hero h1 { max-width: 13ch; }
+.hero__sub {
+  margin-top: var(--s-3);
+  font-size: 1.14rem;
+  color: var(--ink-soft);
+  max-width: 44ch;
+}
+.hero__acts { display: flex; flex-wrap: wrap; gap: 14px; margin-top: var(--s-4); }
+
+.hero__photo {
+  border-radius: var(--r-box);
+  overflow: hidden;
+  border: 1px solid var(--tungsten-800);
+}
+.hero__photo img { width: 100%; height: 100%; object-fit: cover; aspect-ratio: 4 / 3; }
+.hero__photo figcaption {
+  font-size: var(--t-small); color: var(--ink-soft);
+  padding: 10px 2px 0;
+}
+@media (max-width: 979px) { .hero__photo { order: 2; } }
+
+/* ---- Trust bar ------------------------------------------------------------ */
+.trust {
+  border-block: 1px solid var(--tungsten-800);
+  background: var(--tungsten-900);
+}
+.trust__row {
+  display: grid; grid-template-columns: repeat(4, auto);
+  justify-content: space-between; gap: var(--s-3);
+  padding-block: 18px;
+}
+.trust__item { display: grid; gap: 2px; }
+.trust__item strong { font: 700 1.05rem var(--font-display); letter-spacing: 0; }
+.trust__item span { font-size: var(--t-small); color: var(--ink-soft); }
+.trust__stars { color: var(--accent); display: inline-flex; gap: 2px; }
+@media (max-width: 860px) {
+  .trust__row { grid-template-columns: 1fr 1fr; row-gap: 16px; }
+}
+
+/* ---- The conductor -------------------------------------------------------- */
+/* One amber line, drawn by reading. It lives in the page's left gutter from
+   the trust bar to the contact band, scaleY driven by scroll progress. */
+.conductor {
+  position: absolute;
+  left: max(12px, calc((100vw - 1200px) / 2 - 42px));
+  top: 0; bottom: 0;
+  width: 2px;
+  background: linear-gradient(var(--amber-500), var(--amber-300));
+  transform: scaleY(0); transform-origin: top;
+  border-radius: 2px;
+  pointer-events: none;
+  opacity: .8;
+}
+@supports (animation-timeline: scroll()) {
+  .conductor { animation: conduct linear both; animation-timeline: scroll(); }
+}
+@supports not (animation-timeline: scroll()) {
+  .conductor { transform: none; opacity: .22; }  /* quiet static wire */
+}
+@keyframes conduct { from { transform: scaleY(0); } to { transform: scaleY(1); } }
+@media (max-width: 1279px) { .conductor { display: none; } }
+
+/* ---- Section reveals (once, quiet, content only) --------------------------- */
+@supports (animation-timeline: view()) {
+  @media (prefers-reduced-motion: no-preference) {
+    .rise {
+      animation: rise .01s var(--ease-out) both;
+      animation-timeline: view();
+      animation-range: entry 4% entry 34%;
+    }
+    @keyframes rise {
+      from { opacity: 0; transform: translateY(22px); }
+      to   { opacity: 1; transform: none; }
+    }
+    /* Wave stagger for grids: each cell names its own index. */
+    .rise[style*="--i"] { animation-range: entry calc(4% + var(--i) * 2.2%) entry calc(34% + var(--i) * 2.2%); }
+  }
+}
+
+/* ---- Services teaser: asymmetric bento, exactly seven cells ---------------- */
+.work { position: relative; }
+.work__grid {
+  display: grid; gap: 14px;
+  grid-template-columns: repeat(2, 1fr);
+  margin-top: var(--s-4);
+}
+@media (min-width: 900px) {
+  .work__grid { grid-template-columns: repeat(4, 1fr); }
+  .work__cell--lead { grid-column: span 2; grid-row: span 2; }
+}
+.work__cell {
+  position: relative;
+  display: flex; flex-direction: column; justify-content: end; gap: 6px;
+  min-height: 118px;
+  padding: 20px;
+  background: var(--surface);
+  border: 1px solid var(--edge);
+  border-radius: var(--r-box);
+  text-decoration: none;
+  transition: border-color 170ms var(--ease-ui), transform 220ms var(--ease-out);
+}
+.work__cell:hover { border-color: var(--accent); transform: translateY(-3px); }
+.work__cell h3 { font-size: 1.18rem; }
+.work__cell p { font-size: var(--t-small); color: var(--ink-soft); max-width: none; }
+.work__cell .from {
+  font: 700 var(--t-label) var(--font-body);
+  color: var(--accent);
+}
+.work__cell--lead { min-height: 300px; padding: 0; overflow: hidden; }
+.work__cell--lead .work__img { position: absolute; inset: 0; }
+.work__cell--lead .work__img img { width: 100%; height: 100%; object-fit: cover; }
+.work__cell--lead .work__body {
+  position: relative;
+  padding: 20px;
+  background: linear-gradient(transparent, rgba(18, 14, 8, .82) 38%);
+  color: var(--ink-dark);
+  border-radius: 0 0 var(--r-box) var(--r-box);
+  margin-top: auto;
+  display: grid; gap: 6px;
+}
+.work__cell--lead .work__body p { color: rgba(244, 239, 230, .8); }
+.work__cell--lead .from { color: var(--amber-300); }
+
+/* ---- Proof (paper, editorial: no cards, hairlines and space) --------------- */
+.proof__cols {
+  display: grid; gap: var(--s-4);
+  margin-top: var(--s-4);
+}
+@media (min-width: 860px) { .proof__cols { grid-template-columns: 1fr 1fr; } }
+.proof__point { border-top: 2px solid var(--edge); padding-top: 18px; }
+.proof__point strong { font-family: var(--font-display); font-size: 1.15rem; display: block; margin-bottom: 4px; }
+.proof__point p { color: var(--ink-soft); font-size: var(--t-small); }
+.proof__point:first-child { border-top-color: var(--accent); }
+
+/* ---- Reviews: one lead pull-quote, two supporting ---------------------------- */
+.reviews__grid { display: grid; gap: var(--s-4); margin-top: var(--s-4); }
+@media (min-width: 900px) {
+  .reviews__grid { grid-template-columns: 6fr 5fr; }
+  .reviews__side { display: grid; gap: var(--s-3); align-content: start; }
+}
+.review { border-left: 2px solid var(--edge); padding-left: 20px; }
+.review--lead { border-left: none; padding-left: 0; }
+.review--lead blockquote { font: 600 var(--t-h3) var(--font-display); letter-spacing: -.01em; line-height: 1.3; }
+.review blockquote { quotes: '\201C' '\201D'; }
+.review blockquote::before { content: open-quote; }
+.review blockquote::after { content: close-quote; }
+.review footer { margin-top: 10px; font-size: var(--t-small); color: var(--ink-soft); }
+.review .stars { display: inline-flex; gap: 3px; color: var(--amber-700); margin-bottom: 8px; }
+.reviews__all { display: inline-block; margin-top: var(--s-3); font-weight: 500; }
+
+/* ---- Solar path: image + the flow ------------------------------------------- */
+.solar__grid { display: grid; gap: var(--s-4); align-items: center; margin-top: var(--s-4); }
+@media (min-width: 900px) { .solar__grid { grid-template-columns: 5fr 6fr; } }
+.solar__photo { border-radius: var(--r-box); overflow: hidden; border: 1px solid var(--edge); }
+.solar__photo img { aspect-ratio: 16 / 9; object-fit: cover; width: 100%; }
+
+/* The flow: panel to battery to house, three amber pulses on one drawn path.
+   Informational, not decoration: it is the sentence "your roof feeds your
+   house" drawn instead of written twice. */
+.flow { margin-top: var(--s-3); }
+.flow path { stroke: var(--edge); stroke-width: 1.5; fill: none; }
+.flow text { font: 700 11px var(--font-body); fill: var(--ink-soft); letter-spacing: .06em; }
+.flow .dot { fill: var(--amber-700); }
+@media (prefers-reduced-motion: no-preference) {
+  .flow .dot { offset-path: path('M8 46 C 90 46, 120 12, 208 12 S 330 46, 402 46'); animation: flowdot 4.2s linear infinite; }
+  .flow .dot:nth-child(2) { animation-delay: 1.4s; }
+  .flow .dot:nth-child(3) { animation-delay: 2.8s; }
+}
+@keyframes flowdot {
+  0% { offset-distance: 0%; opacity: 0; }
+  6% { opacity: 1; }
+  86% { opacity: 1; }
+  96% { offset-distance: 100%; opacity: 0; }
+  100% { offset-distance: 100%; opacity: 0; }
+}
+
+/* ---- Contact band (dark) ------------------------------------------------------ */
+.contact { border-top: 1px solid var(--tungsten-800); }
+.contact__grid { display: grid; gap: var(--s-5); margin-top: var(--s-4); }
+@media (min-width: 900px) { .contact__grid { grid-template-columns: 6fr 5fr; } }
+.contact__tel {
+  font: 700 clamp(1.7rem, 4.4vw, 3.2rem) var(--font-display);
+  letter-spacing: -.02em;
+  color: var(--ink);
+  text-decoration: none;
+  display: inline-block;
+}
+.contact__tel:hover { color: var(--amber-300); }
+.contact__hours { margin-top: var(--s-2); color: var(--ink-soft); }
+.contact__facts {
+  list-style: none; padding: 0;
+  margin-top: var(--s-4);
+  display: grid; gap: 12px;
+  font-size: var(--t-small); color: var(--ink-soft);
+  max-width: 42ch;
+}
+.contact__facts a { color: var(--ink); }
+.contact form { display: grid; gap: var(--s-2); }
+.contact .confirm { font-size: var(--t-small); color: var(--ink-soft); }
+
+/* ---- Sticky mobile bar --------------------------------------------------------- */
+.bar {
+  position: fixed; left: 0; right: 0; bottom: 0; z-index: 60;
+  display: none;
+  grid-template-columns: 1fr 1fr; gap: 1px;
+  background: var(--tungsten-800);
+  border-top: 1px solid var(--tungsten-800);
+  padding-bottom: env(safe-area-inset-bottom);
+  transform: translateY(102%);
+  transition: transform 260ms var(--ease-out);
+}
+.bar[data-on] { transform: none; }
+.bar a {
+  display: flex; align-items: center; justify-content: center; gap: 8px;
+  min-height: 58px;
+  font: 700 1rem var(--font-body);
+  text-decoration: none;
+}
+.bar__call { background: var(--action); color: var(--on-action); }
+.bar__quote { background: var(--tungsten-900); color: var(--ink); }
+@media (max-width: 860px) { .bar { display: grid; } }
+
+/* ---- Footer ---------------------------------------------------------------------- */
+.footer { border-top: 1px solid var(--tungsten-800); padding-block: var(--s-5) var(--s-4); }
+.footer__grid { display: grid; gap: var(--s-4); }
+@media (min-width: 860px) { .footer__grid { grid-template-columns: 2fr 1fr 1fr; } }
+.footer h2 { font-size: 1.1rem; }
+.footer ul { list-style: none; padding: 0; display: grid; gap: 8px; }
+.footer a { color: var(--ink-soft); text-decoration: none; font-size: var(--t-small); }
+.footer a:hover { color: var(--ink); }
+.footer__meta { margin-top: var(--s-4); padding-top: var(--s-3); border-top: 1px solid var(--tungsten-800);
+  font-size: var(--t-small); color: var(--ink-soft); display: flex; flex-wrap: wrap; gap: 8px 24px; }
+@media (max-width: 860px) { .footer { padding-bottom: calc(var(--s-5) + 64px); } }
+
+/* ---- Article pages (blog) ----------------------------------------------------------- */
+.article { padding-block: var(--s-5); }
+.article__head { max-width: 720px; margin-bottom: var(--s-4); }
+.article__meta { color: var(--ink-soft); font-size: var(--t-small); margin-top: var(--s-2); }
+.article__body { max-width: 68ch; display: grid; gap: var(--s-3); }
+.article__body h2 { font-size: 1.5rem; margin-top: var(--s-3); }
+.article__body ul { padding-left: 1.2em; display: grid; gap: 8px; }
+
+.costs { border-collapse: collapse; width: 100%; font-size: var(--t-small); }
+.costs caption { caption-side: bottom; text-align: left; padding-top: 10px; color: var(--ink-soft); }
+.costs th, .costs td { text-align: left; padding: 12px 14px; }
+.costs thead th { font: 700 var(--t-label) var(--font-body); letter-spacing: .05em; text-transform: uppercase; color: var(--ink-soft); }
+.costs tbody tr { background: var(--surface); }
+.costs tbody tr:nth-child(even) { background: transparent; }
+.costs td:last-child, .costs th:last-child { text-align: right; }
+.costs strong { font-family: var(--font-display); }
+
+/* ---- CTA band shared -------------------------------------------------------------------- */
+.band {
+  margin-top: var(--s-4);
+  padding: clamp(22px, 3.4vw, 40px);
+  border: 1px solid var(--edge);
+  border-radius: var(--r-box);
+  background: var(--surface);
+  display: grid; gap: var(--s-2);
+  justify-items: start;
+}
+.band .acts { display: flex; flex-wrap: wrap; gap: 12px; }

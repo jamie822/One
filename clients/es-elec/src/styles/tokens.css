@@ -1,0 +1,66 @@
+/* ES ELEC v2 — TUNGSTEN tokens.
+   Three layers: primitives (raw values) → semantic (what they mean) →
+   component tokens live with their components. Change a client's brand by
+   editing the primitives block only; the semantic layer holds. */
+
+:root {
+  /* ---- Layer 1: primitives -------------------------------------------- */
+  /* The Tungsten palette. Warm charcoal, never blue-black; filament amber,
+     never cyan. Locked in research/direction-ledger.md. */
+  --tungsten-950: #16130f;   /* night ground            */
+  --tungsten-900: #211d17;   /* raised night surface    */
+  --tungsten-800: #2d2820;   /* hairlines on dark       */
+  --paper-100:    #f7f2e9;   /* lit paper ground        */
+  --paper-50:     #fffdf8;   /* raised paper surface    */
+  --paper-300:    #e7ddcc;   /* hairlines on paper      */
+  --ink-dark:     #f4efe6;   /* type on night           */
+  --ink-dark-2:   #b5aa97;   /* supporting type on night */
+  --ink-paper:    #1b1710;   /* type on paper           */
+  --ink-paper-2:  #5d5546;   /* supporting type on paper */
+  --amber-300:    #ffb24d;   /* highlight amber          */
+  --amber-500:    #ff9e1f;   /* filament: conversion only */
+  --amber-700:    #b36a00;   /* amber that passes AA on paper */
+
+  /* ---- Layer 2: semantic ---------------------------------------------- */
+  --ground:      var(--tungsten-950);
+  --surface:     var(--tungsten-900);
+  --edge:        var(--tungsten-800);
+  --ink:         var(--ink-dark);
+  --ink-soft:    var(--ink-dark-2);
+  --accent:      var(--amber-300);
+  --action:      var(--amber-500);   /* CTAs and nothing else */
+  --on-action:   #171001;
+
+  /* Type. Clash carries display, Satoshi carries everything else. */
+  --font-display: 'Clash Display', 'Arial Narrow', sans-serif;
+  --font-body: 'Satoshi', system-ui, sans-serif;
+  --t-hero:  clamp(2.1rem, 5.4vw, 4.9rem);
+  --t-h2:    clamp(1.55rem, 3.1vw, 2.7rem);
+  --t-h3:    clamp(1.12rem, 1.7vw, 1.45rem);
+  --t-body:  1.0625rem;
+  --t-small: .9rem;
+  --t-label: .8125rem;
+
+  /* Space and shape. One radius system: interactive pill, containers 14px. */
+  --s-1: .5rem;  --s-2: 1rem;  --s-3: 1.5rem;  --s-4: 2.5rem;
+  --s-5: 4rem;   --s-6: 6.5rem;
+  --r-box: 14px;
+  --r-pill: 999px;
+  --measure: 66ch;
+
+  /* Motion. Two curves, one signature. */
+  --ease-out: cubic-bezier(.16, 1, .3, 1);
+  --ease-ui:  cubic-bezier(.23, 1, .32, 1);
+}
+
+/* The lit middle of the page. Sections opt in with class="paper". */
+.paper {
+  --ground:   var(--paper-100);
+  --surface:  var(--paper-50);
+  --edge:     var(--paper-300);
+  --ink:      var(--ink-paper);
+  --ink-soft: var(--ink-paper-2);
+  --accent:   var(--amber-700);   /* amber deepens to hold AA on paper */
+  background: var(--ground);
+  color: var(--ink);
+}

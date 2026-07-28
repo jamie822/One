@@ -1,0 +1,139 @@
+---
+// ABOUT: the accountability page. E-E-A-T lives here: named person, checkable
+// register, quals, insurance, how a job actually goes.
+import Base from '../layouts/Base.astro';
+import { client } from '../data/client.js';
+
+const tel = client.phone.replace(/\s/g, '');
+const breadcrumbs = {
+  '@context': 'https://schema.org',
+  '@type': 'BreadcrumbList',
+  itemListElement: [
+    { '@type': 'ListItem', position: 1, name: 'Home', item: 'https://eselec.co.uk/' },
+    { '@type': 'ListItem', position: 2, name: 'About', item: 'https://eselec.co.uk/about/' },
+  ],
+};
+const person = {
+  '@context': 'https://schema.org',
+  '@type': 'Person',
+  name: client.owner,
+  jobTitle: 'Electrician and solar installer',
+  worksFor: { '@id': 'https://eselec.co.uk/#business' },
+};
+---
+<Base
+  title="About ES Elec | NICEIC Electrician in Leeds"
+  description={`ES Elec is run by ${client.owner}: NICEIC registered, insured to £2m, trading since ${client.founded}. The person who answers the phone is the person on the tools.`}
+  current="/about/"
+  schema={[breadcrumbs, person]}
+>
+  <section class="section" style="padding-bottom: var(--s-4);">
+    <div class="wrap">
+      <h1 style="max-width: 18ch;">The one who answers the phone is the one on the tools.</h1>
+      <p class="hero__sub" style="margin-top: var(--s-3);">
+        ES Elec is one electrician, on purpose. The person who quotes your job
+        is the person who turns up to do it, and the phone gets answered by him
+        too.
+      </p>
+    </div>
+  </section>
+
+  <div class="paper">
+    <section class="section" aria-labelledby="short-h">
+      <div class="wrap about__grid">
+        <div class="rise">
+          <h2 id="short-h">The short version</h2>
+          <ul class="about__facts">
+            <li><strong>{client.owner}</strong> electrician and solar installer <!-- TEMP name --></li>
+            <li><strong>Since {client.founded}</strong> trading in Leeds <!-- TEMP --></li>
+            <li><strong>{client.accreditation}</strong> number {client.accreditationNumber} <!-- TEMP --></li>
+            <li><strong>Qualified</strong> 18th Edition, City &amp; Guilds 2391 inspection and testing <!-- TEMP --></li>
+            <li><strong>{client.liabilityCover}</strong> insurance behind every job <!-- TEMP --></li>
+            <li><strong>{client.guarantee}</strong> on everything I fit <!-- TEMP --></li>
+          </ul>
+        </div>
+        <figure class="about__photo rise" style="--i:1">
+          <img src="/img/board-hands.webp" alt="Hands wiring a consumer unit under warm workshop light" width="1200" height="900" loading="lazy" />
+          <figcaption>On the tools. <!-- TEMP image: generated placeholder, swap for a real photo of the owner --></figcaption>
+        </figure>
+      </div>
+    </section>
+
+    <section class="section" aria-labelledby="how-h" style="padding-top: 0;">
+      <div class="wrap">
+        <h2 id="how-h" class="rise">How a job goes</h2>
+        <ol class="steps">
+          <li class="rise" style="--i:0">
+            <strong>You ring, I answer.</strong>
+            We talk through what you need and I ask the awkward questions early.
+          </li>
+          <li class="rise" style="--i:1">
+            <strong>Written price.</strong>
+            Usually same day for small work, within 48 hours after a look at bigger jobs.
+          </li>
+          <li class="rise" style="--i:2">
+            <strong>The work.</strong>
+            On the day we agreed, tidy, tested as I go.
+          </li>
+          <li class="rise" style="--i:3">
+            <strong>Paperwork.</strong>
+            Certificate, Building Control notification where needed, and the invoice matching the quote.
+          </li>
+        </ol>
+      </div>
+    </section>
+
+    <section class="section" aria-labelledby="gt-h" style="padding-top: 0;">
+      <div class="wrap">
+        <h2 id="gt-h" class="rise">The guarantee</h2>
+        <p class="rise" style="margin-top: var(--s-2); color: var(--ink-soft);">
+          Twelve months on workmanship. If something I fitted plays up, I come
+          back and put it right. Insurance sits behind that at £2m, and NICEIC
+          stands behind the lot: their register entry is public and you should
+          check it before hiring anyone, me included. <!-- TEMP figures -->
+        </p>
+      </div>
+    </section>
+  </div>
+
+  <section class="section contact" aria-labelledby="cta-h">
+    <div class="wrap">
+      <h2 id="cta-h" class="rise">Want a price on something?</h2>
+      <div class="hero__acts rise" style="--i:1">
+        <a class="btn btn--call" href={`tel:${tel}`}>Call Eddie</a>
+        <a class="btn btn--quote" href="/#quote">Get a quote</a>
+      </div>
+    </div>
+  </section>
+</Base>
+
+<style>
+  .about__grid { display: grid; gap: var(--s-4); align-items: start; }
+  @media (min-width: 900px) { .about__grid { grid-template-columns: 6fr 5fr; } }
+  .about__facts { list-style: none; padding: 0; margin-top: var(--s-3); display: grid; gap: 0; }
+  .about__facts li {
+    padding-block: 14px;
+    border-top: 1px solid var(--edge);
+    font-size: var(--t-small); color: var(--ink-soft);
+  }
+  .about__facts strong {
+    display: block;
+    font: 700 1.05rem var(--font-display);
+    color: var(--ink);
+  }
+  .about__photo { margin: 0; border-radius: var(--r-box); overflow: hidden; border: 1px solid var(--edge); }
+  .about__photo img { width: 100%; object-fit: cover; }
+  .about__photo figcaption { font-size: var(--t-small); color: var(--ink-soft); padding: 10px 2px; }
+  .steps { list-style: none; padding: 0; counter-reset: step; display: grid; gap: var(--s-3); margin-top: var(--s-4); max-width: 620px; }
+  .steps li { counter-increment: step; display: grid; grid-template-columns: 44px 1fr; gap: 14px; color: var(--ink-soft); }
+  .steps li::before {
+    content: counter(step);
+    font: 700 1.1rem var(--font-display);
+    color: var(--accent);
+    border: 1.5px solid var(--edge);
+    border-radius: 50%;
+    width: 40px; height: 40px;
+    display: grid; place-items: center;
+  }
+  .steps strong { display: block; color: var(--ink); font-family: var(--font-display); font-size: 1.1rem; }
+</style>
