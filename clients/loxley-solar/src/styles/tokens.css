@@ -1,0 +1,70 @@
+/* LOXLEY SOLAR — DAYLIGHT YIELD tokens.
+   Three layers: primitives → semantic → components own the rest. Rebrand a
+   client by editing the primitives block only.
+   Locked in research/direction-ledger.md: warm white ground, pine ink doing
+   both text and action, sun yellow for DATA MARKS ONLY (never text, never
+   buttons). One dark moment per page: the pine contact band. */
+
+:root {
+  /* ---- Layer 1: primitives -------------------------------------------- */
+  --day-50:    #fbfaf7;   /* warm white ground              */
+  --day-0:     #ffffff;   /* raised card surface            */
+  --day-200:   #e7e3d8;   /* hairlines on light             */
+  --ink-900:   #1a2420;   /* text on light                  */
+  --ink-600:   #57635b;   /* supporting text on light       */
+  --pine-900:  #0f3b2e;   /* action + the dark band ground  */
+  --pine-700:  #1b5e46;   /* links, hovers                  */
+  --pine-band-surface: #14462f;
+  --pine-band-edge:    #275940;
+  --pine-band-ink:     #f2f7f1;
+  --pine-band-soft:    #b9ccbe;
+  --sun-500:   #f5b301;   /* data marks: charts, dots, slider */
+  --sun-150:   #fdefc4;   /* data fills                      */
+
+  /* ---- Layer 2: semantic ---------------------------------------------- */
+  --ground:    var(--day-50);
+  --surface:   var(--day-0);
+  --edge:      var(--day-200);
+  --ink:       var(--ink-900);
+  --ink-soft:  var(--ink-600);
+  --action:    var(--pine-900);   /* the form is the conversion */
+  --on-action: #f6faf5;
+  --link:      var(--pine-700);
+  --data:      var(--sun-500);    /* charts and marks only */
+  --data-fill: var(--sun-150);
+
+  /* Type. One family at three jobs, mono for every figure. */
+  --font-display: 'Sora', system-ui, sans-serif;
+  --font-body: 'Sora', system-ui, sans-serif;
+  --font-data: 'IBM Plex Mono', ui-monospace, monospace;
+  --t-hero:  clamp(2.1rem, 4.8vw, 4.1rem);
+  --t-h2:    clamp(1.5rem, 2.9vw, 2.4rem);
+  --t-h3:    clamp(1.08rem, 1.6vw, 1.35rem);
+  --t-body:  1.03rem;
+  --t-small: .89rem;
+  --t-label: .78rem;
+
+  /* Space and shape. Squarer than Tungsten: 10px boxes, pill buttons. */
+  --s-1: .5rem;  --s-2: 1rem;  --s-3: 1.5rem;  --s-4: 2.5rem;
+  --s-5: 4rem;   --s-6: 6.5rem;
+  --r-box: 10px;
+  --r-pill: 999px;
+  --measure: 64ch;
+
+  --ease-out: cubic-bezier(.2, .9, .25, 1);
+  --ease-ui:  cubic-bezier(.3, .8, .3, 1);
+}
+
+/* The one dark moment: sections opt in with class="pine". */
+.pine {
+  --ground:   var(--pine-900);
+  --surface:  var(--pine-band-surface);
+  --edge:     var(--pine-band-edge);
+  --ink:      var(--pine-band-ink);
+  --ink-soft: var(--pine-band-soft);
+  --action:   var(--day-0);        /* buttons invert to white on pine */
+  --on-action: var(--pine-900);
+  --link:     var(--pine-band-ink);
+  background: var(--ground);
+  color: var(--ink);
+}

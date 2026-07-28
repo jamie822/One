@@ -1,0 +1,312 @@
+---
+// HOME. Copy comes from COPY.md verbatim; figures from client.js, TEMP-tagged.
+import Base from '../layouts/Base.astro';
+import QuoteForm from '../components/QuoteForm.astro';
+import { client } from '../data/client.js';
+
+const tel = client.phone.replace(/\s/g, '');
+const fmt = (n) => '£' + n.toLocaleString('en-GB');
+const svc = Object.fromEntries(client.services.map((s) => [s.id, s]));
+const stars = Array.from({ length: 5 });
+
+// Server-rendered estimator default: 10 panels, south. The inline script
+// mirrors this maths exactly; both read client.estimator (TEMP until
+// calibrated).
+const E = client.estimator;
+const DEF = { panels: 10, facing: 'south' };
+const gen0 = Math.round(DEF.panels * E.kwhPerPanelYear * E.facingFactor[DEF.facing]);
+const val0 = Math.round(gen0 * (E.selfUseShare * E.importRate + (1 - E.selfUseShare) * E.exportRate));
+const price0 = E.priceFixed + DEF.panels * E.pricePerPanel;
+const pay0 = (price0 / val0).toFixed(1);
+const MAXGEN = 16 * E.kwhPerPanelYear; // slider max, south
+const ARC_LEN = 251.3; // half-circle r=80
+const off0 = ARC_LEN * (1 - gen0 / MAXGEN);
+---
+<!-- DIRECTION CONTRACT
+THESIS: the installer who shows the maths first, staged as an instrument you
+can operate before anyone rings you back.
+OWN-WORLD: Daylight Yield. Warm white, pine ink, sun yellow only where data
+lives, Sora + Plex Mono, one pine-dark band at the end.
+STORY: arrive curious, move the sliders, see honest numbers with assumptions
+attached, read how the workings hold up, leave by form.
+FIRST VIEWPORT: left, H1 + sub; right, the working estimator card.
+FORM: brief-pinned by ledger 2026-07-28, zero shared axes with prior builds. -->
+<Base
+  title="Solar Panel Installation Sheffield | MCS | Loxley Solar"
+  description={`MCS-certified solar and battery installer in Sheffield. Systems sized on your actual bills, payback maths in writing before you pay a deposit. Call ${client.phone}.`}
+  current="/"
+>
+  <section class="hero" aria-labelledby="hero-h">
+    <div class="wrap hero__grid">
+      <div>
+        <p class="kicker">{client.accreditation} · {client.town} <!-- TEMP --></p>
+        <h1 id="hero-h">Solar panels for Sheffield roofs, sized on your bills.</h1>
+        <p class="hero__sub">
+          Move the sliders and watch the numbers. When they look right, send
+          us two energy bills and we turn the estimate into a written quote
+          with the workings shown.
+        </p>
+        <div class="hero__acts">
+          <a class="btn btn--quote" href="#quote">Get a quote</a>
+          <a class="btn btn--call" href={`tel:${tel}`}>Call Dan</a>
+        </div>
+      </div>
+
+      <div class="est" data-est data-config={JSON.stringify(E)}>
+        <div class="est__head">
+          <h2>What could your roof do?</h2>
+          <span class="kicker">Estimate <!-- TEMP maths --></span>
+        </div>
+
+        <div class="est__row">
+          <label for="est-panels">Roof size <output for="est-panels" data-panels-out>10 panels</output></label>
+          <input
+            class="est__slider" type="range" id="est-panels"
+            min="6" max="16" step="1" value="10" data-panels
+            style="--pct: 40%"
+          />
+        </div>
+
+        <fieldset class="est__row" style="border: 0; padding: 0;">
+          <legend class="est__legend" style="padding: 0; margin-bottom: 8px;">Roof faces</legend>
+          <div class="est__facing" data-facing>
+            <label><input type="radio" name="facing" value="south" checked />South</label>
+            <label><input type="radio" name="facing" value="southeast" />SE or SW</label>
+            <label><input type="radio" name="facing" value="east" />E-W split</label>
+          </div>
+        </fieldset>
+
+        <p data-nojs-note>
+          Shown for a 10-panel, south-facing roof. Turn on JavaScript to try
+          your own, or just send the form: we run the numbers either way.
+        </p>
+
+        <svg class="est__arc" viewBox="0 0 200 108" width="200" height="108" role="img"
+             aria-label="Yield arc: how much of the best-case generation your setup reaches">
+          <path class="track" d="M 20 100 A 80 80 0 0 1 180 100" />
+          <path class="fill" d="M 20 100 A 80 80 0 0 1 180 100"
+                stroke-dasharray="251.3" stroke-dashoffset={off0} data-arc />
+          <circle class="sun" r="7" cx="100" cy="20" data-sun />
+        </svg>
+
+        <div class="est__out">
+          <div class="est__cell">
+            <strong class="est__n"><span data-out="gen">{gen0.toLocaleString('en-GB')}</span> kWh</strong>
+            <span>generation a year</span>
+          </div>
+          <div class="est__cell">
+            <strong class="est__n">£<span data-out="value">{val0}</span></strong>
+            <span>off your bills a year</span>
+          </div>
+          <div class="est__cell">
+            <strong class="est__n"><span data-out="payback">{pay0}</span> yrs</strong>
+            <span>payback</span>
+          </div>
+        </div>
+
+        <p class="est__price">
+          Guide price <strong data-out="price">{fmt(Math.round(price0 / 100) * 100)}</strong> installed.
+          Estimate, not a quote: your roof, shading and usage move these
+          numbers. That is why the survey exists.
+        </p>
+        <div class="est__acts">
+          <a class="btn btn--quote" href="#quote">Get a quote</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="trust" aria-label="Credentials">
+    <div class="wrap trust__row">
+      <p class="trust__item">
+        <strong>{client.google.rating}</strong>
+        <span>from {client.google.reviewCount} Google reviews <!-- TEMP --></span>
+      </p>
+      <p class="trust__item">
+        <strong>MCS</strong>
+        <span>certified, {client.accreditationNumber} <!-- TEMP --></span>
+      </p>
+      <p class="trust__item">
+        <strong><span data-count="640">640</span></strong>
+        <span>installs across South Yorkshire <!-- TEMP --></span>
+      </p>
+      <p class="trust__item">
+        <strong>10 yr</strong>
+        <span>workmanship guarantee <!-- TEMP --></span>
+      </p>
+    </div>
+  </section>
+
+  <section class="section" aria-labelledby="work-h">
+    <div class="wrap">
+      <h2 id="work-h" class="rise">The estimate shows its workings.</h2>
+      <p class="rise" style="margin-top: var(--s-3); color: var(--ink-soft);">
+        Most solar quotes arrive as one big number and a promise. Ours
+        arrives as a table: what the panels generate at your roof's pitch and
+        facing, what you use while the sun is up, what the battery catches,
+        what the export pays, and what that does to your bill in year one.
+        If the payback runs past ten years, we say so and suggest you keep
+        your money. About one roof in five, we do.
+      </p>
+      <div class="workings__points">
+        <div class="rise" style="--i:0">
+          <strong>Sized on twelve months of your bills</strong>
+          <p>A family of five and a couple who are out all day need different
+          roofs. National calculators average them.</p>
+        </div>
+        <div class="rise" style="--i:1">
+          <strong>Panel-level layout, drawn before you sign</strong>
+          <p>You see exactly which slates carry panels and why the shaded
+          corner is skipped.</p>
+        </div>
+        <div class="rise" style="--i:2">
+          <strong>The no is free</strong>
+          <p>Wrong roof, heavy shade, tired wiring: the survey says so in
+          writing, and it costs you nothing.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" aria-labelledby="offer-h" style="padding-top: 0;">
+    <div class="wrap">
+      <h2 id="offer-h" class="rise">What we fit</h2>
+      <div class="offer__grid">
+        <a class="offer rise" style="--i:0" href="/services/#solar">
+          <h3>Solar panel installation</h3>
+          <p>Panels, scaffolding, MCS paperwork, export registration: one price for the lot.</p>
+          <span class="from">From {fmt(svc.solar.from)}</span>
+        </a>
+        <a class="offer rise" style="--i:1" href="/services/#battery">
+          <h3>Battery storage</h3>
+          <p>Catches the daytime surplus for the evening.</p>
+          <span class="from">From {fmt(svc.battery.from)}</span>
+        </a>
+        <a class="offer rise" style="--i:2" href="/services/#solarplus">
+          <h3>Solar plus battery</h3>
+          <p>The pairing most Sheffield semis end up choosing.</p>
+          <span class="from">From {fmt(svc.solarplus.from)}</span>
+        </a>
+        <a class="offer rise" style="--i:3" href="/services/#ev">
+          <h3>EV chargers</h3>
+          <p>Fitted to charge from your surplus first.</p>
+          <span class="from">From {fmt(svc.ev.from)}</span>
+        </a>
+        <a class="offer rise" style="--i:4" href="/services/#diverter">
+          <h3>Hot water diverters</h3>
+          <p>Surplus goes into the tank before the grid.</p>
+          <span class="from">From {fmt(svc.diverter.from)}</span>
+        </a>
+        <a class="offer rise" style="--i:5" href="/services/#health">
+          <h3>System health checks</h3>
+          <p>For panels fitted by anyone, including the firm that vanished.</p>
+          <span class="from">From {fmt(svc.health.from)}</span>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" aria-labelledby="rev-h" style="padding-top: 0;">
+    <div class="wrap">
+      <h2 id="rev-h" class="rise">Word for word</h2>
+      <div class="reviews__grid">
+        <article class="review review--lead rise">
+          <p class="stars" role="img" aria-label="Five stars">
+            {stars.map(() => (
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2l2.9 6.6 7.1.7-5.4 4.8 1.6 7L12 17.5 5.8 21l1.6-7L2 9.3l7.1-.7z"/></svg>
+            ))}
+          </p>
+          <blockquote>Dan's estimate said 3,900 kWh. First full year: 4,014. The spreadsheet he left us still runs the house.</blockquote>
+          <footer>Karen, Ecclesall. Solar + battery, March 2025 <!-- TEMP demo review --></footer>
+        </article>
+        <div class="reviews__side">
+          <article class="review rise" style="--i:1">
+            <blockquote>Told us our back roof wasn't worth panels and to spend the money on a battery instead. Who does that?</blockquote>
+            <footer>Steve, Dronfield. Battery, June 2026 <!-- TEMP demo review --></footer>
+          </article>
+          <article class="review rise" style="--i:2">
+            <blockquote>Scaffold up Monday, generating Thursday, paperwork done the week after. DNO, MCS, the lot.</blockquote>
+            <footer>Amrit, Hillsborough. 12 panels, May 2026 <!-- TEMP demo review --></footer>
+          </article>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" aria-labelledby="area-h" style="padding-top: 0;">
+    <div class="wrap">
+      <h2 id="area-h" class="rise">Sheffield and the hills around it</h2>
+      <p class="rise" style="margin-top: var(--s-2); color: var(--ink-soft);">
+        Based in Hillsborough, out daily across {client.areas.slice(1, -1).join(', ')} and
+        {' '}{client.areas.at(-1)}. Steep roofs and stone terraces welcome:
+        this is Sheffield, they mostly are.
+      </p>
+    </div>
+  </section>
+
+  <div class="pine">
+    <section class="section contact" id="quote" aria-labelledby="contact-h">
+      <div class="wrap">
+        <h2 id="contact-h" class="rise">Two bills. One written estimate. No salesman on your sofa.</h2>
+        <div class="contact__grid">
+          <div class="rise contact__info">
+            <a class="contact__tel" href={`tel:${tel}`}>{client.phone}</a>
+            <p class="contact__hours">
+              {client.hours}. Email replies inside one working day. <!-- TEMP -->
+            </p>
+            <ul class="contact__facts">
+              <li>Prefer email? <a href={`mailto:${client.email}`}>{client.email}</a></li>
+              <li>{client.accreditation}, number {client.accreditationNumber} <!-- TEMP --></li>
+              <li>{client.guarantee} and {client.liabilityCover} behind every install <!-- TEMP --></li>
+            </ul>
+          </div>
+          <QuoteForm />
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <script is:inline>
+    // The estimator. Mirrors the server-rendered default maths exactly; all
+    // working numbers are TEMP in client.js until calibrated to the client's
+    // real quoting model.
+    (function () {
+      var box = document.querySelector('[data-est]');
+      if (!box) return;
+      var E = JSON.parse(box.dataset.config);
+      var slider = box.querySelector('[data-panels]');
+      var panelsOut = box.querySelector('[data-panels-out]');
+      var outs = {};
+      box.querySelectorAll('[data-out]').forEach(function (el) { outs[el.dataset.out] = el; });
+      var arc = box.querySelector('[data-arc]');
+      var sun = box.querySelector('[data-sun]');
+      var ARC = 251.3, MAXGEN = 16 * E.kwhPerPanelYear;
+
+      function facing() {
+        var el = box.querySelector('[data-facing] input:checked');
+        return el ? el.value : 'south';
+      }
+      function update() {
+        var n = parseInt(slider.value, 10);
+        var gen = Math.round(n * E.kwhPerPanelYear * E.facingFactor[facing()]);
+        var value = Math.round(gen * (E.selfUseShare * E.importRate + (1 - E.selfUseShare) * E.exportRate));
+        var price = E.priceFixed + n * E.pricePerPanel;
+        var payback = (price / value).toFixed(1);
+        panelsOut.textContent = n + ' panels';
+        outs.gen.textContent = gen.toLocaleString('en-GB');
+        outs.value.textContent = value;
+        outs.payback.textContent = payback;
+        outs.price.textContent = '£' + (Math.round(price / 100) * 100).toLocaleString('en-GB');
+        slider.style.setProperty('--pct', ((n - 6) / 10) * 100 + '%');
+        var frac = gen / MAXGEN;
+        arc.style.strokeDashoffset = ARC * (1 - frac);
+        var a = Math.PI * (1 - frac);
+        sun.setAttribute('cx', 100 + 80 * Math.cos(a));
+        sun.setAttribute('cy', 100 - 80 * Math.sin(a));
+      }
+      slider.addEventListener('input', update);
+      box.querySelectorAll('[data-facing] input').forEach(function (r) { r.addEventListener('change', update); });
+      update();
+    })();
+  </script>
+</Base>

@@ -40,7 +40,7 @@ export const client = {
 
   // Ranked in the order the client wants MORE of.
   services: [
-    { id: 'solar',       name: 'Solar panel installation',      from: 5900 },  // TEMP from-price
+    { id: 'solar',       name: 'Solar panel installation',      from: 4400 },  // TEMP from-price (6-panel terrace)
     { id: 'battery',     name: 'Battery storage',               from: 2800 },  // TEMP
     { id: 'solarplus',   name: 'Solar plus battery packages',   from: 8200 },  // TEMP
     { id: 'ev',          name: 'EV charger installation',       from: 980 },   // TEMP
@@ -49,15 +49,17 @@ export const client = {
   ],
 
   // The estimator's working numbers. All TEMP: calibrate to the client's real
-  // quoting model before go-live. Sheffield-latitude yield baseline.
+  // quoting model before go-live. Sheffield-latitude yield baseline. The blog
+  // cost table derives from the same model; change one, change both.
   estimator: {
     kwhPerPanelYear: 385,      // TEMP — 440W panel, south-facing, Sheffield
     facingFactor: { south: 1.0, southeast: 0.94, east: 0.82 },  // TEMP
-    exportRate: 0.15,          // TEMP — SEG p/kWh
-    importRate: 0.27,          // TEMP — p/kWh offset value
+    exportRate: 0.15,          // TEMP — SEG £/kWh
+    importRate: 0.27,          // TEMP — £/kWh offset value
     selfUseShare: 0.45,        // TEMP — without battery
     selfUseShareBattery: 0.8,  // TEMP — with battery
-    costPerPanel: 590,         // TEMP — installed, per panel, at 10-panel scale
+    priceFixed: 1520,          // TEMP — scaffold + fixed costs per job
+    pricePerPanel: 480,        // TEMP — installed, per panel
   },
 
   conversion: {

@@ -1,0 +1,146 @@
+/* LOXLEY SOLAR — base: fonts, reset, type, buttons, forms, a11y. */
+
+@font-face {
+  font-family: 'Sora';
+  src: url('/fonts/sora-latin-300-normal.woff2') format('woff2');
+  font-weight: 300; font-display: swap;
+}
+@font-face {
+  font-family: 'Sora';
+  src: url('/fonts/sora-latin-400-normal.woff2') format('woff2');
+  font-weight: 400; font-display: swap;
+}
+@font-face {
+  font-family: 'Sora';
+  src: url('/fonts/sora-latin-600-normal.woff2') format('woff2');
+  font-weight: 600; font-display: swap;
+}
+@font-face {
+  font-family: 'Sora';
+  src: url('/fonts/sora-latin-700-normal.woff2') format('woff2');
+  font-weight: 700; font-display: swap;
+}
+@font-face {
+  font-family: 'Sora';
+  src: url('/fonts/sora-latin-800-normal.woff2') format('woff2');
+  font-weight: 800; font-display: swap;
+}
+@font-face {
+  font-family: 'IBM Plex Mono';
+  src: url('/fonts/ibm-plex-mono-latin-400-normal.woff2') format('woff2');
+  font-weight: 400; font-display: swap;
+}
+@font-face {
+  font-family: 'IBM Plex Mono';
+  src: url('/fonts/ibm-plex-mono-latin-500-normal.woff2') format('woff2');
+  font-weight: 500; font-display: swap;
+}
+
+*, *::before, *::after { box-sizing: border-box; }
+* { margin: 0; }
+
+html { scroll-behavior: smooth; }
+@media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
+
+body {
+  background: var(--ground);
+  color: var(--ink);
+  font: 400 var(--t-body)/1.6 var(--font-body);
+  -webkit-font-smoothing: antialiased;
+}
+
+img, svg, video { display: block; max-width: 100%; height: auto; }
+
+h1, h2, h3 {
+  font-family: var(--font-display);
+  font-weight: 800;
+  line-height: 1.08;
+  letter-spacing: -.03em;
+  text-wrap: balance;
+}
+h1 { font-size: var(--t-hero); }
+h2 { font-size: var(--t-h2); }
+h3 { font-size: var(--t-h3); font-weight: 700; letter-spacing: -.02em; }
+p  { text-wrap: pretty; max-width: var(--measure); }
+
+a { color: inherit; text-decoration-thickness: 1px; text-underline-offset: 3px; }
+
+:focus-visible {
+  outline: 2.5px solid var(--pine-700);
+  outline-offset: 3px;
+  border-radius: 3px;
+}
+.pine :focus-visible { outline-color: var(--sun-500); }
+
+.skip {
+  position: absolute; left: -999px; top: 0; z-index: 100;
+  background: var(--pine-900); color: #f6faf5;
+  padding: 10px 18px; border-radius: 0 0 8px 0; font-weight: 700;
+}
+.skip:focus-visible { left: 0; }
+
+/* ---- Buttons. Two intents on this site: the form leads, the phone backs. */
+.btn {
+  display: inline-flex; align-items: center; justify-content: center; gap: 9px;
+  min-height: 48px; padding: 12px 26px;
+  font: 700 .98rem var(--font-body);
+  border-radius: var(--r-pill);
+  border: 1.5px solid transparent;
+  text-decoration: none;
+  cursor: pointer;
+  transition: background-color 160ms var(--ease-ui), border-color 160ms var(--ease-ui),
+              color 160ms var(--ease-ui), transform 160ms var(--ease-ui);
+}
+.btn:active { transform: scale(.97); }
+.btn--quote { background: var(--action); color: var(--on-action); }
+.btn--quote:hover { background: var(--pine-700); }
+.pine .btn--quote:hover { background: var(--day-50); }
+.btn--call { background: transparent; color: var(--ink); border-color: color-mix(in srgb, var(--ink) 32%, transparent); }
+.btn--call:hover { border-color: var(--ink); }
+
+/* ---- Forms: labels above, errors below. ------------------------------- */
+.field { display: grid; gap: 7px; }
+.field label { font: 700 var(--t-label) var(--font-body); letter-spacing: .02em; }
+.field .opt { color: var(--ink-soft); font-weight: 400; }
+.field input, .field textarea {
+  font: 400 1rem var(--font-body);
+  color: var(--ink);
+  background: color-mix(in srgb, var(--surface) 80%, transparent);
+  border: 1.5px solid var(--edge);
+  border-radius: 8px;
+  padding: 12px 14px;
+  min-height: 48px;
+  transition: border-color 150ms var(--ease-ui);
+}
+.field textarea { min-height: 92px; resize: vertical; }
+.field input:focus-visible, .field textarea:focus-visible {
+  outline: none;
+  border-color: var(--sun-500);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--sun-500) 30%, transparent);
+}
+.field .err { display: none; font-size: var(--t-small); color: #b3401f; font-weight: 500; }
+.pine .field .err { color: #ffd9cf; }
+.field[data-bad] .err { display: block; }
+.field[data-bad] input, .field[data-bad] textarea { border-color: #d95a34; }
+
+/* ---- Shared furniture --------------------------------------------------- */
+.wrap { width: min(100% - 2 * var(--s-3), 1180px); margin-inline: auto; }
+.section { padding-block: clamp(3.2rem, 7vw, 6rem); }
+
+.kicker {
+  font: 500 var(--t-label) var(--font-data);
+  letter-spacing: .12em;
+  text-transform: uppercase;
+  color: var(--ink-soft);
+}
+
+/* Every figure on the site is mono. */
+.fig { font-family: var(--font-data); font-variant-numeric: tabular-nums; }
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: .01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: .01ms !important;
+  }
+}

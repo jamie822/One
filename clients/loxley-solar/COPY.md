@@ -58,7 +58,7 @@ Points (hairline list):
   so in writing, and it costs you nothing.
 
 ### Services teaser (grid, six cells, prices from client.js)
-- Solar panel installation. From £5,900. Panels, scaffolding, MCS paperwork,
+- Solar panel installation. From £4,400. Panels, scaffolding, MCS paperwork,
   export registration: one price for the lot.
 - Battery storage. From £2,800. Catches the daytime surplus for the evening.
 - Solar plus battery. From £8,200. The pairing most Sheffield semis end up
@@ -107,13 +107,13 @@ workings.
 **Sub:** From-prices below come from jobs quoted this year. The written
 estimate you get after the survey is the number you pay.
 
-### #solar — Solar panel installation in Sheffield, from £5,900
+### #solar — Solar panel installation in Sheffield, from £4,400
 Panels, inverter, scaffolding, bird guard if you want it, MCS certificate,
 DNO notification and export registration: one price covers the job, not the
 job minus the paperwork. Typical 10-panel system on a Sheffield semi: £5,900
 to £7,500 installed. We draw the panel layout on your actual roof before you
 sign, and we skip the shaded slates a brochure would happily cover. (TEMP)
-Card: From £5,900 · Two days on the roof, paperwork inside three weeks · Get a quote
+Card: From £4,400 · Two days on the roof, paperwork inside three weeks · Get a quote
 
 ### #battery — Battery storage, from £2,800
 A battery moves your free daytime electricity to the evening, which is where
@@ -217,15 +217,15 @@ earns its place. July 2026.
 ## BLOG: SOLAR PANEL COST SHEFFIELD
 
 **Title:** How Much Do Solar Panels Cost in Sheffield? 2026 Prices
-**Meta:** Solar panels in Sheffield cost £5,900 to £9,500 installed in 2026
-for a typical 8 to 12 panel system. An MCS installer breaks down real prices
+**Meta:** Solar panels in Sheffield cost £4,400 to £9,500 installed in 2026
+depending on system size. An MCS installer breaks down real prices
 and what moves them.
 
 **H1:** How much do solar panels cost in Sheffield? 2026 prices
 **Byline:** By Dan Whitfield, MCS installer, Loxley Solar · July 2026 (TEMP)
 
-**Lead (direct answer):** A typical solar installation in Sheffield costs
-£5,900 to £9,500 in 2026: that is 8 to 12 panels, installed, with
+**Lead (direct answer):** A solar installation in Sheffield costs
+£4,400 to £9,500 in 2026: that is 6 to 14 panels, installed, with
 scaffolding, MCS paperwork and export registration included. Add £2,800 to
 £4,500 for a battery. Those are installed prices from jobs we quoted this
 year, not a lead-generation site's teaser figures, and VAT on domestic solar
@@ -233,10 +233,10 @@ is zero-rated until 2027. (TEMP figures)
 
 **Table: installed prices, 2026** (all TEMP)
 | System | Panels | Installed price | Typical year-one benefit |
-| Small terrace | 6 | £4,400 to £5,200 | £340 to £430 |
-| Semi, the common case | 10 | £5,900 to £7,500 | £520 to £680 |
-| Large semi or detached | 12 | £7,200 to £8,600 | £640 to £820 |
-| Big detached, dual aspect | 14+ | £8,500 to £9,500+ | £750 to £950 |
+| Small terrace | 6 | £4,400 to £5,200 | £390 to £470 |
+| Semi, the common case | 10 | £5,900 to £7,500 | £640 to £790 |
+| Large semi or detached | 12 | £7,200 to £8,600 | £770 to £940 |
+| Big detached, dual aspect | 14+ | £8,200 to £9,500+ | £900 to £1,100 |
 Caption: Installed, incl. scaffolding, MCS certificate, DNO and export
 registration. Your written quote is the real number; this table is for
 orientation.
@@ -253,7 +253,7 @@ labour and access move it more.
 Sometimes. Without one, a working household uses under half of what the roof
 makes; the rest exports at around 15p while you buy evenings back at 27p.
 A battery closes that gap and pushes self-use towards 80 percent. On a
-10-panel system that is roughly £150 to £250 a year of extra benefit against
+10-panel system that is roughly £250 to £350 a year of extra benefit against
 £2,800 to £4,500 of cost, so the battery case rests on how much you are home,
 your tariff, and whether you charge a car. We price it separately in every
 estimate so you can drop it without dropping the panels. (TEMP figures)

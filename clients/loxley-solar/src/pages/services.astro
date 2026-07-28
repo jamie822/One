@@ -1,0 +1,234 @@
+---
+// SERVICES: six anchored sections, each with its own H2, price, duration and
+// path. Copy from COPY.md.
+import Base from '../layouts/Base.astro';
+import QuoteForm from '../components/QuoteForm.astro';
+import { client } from '../data/client.js';
+
+const tel = client.phone.replace(/\s/g, '');
+const fmt = (n) => '£' + n.toLocaleString('en-GB');
+const svc = Object.fromEntries(client.services.map((s) => [s.id, s]));
+
+const breadcrumbs = {
+  '@context': 'https://schema.org',
+  '@type': 'BreadcrumbList',
+  itemListElement: [
+    { '@type': 'ListItem', position: 1, name: 'Home', item: 'https://loxleysolar.co.uk/' },
+    { '@type': 'ListItem', position: 2, name: 'Services', item: 'https://loxleysolar.co.uk/services/' },
+  ],
+};
+const catalog = {
+  '@context': 'https://schema.org',
+  '@type': 'OfferCatalog',
+  name: 'Solar, battery and EV services in Sheffield',
+  provider: { '@id': 'https://loxleysolar.co.uk/#business' },
+  itemListElement: client.services.map((s) => ({
+    '@type': 'Offer',
+    itemOffered: { '@type': 'Service', name: s.name },
+    priceSpecification: { '@type': 'PriceSpecification', price: s.from, priceCurrency: 'GBP', description: 'from' },
+  })),
+};
+
+const cards = {
+  solar:     { label: 'From', time: 'Two days on the roof, paperwork inside three weeks', cta: 'quote' },
+  battery:   { label: 'From', time: 'Fitted in a day', cta: 'quote' },
+  solarplus: { label: 'From', time: 'Two to three days, one scaffold', cta: 'quote' },
+  ev:        { label: 'From', time: 'Half a day', cta: 'call' },
+  diverter:  { label: 'From', time: 'Two hours', cta: 'call' },
+  health:    { label: 'From', time: 'Under two hours, report same day', cta: 'quote' },
+};
+---
+<Base
+  title="Solar, Battery & EV Services Sheffield | Loxley Solar"
+  description="From-prices for solar panels, battery storage, EV chargers and hot water diverters in Sheffield. MCS paperwork included. The estimate shows its workings."
+  current="/services/"
+  schema={[breadcrumbs, catalog]}
+>
+  <section class="section" style="padding-bottom: var(--s-4);">
+    <div class="wrap">
+      <h1>Solar, battery and EV charging in Sheffield</h1>
+      <p class="hero__sub" style="margin-top: var(--s-2);">
+        From-prices below come from jobs quoted this year. The written
+        estimate you get after the survey is the number you pay.
+      </p>
+    </div>
+  </section>
+
+  <section id="solar" class="svc" aria-labelledby="solar-h">
+    <div class="wrap svc__grid">
+      <div class="rise">
+        <h2 id="solar-h">Solar panel installation in Sheffield, from {fmt(svc.solar.from)}</h2>
+        <p>
+          Panels, inverter, scaffolding, bird guard if you want it, MCS
+          certificate, DNO notification and export registration: one price
+          covers the job, not the job minus the paperwork. Typical 10-panel
+          system on a Sheffield semi: £5,900 to £7,500 installed. We draw the
+          panel layout on your actual roof before you sign, and we skip the
+          shaded slates a brochure would happily cover. <!-- TEMP figures -->
+        </p>
+      </div>
+      <aside class="svc__card rise" style="--i:1" aria-label="Solar installation price and booking">
+        <span class="svc__card-label">{cards.solar.label}</span>
+        <strong class="svc__card-price">{fmt(svc.solar.from)}</strong>
+        <span class="svc__card-time">{cards.solar.time}</span>
+        <a class="btn btn--quote" href="#quote">Get a quote</a>
+      </aside>
+    </div>
+  </section>
+
+  <section id="battery" class="svc" aria-labelledby="bat-h">
+    <div class="wrap svc__grid">
+      <div class="rise">
+        <h2 id="bat-h">Battery storage, from {fmt(svc.battery.from)}</h2>
+        <p>
+          A battery moves your free daytime electricity to the evening, which
+          is where most Sheffield bills live. Sized from your smart meter
+          data, not a guess: too small wastes surplus, too big wastes
+          capital, and we show you the sizing maths either way. Works with
+          panels we fitted or panels you already have. <!-- TEMP -->
+        </p>
+      </div>
+      <aside class="svc__card rise" style="--i:1" aria-label="Battery price and booking">
+        <span class="svc__card-label">{cards.battery.label}</span>
+        <strong class="svc__card-price">{fmt(svc.battery.from)}</strong>
+        <span class="svc__card-time">{cards.battery.time}</span>
+        <a class="btn btn--quote" href="#quote">Get a quote</a>
+      </aside>
+    </div>
+  </section>
+
+  <section id="solarplus" class="svc" aria-labelledby="sp-h">
+    <div class="wrap svc__grid">
+      <div class="rise">
+        <h2 id="sp-h">Solar plus battery, from {fmt(svc.solarplus.from)}</h2>
+        <p>
+          The package most of our Sheffield customers land on: panels sized
+          to the roof, battery sized to the evening, one scaffold, one visit,
+          one warranty conversation. Self-use typically rises from under half
+          to around 80 percent, and the payback maths for the pair is in the
+          estimate, separately, so you can drop the battery if it does not
+          earn its keep. <!-- TEMP figures -->
+        </p>
+      </div>
+      <aside class="svc__card rise" style="--i:1" aria-label="Solar plus battery price and booking">
+        <span class="svc__card-label">{cards.solarplus.label}</span>
+        <strong class="svc__card-price">{fmt(svc.solarplus.from)}</strong>
+        <span class="svc__card-time">{cards.solarplus.time}</span>
+        <a class="btn btn--quote" href="#quote">Get a quote</a>
+      </aside>
+    </div>
+  </section>
+
+  <section id="ev" class="svc" aria-labelledby="ev-h">
+    <div class="wrap svc__grid">
+      <div class="rise">
+        <h2 id="ev-h">EV charger installation, from {fmt(svc.ev.from)}</h2>
+        <p>
+          A 7kW charger wired to prefer your surplus solar before it touches
+          the grid. Fuse board checked before we quote, so the price is the
+          whole job. Works with any car sold in the UK, and the app does not
+          need a PhD. <!-- TEMP -->
+        </p>
+      </div>
+      <aside class="svc__card rise" style="--i:1" aria-label="EV charger price and booking">
+        <span class="svc__card-label">{cards.ev.label}</span>
+        <strong class="svc__card-price">{fmt(svc.ev.from)}</strong>
+        <span class="svc__card-time">{cards.ev.time}</span>
+        <a class="btn btn--call" href={`tel:${tel}`}>Call Dan</a>
+      </aside>
+    </div>
+  </section>
+
+  <section id="diverter" class="svc" aria-labelledby="dv-h">
+    <div class="wrap svc__grid">
+      <div class="rise">
+        <h2 id="dv-h">Hot water diverters, from {fmt(svc.diverter.from)}</h2>
+        <p>
+          The cheapest storage you can buy is the tank you already own. A
+          diverter sends surplus generation into the immersion heater before
+          it exports, which in summer means the boiler barely runs. Only
+          worth it if you have a tank and decent surplus: we will tell you
+          which straight away on the phone. <!-- TEMP -->
+        </p>
+      </div>
+      <aside class="svc__card rise" style="--i:1" aria-label="Diverter price and booking">
+        <span class="svc__card-label">{cards.diverter.label}</span>
+        <strong class="svc__card-price">{fmt(svc.diverter.from)}</strong>
+        <span class="svc__card-time">{cards.diverter.time}</span>
+        <a class="btn btn--call" href={`tel:${tel}`}>Call Dan</a>
+      </aside>
+    </div>
+  </section>
+
+  <section id="health" class="svc" aria-labelledby="hc-h">
+    <div class="wrap svc__grid">
+      <div class="rise">
+        <h2 id="hc-h">System health checks, from {fmt(svc.health.from)}</h2>
+        <p>
+          For any solar system, whoever fitted it. Generation checked against
+          what the roof should do, connections tightened and thermal-imaged,
+          inverter logs read, and a one-page report saying what is fine and
+          what is not. If your installer has vanished, this is where the
+          warranty conversation starts. <!-- TEMP -->
+        </p>
+      </div>
+      <aside class="svc__card rise" style="--i:1" aria-label="Health check price and booking">
+        <span class="svc__card-label">{cards.health.label}</span>
+        <strong class="svc__card-price">{fmt(svc.health.from)}</strong>
+        <span class="svc__card-time">{cards.health.time}</span>
+        <a class="btn btn--quote" href="#quote">Get a quote</a>
+      </aside>
+    </div>
+  </section>
+
+  <div class="pine">
+    <section class="section contact" id="quote" aria-labelledby="cl-h">
+      <div class="wrap">
+        <h2 id="cl-h" class="rise">Not sure which of these you need?</h2>
+        <div class="contact__grid">
+          <div class="rise contact__info">
+            <a class="contact__tel" href={`tel:${tel}`}>{client.phone}</a>
+            <p class="contact__hours">
+              Send the form with a sentence about the house. We will answer
+              with numbers, not an appointment for a presentation.
+            </p>
+            <ul class="contact__facts">
+              <li>Prefer email? <a href={`mailto:${client.email}`}>{client.email}</a></li>
+              <li>{client.accreditation}, number {client.accreditationNumber} <!-- TEMP --></li>
+              <li>{client.guarantee} and {client.liabilityCover} behind every install <!-- TEMP --></li>
+            </ul>
+          </div>
+          <QuoteForm />
+        </div>
+      </div>
+    </section>
+  </div>
+</Base>
+
+<style>
+  .svc { padding-block: clamp(2.4rem, 4.6vw, 4rem); }
+  .svc + .svc { border-top: 1px solid var(--edge); }
+  .svc__grid { display: grid; gap: var(--s-4); align-items: start; }
+  @media (min-width: 900px) { .svc__grid { grid-template-columns: 7fr 4fr; } }
+  .svc h2 { max-width: 24ch; }
+  .svc p { margin-top: var(--s-2); }
+  .svc__card {
+    background: var(--surface);
+    border: 1px solid var(--edge);
+    border-radius: var(--r-box);
+    padding: 24px;
+    display: grid; gap: 5px; justify-items: start;
+  }
+  .svc__card-label {
+    font: 500 var(--t-label) var(--font-data);
+    letter-spacing: .1em; text-transform: uppercase;
+    color: var(--ink-soft);
+  }
+  .svc__card-price {
+    font: 500 2.3rem var(--font-data);
+    font-variant-numeric: tabular-nums;
+    letter-spacing: -.03em; line-height: 1;
+  }
+  .svc__card-time { font-size: var(--t-small); color: var(--ink-soft); }
+  .svc__card .btn { margin-top: 14px; }
+</style>
