@@ -62,14 +62,14 @@ const catalog = {
           <a class="btn btn--quote" href="/#quote">Get a quote</a>
         </div>
         <figure class="svc__photo rise" style="--i:1">
-          <img src="/img/solar-dusk.webp" alt="Solar panels catching low sun on a Leeds semi" width="1600" height="900" loading="lazy" />
+          <img src="/img/solar-dusk-1100.webp" alt="Solar panels catching low sun on a Leeds semi" width="1600" height="900" loading="lazy" />
         </figure>
       </div>
     </section>
 
     <section id="ev" class="section svc" aria-labelledby="ev-h">
-      <div class="wrap">
-        <div class="rise" style="max-width: 720px;">
+      <div class="wrap svc__grid svc__grid--card">
+        <div class="rise">
           <h2 id="ev-h">EV charger installation, from {fmt(svc.ev.from)}</h2>
           <p>
             Supply and fit of a 7kW home charger, certified and notified. I
@@ -77,30 +77,38 @@ const catalog = {
             covers the whole job instead of growing on the day. Grant paperwork
             handled where you qualify. <!-- TEMP price -->
           </p>
-          <p class="svc__meta">Half a day</p>
-          <a class="btn btn--call" href={`tel:${tel}`}>Call Eddie</a>
         </div>
+        <aside class="svc__card rise" style="--i:1" aria-label="EV charger price and booking">
+          <span class="svc__card-label">From</span>
+          <strong class="svc__card-price">{fmt(svc.ev.from)}</strong>
+          <span class="svc__card-time">Half a day, certified before I leave</span>
+          <a class="btn btn--call" href={`tel:${tel}`}>Call Eddie</a>
+        </aside>
       </div>
     </section>
 
     <section id="rewires" class="section svc" aria-labelledby="rw-h">
-      <div class="wrap">
-        <div class="rise" style="max-width: 720px;">
+      <div class="wrap svc__grid svc__grid--card">
+        <div class="rise">
           <h2 id="rw-h">House rewires in Leeds, priced room by room</h2>
           <p>
             A rewire is the biggest electrical job a house ever gets, and it is
             the one where quotes grow. Mine is priced room by room before a
             floorboard lifts, so you can see what each part costs and cut cloth
             accordingly. Living through it? I put the rooms back together at
-            the end of each day. Typical 3-bed full rewire: from
-            {' '}{fmt(svc.rewires.from)}, five to eight working days. <!-- TEMP -->
+            the end of each day. <!-- TEMP -->
           </p>
           <p class="svc__meta">
             Wondering what yours would cost?
             <a href="/blog/rewire-cost-leeds/">Real 2026 rewire prices for Leeds houses</a>
           </p>
-          <a class="btn btn--quote" href="/#quote">Get a quote</a>
         </div>
+        <aside class="svc__card rise" style="--i:1" aria-label="Rewire price and booking">
+          <span class="svc__card-label">Typical 3-bed, from</span>
+          <strong class="svc__card-price">{fmt(svc.rewires.from)}</strong>
+          <span class="svc__card-time">Five to eight working days, lived-in houses welcome</span>
+          <a class="btn btn--quote" href="/#quote">Get a quote</a>
+        </aside>
       </div>
     </section>
 
@@ -123,8 +131,8 @@ const catalog = {
     </section>
 
     <section id="eicr" class="section svc" aria-labelledby="ei-h">
-      <div class="wrap">
-        <div class="rise" style="max-width: 720px;">
+      <div class="wrap svc__grid svc__grid--card">
+        <div class="rise">
           <h2 id="ei-h">EICRs in Leeds, from {fmt(svc.eicr.from)}</h2>
           <p>
             Legally required for rented homes in England every five years. You
@@ -132,15 +140,19 @@ const catalog = {
             and a fixed price to put it right, not a scare list. Landlords with
             more than one property: ask about batch pricing. <!-- TEMP price -->
           </p>
-          <p class="svc__meta">2 to 4 hours depending on circuits</p>
-          <a class="btn btn--call" href={`tel:${tel}`}>Call Eddie</a>
         </div>
+        <aside class="svc__card rise" style="--i:1" aria-label="EICR price and booking">
+          <span class="svc__card-label">From</span>
+          <strong class="svc__card-price">{fmt(svc.eicr.from)}</strong>
+          <span class="svc__card-time">2 to 4 hours depending on circuits, report same week</span>
+          <a class="btn btn--call" href={`tel:${tel}`}>Call Eddie</a>
+        </aside>
       </div>
     </section>
 
     <section id="fault" class="section svc" aria-labelledby="ff-h">
-      <div class="wrap">
-        <div class="rise" style="max-width: 720px;">
+      <div class="wrap svc__grid svc__grid--card">
+        <div class="rise">
           <h2 id="ff-h">Electrical fault finding, from {fmt(svc.fault.from)}</h2>
           <p>
             Tripping RCDs, dead sockets, lights that flicker when the shower
@@ -148,22 +160,32 @@ const catalog = {
             finding and the fix instead of a pile of parts you never needed.
             The invoice tells you which was which. <!-- TEMP price -->
           </p>
-          <a class="btn btn--call" href={`tel:${tel}`}>Call Eddie</a>
         </div>
+        <aside class="svc__card rise" style="--i:1" aria-label="Fault finding price and booking">
+          <span class="svc__card-label">From</span>
+          <strong class="svc__card-price">{fmt(svc.fault.from)}</strong>
+          <span class="svc__card-time">Most faults found the same visit</span>
+          <a class="btn btn--call" href={`tel:${tel}`}>Call Eddie</a>
+        </aside>
       </div>
     </section>
 
     <section id="lighting" class="section svc" aria-labelledby="lt-h">
-      <div class="wrap">
-        <div class="rise" style="max-width: 720px;">
+      <div class="wrap svc__grid svc__grid--card">
+        <div class="rise">
           <h2 id="lt-h">Lighting, indoors and out, from {fmt(svc.lighting.from)}</h2>
           <p>
             Kitchen downlights that do not dazzle, garden lighting that
             survives a Leeds winter, dimming that works with LEDs instead of
             buzzing at them. <!-- TEMP price -->
           </p>
-          <a class="btn btn--quote" href="/#quote">Get a quote</a>
         </div>
+        <aside class="svc__card rise" style="--i:1" aria-label="Lighting price and booking">
+          <span class="svc__card-label">From</span>
+          <strong class="svc__card-price">{fmt(svc.lighting.from)}</strong>
+          <span class="svc__card-time">Priced per room or per garden, in writing</span>
+          <a class="btn btn--quote" href="/#quote">Get a quote</a>
+        </aside>
       </div>
     </section>
   </div>
@@ -192,4 +214,26 @@ const catalog = {
   .svc__meta { font-size: var(--t-small); color: var(--ink-soft); margin-block: 12px 18px; }
   .svc h2 { max-width: 22ch; }
   .svc p { margin-top: var(--s-2); }
+
+  /* Image-less services carry a job card instead: price, time, one action. */
+  .svc__grid--card { align-items: start; }
+  @media (min-width: 900px) { .svc__grid--card { grid-template-columns: 7fr 4fr; } }
+  .svc__card {
+    background: var(--surface);
+    border: 1px solid var(--edge);
+    border-radius: var(--r-box);
+    padding: 26px;
+    display: grid; gap: 5px; justify-items: start;
+  }
+  .svc__card-label {
+    font: 700 var(--t-label) var(--font-body);
+    letter-spacing: .1em; text-transform: uppercase;
+    color: var(--ink-soft);
+  }
+  .svc__card-price {
+    font: 700 2.5rem var(--font-display);
+    letter-spacing: -.02em; line-height: 1;
+  }
+  .svc__card-time { font-size: var(--t-small); color: var(--ink-soft); }
+  .svc__card .btn { margin-top: 14px; }
 </style>

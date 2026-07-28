@@ -17,6 +17,12 @@ export const client = {
   county: 'West Yorkshire',
   areas: ['Leeds', 'Horsforth', 'Headingley', 'Pudsey', 'Morley', 'Wetherby', 'Otley', 'Garforth'],
   geo: { lat: 53.79648, lng: -1.54785 },
+  address: {
+    street: '14 Kirkstall Road',                 // TEMP
+    locality: 'Leeds',
+    region: 'West Yorkshire',
+    postcode: 'LS3 1LX',                         // TEMP
+  },
 
   phone: '0113 496 0620',                      // TEMP — Ofcom drama range, safe placeholder
   email: 'hello@eselec.co.uk',                 // TEMP
@@ -50,6 +56,10 @@ export const client = {
     primary: 'call',
     considered: 'quote-form',                  // solar / EV / rewire path
     stickyMobileCallBar: true,
+    // Where the quote form POSTs at go-live (Formspree/Basin/host handler).
+    // Empty string = demo mode: the form composes an email to client.email
+    // instead, so an enquiry is never silently lost.  // TEMP
+    formEndpoint: '',
   },
 
   social: { instagram: '', facebook: '' },     // TEMP — empty renders nothing, not a blank

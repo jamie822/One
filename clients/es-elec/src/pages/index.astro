@@ -28,7 +28,9 @@ seed n/a: direction pinned by founder brief, not rolled. -->
   title="Electrician in Leeds | Rewires, EV & Solar | ES Elec"
   description={`NICEIC registered electrician in Leeds. Rewires, fuse boards, EICRs, EV chargers and solar, priced before work starts. Call Eddie on ${client.phone}.`}
   current="/"
-  preloadImage="/img/van-dusk.webp"
+  preloadImage="/img/van-dusk-1080.webp"
+  preloadSrcset="/img/van-dusk-720.webp 720w, /img/van-dusk-1080.webp 1080w"
+  preloadSizes="(min-width: 980px) 470px, 92vw"
 >
   <section class="hero">
     <div class="wrap hero__grid">
@@ -48,8 +50,11 @@ seed n/a: direction pinned by founder brief, not rolled. -->
       </div>
       <figure class="hero__photo">
         <img
-          src="/img/van-dusk.webp" alt="Work van at dusk on a street of red brick terraces in Leeds"
-          width="1600" height="900" fetchpriority="high"
+          src="/img/van-dusk-1080.webp"
+          srcset="/img/van-dusk-720.webp 720w, /img/van-dusk-1080.webp 1080w"
+          sizes="(min-width: 980px) 470px, 92vw"
+          alt="Work van at dusk on a street of red brick terraces in Leeds"
+          width="1080" height="603" fetchpriority="high"
         />
         <figcaption>Out across Leeds, {client.hours}. <!-- TEMP image: generated placeholder --></figcaption>
       </figure>
@@ -84,7 +89,7 @@ seed n/a: direction pinned by founder brief, not rolled. -->
         <div class="work__grid">
           <a class="work__cell work__cell--lead rise" style="--i:0" href="/services/#solar">
             <span class="work__img">
-              <img src="/img/solar-dusk.webp" alt="" width="800" height="450" loading="lazy" />
+              <img src="/img/solar-dusk-1100.webp" alt="" width="800" height="450" loading="lazy" />
             </span>
             <span class="work__body">
               <h3>Solar and battery</h3>
@@ -112,12 +117,12 @@ seed n/a: direction pinned by founder brief, not rolled. -->
             <p>Booked this week, report in plain English.</p>
             <span class="from">From {fmt(svc.eicr.from)}</span>
           </a>
-          <a class="work__cell rise" style="--i:5" href="/services/#fault">
+          <a class="work__cell work__cell--wide rise" style="--i:5" href="/services/#fault">
             <h3>Fault finding</h3>
             <p>Traced with test gear, fixed the same visit where parts allow.</p>
             <span class="from">From {fmt(svc.fault.from)}</span>
           </a>
-          <a class="work__cell rise" style="--i:6" href="/services/#lighting">
+          <a class="work__cell work__cell--wide rise" style="--i:6" href="/services/#lighting">
             <h3>Lighting</h3>
             <p>Design and fitting, indoors and out.</p>
             <span class="from">From {fmt(svc.lighting.from)}</span>
@@ -161,7 +166,7 @@ seed n/a: direction pinned by founder brief, not rolled. -->
           <h2 id="rev-h" class="rise">Word for word</h2>
           <div class="reviews__grid">
             <article class="review review--lead rise">
-              <p class="stars" aria-label="Five stars">
+              <p class="stars" role="img" aria-label="Five stars">
                 {stars.map(() => (
                   <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2l2.9 6.6 7.1.7-5.4 4.8 1.6 7L12 17.5 5.8 21l1.6-7L2 9.3l7.1-.7z"/></svg>
                 ))}
@@ -202,7 +207,7 @@ seed n/a: direction pinned by founder brief, not rolled. -->
           <h2 id="solar-h" class="rise">Thinking about solar? Do the maths first.</h2>
           <div class="solar__grid">
             <figure class="solar__photo rise">
-              <img src="/img/solar-dusk.webp" alt="Solar panels on a red brick semi at golden hour" width="1600" height="900" loading="lazy" />
+              <img src="/img/solar-dusk-1100.webp" alt="Solar panels on a red brick semi at golden hour" width="1600" height="900" loading="lazy" />
             </figure>
             <div class="rise" style="--i:1">
               <p>
@@ -235,7 +240,7 @@ seed n/a: direction pinned by founder brief, not rolled. -->
       <div class="wrap">
         <h2 id="contact-h" class="rise">Ring now, or get a written price by tomorrow.</h2>
         <div class="contact__grid">
-          <div class="rise">
+          <div class="rise contact__info">
             <a class="contact__tel" href={`tel:${tel}`}>{client.phone}</a>
             <p class="contact__hours">
               {client.hours}. Out of hours, leave a message and I call back
@@ -247,7 +252,15 @@ seed n/a: direction pinned by founder brief, not rolled. -->
               <li>{client.guarantee} and {client.liabilityCover} behind every job <!-- TEMP --></li>
             </ul>
           </div>
-          <form class="rise" style="--i:1" method="post" action="/enquiry" data-quote>
+          <form
+            class="rise"
+            style="--i:1"
+            method={client.conversion.formEndpoint ? 'post' : 'get'}
+            action={client.conversion.formEndpoint || `mailto:${client.email}`}
+            data-quote
+            data-endpoint={client.conversion.formEndpoint}
+            data-email={client.email}
+          >
             <div class="field">
               <label for="q-name">Name</label>
               <input id="q-name" name="name" autocomplete="name" required />
@@ -269,8 +282,35 @@ seed n/a: direction pinned by founder brief, not rolled. -->
               <p class="err">A sentence is plenty.</p>
             </div>
             <button class="btn btn--call" type="submit">Get a quote</button>
-            <p class="confirm">You will hear from me within one working hour, Mon to Sat. <!-- TEMP promise --></p>
+            <p class="confirm" data-confirm>You will hear from me within one working hour, Mon to Sat. <!-- TEMP promise --></p>
           </form>
+          <script is:inline>
+            // Quote form. With a real endpoint it POSTs there; in demo mode it
+            // composes an email instead, so nothing typed here ever vanishes.
+            (function () {
+              var form = document.querySelector('[data-quote]');
+              if (!form) return;
+              form.setAttribute('novalidate', '');
+              form.addEventListener('submit', function (e) {
+                var bad = false;
+                form.querySelectorAll('.field').forEach(function (f) {
+                  var input = f.querySelector('input, textarea');
+                  if (input && !input.value.trim()) { f.setAttribute('data-bad', ''); bad = true; }
+                  else f.removeAttribute('data-bad');
+                });
+                if (bad) { e.preventDefault(); form.querySelector('[data-bad] input, [data-bad] textarea').focus(); return; }
+                if (form.dataset.endpoint) return; // real handler takes it from here
+                e.preventDefault();
+                var v = function (n) { return form.querySelector('[name=' + n + ']').value.trim(); };
+                var subject = 'Quote request from ' + v('name') + ' (' + v('postcode') + ')';
+                var body = 'Name: ' + v('name') + '\nPhone: ' + v('phone') + '\nPostcode: ' + v('postcode') + '\n\nJob:\n' + v('job');
+                var confirm = form.querySelector('[data-confirm]');
+                if (confirm) confirm.textContent = 'Your email app should open with everything filled in. If it does not, ring me instead.';
+                window.location.href = 'mailto:' + form.dataset.email +
+                  '?subject=' + encodeURIComponent(subject) + '&body=' + encodeURIComponent(body);
+              });
+            })();
+          </script>
         </div>
       </div>
     </section>

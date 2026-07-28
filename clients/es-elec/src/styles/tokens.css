@@ -19,7 +19,7 @@
   --ink-paper-2:  #5d5546;   /* supporting type on paper */
   --amber-300:    #ffb24d;   /* highlight amber          */
   --amber-500:    #ff9e1f;   /* filament: conversion only */
-  --amber-700:    #b36a00;   /* amber that passes AA on paper */
+  --amber-700:    #a05f00;   /* amber that passes AA on paper, 5.0:1 on paper-50 */
 
   /* ---- Layer 2: semantic ---------------------------------------------- */
   --ground:      var(--tungsten-950);

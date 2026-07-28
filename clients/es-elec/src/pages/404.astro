@@ -1,0 +1,30 @@
+---
+// Branded 404: same world, one job — get the visitor back on a path that
+// converts. Noindexed via the page being an error response at host level.
+import Base from '../layouts/Base.astro';
+import { client } from '../data/client.js';
+const tel = client.phone.replace(/\s/g, '');
+---
+<Base
+  title="Page not found | ES Elec"
+  description="That page is not here, but the electrician is. Call ES Elec in Leeds or head back to the homepage."
+  current=""
+>
+  <section class="section">
+    <div class="wrap">
+      <p class="kicker">404</p>
+      <h1 style="margin-top: var(--s-2); max-width: 16ch;">Wrong turn. Happens to the best of us.</h1>
+      <p class="hero__sub" style="margin-top: var(--s-3);">
+        That page is not here. If you were after a price or a booking, the
+        quickest route is still the phone.
+      </p>
+      <div class="hero__acts">
+        <a class="btn btn--call" href={`tel:${tel}`}>Call Eddie</a>
+        <a class="btn btn--quote" href="/#quote">Get a quote</a>
+      </div>
+      <p style="margin-top: var(--s-4); font-size: var(--t-small); color: var(--ink-soft);">
+        Or start again at the <a href="/" style="color: var(--ink);">homepage</a>.
+      </p>
+    </div>
+  </section>
+</Base>

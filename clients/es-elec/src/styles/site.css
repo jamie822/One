@@ -40,9 +40,64 @@
   white-space: nowrap;
 }
 .nav .btn { min-height: 42px; padding: 9px 20px; font-size: .92rem; }
+.nav__call svg { display: none; }
+
+/* Mobile: links collapse into the menu button; the call pill stays. */
+.nav__menu { display: none; }
 @media (max-width: 860px) {
-  .nav__links, .nav__tel { display: none; }  /* sticky bar carries mobile actions */
+  .nav__links, .nav__tel { display: none; }
+  .nav__menu {
+    display: inline-flex; align-items: center; gap: 8px;
+    margin-left: auto;
+    min-height: 42px; padding: 8px 14px;
+    background: transparent;
+    border: 1.5px solid var(--tungsten-800);
+    border-radius: var(--r-pill);
+    color: var(--ink);
+    font: 700 .88rem var(--font-body);
+    cursor: pointer;
+  }
+  .nav__row { justify-content: space-between; }
+  .nav__brand { margin-right: auto; }
 }
+.nav__menu-bars { display: grid; gap: 4px; width: 15px; }
+.nav__menu-bars i { height: 2px; background: var(--accent); border-radius: 2px; transition: transform 200ms var(--ease-out); }
+.nav__menu[aria-expanded="true"] .nav__menu-bars i:first-child { transform: translateY(3px) rotate(45deg); }
+.nav__menu[aria-expanded="true"] .nav__menu-bars i:last-child { transform: translateY(-3px) rotate(-45deg); }
+
+@media (max-width: 420px) {
+  /* Narrow phones: the call pill becomes a round phone button. */
+  .nav__call { padding: 9px 13px; }
+  .nav__call svg { display: block; }
+  .nav__call span { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); }
+}
+
+.nav__panel {
+  border-top: 1px solid var(--tungsten-800);
+  background: var(--tungsten-900);
+  opacity: 0; transform: translateY(-6px);
+  transition: opacity 200ms var(--ease-out), transform 200ms var(--ease-out);
+}
+.nav__panel[data-open] { opacity: 1; transform: none; }
+.nav__panel ul {
+  list-style: none; margin: 0;
+  padding: 10px var(--s-3) 6px;
+  display: grid;
+}
+.nav__panel ul a {
+  display: block; padding: 13px 2px;
+  font: 600 1.3rem var(--font-display);
+  letter-spacing: -.015em;
+  color: var(--ink); text-decoration: none;
+  border-bottom: 1px solid var(--tungsten-800);
+}
+.nav__panel ul a[aria-current="page"] { color: var(--accent); }
+.nav__panel-tel {
+  display: block; padding: 14px var(--s-3) 18px;
+  font: 700 1.05rem var(--font-body);
+  color: var(--accent); text-decoration: none;
+}
+@media (min-width: 861px) { .nav__panel { display: none; } }
 
 /* The lockup's load-in: the mark faces in from the left and its slots fill
    in sequence, then the wordmark inks. Brand story, told once, in the nav. */
@@ -168,21 +223,21 @@
 @keyframes conduct { from { transform: scaleY(0); } to { transform: scaleY(1); } }
 @media (max-width: 1279px) { .conductor { display: none; } }
 
-/* ---- Section reveals (once, quiet, content only) --------------------------- */
-@supports (animation-timeline: view()) {
-  @media (prefers-reduced-motion: no-preference) {
-    .rise {
-      animation: rise .01s var(--ease-out) both;
-      animation-timeline: view();
-      animation-range: entry 4% entry 34%;
-    }
-    @keyframes rise {
-      from { opacity: 0; transform: translateY(22px); }
-      to   { opacity: 1; transform: none; }
-    }
-    /* Wave stagger for grids: each cell names its own index. */
-    .rise[style*="--i"] { animation-range: entry calc(4% + var(--i) * 2.2%) entry calc(34% + var(--i) * 2.2%); }
+/* ---- Section reveals (fire once, then stay) --------------------------------
+   IntersectionObserver adds .is-in the first time a .rise enters the viewport;
+   it never re-fires, so text is never half-faded while being read, nothing
+   replays on the way back up, and print/full-page renders stay intact.
+   Hidden state only exists when JS has stamped html.js. */
+@media (prefers-reduced-motion: no-preference) {
+  html.js .rise {
+    opacity: 0; transform: translateY(22px);
+    transition: opacity .55s var(--ease-out), transform .55s var(--ease-out);
+    transition-delay: calc(var(--i, 0) * 90ms);
   }
+  html.js .rise.is-in { opacity: 1; transform: none; }
+}
+@media print {
+  html.js .rise { opacity: 1 !important; transform: none !important; }
 }
 
 /* ---- Services teaser: asymmetric bento, exactly seven cells ---------------- */
@@ -192,9 +247,11 @@
   grid-template-columns: repeat(2, 1fr);
   margin-top: var(--s-4);
 }
+.work__cell--lead { grid-column: span 2; }  /* full-width on mobile, no orphan cell */
 @media (min-width: 900px) {
   .work__grid { grid-template-columns: repeat(4, 1fr); }
-  .work__cell--lead { grid-column: span 2; grid-row: span 2; }
+  .work__cell--lead { grid-row: span 2; }
+  .work__cell--wide { grid-column: span 2; }  /* fault + lighting close the last row */
 }
 .work__cell {
   position: relative;
@@ -242,9 +299,9 @@
 
 /* ---- Reviews: one lead pull-quote, two supporting ---------------------------- */
 .reviews__grid { display: grid; gap: var(--s-4); margin-top: var(--s-4); }
+.reviews__side { display: grid; gap: var(--s-3); align-content: start; }
 @media (min-width: 900px) {
   .reviews__grid { grid-template-columns: 6fr 5fr; }
-  .reviews__side { display: grid; gap: var(--s-3); align-content: start; }
 }
 .review { border-left: 2px solid var(--edge); padding-left: 20px; }
 .review--lead { border-left: none; padding-left: 0; }
@@ -295,9 +352,11 @@
 }
 .contact__tel:hover { color: var(--amber-300); }
 .contact__hours { margin-top: var(--s-2); color: var(--ink-soft); }
+.contact__info { display: flex; flex-direction: column; }
 .contact__facts {
   list-style: none; padding: 0;
-  margin-top: var(--s-4);
+  margin-top: auto;               /* pins to the form's baseline on desktop */
+  padding-top: var(--s-4);
   display: grid; gap: 12px;
   font-size: var(--t-small); color: var(--ink-soft);
   max-width: 42ch;
@@ -333,16 +392,20 @@
 .footer__grid { display: grid; gap: var(--s-4); }
 @media (min-width: 860px) { .footer__grid { grid-template-columns: 2fr 1fr 1fr; } }
 .footer h2 { font-size: 1.1rem; }
-.footer ul { list-style: none; padding: 0; display: grid; gap: 8px; }
-.footer a { color: var(--ink-soft); text-decoration: none; font-size: var(--t-small); }
+.footer ul { list-style: none; padding: 0; display: grid; gap: 2px; }
+.footer a {
+  color: var(--ink-soft); text-decoration: none; font-size: var(--t-small);
+  display: inline-block; padding-block: 6px;   /* WCAG 2.2 target size */
+}
 .footer a:hover { color: var(--ink); }
 .footer__meta { margin-top: var(--s-4); padding-top: var(--s-3); border-top: 1px solid var(--tungsten-800);
   font-size: var(--t-small); color: var(--ink-soft); display: flex; flex-wrap: wrap; gap: 8px 24px; }
 @media (max-width: 860px) { .footer { padding-bottom: calc(var(--s-5) + 64px); } }
 
 /* ---- Article pages (blog) ----------------------------------------------------------- */
-.article { padding-block: var(--s-5); }
-.article__head { max-width: 720px; margin-bottom: var(--s-4); }
+.article { padding-block: var(--s-5); max-width: 760px; margin-inline: auto; }
+.article__head { margin-bottom: var(--s-4); }
+.article__head h1 { font-size: clamp(2rem, 3.6vw, 3.3rem); }
 .article__meta { color: var(--ink-soft); font-size: var(--t-small); margin-top: var(--s-2); }
 .article__body { max-width: 68ch; display: grid; gap: var(--s-3); }
 .article__body h2 { font-size: 1.5rem; margin-top: var(--s-3); }
