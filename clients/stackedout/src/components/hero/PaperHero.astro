@@ -1,0 +1,110 @@
+---
+// PAPER HERO — the photographic wall calendar.
+//
+// This replaces the CSS calendar as the hero. Not because the CSS one was wrong,
+// but because of what it could never do: a flat plane has one surface normal, so
+// it catches light evenly and paper stops reading as paper. Four attempts at a
+// corner peel in CSS proved that, and the fifth only worked by shading a canvas
+// mesh by hand. Film of real paper has the light for free.
+//
+// The turn is a 5 second clip generated through the Higgsfield MCP from an
+// approved still, which is their own grounded pipeline: check the composition as
+// a frame first, then animate that exact frame, so the motion cannot wander off
+// into a different photograph. Brief was explicit about the things that were
+// wrong before — bottom right corner first, slow, no hands, no camera move, and
+// no text on the paper at any point.
+//
+// NO TEXT ON THE PAPER IS DELIBERATE, TWICE OVER. Generated video cannot spell,
+// so asking for dates would have produced garbled glyphs. It also means the only
+// type in the hero is real DOM type, which is selectable, translatable, and
+// crisp at any density. The printed grid is empty on purpose and the wordmark
+// sits on it.
+//
+// THE WORDMARK. Two stacked copies of the same word. The first inks in from left
+// to right in white. The second is the brand gradient, revealed by the same left
+// to right sweep a beat later, so the colour arrives across the word in the same
+// direction the word did. That is the signature gradient for this page and there
+// is no second one.
+//
+// The h1 is NOT in here. It sits outside the stage as normal document text,
+// because it is the LCP element and the rule is that the LCP element is never
+// animated.
+//
+// WITHOUT JAVASCRIPT, OR UNDER REDUCED MOTION, the poster frame is the hero and
+// the film never starts. The poster is the approved still, so the fallback is
+// the composition that was signed off rather than a blank box.
+import { studio } from '../../data/studio.js';
+---
+<div class="ph" data-paper-hero>
+  <div class="ph__stage">
+    {/* aria-hidden: it is a photograph of paper carrying no information the copy
+        below does not already state, and a screen reader announcing a video
+        element here would only get in the way. */}
+    <video
+      class="ph__film"
+      poster="/img/hero-calendar.webp"
+      width="1344" height="576"
+      muted playsinline preload="auto"
+      aria-hidden="true" tabindex="-1"
+    >
+      <source src="/video/hero-turn.mp4" type="video/mp4" />
+    </video>
+
+    <p class="ph__word" aria-label={studio.name}>
+      {/* Two copies, one accessible name. The ink layer is what a reader sees
+          first; the gradient layer arrives over it. */}
+      <span class="ph__ink" aria-hidden="true">Stacked&nbsp;Out</span>
+      <span class="ph__grad" aria-hidden="true">Stacked&nbsp;Out</span>
+    </p>
+
+    <p class="ph__strap">Web design for electricians and solar installers</p>
+  </div>
+</div>
+
+<script is:inline>
+  // Small enough to stay inline: it decides whether the film runs at all, and
+  // that decision has to be made before the first frame either way.
+  (function () {
+    var host = document.querySelector('[data-paper-hero]');
+    if (!host) return;
+    var film = host.querySelector('.ph__film');
+    if (!film) return;
+
+    var still = window.matchMedia('(prefers-reduced-motion: reduce)');
+
+    function play() {
+      // The poster is already the settled composition, so a failed play is not a
+      // broken hero — it is the same hero, still.
+      var p = film.play();
+      if (p && p.catch) p.catch(function () {});
+    }
+
+    function arm() {
+      if (still.matches) return;
+      host.classList.add('ph--live');
+      // Wait until it can actually run start to finish. Starting a 5 second turn
+      // and stalling halfway through is worse than starting it a beat late.
+      if (film.readyState >= 3) play();
+      else film.addEventListener('canplaythrough', play, { once: true });
+    }
+
+    // Only when it is on screen. A hero is on screen at load, but this also
+    // covers a reload part way down the page, where autoplaying a turn nobody
+    // can see wastes the one time it happens.
+    if ('IntersectionObserver' in window) {
+      var io = new IntersectionObserver(function (entries) {
+        entries.forEach(function (e) {
+          if (e.isIntersecting) { io.disconnect(); arm(); }
+        });
+      }, { threshold: 0.25 });
+      io.observe(host);
+    } else {
+      arm();
+    }
+
+    // Someone turning reduced motion on mid session should not be mid turn.
+    still.addEventListener('change', function () {
+      if (still.matches) { film.pause(); host.classList.remove('ph--live'); }
+    });
+  })();
+</script>

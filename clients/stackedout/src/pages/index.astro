@@ -24,8 +24,10 @@
 // and no client screenshots, because we do not have either and inventing them is
 // the one thing the brand guide rules out absolutely.
 import Site from '../layouts/Site.astro';
+import PaperHero from '../components/hero/PaperHero.astro';
 import WallCalendar from '../components/hero/WallCalendar.astro';
 import { studio } from '../data/studio.js';
+import '../styles/paper-hero.css';
 import '../styles/wall-calendar.css';
 
 const mailto = `mailto:${studio.contact.email}`;
@@ -57,9 +59,9 @@ const steps = [
   title="Websites for electricians and solar installers. Stacked Out"
   blurb="Websites built for electricians and solar installers by a spark with 25 years on the tools."
 >
-  <!-- 1. HERO. Split: the calendar carries the left, the copy the right. -->
+  <!-- 1. HERO. The film, then the copy underneath it. -->
   <section class="wcp">
-    <WallCalendar />
+    <PaperHero />
 
     <div class="wcp__copy">
       <div>
@@ -78,10 +80,28 @@ const steps = [
         <a class="btn btn--action" href={mailto}>Book yours in</a>
         <p class="wcp__mail">{studio.contact.email}</p>
         <p class="wcp__note">
-          The calendar is illustrative. Real job types, not a record of bookings.
+          The paper is a photograph. The diary underneath it is real markup.
         </p>
       </div>
     </div>
+  </section>
+
+  <!-- 1b. THE DIARY. A deviation from guide §7's order, and a deliberate one.
+       The film sells the feeling and its printed grid is deliberately empty,
+       because generated video cannot spell and asking it for dates produces
+       garbled glyphs. So the claim the whole brand is built on — the diary is
+       stacked out and there is one slot left — has to be stated somewhere it can
+       actually be read. This is that place, and it is the mark unrolled: a real
+       month, every day carrying a real job type, and one Friday ringed. It reads
+       as the hero's second beat rather than a section of its own, which is why it
+       has no heading. -->
+  <section class="diaryband">
+    <WallCalendar />
+    <p class="diaryband__note shell">
+      Illustrative. Real job types and a real August, not a record of bookings.
+      The ringed day is the point: five booked, one free, and that is the mark on
+      every page of this site.
+    </p>
   </section>
 
   <!-- 2. THE WORK. Asymmetric two cell grid, 7fr and 5fr. -->
@@ -266,16 +286,14 @@ const steps = [
     </div>
   </section>
 
-  <!-- The one signature gradient on the page: the brand's yellow to cyan as real
-       light on a near black field, full bleed, running into the contact band.
-       Decorative, so it is empty alt and hidden from the accessibility tree. -->
-  <div class="trail" role="presentation">
-    <img
-      src="/img/current-trail.webp"
-      width="1800" height="764"
-      loading="lazy" decoding="async" alt=""
-    />
-  </div>
+  {/* The current trail photograph used to run full bleed here, the brand's yellow
+      to cyan as real light. It has come out, and the reason is a rule rather than
+      taste: one signature gradient per page, and the hero wordmark now takes it.
+      The founder asked twice for the colour to wash across the wordmark left to
+      right, so that is where the signature belongs, and a second yellow to cyan
+      moment further down the same page is the breach the guide names outright.
+      The asset stays in the repo: it is the right transition for a client build
+      whose hero does not already spend the gradient. */}
 
   <!-- 6. ONE WAY TO GET IN TOUCH. Full bleed band. Guide §7: "Not four." -->
   <section class="contact" id="contact">

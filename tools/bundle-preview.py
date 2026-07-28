@@ -148,6 +148,11 @@ MIME = {
     '.webp': 'image/webp', '.png': 'image/png', '.jpg': 'image/jpeg',
     '.jpeg': 'image/jpeg', '.svg': 'image/svg+xml', '.avif': 'image/avif',
     '.gif': 'image/gif', '.ico': 'image/x-icon',
+    # Video too. A hero that is a film is the whole point of the page it is on, and
+    # a root relative <source src="/video/…"> 404s out of a single published file
+    # exactly like an image does — leaving the poster frame up and the motion gone,
+    # which is the specific way this preview has already lied once.
+    '.mp4': 'video/mp4', '.webm': 'video/webm',
 }
 
 def inline_images(markup):

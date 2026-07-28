@@ -286,7 +286,18 @@
   .who__media img { max-height: 52vh; object-fit: cover; }
 }
 
-/* ---- The signature gradient, full bleed ---------------------------------- */
+/* ---- The diary band ------------------------------------------------------ */
+/* The CSS calendar, demoted from hero to the hero's second beat. It keeps its own
+   stylesheet; all this does is give it room and a caption. */
+.diaryband { padding-block: var(--s-5) var(--s-6); border-top: 1px solid var(--edge); }
+.diaryband__note {
+  margin-top: var(--s-3);
+  font-size: var(--t-label);
+  color: var(--ink-muted);
+  max-width: 78ch;
+}
+
+/* ---- Kept for client builds, not used on this page ----------------------- */
 /* Not a section: a transition. Full bleed on purpose, so the light runs edge to
    edge and reads as one continuous conductor rather than a picture in a frame. */
 .trail {

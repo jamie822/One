@@ -1,0 +1,171 @@
+/* PAPER HERO — the photographic calendar, and the type that sits on it.
+
+   Everything here is transform, opacity or background-position: nothing animates
+   a property that costs layout. The film itself is the only heavy thing on the
+   page and it is one element.
+
+   The wordmark timings are keyed off the clip, not chosen for feel. The turn
+   starts at about 0.6s and the second sheet is settled by about 3.4s, so the word
+   inks in over the settled sheet at the end rather than over paper that is
+   moving underneath it. */
+
+.ph {
+  --film-ar: 1344 / 576;
+  /* Word timings, taken off the delivered clip rather than guessed. Measured on
+     frames: the corner is lifting by 1.1s, the sheet is rolled and clear of the
+     page by 1.8s, and the sheet underneath is settled from about 2.4s. The clip
+     is trimmed to 3.4s. So the word inks in over settled paper, and the colour
+     lands as the film holds on its last frame. */
+  --t-ink: 2.5s;
+  --t-wash: 3.15s;
+  --d-ink: 1.15s;
+  --d-wash: 1.05s;
+
+  position: relative;
+  width: min(100% - 2 * var(--s-3), 1560px);
+  margin-inline: auto;
+}
+
+.ph__stage {
+  position: relative;
+  isolation: isolate;
+  border-radius: var(--r-card);
+  overflow: hidden;
+  /* The paper is the lit subject on a near black page, so the frame needs a lip
+     rather than a border: a hairline at the top where the wall meets the crop. */
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, .07);
+}
+
+/* A scrim under the masthead, and it is doing legibility work rather than styling.
+   The light in the photograph rakes from the left, so the top left of the sheet is
+   the BRIGHTEST part of the frame, which is exactly where a masthead belongs and
+   exactly where yellow type disappears. Measured on the poster: the wordmark's
+   yellow stop sat on paper lighter than the type. A soft radial darkening puts a
+   printed header band under the type without drawing a box, which is what these
+   calendars have anyway, and both brand stops read against it. */
+.ph__stage::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  background: radial-gradient(64% 46% at 7% 20%, rgba(5, 7, 10, .74), rgba(5, 7, 10, 0) 70%);
+}
+
+.ph__film {
+  display: block;
+  width: 100%;
+  height: auto;
+  aspect-ratio: var(--film-ar);
+  object-fit: cover;
+  /* Belt and braces against the one frame of flash some browsers show between
+     poster and first decoded frame on a dark video. */
+  background: var(--ground);
+}
+
+/* ---- The wordmark ------------------------------------------------------- */
+/* Sits on the paper, upper left, where the masthead of a real wall calendar is.
+   Percentages rather than a fixed offset so it stays on the same part of the
+   photograph at every width. */
+.ph__word {
+  position: absolute;
+  left: 4.6%;
+  /* Below the wire, on the sheet. At 7.5% the wordmark was printed across the twin
+     loop binding, which reads as a sticker on the spiral rather than as ink on the
+     page. */
+  top: 17%;
+  margin: 0;
+  z-index: 2;
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: clamp(22px, 3.4vw, 62px);
+  line-height: 1;
+  letter-spacing: -.03em;
+  /* Clash draws a narrow word space and the guide forbids "StackedOut". */
+  word-spacing: .12em;
+  /* The two copies stack, so the element is sized by the first and the second is
+     laid over it exactly. */
+  display: grid;
+}
+
+.ph__word > span {
+  grid-area: 1 / 1;
+  /* Both layers are revealed by the same device: a hard edged gradient used as a
+     text clip, slid from right to left across a 220% wide background. Identical
+     geometry means identical sweep, which is the whole point — the colour has to
+     arrive across the word in the direction the word did. */
+  background-size: 220% 100%;
+  background-repeat: no-repeat;
+  background-position: 100% 0;
+  -webkit-background-clip: text;
+          background-clip: text;
+  color: transparent;
+}
+
+.ph__ink  { background-image: linear-gradient(100deg, var(--ink) 0 50%, transparent 50%); }
+/* THE one signature gradient on this page. Two stops, the brand's own, and the
+   same 100deg the ink sweep uses so the two edges travel in parallel. */
+.ph__grad { background-image: linear-gradient(100deg, #ffdd33 0 24%, #3fe3ff 42% 50%, transparent 50%); }
+
+.ph__strap {
+  position: absolute;
+  left: 4.8%;
+  top: calc(17% + clamp(30px, 4.6vw, 82px));
+  margin: 0;
+  z-index: 2;
+  max-width: 46%;
+  font-size: clamp(9px, .72vw, 12.5px);
+  font-weight: 500;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  /* Light, not dark: it now sits inside the scrim above, so the ground under it is
+     the darkened band rather than the lit paper. */
+  color: rgba(245, 246, 248, .72);
+  opacity: 0;
+}
+
+/* Nothing moves until the script says the film is running. Without JavaScript
+   the poster is the hero and the word is simply there, fully inked, which is
+   what .ph:not(.ph--live) below settles. */
+.ph:not(.ph--live) .ph__ink,
+.ph:not(.ph--live) .ph__grad { background-position: 0 0; }
+.ph:not(.ph--live) .ph__strap { opacity: 1; }
+
+.ph--live .ph__ink {
+  animation: ph-sweep var(--d-ink) var(--ease-enter) var(--t-ink) both;
+}
+.ph--live .ph__grad {
+  animation: ph-sweep var(--d-wash) var(--ease-enter) var(--t-wash) both;
+}
+.ph--live .ph__strap {
+  animation: ph-fade .7s var(--ease-ui) calc(var(--t-ink) + .55s) both;
+}
+
+@keyframes ph-sweep { from { background-position: 100% 0; } to { background-position: 0 0; } }
+@keyframes ph-fade  { from { opacity: 0; } to { opacity: 1; } }
+
+/* ---- Phone -------------------------------------------------------------- */
+@media (max-width: 720px) {
+  .ph {
+    /* 21:9 at 390px is 167px tall and stops reading as a calendar at all. Crop to
+       a portrait-ish window and take it from just below the top, so the binding
+       and the head of the grid are what survive the crop. */
+    --film-ar: 5 / 4;
+  }
+  .ph__film { object-position: 50% 26%; }
+  .ph__word { left: 6%; top: 13%; font-size: clamp(24px, 8.4vw, 40px); }
+  .ph__strap {
+    left: 6.2%;
+    top: calc(13% + clamp(30px, 10vw, 46px));
+    max-width: 62%;
+    font-size: 9.5px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  /* The script never adds ph--live under reduced motion, so these are a guard
+     rather than a repair: if the class arrives some other way, the word is still
+     just there. */
+  .ph__ink, .ph__grad { animation: none; background-position: 0 0; }
+  .ph__strap { animation: none; opacity: 1; }
+}
