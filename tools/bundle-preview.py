@@ -96,11 +96,38 @@ def inline_fonts(sheet):
 
 css = inline_fonts(css)
 
+# Same problem as the fonts, and it was silently shipping broken previews: an
+# <img src="/img/…"> is same-origin in the real build, but in a single published
+# file that root-relative path resolves against the artifact host and 404s, so
+# every photograph on the page came out as an empty box. The site looked worse in
+# preview than it does in the build, which is the one thing a preview must never
+# do. Raster and SVG both, keyed off the real extension so the data URI carries
+# the right MIME type.
+MIME = {
+    '.webp': 'image/webp', '.png': 'image/png', '.jpg': 'image/jpeg',
+    '.jpeg': 'image/jpeg', '.svg': 'image/svg+xml', '.avif': 'image/avif',
+    '.gif': 'image/gif', '.ico': 'image/x-icon',
+}
+
+def inline_images(markup):
+    def sub(m):
+        attr, quote, url = m.group(1), m.group(2), m.group(3)
+        f = dist / url.lstrip('/')
+        mime = MIME.get(f.suffix.lower())
+        if not mime or not f.exists():
+            return m.group(0)
+        b64 = base64.b64encode(f.read_bytes()).decode()
+        return f'{attr}={quote}data:{mime};base64,{b64}{quote}'
+    # src and href, and the leading slash is required: a data: or https: URL is
+    # already self-contained and must be left alone.
+    return re.sub(r'\b(src|href)=(["\'])(/[^"\']+)\2', sub, markup)
+
 def body_of(doc):
     m = re.search(r'<body[^>]*>(.*)</body>', doc, re.S)
     inner = m.group(1) if m else doc
     inner = re.sub(r'<script(?![^>]*application/ld\+json).*?</script>', '', inner, flags=re.S)  # drop page scripts
     inner = re.sub(r'<script type="application/ld\+json".*?</script>', '', inner, flags=re.S)
+    inner = inline_images(inner)
     return inner
 
 # Per-page <style> blocks (Astro scoped styles) get hoisted once
