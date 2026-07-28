@@ -129,6 +129,29 @@ const business = {
         }, { rootMargin: '0px 0px -8% 0px' });
         document.querySelectorAll('.rise').forEach(function (el) { io.observe(el); });
 
+        // Count-ups: figures roll to their value the first time they appear.
+        var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+        var cio = new IntersectionObserver(function (entries) {
+          entries.forEach(function (e) {
+            if (!e.isIntersecting) return;
+            cio.unobserve(e.target);
+            var el = e.target;
+            var end = parseFloat(el.dataset.count);
+            var dp = (el.dataset.count.split('.')[1] || '').length;
+            if (reduce) { el.textContent = el.dataset.count; return; }
+            var t0 = null;
+            function step(t) {
+              if (!t0) t0 = t;
+              var p = Math.min((t - t0) / 900, 1);
+              var eased = 1 - Math.pow(1 - p, 3);
+              el.textContent = (end * eased).toFixed(dp);
+              if (p < 1) requestAnimationFrame(step);
+            }
+            requestAnimationFrame(step);
+          });
+        }, { rootMargin: '0px 0px -8% 0px' });
+        document.querySelectorAll('[data-count]').forEach(function (el) { cio.observe(el); });
+
         // The bar waits for intent: one viewport of scroll.
         var bar = document.querySelector('[data-bar]');
         if (!bar) return;

@@ -131,15 +131,137 @@
 @keyframes slot-in { from { opacity: 0; transform: scale(.4); } to { opacity: 1; transform: none; } }
 @keyframes ink-in  { from { background-position: 100% 0; } to { background-position: 0 0; } }
 
-/* ---- Hero ---------------------------------------------------------------- */
+/* ---- Hero: the film ---------------------------------------------------------
+   Full-bleed dusk street that slow-pans, current running the traces, embers
+   drifting up. The content lives in the scrimmed left third; a trust marquee
+   closes the frame. */
 .hero { position: relative; }
-.hero__grid {
-  display: grid; gap: var(--s-4);
-  padding-block: clamp(2.6rem, 6vh, 4.6rem) clamp(2.2rem, 5vh, 3.6rem);
-  align-items: center;
+.hero--film {
+  overflow: hidden;
+  display: flex; flex-direction: column; justify-content: center;
+  min-height: min(92vh, 880px);
+  min-height: min(92svh, 880px);
 }
-@media (min-width: 980px) {
-  .hero__grid { grid-template-columns: 7fr 5fr; }
+.hero__scene { position: absolute; inset: 0; }
+.hero__film {
+  position: absolute; inset: 0;
+  width: 100%; height: 100%; object-fit: cover;
+  transform-origin: 62% 42%;
+}
+@media (prefers-reduced-motion: no-preference) {
+  html.js .hero__film {
+    opacity: 0;
+    animation: film-in 1s ease .15s forwards, kenburns 30s ease-in-out 1s infinite alternate;
+  }
+}
+@keyframes film-in { to { opacity: 1; } }
+@keyframes kenburns {
+  from { transform: scale(1) translateX(0); }
+  to   { transform: scale(1.1) translateX(-2.2%); }
+}
+.hero__scrim {
+  position: absolute; inset: 0;
+  background:
+    linear-gradient(90deg,
+      color-mix(in srgb, var(--tungsten-950) 94%, transparent) 0%,
+      color-mix(in srgb, var(--tungsten-950) 82%, transparent) 34%,
+      color-mix(in srgb, var(--tungsten-950) 38%, transparent) 62%,
+      color-mix(in srgb, var(--tungsten-950) 24%, transparent) 100%),
+    linear-gradient(0deg,
+      color-mix(in srgb, var(--tungsten-950) 92%, transparent) 0%,
+      transparent 26%),
+    linear-gradient(180deg,
+      color-mix(in srgb, var(--tungsten-950) 72%, transparent) 0%,
+      transparent 22%);
+}
+.hero__traces { position: absolute; inset: 0; width: 100%; height: 100%; }
+.hero__traces .trace { stroke: color-mix(in srgb, var(--amber-300) 16%, transparent); stroke-width: 1.5; fill: none; }
+.hero__traces .pulse {
+  stroke: var(--amber-500); stroke-width: 2; fill: none;
+  stroke-linecap: round;
+  stroke-dasharray: 90 1600;
+  filter: drop-shadow(0 0 6px color-mix(in srgb, var(--amber-500) 70%, transparent));
+  opacity: 0;
+}
+@media (prefers-reduced-motion: no-preference) {
+  .hero__traces .pulse { opacity: 1; animation: current 7.5s linear infinite; }
+  .hero__traces .pulse--b { animation-delay: 2.5s; }
+  .hero__traces .pulse--c { animation-delay: 5s; }
+}
+@keyframes current {
+  from { stroke-dashoffset: 1690; }
+  to   { stroke-dashoffset: 0; }
+}
+.hero__embers { position: absolute; inset: 0; width: 100%; height: 100%; }
+
+.hero__inner {
+  position: relative;
+  padding-block: clamp(4rem, 12vh, 7rem) clamp(4.6rem, 13vh, 7.6rem);
+}
+.hero__copy { max-width: 640px; }
+.hero--film h1 {
+  font-size: clamp(2.4rem, 5.8vw, 5.4rem);
+  max-width: 14ch;
+  text-shadow: 0 2px 30px rgba(22, 19, 15, .6);
+}
+.hero__hl {
+  background: linear-gradient(100deg, var(--amber-300), var(--amber-500) 55%, #ffd9a0);
+  -webkit-background-clip: text; background-clip: text;
+  color: transparent;
+}
+
+/* Floating chips: the glass notes pinned over the scene. */
+.hero__chip {
+  position: absolute;
+  display: inline-flex; align-items: center; gap: 8px;
+  padding: 10px 16px;
+  font: 700 var(--t-label) var(--font-body);
+  letter-spacing: .04em;
+  color: var(--ink);
+  background: color-mix(in srgb, var(--tungsten-950) 62%, transparent);
+  border: 1px solid color-mix(in srgb, var(--amber-300) 26%, transparent);
+  border-radius: var(--r-pill);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+}
+.hero__chip svg { color: var(--amber-300); }
+.hero__chip--a { right: 8%; top: 24%; }
+.hero__chip--b { right: 16%; bottom: 20%; }
+@media (prefers-reduced-motion: no-preference) {
+  html.js .hero__chip--a { animation: chip-float 7s ease-in-out infinite alternate; }
+  html.js .hero__chip--b { animation: chip-float 8.5s ease-in-out infinite alternate-reverse; }
+}
+@keyframes chip-float {
+  from { transform: translateY(-7px); }
+  to   { transform: translateY(7px); }
+}
+@media (max-width: 979px) { .hero__chip { display: none; } }
+
+/* The trust marquee closing the frame. */
+.hero__marquee {
+  position: relative;
+  border-top: 1px solid color-mix(in srgb, var(--amber-300) 18%, transparent);
+  overflow: hidden;
+  padding-block: 13px;
+  background: color-mix(in srgb, var(--tungsten-950) 55%, transparent);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+}
+.hero__marquee-track {
+  display: flex; gap: 26px; align-items: center;
+  width: max-content;
+  font: 700 var(--t-label) var(--font-body);
+  letter-spacing: .12em; text-transform: uppercase;
+  color: var(--ink-soft);
+  white-space: nowrap;
+}
+.hero__marquee-track i { color: var(--amber-500); font-style: normal; }
+@media (prefers-reduced-motion: no-preference) {
+  .hero__marquee-track { animation: marquee 36s linear infinite; }
+}
+@keyframes marquee {
+  from { transform: translateX(0); }
+  to   { transform: translateX(-50%); }
 }
 
 /* The kinetic line: six services take turns above the headline. Each word

@@ -78,16 +78,103 @@
 .nav__panel-quote { font: 700 .95rem var(--font-body); color: var(--ink); text-decoration: none; padding-block: 13px; }
 @media (min-width: 881px) { .nav__panel { display: none; } }
 
-/* ---- Hero: headline left, estimator right --------------------------------- */
-.hero__grid {
-  display: grid; gap: var(--s-4);
-  padding-block: clamp(2.4rem, 6vh, 4.4rem) clamp(2rem, 5vh, 3.4rem);
-  align-items: center;
+/* ---- Hero: the film ---------------------------------------------------------
+   Full-bleed golden-hour roof, slow-panning, sun glow breathing, glints
+   sparking off the panels. Copy sits in the pine-scrimmed left; the white
+   estimator floats on the scene as the working instrument. */
+.hero--film {
+  position: relative;
+  overflow: hidden;
+  display: flex; flex-direction: column; justify-content: center;
+  min-height: min(92vh, 880px);
+  min-height: min(92svh, 880px);
 }
-@media (min-width: 1020px) { .hero__grid { grid-template-columns: 6fr 6fr; gap: var(--s-5); } }
-.hero h1 { max-width: 15ch; margin-top: var(--s-2); }
+.hero__scene { position: absolute; inset: 0; }
+.hero__film {
+  position: absolute; inset: 0;
+  width: 100%; height: 100%; object-fit: cover;
+  transform-origin: 40% 35%;
+}
+@media (prefers-reduced-motion: no-preference) {
+  html.js .hero__film { animation: kenburns 32s ease-in-out infinite alternate; animation-delay: .6s; }
+}
+@keyframes kenburns {
+  from { transform: scale(1) translateX(0); }
+  to   { transform: scale(1.1) translateX(2.2%); }
+}
+.hero__scrim {
+  position: absolute; inset: 0;
+  background:
+    linear-gradient(90deg,
+      color-mix(in srgb, var(--pine-900) 90%, transparent) 0%,
+      color-mix(in srgb, var(--pine-900) 72%, transparent) 34%,
+      color-mix(in srgb, var(--pine-900) 30%, transparent) 62%,
+      color-mix(in srgb, var(--pine-900) 22%, transparent) 100%),
+    linear-gradient(0deg,
+      color-mix(in srgb, var(--pine-900) 62%, transparent) 0%,
+      transparent 24%);
+}
+.hero__sunglow {
+  position: absolute;
+  width: 56vw; height: 56vw;
+  right: -12vw; top: -22vw;
+  border-radius: 50%;
+  background: radial-gradient(circle, color-mix(in srgb, var(--sun-500) 34%, transparent), transparent 62%);
+  pointer-events: none;
+}
+@media (prefers-reduced-motion: no-preference) {
+  html.js .hero__sunglow { animation: sun-breathe 9s ease-in-out infinite alternate; }
+}
+@keyframes sun-breathe {
+  from { transform: scale(1); opacity: .8; }
+  to   { transform: scale(1.12); opacity: 1; }
+}
+.hero__glints { position: absolute; inset: 0; width: 100%; height: 100%; }
+
+.hero__inner {
+  position: relative;
+  display: grid; gap: var(--s-4);
+  align-items: center;
+  padding-block: clamp(3rem, 9vh, 5.5rem);
+}
+@media (min-width: 1020px) { .hero__inner { grid-template-columns: 6fr 6fr; gap: var(--s-5); } }
+
+.hero--film .kicker { color: color-mix(in srgb, var(--pine-band-ink) 80%, transparent); }
+.hero--film h1 {
+  font-size: clamp(2.3rem, 5.2vw, 4.6rem);
+  max-width: 15ch; margin-top: var(--s-2);
+  text-shadow: 0 2px 26px color-mix(in srgb, var(--pine-900) 55%, transparent);
+}
+.hero__hl {
+  background-image: linear-gradient(color-mix(in srgb, var(--sun-500) 55%, transparent), color-mix(in srgb, var(--sun-500) 55%, transparent));
+  background-repeat: no-repeat;
+  background-size: 0% 34%;
+  background-position: 0 82%;
+}
+@media (prefers-reduced-motion: no-preference) {
+  html.js .hero__hl { animation: hl-sweep .9s var(--ease-out) .9s forwards; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .hero__hl { background-size: 100% 34%; }
+}
+@keyframes hl-sweep { to { background-size: 100% 34%; } }
+
 .hero__sub { margin-top: var(--s-3); font-size: 1.1rem; font-weight: 300; color: var(--ink-soft); max-width: 46ch; }
 .hero__acts { display: flex; flex-wrap: wrap; gap: 12px; margin-top: var(--s-4); }
+
+/* The instrument stays a white card on the film: reset the pine tokens. */
+.hero--film .est {
+  --surface: var(--day-0);
+  --edge: var(--day-200);
+  --ink: var(--ink-900);
+  --ink-soft: var(--ink-600);
+  --action: var(--pine-900);
+  --on-action: #f6faf5;
+  --ground: var(--day-50);
+  color: var(--ink);   /* re-anchor inheritance: the card is light-on-white */
+  box-shadow: 0 40px 90px -32px rgba(10, 25, 18, .55);
+}
+.hero--film .est .btn--quote:hover { background: var(--pine-700); }
 
 /* ---- The estimator --------------------------------------------------------- */
 .est {

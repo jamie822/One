@@ -35,12 +35,34 @@ FORM: brief-pinned by ledger 2026-07-28, zero shared axes with prior builds. -->
   title="Solar Panel Installation Sheffield | MCS | Loxley Solar"
   description={`MCS-certified solar and battery installer in Sheffield. Systems sized on your actual bills, payback maths in writing before you pay a deposit. Call ${client.phone}.`}
   current="/"
+  preloadImage="/img/solar-dusk.webp"
+  preloadSrcset="/img/solar-dusk-760.webp 760w, /img/solar-dusk-1100.webp 1100w, /img/solar-dusk.webp 1400w"
+  preloadSizes="100vw"
 >
-  <section class="hero" aria-labelledby="hero-h">
-    <div class="wrap hero__grid">
-      <div>
+  <section class="hero hero--film pine" aria-labelledby="hero-h">
+    {/* The film: a Sheffield roof earning its keep at golden hour, sun glow
+        breathing, glints sparking off the panels. The estimator floats on
+        top as the working instrument. TEMP footage slot: a Higgsfield video
+        loop drops behind the same scrim when the connection is back. */}
+    <div class="hero__scene" aria-hidden="true">
+      <img
+        class="hero__film"
+        src="/img/solar-dusk.webp"
+        srcset="/img/solar-dusk-760.webp 760w, /img/solar-dusk-1100.webp 1100w, /img/solar-dusk.webp 1400w"
+        sizes="100vw"
+        alt=""
+        width="1400" height="781" fetchpriority="high" decoding="async"
+        data-film
+      />
+      <div class="hero__scrim"></div>
+      <span class="hero__sunglow"></span>
+      <canvas class="hero__glints" data-glints></canvas>
+    </div>
+
+    <div class="wrap hero__inner">
+      <div class="hero__copy">
         <p class="kicker">{client.accreditation} · {client.town} <!-- TEMP --></p>
-        <h1 id="hero-h">Solar panels for Sheffield roofs, sized on your bills.</h1>
+        <h1 id="hero-h">Solar panels for Sheffield roofs, <span class="hero__hl">sized on your bills.</span></h1>
         <p class="hero__sub">
           Move the slider and watch the numbers. When they look right, send
           us two energy bills and we turn the estimate into a written quote
@@ -325,5 +347,54 @@ FORM: brief-pinned by ledger 2026-07-28, zero shared axes with prior builds. -->
       box.querySelectorAll('[data-facing] input').forEach(function (r) { r.addEventListener('change', update); });
       update();
     })();
+
+    // The glints: light catching the panels, twinkling in the lower half of
+    // the film. Starts after load, skips under reduced motion, pauses when
+    // the tab hides.
+    window.addEventListener('load', function () {
+      var c = document.querySelector('[data-glints]');
+      if (!c || matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+      var x = c.getContext('2d');
+      var dpr = Math.min(devicePixelRatio || 1, 2);
+      var W, H;
+      function size() { W = c.width = c.offsetWidth * dpr; H = c.height = c.offsetHeight * dpr; }
+      size();
+      addEventListener('resize', size);
+      var N = innerWidth < 800 ? 10 : 22;
+      function spawn() {
+        return {
+          x: (Math.random() * 0.9 + 0.05) * W,
+          y: (Math.random() * 0.5 + 0.45) * H,
+          r: (Math.random() * 1.6 + 0.7) * dpr,
+          ph: Math.random() * 6.28,
+          sp: Math.random() * 0.02 + 0.008,
+        };
+      }
+      var ps = [];
+      for (var i = 0; i < N; i++) ps.push(spawn());
+      var running = true;
+      document.addEventListener('visibilitychange', function () {
+        running = !document.hidden;
+        if (running) requestAnimationFrame(tick);
+      });
+      function tick() {
+        if (!running) return;
+        x.clearRect(0, 0, W, H);
+        for (var i = 0; i < ps.length; i++) {
+          var p = ps[i];
+          p.ph += p.sp;
+          var a = (Math.sin(p.ph) + 1) / 2;
+          if (a < 0.02 && Math.random() < 0.01) ps[i] = p = spawn();
+          x.globalAlpha = a * 0.75;
+          x.fillStyle = '#f5b301';
+          x.beginPath();
+          x.arc(p.x, p.y, p.r, 0, 6.29);
+          x.fill();
+        }
+        x.globalAlpha = 1;
+        requestAnimationFrame(tick);
+      }
+      requestAnimationFrame(tick);
+    });
   </script>
 </Base>
