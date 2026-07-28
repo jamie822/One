@@ -58,6 +58,21 @@ import { studio } from '../../data/studio.js';
     </p>
 
     <p class="ph__strap">Web design for electricians and solar installers</p>
+
+    {/* The way in when the film cannot start on its own. Muted autoplay is allowed
+        by every browser's policy, but it is NOT allowed inside a cross origin
+        iframe that was not granted allow="autoplay" — which is how a preview gets
+        embedded — and data saver and battery saver both block it outright. In all
+        of those the poster is a still calendar and the visitor has no way to know
+        anything was meant to happen. So the control is real: hidden while the film
+        is playing or has finished, visible the moment we know it will not start by
+        itself, and a click is the gesture that satisfies the policy. */}
+    <button class="ph__play" type="button" hidden data-play>
+      <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true" fill="currentColor">
+        <path d="M8 5v14l11-7z" />
+      </svg>
+      Play the turn
+    </button>
   </div>
 </div>
 
@@ -70,22 +85,57 @@ import { studio } from '../../data/studio.js';
     var film = host.querySelector('.ph__film');
     if (!film) return;
 
+    var button = host.querySelector('[data-play]');
     var still = window.matchMedia('(prefers-reduced-motion: reduce)');
+    var started = false;
+
+    // ph--live is added on the PLAYING event, not before the attempt. The wordmark
+    // timeline is keyed to the film's own clock — ink at 2.5s, colour at 3.15s —
+    // so running it while the film sits on its poster would sweep the word over a
+    // still and land the colour on nothing. If the film never starts, the page
+    // falls back to exactly the no-JavaScript state: poster, and the word simply
+    // there, fully inked.
+    film.addEventListener('playing', function () {
+      started = true;
+      host.classList.add('ph--live');
+      if (button) button.hidden = true;
+    });
+
+    function offer() {
+      if (started || !button) return;
+      button.hidden = false;
+    }
 
     function play() {
-      // The poster is already the settled composition, so a failed play is not a
-      // broken hero — it is the same hero, still.
       var p = film.play();
-      if (p && p.catch) p.catch(function () {});
+      if (p && p.catch) {
+        // A rejected play() is the browser saying no, not an error. Blocked
+        // autoplay, an iframe without allow="autoplay", data saver, low power
+        // mode: all land here, and all of them are recoverable with one click.
+        p.catch(offer);
+      }
     }
 
     function arm() {
-      if (still.matches) return;
-      host.classList.add('ph--live');
-      // Wait until it can actually run start to finish. Starting a 5 second turn
-      // and stalling halfway through is worse than starting it a beat late.
+      if (still.matches) { offer(); return; }
+      // Wait until it can run start to finish. Starting the turn and stalling
+      // halfway through is worse than starting it a beat late.
       if (film.readyState >= 3) play();
       else film.addEventListener('canplaythrough', play, { once: true });
+      // And if the file never gets that far — no decoder for this codec, a failed
+      // request, a stalled network — say so with the control rather than sitting
+      // on a poster that pretends nothing was missing.
+      setTimeout(offer, 2500);
+    }
+    film.addEventListener('error', offer);
+
+    if (button) {
+      button.addEventListener('click', function () {
+        // A real gesture, so this attempt is allowed even where autoplay was not.
+        // Rewind first: a blocked attempt can still have advanced the clock.
+        try { film.currentTime = 0; } catch (e) {}
+        film.play();
+      });
     }
 
     // Only when it is on screen. A hero is on screen at load, but this also

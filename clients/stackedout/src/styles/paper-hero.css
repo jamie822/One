@@ -169,3 +169,24 @@
   .ph__ink, .ph__grad { animation: none; background-position: 0 0; }
   .ph__strap { animation: none; opacity: 1; }
 }
+
+/* ---- The way in when the film cannot start itself ------------------------ */
+/* Bottom right of the stage, over the darkest part of the photograph, so it does
+   not sit on the masthead or on the lit paper. Hidden by default in the markup and
+   only revealed by script, so a visitor whose film autoplays never sees it. */
+.ph__play {
+  position: absolute;
+  right: clamp(12px, 1.6vw, 26px);
+  bottom: clamp(12px, 1.6vw, 26px);
+  z-index: 3;
+  display: inline-flex; align-items: center; gap: 8px;
+  min-height: 44px; padding: 11px 18px;
+  font-family: var(--font-body); font-weight: 700; font-size: var(--t-label);
+  color: var(--ground); background: var(--action);
+  border: 1px solid transparent; border-radius: var(--r-chip);
+  cursor: pointer;
+  transition: background-color 160ms var(--ease-ui), transform 160ms var(--ease-ui);
+}
+.ph__play:hover { background: var(--action-deep); }
+.ph__play:active { transform: scale(.97); }
+.ph__play[hidden] { display: none; }
