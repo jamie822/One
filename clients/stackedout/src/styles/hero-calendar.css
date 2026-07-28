@@ -10,8 +10,13 @@
                         not a new colour.
      rgba(8,9,11,a)      --ground at alpha. Page shadows only.
 
-   ONE signature gradient on this page. It is the wash across the booked slots
-   and nothing else. See --cal-word-ghost below for the topbar note. */
+   ONE signature gradient on this page. It is a single left to right wash, one
+   ramp under one mask on one travel, crossing the wordmark and continuing down
+   through the month. Counted on the built route: 1 distinct gradient
+   declaration, painted as 30 samples of it (the wordmark plus twenty nine booked
+   days), each sampling its own slice of the same full width ramp, exactly as
+   Mark.astro fills five rects from one <linearGradient>. The topbar mark on this
+   route paints no gradient at all; see section 10. */
 
 /* ---------------------------------------------------------------------------
    THE SCORE
@@ -49,10 +54,22 @@
   --cal-pad: clamp(14px, 2.6vw, 40px);
   --cal-gap: clamp(5px, .62vw, 10px);
 
-  /* One wipe, used twice. Same mask, same size, same travel, so the second
-     sweep genuinely follows the path the first one took. The 100deg matches
-     the signature gradient's own angle, so the wipe edge and the colour it
-     lays down are cut on the same bias. */
+  /* The binding hardware. Declared here rather than on .cal__bind because the
+     sheet beneath has to punch its holes on the same tile as the wire, and the
+     two elements are siblings. Fewer rings and bigger: at clamp() maximum the
+     wire is 31px across, which is hardware, where the 22px it was read as a
+     row of lowercase "o". */
+  --ring-tile: clamp(46px, 4.55vw, 76px);
+  --ring-r:    clamp(9px, .92vw, 15.5px);     /* outer radius of the wire     */
+  --ring-w:    clamp(3.4px, .34vw, 5.6px);    /* the wire's own thickness     */
+  --ring-mid:  calc(var(--ring-r) - var(--ring-w) / 2);
+  --ring-in:   calc(var(--ring-r) - var(--ring-w));
+
+  /* ONE wipe. Two layers wear it, at the same delay, the same duration and the
+     same curve, so a single vertical edge travels left to right and crosses the
+     wordmark and the month at the same x in the same frame. The 100deg matches
+     the signature gradient's own angle, so the wipe edge and the colour it lays
+     down are cut on the same bias. */
   --cal-wipe: linear-gradient(100deg, #000 0 42%, rgba(0, 0, 0, 0) 58% 100%);
 
   position: relative;
@@ -81,7 +98,7 @@
 .cal__bind {
   position: relative;
   z-index: 6;                  /* the rings bind the pages, so nothing turns over them */
-  height: clamp(28px, 3.3vw, 48px);
+  height: clamp(40px, 4.3vw, 64px);
   /* The hanging board behind the rings. Value step, not a shadow, per guide §4. */
   background: var(--panel);
   border-bottom: 1px solid var(--edge);
@@ -89,40 +106,114 @@
 .cal__rings {
   position: absolute;
   inset: 0;
-  /* Three layers per tile: the ring, the light it catches on its upper curve,
-     and the shadow it drops into the punch hole. A repeating background rather
-     than N elements, so it is correct at 320px and at 1920px without a single
-     media query or a line of script. */
+  /* Four layers per tile, painted top down: the specular catch on the wire's
+     upper left, the wire turning away from the light on its lower right, the
+     wire itself in the mark's own #c9ced6, and inside it the punch, shaded at
+     the top edge where the paper turns down into the hole. That last one is
+     what makes the ring read as going THROUGH something.
+
+     A repeating background rather than N elements, so it is correct at 320px
+     and at 1920px without a media query or a line of script, and it is one
+     paint no matter how wide the wall is. */
   background-image:
-    radial-gradient(circle 4px   at 50% 26%, rgba(255, 255, 255, .78), rgba(255, 255, 255, 0) 74%),
-    radial-gradient(circle 5.6px at 50% 62%, rgba(8, 9, 11, .85), rgba(8, 9, 11, 0) 78%),
-    radial-gradient(circle 11px  at 50% 50%, rgba(0, 0, 0, 0) 0 5.6px, var(--cal-ring) 5.6px 9.6px, rgba(0, 0, 0, 0) 9.9px);
-  background-size: clamp(26px, 2.85vw, 41px) 100%;
+    radial-gradient(circle calc(var(--ring-w) * .95)
+        at calc(50% - .68 * var(--ring-mid)) calc(50% - .68 * var(--ring-mid)),
+        rgba(255, 255, 255, .95), rgba(255, 255, 255, 0) 78%),
+    radial-gradient(circle calc(var(--ring-w) * 1.15)
+        at calc(50% + .6 * var(--ring-mid)) calc(50% + .66 * var(--ring-mid)),
+        rgba(8, 9, 11, .88), rgba(8, 9, 11, 0) 80%),
+    radial-gradient(circle at 50% 50%,
+        rgba(0, 0, 0, 0) 0 var(--ring-in),
+        var(--cal-ring) var(--ring-in) var(--ring-r),
+        rgba(0, 0, 0, 0) calc(var(--ring-r) + .7px)),
+    /* the shadow gathered against the top inside of the hole. Kept to 0.85 of
+       the hole radius so it cannot bleed past the wire onto the board. */
+    radial-gradient(circle calc(var(--ring-in) * .55)
+        at 50% calc(50% - .3 * var(--ring-in)),
+        rgba(0, 0, 0, .9), rgba(0, 0, 0, 0) 85%),
+    /* the hole itself, punched through to the dark behind the board */
+    radial-gradient(circle at 50% 50%,
+        rgba(8, 9, 11, .94) 0 var(--ring-in),
+        rgba(8, 9, 11, 0) calc(var(--ring-in) + .8px));
+  background-size: var(--ring-tile) 100%;
   background-repeat: repeat-x;
   background-position: center;
 }
 
 /* ---------------------------------------------------------------------------
-   2 · The wordmark strip. Sweep one lands here.
+   2 · The wordmark strip. Both sweeps cross it.
+
+   It fills the width, edge to edge. It used to be set at 9.3vw, which put the
+   mark across 58% of a 1440 and left the right hand 42% of the band as a hole
+   the composition had no use for. At 15.2vw the ink runs from the left padding
+   to the right padding on every width from 480 to 1920, and the band stops
+   being leftover space and becomes the object that owns it. The vertical cost
+   is paid back by tighter leading: "Stacked Out" has no descender in it, so
+   .78 clips nothing.
+
+   This is deliberately past the 6rem display ceiling the house rules set for a
+   headline. It is not a headline; it is the studio's own mark at wall scale on
+   the studio's own site, which is the one place the brief asks for exactly that.
+   The actual <h1> is in the copy band below at 2.95rem and is well inside.
 --------------------------------------------------------------------------- */
 .cal__word {
+  --word-pad-top: clamp(6px, .75vw, 14px);
+  --word-pad-bot: clamp(6px, .8vw, 15px);
   position: relative;
   z-index: 2;
-  padding: clamp(10px, 1.5vw, 22px) var(--cal-pad) clamp(8px, 1.2vw, 18px);
+  padding: var(--word-pad-top) var(--cal-pad) var(--word-pad-bot);
   border-bottom: 1px solid var(--edge);
   background: var(--panel);
   /* The binding drops a line of shade onto the board beneath it. */
   box-shadow: inset 0 13px 20px -15px rgba(8, 9, 11, .95);
+  /* Guard, not a design device. The metric matched fallback is fitted to within
+     about 1% of Clash Display, but 1% of a 292px line is 3px, and a wordmark
+     set to the padding on both sides has no slack. Clipping 3px of a letter for
+     the few frames before the real face swaps in beats a horizontal scrollbar
+     on the studio's own hero. */
+  overflow: clip;
 }
+
+/* The sheet under the wire is punched. Same tile as the ring, so every hole sits
+   under a ring, and drawn as a half ellipse hanging off the top edge because
+   that is a round hole in a sheet you are looking at from below and in front. */
+.cal__word::before {
+  content: '';
+  position: absolute;
+  left: 0; right: 0; top: 0;
+  height: calc(var(--ring-in) * 1.75);
+  pointer-events: none;
+  background-image:
+    /* Light catching the hole's lower lip. On a near black sheet the darkness of
+       a hole carries almost nothing, because panel and ground are five values
+       apart; it is the lit rim that makes it read as a hole in something rather
+       than a smudge on something. So the lip does the work and the dark is only
+       there to give it something to sit against. */
+    radial-gradient(ellipse calc(var(--ring-in) * .88) calc(var(--ring-in) * .26)
+        at 50% calc(var(--ring-in) * 1.12),
+        rgba(255, 255, 255, .46), rgba(255, 255, 255, 0) 84%),
+    /* the punch, true black so it is genuinely below the ground it sits on */
+    radial-gradient(ellipse calc(var(--ring-in) * 1.04) calc(var(--ring-in) * 1.2) at 50% 0%,
+        rgba(0, 0, 0, .96) 0 68%,
+        rgba(0, 0, 0, .55) 90%,
+        rgba(0, 0, 0, 0) 100%);
+  background-size: var(--ring-tile) 100%;
+  background-repeat: repeat-x;
+  background-position: center top;
+}
+
 .cal__word-ghost,
-.cal__word-ink {
+.cal__word-ink,
+.cal__word-grad {
   display: block;
   font-family: var(--font-display);
   font-weight: 700;
-  font-size: clamp(2.1rem, 9.3vw, 8.4rem);
-  line-height: .92;
-  letter-spacing: -.03em;
-  /* Clash Display draws a 0.14em word space against the -0.03em tracking, which
+  font-size: clamp(2.1rem, 15.2vw, 20rem);
+  line-height: .78;
+  /* Tracking tightens as display type grows, and -.04em is the floor before
+     Clash Display's letters start touching at this size. */
+  letter-spacing: -.038em;
+  /* Clash Display draws a 0.14em word space against negative tracking, which
      collides the two words into the one spelling the guide forbids. */
   word-spacing: .14em;
   white-space: nowrap;
@@ -134,10 +225,10 @@
   color: rgba(245, 246, 248, .055);
   -webkit-text-stroke: 1px rgba(245, 246, 248, .17);
 }
-.cal__word-ink {
+.cal__word-ink,
+.cal__word-grad {
   position: absolute;
-  inset: clamp(10px, 1.5vw, 22px) var(--cal-pad) clamp(8px, 1.2vw, 18px);
-  color: var(--ink);
+  inset: var(--word-pad-top) var(--cal-pad) var(--word-pad-bot);
   -webkit-mask-image: var(--cal-wipe);
           mask-image: var(--cal-wipe);
   -webkit-mask-size: 250% 100%;
@@ -146,10 +237,41 @@
           mask-repeat: no-repeat;
   -webkit-mask-position: 100% 0;
           mask-position: 100% 0;
+}
+/* Sweep one: the mark inks in, white, left to right. */
+.cal__word-ink {
+  color: var(--ink);
   /* No will-change here. Measured both ways: the mask sweep runs at a flat
      16.7ms with zero frames over 20ms with or without it, so the hint was
      holding a full width layer in GPU memory for nothing. */
   animation: cal-wipe var(--d-word) var(--ease-snap) var(--t-word) both;
+}
+/* Sweep two, first half. The founder's brief is "the logo fading in from left
+   to right and then the colour scheme of the fading colours fading in TO IT in
+   the same pattern" — it, the logo. So the colour lands in the wordmark, on the
+   path the wordmark itself just took, and carries on down through the month in
+   the same frame. Same mask, same size, same travel, same curve, same delay as
+   .cal__grid--wash: one edge, two objects.
+
+   background-size 100% means the ramp spans the full strip width, and the month
+   below steps one full ramp across its six columns, so any vertical line
+   through the diary crosses the same colour twice. That is what makes it read
+   as one wash rather than two tinted objects. */
+/* SANCTIONED EXCEPTION. The house craft rules ban gradient text, and the
+   Impeccable detector flags this line as `gradient-text`, correctly. It stands
+   anyway, on two authorities that outrank a general rule: BRAND-GUIDE.md §1
+   names the signature gradient's permitted homes as "The logo, or one headline,
+   or one primary button", and this is the logo; and the founder's brief asks for
+   this specific thing in these words. The ban exists to stop gradient text being
+   reached for as decoration on a heading. This is the mark, once, on the studio's
+   own site. The real <h1> below is solid --ink and stays that way. */
+.cal__word-grad {
+  background-image: var(--hero-gradient);
+  background-size: 100% 100%;
+  -webkit-background-clip: text;
+          background-clip: text;
+  color: transparent;
+  animation: cal-wipe var(--d-wash) var(--ease-snap) var(--t-wash) both;
 }
 
 @keyframes cal-wipe {
@@ -185,9 +307,43 @@
      flicks. Flattening took that to zero. */
   backface-visibility: hidden;
   contain: paint;
-  background: var(--panel);
-  /* The cut edge of the sheet, catching the light along the bottom. */
-  border-bottom: 1px solid rgba(255, 255, 255, .15);
+  background-color: var(--panel);
+  /* THE SHEET HAS TO BE VISIBLE AS A SHEET. This is what the turn was missing.
+     A plane with no boundary and no surface gives the eye nothing rigid to
+     attach the rotation to, so at a shallow angle the only thing it can read is
+     the grid of cells changing position relative to one another, which is a
+     ripple. Two things fix it, and neither costs a frame because neither
+     changes during the turn:
+
+     a directional sheen on the mark's own 100deg bias, so the sheet is a lit
+     surface rather than a hole, and it is asymmetric, which is the "a real
+     sheet does not stay perfectly flat as it lifts" note paid for with light
+     instead of with geometry;
+
+     and a rim: a lit hairline where the binding grips the head, and a real cut
+     edge along the bottom (see ::after) which is the edge that travels up the
+     composition as the page goes over. */
+  background-image:
+    linear-gradient(100deg,
+        rgba(255, 255, 255, .055) 0%,
+        rgba(255, 255, 255, .012) 38%,
+        rgba(8, 9, 11, .34) 100%);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, .13);
+}
+/* The cut edge of the sheet: a lit hairline over the paper's own thickness.
+   Static, so it rides inside the page's cached texture and costs nothing per
+   frame. This is the object the eye follows during a turn. */
+.cal__page::after {
+  content: '';
+  position: absolute;
+  left: 0; right: 0; bottom: 0;
+  height: clamp(4px, .42vw, 7px);
+  pointer-events: none;
+  z-index: 6;
+  background: linear-gradient(to bottom,
+      rgba(255, 255, 255, .26) 0 1px,
+      rgba(255, 255, 255, .07) 1px 2px,
+      rgba(8, 9, 11, .5) 2px 100%);
 }
 /* Never white paper: a fine printed grid, well under the hairline the cards
    use, so it reads as texture and not as structure. Only on the page that
@@ -196,7 +352,11 @@
 .cal__page[data-page='4'] {
   background-image:
     repeating-linear-gradient(to right,  var(--cal-rule) 0 1px, transparent 1px 28px),
-    repeating-linear-gradient(to bottom, var(--cal-rule) 0 1px, transparent 1px 28px);
+    repeating-linear-gradient(to bottom, var(--cal-rule) 0 1px, transparent 1px 28px),
+    linear-gradient(100deg,
+        rgba(255, 255, 255, .055) 0%,
+        rgba(255, 255, 255, .012) 38%,
+        rgba(8, 9, 11, .34) 100%);
   background-position: center top;
 }
 /* Interleaved: page, then the shadow the page above throws onto it, then the
@@ -204,52 +364,99 @@
 .cal__page[data-page='4'] { z-index: 2; }
 .cal__cast[data-cast='3']  { z-index: 3; }
 .cal__page[data-page='3'] { z-index: 4; }
-.cal__cast[data-cast='2']  { z-index: 5; }
-.cal__page[data-page='2'] { z-index: 6; }
-.cal__cast[data-cast='1']  { z-index: 7; }
-.cal__page[data-page='1'] { z-index: 8; }
+.cal__face[data-face='3']  { z-index: 5; }
+.cal__cast[data-cast='2']  { z-index: 6; }
+.cal__page[data-page='2'] { z-index: 7; }
+.cal__face[data-face='2']  { z-index: 8; }
+.cal__cast[data-cast='1']  { z-index: 9; }
+.cal__page[data-page='1'] { z-index: 10; }
+.cal__face[data-face='1']  { z-index: 11; }
 
-/* The cast shadow. --ground at alpha rather than black, and a falloff rather
-   than a flat slab, because a page throws a gradient. It never transforms, so
-   its opacity animation stays on the compositor. */
+/* The travelling cast shadow. A page lifting off does not dim the whole sheet
+   beneath it evenly; it drags a band of shade down the sheet and off the bottom
+   as it goes over. So this is taller than the stack and it TRANSLATES, which is
+   both truer and cheaper than fading a full height slab: transform and opacity
+   only, on its own layer, and it is a sibling of the pages rather than a child,
+   so nothing it does can dirty a page's cached texture. */
 .cal__cast {
   position: absolute;
-  inset: 0;
+  left: 0; right: 0; top: 0;
+  height: 128%;
   opacity: 0;
   pointer-events: none;
-  background: linear-gradient(to bottom, var(--cal-shadow), rgba(8, 9, 11, 0) 66%);
-  will-change: opacity;
+  background: linear-gradient(to bottom,
+      rgba(8, 9, 11, .94) 0%,
+      var(--cal-shadow) 26%,
+      rgba(8, 9, 11, .34) 52%,
+      rgba(8, 9, 11, 0) 74%);
+  transform: translate3d(0, -46%, 0);
+  will-change: transform, opacity;
 }
 
-/* ::after — the shade on the page's own face as it turns away from the light.
-   This one has to ride the page, so it cannot leave the transformed layer. */
-.cal__page::after {
-  content: '';
+/* The shade on the turning page's own face, as a SIBLING of that page carrying
+   the identical flick transform rather than a child of it.
+
+   This is the shape of the whole performance problem on this route and it was
+   settled by measurement, not by argument. Anything that changes per frame
+   INSIDE a 3D transformed element invalidates that element's rasterised
+   texture, so the browser repaints thirty cells of text every frame instead of
+   projecting one cached bitmap. The previous build had this shade as a ::after
+   on the page. The obvious repair, folding the darkening into the page's own
+   transform as filter: brightness(), turned out to be worse, not better:
+   measured 64 of 203 frames over 20ms with it, 10 of 268 without. Chrome will
+   not composite a filter animation on a layer that is simultaneously rotating
+   in 3D, so it re-rastered anyway.
+
+   A sibling with the same transform-origin, the same perspective parent and the
+   same keyframes projects to exactly the same quadrilateral, so it is glued to
+   the page. It animates transform and opacity only, on its own layer, and the
+   page's texture is never touched. */
+.cal__face {
   position: absolute;
   inset: 0;
   opacity: 0;
   pointer-events: none;
-  background: linear-gradient(to bottom, rgba(8, 9, 11, .58), var(--cal-shadow) 70%);
-  z-index: 6;
+  transform-origin: 50% 0%;
+  backface-visibility: hidden;
+  background: linear-gradient(to bottom,
+      rgba(8, 9, 11, .52), var(--cal-shadow) 72%);
+  will-change: transform, opacity;
 }
 
 .cal__page[data-page='1'],
 .cal__page[data-page='2'],
 .cal__page[data-page='3'] { will-change: transform; }
 
-/* The flick. Lifts a touch first, then goes over the binding and away. The
-   small rotateZ is the wrist: nothing turns perfectly square to the hinge. */
-/* Stops just past vertical rather than carrying on to a full turn. The back of a
+/* THE FLICK. One transform on one element: the whole sheet tips on the binding
+   and every cell on it is inert cargo. The compositor rasterises the page once
+   and rotates that one texture, instead of thirty boxes each finding a new
+   position, which is what made it read as a wave and what dropped the frames.
+
+   Stops just past vertical rather than carrying on to a full turn. The back of a
    page is blank, so backface-visibility takes it out of the render at exactly
    90deg; taking the transform to -166deg meant the whole visible half of the arc
-   was over in the first 54% of the duration and the rest was dead time, which is
-   why the first build read as pages squashing rather than lifting. Ending near
-   -100deg spends the entire beat on the part you can see.
-   The small rotateZ is the wrist: nothing turns perfectly square to the hinge. */
+   was over in the first 54% of the duration and the rest was dead time. Ending
+   near -101deg spends the entire beat on the part you can see.
+
+   rotateZ is pinned at EXACTLY ZERO for the first 58%, and this is the whole
+   repair. The wrist tilt was 0.5deg early in the arc, which over 1400px of sheet
+   drops the right hand column 9px below the left. Nine pixels of ladder across
+   six columns of 47px boxes is not a wrist, it is a travelling wave, and it is
+   the only thing the eye could see while the sheet itself was invisible. Held at
+   zero, pure rotateX about a horizontal hinge means every cell in a row shares
+   an identical top and an identical height, to the pixel, for the entire part of
+   the turn a reader can resolve. The wrist comes back at 58%, by which point the
+   sheet is 58deg over and the rows are foreshortened to 53% of their height, so
+   it reads as the page not going over perfectly square and cannot read as a
+   ripple.
+
+   The turning sheet's own shading is NOT here. It rides a sibling layer, for
+   reasons measured under .cal__face above. */
 @keyframes cal-flick {
-  0%   { transform: rotateX(0deg)   rotateZ(0deg)    translateZ(0);    }
-  18%  { transform: rotateX(-11deg) rotateZ(.5deg)   translateZ(18px); }
-  100% { transform: rotateX(-99deg) rotateZ(-1.4deg) translateZ(4px);  }
+  0%   { transform: rotateX(0deg)    rotateZ(0deg)    translateZ(0);    }
+  16%  { transform: rotateX(-9deg)   rotateZ(0deg)    translateZ(24px); }
+  58%  { transform: rotateX(-58deg)  rotateZ(0deg)    translateZ(13px); }
+  100% { transform: rotateX(-101deg) rotateZ(-1.2deg) translateZ(2px);  }
 }
 /* Dissolves as it comes edge on, so it goes over the binding rather than
    snapping out of existence. */
@@ -257,22 +464,22 @@
   0%, 66% { opacity: 1; }
   100%    { opacity: 0; }
 }
-/* The turning page darkens as its face swings away from the light. */
-/* The page's own face does not darken while it is still nearly flat against the
-   wall; it goes into shadow once it is properly turning. Starting the ramp at
-   34% is both truer and cheaper, because this is the one shade that cannot
-   leave the rotating layer and so repaints it on every frame it changes.
-   Measured: 15 frames over 20ms ramping from 0%, 10 ramping late. */
-@keyframes cal-turn-shade {
-  0%, 34% { opacity: 0; }
-  100%    { opacity: .8; }
+/* The sheet's face goes into shadow as it turns away from the light. It stays
+   clear while the page is still nearly flat against the wall, deepens through
+   the readable part of the arc, then holds until the page has dissolved, so the
+   shade never lifts off a page you can still see. */
+@keyframes cal-face-shade {
+  0%, 20% { opacity: 0;   }
+  62%     { opacity: .82; }
+  84%     { opacity: .82; }
+  100%    { opacity: 0;   }
 }
-/* The page underneath takes the shadow while the one above passes overhead,
-   and loses it once that page has cleared. */
+/* The shade sweeps down the sheet beneath while the page above passes overhead,
+   and is gone by the time that page has cleared. */
 @keyframes cal-cast {
-  0%   { opacity: 0; }
-  38%  { opacity: .52; }
-  100% { opacity: 0; }
+  0%   { opacity: 0;   transform: translate3d(0, -48%, 0); }
+  30%  { opacity: .68; }
+  100% { opacity: 0;   transform: translate3d(0, 10%, 0);  }
 }
 
 .cal__page[data-page='1'] {
@@ -280,7 +487,11 @@
     cal-flick     var(--d-p1) var(--ease-snap) var(--t-p1) both,
     cal-flick-out var(--d-p1) linear           var(--t-p1) both;
 }
-.cal__page[data-page='1']::after { animation: cal-turn-shade var(--d-p1) var(--ease-snap) var(--t-p1) both; }
+.cal__face[data-face='1'] {
+  animation:
+    cal-flick       var(--d-p1) var(--ease-snap) var(--t-p1) both,
+    cal-face-shade  var(--d-p1) linear           var(--t-p1) both;
+}
 .cal__cast[data-cast='1'] { animation: cal-cast var(--d-p1) var(--ease-snap) var(--t-p1) both; }
 
 .cal__page[data-page='2'] {
@@ -288,7 +499,11 @@
     cal-flick     var(--d-p2) var(--ease-snap) var(--t-p2) both,
     cal-flick-out var(--d-p2) linear           var(--t-p2) both;
 }
-.cal__page[data-page='2']::after { animation: cal-turn-shade var(--d-p2) var(--ease-snap) var(--t-p2) both; }
+.cal__face[data-face='2'] {
+  animation:
+    cal-flick       var(--d-p2) var(--ease-snap) var(--t-p2) both,
+    cal-face-shade  var(--d-p2) linear           var(--t-p2) both;
+}
 .cal__cast[data-cast='2'] { animation: cal-cast var(--d-p2) var(--ease-snap) var(--t-p2) both; }
 
 .cal__page[data-page='3'] {
@@ -296,7 +511,11 @@
     cal-flick     var(--d-p3) var(--ease-snap) var(--t-p3) both,
     cal-flick-out var(--d-p3) linear           var(--t-p3) both;
 }
-.cal__page[data-page='3']::after { animation: cal-turn-shade var(--d-p3) var(--ease-snap) var(--t-p3) both; }
+.cal__face[data-face='3'] {
+  animation:
+    cal-flick       var(--d-p3) var(--ease-snap) var(--t-p3) both,
+    cal-face-shade  var(--d-p3) linear           var(--t-p3) both;
+}
 .cal__cast[data-cast='3'] { animation: cal-cast var(--d-p3) var(--ease-snap) var(--t-p3) both; }
 
 /* The settle. The last page has been pressed under three others, so it does not
@@ -379,10 +598,10 @@
      way they do on a real planner, so a tall cell reads as room left to write
      rather than as a gap someone forgot to close. */
   justify-content: flex-start;
-  gap: 5px;
+  gap: 3px;
   min-width: 0;
   min-height: 0;
-  padding: clamp(4px, .55vw, 9px) clamp(5px, .62vw, 10px);
+  padding: clamp(4px, .45vw, 7px) clamp(5px, .62vw, 10px);
   border-radius: var(--r-chip);
   overflow: hidden;
   /* Every day is a slot, printed on the page whether it is taken or not.
@@ -406,7 +625,7 @@
   font-family: var(--font-display);
   font-weight: 700;
   font-variant-numeric: tabular-nums;
-  font-size: clamp(11px, 1.05vw, 19px);
+  font-size: clamp(11px, .92vw, 17px);
   line-height: 1;
   letter-spacing: -.03em;
   color: rgba(245, 246, 248, .34);
@@ -467,22 +686,41 @@
 .cal__edges {
   position: relative;
   z-index: 5;
-  height: clamp(16px, 1.9vw, 26px);
+  /* Exactly what seven sheets need: six steps plus one sheet, no slack. */
+  height: calc(6 * clamp(3.5px, .42vw, 6.5px) + clamp(5px, .56vw, 8px) + 2px);
 }
-/* Three sheets still on the pad under the one you are looking at. Each is a
-   real slab with a lit top edge and its own shadow, inset a little further, so
-   the depth is measurable rather than implied. */
+/* Seven sheets still on the pad under the one you are looking at. Three at 5px
+   apart read as a hairline and a rumour of one; seven, each with its own lit
+   top edge, its own dark cut face and its own shadow, inset a step further and
+   dimmed a step further, is a block of paper you could put a thumb into. The
+   step and the inset both scale with the viewport so it is a block at 320px and
+   a block at 1920px.
+
+   --k is the sheet's depth into the pad, set in the markup. Everything below is
+   derived from it, so adding or removing a sheet is a markup change only. */
 .cal__edges span {
+  --step:  clamp(3.5px, .42vw, 6.5px);
+  --inset: clamp(6px, .72vw, 13px);
   position: absolute;
   left: 0; right: 0;
-  height: 5px;
-  border-radius: 0 0 4px 4px;
-  background: linear-gradient(to bottom, rgba(255, 255, 255, .16) 0 1px, var(--panel) 1px 100%);
-  box-shadow: 0 3px 6px -2px rgba(8, 9, 11, .95);
+  top: calc(var(--k) * var(--step));
+  margin-inline: calc(var(--k) * var(--inset));
+  height: clamp(5px, .56vw, 8px);
+  border-radius: 0 0 5px 5px;
+  /* Lit top edge, the paper's own body lifted clear of the ground, then the
+     dark of the cut face underneath. Panel alone is only a hair above the
+     ground, so without the white lift on the body the whole block read as one
+     dark mass with a rumour of lines in it. */
+  background-color: var(--panel);
+  background-image: linear-gradient(to bottom,
+      rgba(255, 255, 255, .34) 0 1.5px,
+      rgba(255, 255, 255, .05) 1.5px calc(100% - 1.5px),
+      rgba(8, 9, 11, .92) calc(100% - 1.5px) 100%);
+  box-shadow: 0 5px 9px -4px rgba(8, 9, 11, .98);
+  /* Deeper into the pad, further from the light. */
+  opacity: calc(1 - var(--k) * .095);
+  z-index: calc(10 - var(--k));
 }
-.cal__edges span:nth-child(1) { top: 0;   margin-inline: 0;    }
-.cal__edges span:nth-child(2) { top: 6px; margin-inline: 11px; opacity: .82; }
-.cal__edges span:nth-child(3) { top: 12px; margin-inline: 26px; opacity: .6; }
 
 /* ---------------------------------------------------------------------------
    7 · The copy band. Sits on the ground below the diary, never on the page,
@@ -495,8 +733,16 @@
   grid-template-columns: minmax(0, 1.5fr) minmax(240px, auto);
   align-items: end;
   gap: clamp(16px, 2.4vw, 48px);
-  padding: clamp(20px, 2.8vw, 44px) var(--cal-pad) clamp(22px, 3vw, 46px);
-  border-top: 1px solid var(--edge);
+  /* Trimmed from 2.8vw/3vw. The band was carrying 83px of padding at 1440 for a
+     hero whose subject is the diary above it, and the wall diary wanted that
+     height more than the copy did. It still reads generous against a 47px
+     headline, and the guide's vertical rhythm is about sections breathing, not
+     about a hero band out-padding the object it is captioning. */
+  padding: clamp(16px, 2.1vw, 34px) var(--cal-pad) clamp(18px, 2.3vw, 38px);
+  /* No border-top. The page edge stack above IS the divider now, and it is a
+     real object; a hairline underneath it read as a second, competing rule.
+     Separation here comes from the value step between panel and ground, which
+     is what guide §4 asks for anyway. */
 }
 
 /* NEVER animated. This is the LCP element and a previous build cost 666ms
@@ -527,6 +773,30 @@
 }
 
 /* ---------------------------------------------------------------------------
+   7b · Short desktop. A laptop is wide and not tall, and a full viewport hero
+   on a 900px screen leaves each of the five month rows about 42px once the
+   binding, the wordmark, the paper block and the copy band have taken theirs.
+   Forty two pixels will not hold a date stacked over a job at a readable size,
+   and the measured result was the job line clipped to zero height at 1280 and
+   1440 while the number stayed. Losing the jobs loses the point: the message is
+   a working month of real trade work, not a grid of numbers.
+
+   So on a short screen the cell reads as a planner row, date then job on one
+   line, which is exactly what the phone already does and what a wall planner
+   with narrow week rows actually looks like. Above 940px of height there is
+   room for the entry to sit under the date and it does. One object, two honest
+   compositions, chosen by the space available rather than by guesswork.
+--------------------------------------------------------------------------- */
+@media (min-width: 721px) and (max-height: 940px) {
+  .cal__cell {
+    flex-direction: row;
+    align-items: center;
+    gap: clamp(7px, .8vw, 13px);
+  }
+  .cal__head { min-width: 2.4em; }
+}
+
+/* ---------------------------------------------------------------------------
    8 · Phone. Not a squeezed month: a working week, drawn as rows.
    Six rows, five booked and one open, which is the mark itself unrolled. The
    flick, the open slot and both sweeps all survive at 320px.
@@ -537,10 +807,14 @@
   .calhero { min-height: max(430px, calc(100svh - 13rem)); }
   .cal { grid-template-rows: auto auto minmax(190px, 1fr) auto; }
 
-  /* 16vw is the largest that still clears the padding at 320px with the
-     wordmark set on one line, which it must be. */
+  /* Same commitment as desktop: the mark fills the width. Clash Display sets
+     "Stacked Out" at 5.95 times its own font size with this tracking, measured
+     on the rendered page, so 14.8vw puts the ink across 95 to 97 percent of the
+     line from 320px up. The old 16vw never took effect, because the max cap
+     underneath it bound first and left the mark at 68 percent of the width. */
   .cal__word-ghost,
-  .cal__word-ink { font-size: clamp(2.2rem, 16vw, 4.6rem); }
+  .cal__word-ink,
+  .cal__word-grad { font-size: clamp(1.9rem, 14.8vw, 7rem); }
 
   .cal__days { display: none; }
   .cal__dow { display: inline; }
@@ -583,10 +857,9 @@
   .calhero__mail, .calhero__note { text-align: left; }
 }
 
-@media (max-width: 400px) {
-  .cal__word-ghost,
-  .cal__word-ink { font-size: clamp(1.9rem, 11vw, 2.6rem); }
-}
+/* No separate rule under 400px. 14.8vw is 47px at 320 and the mark still clears
+   the padding on one line; the old 11vw / 2.6rem cap here was the reason the
+   smallest phone showed the smallest proportional mark. */
 
 /* ---------------------------------------------------------------------------
    9 · Reduced motion. The settled state, in full: the final page flat, the
@@ -599,25 +872,32 @@
 --------------------------------------------------------------------------- */
 @media (prefers-reduced-motion: reduce) {
   .cal__page,
-  .cal__page::after,
   .cal__cast,
+  .cal__face,
   .cal__word-ink,
+  .cal__word-grad,
   .cal__grid--wash { animation: none !important; }
 
   .cal__page[data-page='1'],
   .cal__page[data-page='2'],
   .cal__page[data-page='3'],
-  .cal__cast { display: none; }
+  .cal__cast,
+  .cal__face { display: none; }
 
   .cal__page[data-page='4'] { transform: none; opacity: 1; }
-  .cal__page::after { opacity: 0 !important; }
 
+  /* Both halves of the wash are laid down, so the settled state is the finished
+     picture: full month, mark inked, colour in the mark and in the booked days,
+     the one open Friday still open. */
   .cal__word-ink,
+  .cal__word-grad,
   .cal__grid--wash {
     -webkit-mask-position: 0% 0 !important;
             mask-position: 0% 0 !important;
   }
-  .cal__page { will-change: auto; }
+  .cal__page,
+  .cal__cast,
+  .cal__face { will-change: auto; }
 }
 
 /* ---------------------------------------------------------------------------

@@ -42,29 +42,52 @@ not rolled: the brief pins the world, the form and the signature interaction.
     <div class="cal__bind"><span class="cal__rings"></span></div>
 
     <div class="cal__word">
-      <!-- Sweep one. The wordmark is printed blind at first paint, so the
-           composition is complete from frame zero and nothing appears out of
-           nothing, then the ink layer wipes in left to right over the top. -->
+      <!-- Three layers of the same word, identical glyphs at identical
+           positions, so they are in perfect register and no timing can drift
+           them apart.
+           ghost: printed blind at first paint, so the composition is complete
+                  from frame zero and nothing appears out of nothing.
+           ink:   sweep one. White, wiping in left to right.
+           grad:  sweep two, first half. The signature gradient arriving IN the
+                  mark, on the path the mark just took, in the same frame as it
+                  arrives in the month below. One wash, one mask, one travel. -->
       <span class="cal__word-ghost">Stacked Out</span>
       <span class="cal__word-ink">Stacked Out</span>
+      <span class="cal__word-grad">Stacked Out</span>
     </div>
 
     <div class="cal__stack">
+      {/* Interleaved by depth, bottom of the pad first. Per turning page there
+          are three objects and each one animates transform and opacity only, on
+          its own compositor layer, so no page's rasterised texture is ever
+          dirtied mid flick:
+
+            cast  the shadow the page above throws DOWN the sheet below it. It
+                  lives BETWEEN the two pages, which is where a cast shadow
+                  actually is.
+            page  the rigid sheet. One transform, thirty inert cells.
+            face  the shade on that sheet's own face, glued to it by carrying
+                  the identical flick transform. See .cal__face in the CSS for
+                  why this cannot live inside the page. */}
       <CalendarPage n={4} booked={PAGE_4} isFinal emptyIndex={EMPTY} />
-      {/* The shadow a turning page throws onto the one beneath it. It lives
-          BETWEEN the two pages rather than on either of them, which is where a
-          cast shadow actually is, and which keeps an opacity animation off a
-          layer that is simultaneously rotating in 3D. Measured: 24 frames over
-          20ms during the flicks with these inside the pages, 8 with them out. */}
       <div class="cal__cast" data-cast="3"></div>
       <CalendarPage n={3} booked={PAGE_3} />
+      <div class="cal__face" data-face="3"></div>
       <div class="cal__cast" data-cast="2"></div>
       <CalendarPage n={2} booked={PAGE_2} />
+      <div class="cal__face" data-face="2"></div>
       <div class="cal__cast" data-cast="1"></div>
       <CalendarPage n={1} booked={PAGE_1} />
+      <div class="cal__face" data-face="1"></div>
     </div>
 
-    <div class="cal__edges"><span></span><span></span><span></span></div>
+    <!-- The rest of the pad. Seven sheets, each stepped down and inset from the
+         one above, so the bottom of the diary is a block of paper with a
+         measurable thickness rather than a single line. --k is the sheet's
+         depth; the CSS derives its offset, inset, opacity and stacking from it. -->
+    <div class="cal__edges">
+      {Array.from({ length: 7 }, (_, k) => <span style={`--k:${k}`}></span>)}
+    </div>
   </div>
 
   <div class="calhero__copy">

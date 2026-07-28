@@ -88,11 +88,17 @@ const cells = Array.from({ length: CELLS }, (_, i) => ({
     </div>
 
     {isFinal && (
-      <!-- Sweep two. Same wipe geometry, same easing, same direction as the
-           wordmark, started just before the wordmark finishes so it reads as
-           one gesture chasing the other. The open slot is absent from this
-           layer, so the colour passes straight over it and the base layer's
-           outline stays visible. That gap is the whole point. -->
+      <!-- Sweep two, second half. This layer and .cal__word-grad above it are
+           the same wash: identical mask, identical size, identical travel,
+           identical curve, identical delay, so one vertical edge crosses the
+           wordmark and the month at the same x in the same frame and lays the
+           colour into both. It starts 140ms before the wordmark's white ink
+           sweep has finished, so it reads as one gesture chasing the other
+           rather than two events.
+
+           The open slot is absent from this layer, so the colour passes
+           straight over it and the base layer's outline stays visible. That gap
+           is the whole point. -->
       <div class="cal__grid cal__grid--wash">
         {cells.map((cell) =>
           cell.booked ? (
