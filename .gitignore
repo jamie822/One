@@ -28,3 +28,6 @@ clients/stackedout/node_modules
 # Python bytecode caches from skill scripts — regenerated on every run
 __pycache__/
 *.pyc
+
+# stray clone target
+hfs/
