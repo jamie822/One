@@ -852,15 +852,32 @@
   padding-left: clamp(9px, 1.05vw, 17px);
   padding-top: clamp(5px, .62vw, 11px);
 }
-.cal__cell--open::after {
+/* Ringed by hand, round the date, not round the square. The previous version drew
+   a 1.5px border on a rounded rectangle inset inside the cell, which is the exact
+   CSS of a text input and read as one. A person marking a free day on a wall
+   calendar draws a circle round the number, so that is what this does: a round
+   stroke on the numeral itself, sitting slightly off square because nothing drawn
+   by hand is level. */
+.cal__cell--open .cal__num {
+  color: var(--ink);
+  font-weight: 700;
+  position: relative;
+  z-index: 1;
+}
+.cal__cell--open .cal__num::after {
   content: '';
   position: absolute;
-  inset: clamp(3px, .38vw, 6px);
-  border: 1.5px solid var(--cal-open);
-  border-radius: var(--r-chip);
+  left: 50%;
+  top: 48%;
+  width: clamp(22px, 2.1vw, 34px);
+  height: clamp(22px, 2.1vw, 34px);
+  translate: -50% -50%;
+  border: 1.6px solid var(--cal-open);
+  /* Not a perfect circle. A drawn ring closes slightly out of true. */
+  border-radius: 52% 48% 49% 51%;
+  rotate: -7deg;
   pointer-events: none;
 }
-.cal__cell--open .cal__num { color: var(--ink); font-weight: 700; }
 
 /* ---------------------------------------------------------------------------
    7 · The wash. Sweep two, second half.
@@ -1163,3 +1180,49 @@
 .topbar .mark__slot[data-slot] { fill: var(--action); }
 .topbar .mark__slot[data-slot='4'] { fill: var(--incoming); }
 .topbar .mark__slot--free { fill: none; }
+
+/* ---------------------------------------------------------------------------
+   7b · The gleam.
+
+   Section 7 was right to stop filling cells and wrong about what replaced it. A
+   5% tint plus a coloured marker is honest but quiet, and the sweep is the moment
+   the whole hero exists for. So the drama goes into the LIGHT rather than back
+   into the squares: a soft band travelling left to right across the paper on the
+   wash's own clock, brightening the sheet as it passes and leaving it as it was.
+
+   This is why it does not undo the fix. A tint on a cell says "this cell is a
+   control". A band of light crossing the whole sheet says "a light moved over this
+   paper", which is a property of the sheet, not of any square on it. Same reading
+   as a raking light across a printed page.
+
+   Transform and opacity only, one element, so it composites on its own layer and
+   costs nothing on the sheet beneath.
+--------------------------------------------------------------------------- */
+.cal__sheet[data-sheet='3'] .cal__band::after {
+  content: '';
+  position: absolute;
+  inset: -2% -60%;
+  z-index: 7;
+  pointer-events: none;
+  opacity: 0;
+  background: linear-gradient(
+    100deg,
+    transparent 34%,
+    rgba(255, 221, 51, .10) 44%,
+    rgba(245, 246, 248, .20) 50%,
+    rgba(63, 227, 255, .11) 56%,
+    transparent 66%
+  );
+  animation: cal-gleam var(--d-wash) var(--ease-ui) var(--t-wash) forwards;
+}
+@keyframes cal-gleam {
+  0%   { opacity: 0;   transform: translate3d(-46%, 0, 0); }
+  14%  { opacity: 1; }
+  86%  { opacity: 1; }
+  100% { opacity: 0;   transform: translate3d(46%, 0, 0); }
+}
+@media (prefers-reduced-motion: reduce) {
+  /* The settled sheet is the end state, and the end state is after the light has
+     passed. So there is no gleam to show. */
+  .cal__sheet[data-sheet='3'] .cal__band::after { animation: none; opacity: 0; }
+}
