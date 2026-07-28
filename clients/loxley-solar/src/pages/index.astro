@@ -41,11 +41,7 @@ FORM: brief-pinned by ledger 2026-07-28, zero shared axes with prior builds. -->
         the hero, the glow breathes, glints spark on a drawn roofline, and
         the estimator floats on it as the working instrument. */}
     <div class="hero__scene" aria-hidden="true">
-      <span class="hero__sunglow"></span>
-      <svg class="hero__dayarc" viewBox="0 0 1440 640" preserveAspectRatio="xMidYMax slice">
-        <path class="arc" d="M -60 600 Q 720 -120 1500 600" />
-        <circle class="daysun" r="11" />
-      </svg>
+      <div class="hero__bigsun"><i></i></div>
       <svg class="hero__roofline" viewBox="0 0 1440 150" preserveAspectRatio="xMidYMax slice">
         <path class="roof" d="M0 150 V 96 L 120 40 L 240 96 V 150 M 240 96 H 330 V 150 M 330 96 L 450 40 L 570 96 V 150 M 570 96 H 700 V 62 H 840 V 96 H 900 L 1020 40 L 1140 96 V 150 M 1140 96 H 1260 V 150 M 1260 96 L 1380 40 L 1460 78" />
         <g class="panels">
@@ -352,7 +348,7 @@ FORM: brief-pinned by ledger 2026-07-28, zero shared axes with prior builds. -->
     // The glints: light catching the panels, twinkling in the lower half of
     // the film. Starts after load, skips under reduced motion, pauses when
     // the tab hides.
-    window.addEventListener('load', function () {
+    (function () { var start = function () {
       var c = document.querySelector('[data-glints]');
       if (!c || matchMedia('(prefers-reduced-motion: reduce)').matches) return;
       var x = c.getContext('2d');
@@ -396,6 +392,9 @@ FORM: brief-pinned by ledger 2026-07-28, zero shared axes with prior builds. -->
         requestAnimationFrame(tick);
       }
       requestAnimationFrame(tick);
-    });
+    };
+    if (document.readyState === 'complete') setTimeout(start, 0);
+    else window.addEventListener('load', start);
+    })();
   </script>
 </Base>

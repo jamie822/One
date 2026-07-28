@@ -310,7 +310,7 @@ seed n/a: direction pinned by founder brief, not rolled. -->
     // The constellation: live points drifting through the hero, wiring
     // themselves to their neighbours. Starts after load so it never touches
     // LCP; skips under reduced motion; pauses when the tab hides.
-    window.addEventListener('load', function () {
+    (function () { var start = function () {
       var c = document.querySelector('[data-mesh]');
       if (!c || matchMedia('(prefers-reduced-motion: reduce)').matches) return;
       var x = c.getContext('2d');
@@ -371,6 +371,9 @@ seed n/a: direction pinned by founder brief, not rolled. -->
         requestAnimationFrame(tick);
       }
       requestAnimationFrame(tick);
-    });
+    };
+    if (document.readyState === 'complete') setTimeout(start, 0);
+    else window.addEventListener('load', start);
+    })();
   </script>
 </Base>

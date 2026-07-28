@@ -50,6 +50,11 @@ for (const r of ROUTES) {
   html = html.replace(/data-collapsed-src="(\/[^"]+)"/g, (m, p) => { assetToken(p); return `src="${tokenFor[p]}"`; });
   html = html.replace(/url\('?(\/fonts\/[^')]+)'?\)/g, (m, p) => `url('${assetToken(p)}')`);
   // head styles carry the page CSS (inlineStylesheets: always)
+  // The demo always moves: unlock reduced-motion gates in the preview only.
+  html = html
+    .replace(/@media \(prefers-reduced-motion: no-preference\)/g, '@media all')
+    .replace(/@media \(prefers-reduced-motion: reduce\)/g, '@media not all')
+    .replace(/(window\.)?matchMedia\('\(prefers-reduced-motion: reduce\)'\)\.matches/g, 'false');
   const head = html.slice(0, html.indexOf('</head>'));
   const css = [...head.matchAll(/<style>([\s\S]*?)<\/style>/g)].map(m => m[1]).join('\n');
   const body = html.slice(html.indexOf('<body>') + 6, html.lastIndexOf('</body>'));
