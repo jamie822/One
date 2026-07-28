@@ -108,12 +108,28 @@
   width: clamp(200px, 26vw, 380px);
   aspect-ratio: 1;
   border-radius: 50%;
-  background: radial-gradient(circle at 42% 38%, #ffedb0, var(--sun-500) 48%, #ef9c00 70%, rgba(239, 156, 0, 0) 72%);
+  /* A crisp, perfectly round disc with a warm centre. */
+  background: radial-gradient(circle, #ffedb0 0%, var(--sun-500) 55%, #f09c00 100%);
   box-shadow:
-    0 0 90px 30px color-mix(in srgb, var(--sun-500) 38%, transparent),
-    0 0 240px 90px color-mix(in srgb, var(--sun-500) 16%, transparent);
+    0 0 60px 14px color-mix(in srgb, var(--sun-500) 42%, transparent),
+    0 0 200px 70px color-mix(in srgb, var(--sun-500) 15%, transparent);
   transform: translateY(9vh);
 }
+/* The rays: twelve tapiered-off spokes in a slow-turning ring around the disc. */
+.hero__bigsun i::before {
+  content: '';
+  position: absolute; inset: -38%;
+  border-radius: 50%;
+  background: repeating-conic-gradient(
+    color-mix(in srgb, var(--sun-500) 88%, transparent) 0deg 5deg,
+    transparent 5deg 30deg);
+  -webkit-mask: radial-gradient(circle, transparent 40%, #000 41%, #000 57%, transparent 58%);
+  mask: radial-gradient(circle, transparent 40%, #000 41%, #000 57%, transparent 58%);
+}
+@media (prefers-reduced-motion: no-preference) {
+  html.js .hero__bigsun i::before { animation: rays-turn 120s linear infinite; }
+}
+@keyframes rays-turn { to { transform: rotate(360deg); } }
 @media (prefers-reduced-motion: no-preference) {
   html.js .hero__bigsun { animation: sun-cross 58s linear infinite; }
   html.js .hero__bigsun i { animation: sun-climb 58s ease-in-out infinite; }
