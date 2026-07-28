@@ -303,120 +303,238 @@ const tel = has(c.phone) ? `tel:${c.phone.replace(/\s+/g, '')}` : null;
   {tel && <a class="call-bar" href={tel}>Tap to call — free quote</a>}
 
   <script>
-    // ---- Live layer. Everything degrades to a static, readable page without it.
-    const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+    // Interactions and the live layer. Vanilla, no dependencies.
+    // Everything degrades to a static, readable page without it.
+    (function () {
+      'use strict';
+      const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
+      const fine = matchMedia('(pointer:fine)').matches;
 
-    // Animated electrical grid: nodes on a lattice with a current running the links.
-    document.querySelectorAll('canvas[data-grid]').forEach((cv) => {
-      const ctx = cv.getContext('2d');
-      const brand = getComputedStyle(document.documentElement).getPropertyValue('--green').trim() || '#22c8ee';
-      let w = 0, h = 0, nodes = [], links = [], raf = 0;
+      document.getElementById('yr').textContent = String(new Date().getFullYear());
 
-      const build = () => {
-        const dpr = Math.min(devicePixelRatio || 1, 2);
-        w = cv.clientWidth; h = cv.clientHeight;
-        cv.width = w * dpr; cv.height = h * dpr;
-        ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-        const step = w < 720 ? 96 : 132;
-        nodes = []; links = [];
-        for (let y = step / 2; y < h + step; y += step) {
-          for (let x = step / 2; x < w + step; x += step) {
-            nodes.push({ x: x + (Math.random() - .5) * step * .4, y: y + (Math.random() - .5) * step * .4 });
-          }
-        }
-        nodes.forEach((n, i) => nodes.forEach((m, j) => {
-          if (j <= i) return;
-          const d = Math.hypot(n.x - m.x, n.y - m.y);
-          if (d < step * 1.25) links.push({ a: n, b: m, t: Math.random(), v: (0.12 + Math.random() * 0.3) / d });
-        }));
-      };
-
-      const frame = () => {
-        ctx.clearRect(0, 0, w, h);
-        ctx.lineWidth = 1;
-        ctx.strokeStyle = 'rgba(255,255,255,.055)';
-        links.forEach((l) => { ctx.beginPath(); ctx.moveTo(l.a.x, l.a.y); ctx.lineTo(l.b.x, l.b.y); ctx.stroke(); });
-        // the current: a bright dot travelling each link
-        links.forEach((l) => {
-          l.t += l.v; if (l.t > 1) l.t -= 1;
-          const x = l.a.x + (l.b.x - l.a.x) * l.t, y = l.a.y + (l.b.y - l.a.y) * l.t;
-          ctx.beginPath(); ctx.fillStyle = brand; ctx.globalAlpha = .55;
-          ctx.arc(x, y, 1.6, 0, Math.PI * 2); ctx.fill(); ctx.globalAlpha = 1;
+      // ---- mobile nav
+      const toggle = document.querySelector('.nav-toggle');
+      const menu = document.getElementById('nav-menu');
+      if (toggle && menu) {
+        toggle.addEventListener('click', () => {
+          const open = menu.classList.toggle('open');
+          toggle.setAttribute('aria-expanded', String(open));
         });
-        ctx.fillStyle = 'rgba(255,255,255,.16)';
-        nodes.forEach((n) => { ctx.beginPath(); ctx.arc(n.x, n.y, 1.2, 0, Math.PI * 2); ctx.fill(); });
-        raf = requestAnimationFrame(frame);
+        menu.querySelectorAll('a').forEach((a) => a.addEventListener('click', () => {
+          menu.classList.remove('open');
+          toggle.setAttribute('aria-expanded', 'false');
+        }));
+      }
+
+      // ---- header state + scroll progress
+      const header = document.querySelector('.site-header');
+      const progress = document.getElementById('progress');
+      const onScroll = () => {
+        const y = scrollY;
+        header?.classList.toggle('scrolled', y > 20);
+        if (progress) {
+          const h = document.documentElement.scrollHeight - innerHeight;
+          progress.style.width = (h > 0 ? (y / h) * 100 : 0) + '%';
+        }
       };
+      addEventListener('scroll', onScroll, { passive: true });
+      onScroll();
 
-      build();
-      if (reduce) { ctx.clearRect(0, 0, w, h); } else { frame(); }
-      addEventListener('resize', () => { cancelAnimationFrame(raf); build(); if (!reduce) frame(); }, { passive: true });
-    });
+      // ---- reveals, staggered by position among reveal siblings so a row of
+      // cards arrives in sequence rather than all at once
+      const reveals = document.querySelectorAll('.reveal-up');
+      if ('IntersectionObserver' in window && !reduced) {
+        const io = new IntersectionObserver((es) => es.forEach((e) => {
+          if (!e.isIntersecting) return;
+          const sibs = [...e.target.parentElement.children].filter((c) => c.classList.contains('reveal-up'));
+          e.target.style.transitionDelay = (Math.min(sibs.indexOf(e.target), 4) * 80) + 'ms';
+          e.target.classList.add('in');
+          io.unobserve(e.target);
+        }), { threshold: .14 });
+        reveals.forEach((el) => io.observe(el));
+      } else {
+        reveals.forEach((el) => el.classList.add('in'));
+      }
 
-    // Reveals
-    const io = new IntersectionObserver((es) => es.forEach((e) => {
-      if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); }
-    }), { rootMargin: '0px 0px -8% 0px' });
-    document.querySelectorAll('.reveal-up').forEach((el) => io.observe(el));
-
-    // Count-ups. Only the number animates; the suffix is printed immediately.
-    document.querySelectorAll('[data-count]').forEach((el) => {
-      const target = parseFloat(el.dataset.count);
-      const suffix = el.dataset.suffix || '';
-      const io2 = new IntersectionObserver((es) => es.forEach((e) => {
-        if (!e.isIntersecting) return;
-        io2.disconnect();
-        if (reduce) { el.textContent = target + suffix; return; }
-        const t0 = performance.now(), dur = 1100;
-        const tick = (t) => {
-          const p = Math.min(1, (t - t0) / dur);
+      // ---- counters
+      const fmt = (el, v) => (el.dataset.prefix || '') + v + (el.dataset.suffix || '');
+      const countUp = (el) => {
+        const target = parseFloat(el.dataset.count);
+        const dur = 1400, t0 = performance.now();
+        const tick = (now) => {
+          const p = Math.min((now - t0) / dur, 1);
           const eased = 1 - Math.pow(1 - p, 3);
-          el.textContent = Math.round(target * eased) + suffix;
+          const v = target % 1 === 0 ? Math.round(target * eased) : (target * eased).toFixed(1);
+          el.textContent = fmt(el, v);
           if (p < 1) requestAnimationFrame(tick);
         };
         requestAnimationFrame(tick);
-      }));
-      io2.observe(el);
-    });
+      };
+      const counters = document.querySelectorAll('[data-count]');
+      if ('IntersectionObserver' in window && !reduced) {
+        const cio = new IntersectionObserver((es) => es.forEach((e) => {
+          if (e.isIntersecting) { countUp(e.target); cio.unobserve(e.target); }
+        }), { threshold: .6 });
+        counters.forEach((el) => cio.observe(el));
+      } else {
+        counters.forEach((el) => { el.textContent = fmt(el, el.dataset.count); });
+      }
 
-    // Card tilt and magnetic buttons — pointer only, so a tap never leaves a
-    // card stuck at an angle on a phone.
-    if (matchMedia('(hover: hover) and (pointer: fine)').matches && !reduce) {
-      document.querySelectorAll('[data-tilt]').forEach((el) => {
-        el.addEventListener('pointermove', (ev) => {
-          const r = el.getBoundingClientRect();
-          const x = (ev.clientX - r.left) / r.width - .5, y = (ev.clientY - r.top) / r.height - .5;
-          el.style.transform = `perspective(760px) rotateY(${x * 5}deg) rotateX(${-y * 5}deg) translateY(-3px)`;
+      // ---- magnetic buttons and card tilt. Pointer-fine only, so a tap never
+      // leaves a card stuck at an angle on a phone.
+      if (!reduced && fine) {
+        document.querySelectorAll('[data-magnetic]').forEach((el) => {
+          el.addEventListener('mousemove', (e) => {
+            const r = el.getBoundingClientRect();
+            const x = e.clientX - r.left - r.width / 2;
+            const y = e.clientY - r.top - r.height / 2;
+            el.style.transform = `translate(${x * .25}px, ${y * .35}px)`;
+          });
+          el.addEventListener('mouseleave', () => { el.style.transform = ''; });
         });
-        el.addEventListener('pointerleave', () => { el.style.transform = ''; });
-      });
-      document.querySelectorAll('[data-magnetic]').forEach((el) => {
-        el.addEventListener('pointermove', (ev) => {
-          const r = el.getBoundingClientRect();
-          el.style.transform = `translate(${((ev.clientX - r.left) / r.width - .5) * 7}px, ${((ev.clientY - r.top) / r.height - .5) * 7}px)`;
+        document.querySelectorAll('[data-tilt]').forEach((card) => {
+          card.addEventListener('mousemove', (e) => {
+            const r = card.getBoundingClientRect();
+            const px = (e.clientX - r.left) / r.width, py = (e.clientY - r.top) / r.height;
+            card.style.setProperty('--mx', (px * 100) + '%');
+            card.style.setProperty('--my', (py * 100) + '%');
+            card.style.transform = `translateY(-6px) rotateX(${(.5 - py) * 6}deg) rotateY(${(px - .5) * 6}deg)`;
+          });
+          card.addEventListener('mouseleave', () => { card.style.transform = ''; });
         });
-        el.addEventListener('pointerleave', () => { el.style.transform = ''; });
+      }
+
+      // ---- form guard. The endpoint is not wired yet, so say so plainly rather
+      // than silently swallowing an enquiry.
+      const form = document.querySelector('.contact-form');
+      form?.addEventListener('submit', (e) => {
+        const action = (form.getAttribute('action') || '').trim();
+        if (!action || action === '#') {
+          e.preventDefault();
+          alert('This enquiry form is not connected yet.\n\nCall or email in the meantime, details are just above.');
+        }
       });
-    }
 
-    // Scroll progress
-    const bar = document.getElementById('progress');
-    if (bar) addEventListener('scroll', () => {
-      const max = document.documentElement.scrollHeight - innerHeight;
-      bar.style.transform = `scaleX(${max > 0 ? scrollY / max : 0})`;
-    }, { passive: true });
+      /* ==========================================================
+         LIVE ELECTRICAL GRID
+         Nodes drift and bounce. Links are recomputed every frame from
+         distance, so the network forms and breaks connections rather than
+         sitting on a fixed lattice, and link opacity falls off with length.
+         Pulses spawn on random links and travel as a radial glow. The whole
+         field recoils from the cursor.
+         ========================================================== */
+      function buildGrid(canvas, opts) {
+        if (!canvas || reduced) return;
+        const ctx = canvas.getContext('2d');
+        let w, h, dpr, nodes = [], links = [], pulses = [], raf = null;
+        const mouse = { x: -999, y: -999 };
+        const cfg = Object.assign({ density: 9000, linkDist: 150, speed: .18, pulseRate: .9 }, opts || {});
+        const css = getComputedStyle(document.documentElement);
+        const green = css.getPropertyValue('--green').trim() || '#4ade80';
+        const bright = css.getPropertyValue('--green-bright').trim() || '#6bf7a0';
+        // rgb triplet, so the per-link alpha can be applied
+        const rgb = (hex) => {
+          const n = parseInt(hex.replace('#', ''), 16);
+          return [(n >> 16) & 255, (n >> 8) & 255, n & 255];
+        };
+        const [gr, gg, gb] = rgb(green);
+        const [br, bg, bb] = rgb(bright);
 
-    // Mobile nav
-    const nav = document.getElementById('nav'), tg = document.getElementById('navToggle');
-    tg?.addEventListener('click', () => {
-      const open = nav.classList.toggle('is-open');
-      tg.setAttribute('aria-expanded', String(open));
-    });
-    nav?.querySelectorAll('a').forEach((a) => a.addEventListener('click', () => {
-      nav.classList.remove('is-open'); tg?.setAttribute('aria-expanded', 'false');
-    }));
+        const seed = () => {
+          const count = Math.max(14, Math.min(60, Math.round((w * h) / cfg.density)));
+          nodes = [];
+          for (let i = 0; i < count; i++) {
+            nodes.push({
+              x: Math.random() * w, y: Math.random() * h,
+              vx: (Math.random() - .5) * cfg.speed, vy: (Math.random() - .5) * cfg.speed,
+              r: Math.random() * 1.6 + 1.1,
+            });
+          }
+          pulses = [];
+        };
 
-    document.getElementById('yr').textContent = String(new Date().getFullYear());
+        const resize = () => {
+          dpr = Math.min(devicePixelRatio || 1, 2);
+          const rect = canvas.getBoundingClientRect();
+          w = rect.width; h = rect.height;
+          canvas.width = w * dpr; canvas.height = h * dpr;
+          ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+          seed();
+        };
+
+        const step = () => {
+          ctx.clearRect(0, 0, w, h);
+
+          for (const n of nodes) {
+            n.x += n.vx; n.y += n.vy;
+            if (n.x < 0 || n.x > w) n.vx *= -1;
+            if (n.y < 0 || n.y > h) n.vy *= -1;
+            const dx = n.x - mouse.x, dy = n.y - mouse.y, d = Math.hypot(dx, dy);
+            if (d < 120 && d > 0) { n.x += (dx / d) * (120 - d) * .012; n.y += (dy / d) * (120 - d) * .012; }
+          }
+
+          links = [];
+          for (let i = 0; i < nodes.length; i++) {
+            for (let j = i + 1; j < nodes.length; j++) {
+              const d = Math.hypot(nodes[i].x - nodes[j].x, nodes[i].y - nodes[j].y);
+              if (d < cfg.linkDist) links.push({ a: i, b: j, d });
+            }
+          }
+
+          ctx.lineWidth = 1;
+          for (const l of links) {
+            const a = nodes[l.a], b = nodes[l.b];
+            ctx.strokeStyle = `rgba(${gr},${gg},${gb},${(1 - l.d / cfg.linkDist) * .5})`;
+            ctx.beginPath(); ctx.moveTo(a.x, a.y); ctx.lineTo(b.x, b.y); ctx.stroke();
+          }
+
+          if (links.length && Math.random() < cfg.pulseRate * .06) {
+            const l = links[(Math.random() * links.length) | 0];
+            pulses.push({ a: l.a, b: l.b, t: 0, speed: .012 + Math.random() * .02 });
+          }
+          for (let i = pulses.length - 1; i >= 0; i--) {
+            const p = pulses[i], a = nodes[p.a], b = nodes[p.b];
+            if (!a || !b) { pulses.splice(i, 1); continue; }
+            p.t += p.speed;
+            if (p.t >= 1) { pulses.splice(i, 1); continue; }
+            const x = a.x + (b.x - a.x) * p.t, y = a.y + (b.y - a.y) * p.t;
+            const g = ctx.createRadialGradient(x, y, 0, x, y, 7);
+            g.addColorStop(0, `rgba(${Math.min(255, br + 70)},255,${Math.min(255, bb + 50)},.95)`);
+            g.addColorStop(1, `rgba(${gr},${gg},${gb},0)`);
+            ctx.fillStyle = g;
+            ctx.beginPath(); ctx.arc(x, y, 7, 0, Math.PI * 2); ctx.fill();
+          }
+
+          ctx.fillStyle = `rgba(${br},${bg},${bb},.85)`;
+          for (const n of nodes) { ctx.beginPath(); ctx.arc(n.x, n.y, n.r, 0, Math.PI * 2); ctx.fill(); }
+
+          raf = requestAnimationFrame(step);
+        };
+
+        const host = canvas.closest('section') || canvas.parentElement;
+        host.addEventListener('mousemove', (e) => {
+          const r = canvas.getBoundingClientRect();
+          mouse.x = e.clientX - r.left; mouse.y = e.clientY - r.top;
+        });
+        host.addEventListener('mouseleave', () => { mouse.x = mouse.y = -999; });
+        addEventListener('resize', () => { cancelAnimationFrame(raf); resize(); step(); }, { passive: true });
+
+        resize(); step();
+
+        // Stop drawing while offscreen. Two canvases running a full n-squared
+        // link pass every frame is real work to leave burning in a background tab.
+        if ('IntersectionObserver' in window) {
+          new IntersectionObserver((es) => es.forEach((en) => {
+            if (en.isIntersecting) { if (!raf) step(); }
+            else { cancelAnimationFrame(raf); raf = null; }
+          }), { threshold: .01 }).observe(canvas);
+        }
+      }
+
+      const cvs = document.querySelectorAll('canvas[data-grid]');
+      buildGrid(cvs[0], { density: 8000, pulseRate: 1.1 });
+      buildGrid(cvs[1], { density: 12000, pulseRate: .7, linkDist: 130 });
+    })();
   </script>
 </body>
 </html>
