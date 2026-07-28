@@ -120,15 +120,15 @@
    a light blur takes the last of the spike off. */
 .hero__bigsun i::before {
   content: '';
-  position: absolute; inset: -44%;
+  position: absolute; inset: -26%;
   border-radius: 50%;
   background: repeating-conic-gradient(
-    transparent 0deg 7deg,
-    color-mix(in srgb, var(--sun-500) 55%, transparent) 17deg 28deg,
-    transparent 38deg 45deg);
-  -webkit-mask: radial-gradient(circle, transparent 36%, #000 46%, #000 58%, transparent 72%);
-  mask: radial-gradient(circle, transparent 36%, #000 46%, #000 58%, transparent 72%);
-  filter: blur(7px);
+    transparent 0deg 3deg,
+    color-mix(in srgb, var(--sun-500) 62%, transparent) 7deg 13deg,
+    transparent 17deg 20deg);
+  -webkit-mask: radial-gradient(circle, transparent 34%, #000 39%, #000 52%, transparent 58%);
+  mask: radial-gradient(circle, transparent 34%, #000 39%, #000 52%, transparent 58%);
+  filter: blur(5px);
 }
 @media (prefers-reduced-motion: no-preference) {
   html.js .hero__bigsun i::before { animation: rays-turn 120s linear infinite; }
