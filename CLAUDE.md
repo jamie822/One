@@ -110,6 +110,13 @@ AI detection.**
 
 ## Other standing rules
 
+- **THE LIVE-HERO FLOOR (founder-mandated, 2026-07-28).** Every client site
+  opens with a BUILT, MOVING, immersive hero scene — code, not photography —
+  at minimum the level of ES Elec's spinning core or Loxley's rising sun.
+  The moving scene occupies the majority of the hero. Read
+  `research/founder-taste.md` BEFORE any design decision: it records the
+  founder's approvals and rejections as hard rules and outranks generic
+  craft guidance wherever they conflict.
 - **No blanks.** Missing client facts render as plausible industry-average
   temporary values tagged `// TEMP` in the data file, per MASTER_PROMPT.md
   Part 6. All temps are swapped for real facts before paid go-live. The one
@@ -123,9 +130,28 @@ AI detection.**
   ethical one.
 - **Render and look at the result before showing it to anyone.** Do not judge a
   build by grepping the source.
+- **Report status before long-running work.** The founder watches the session;
+  before any stretch of background agents or multi-minute silence, say in
+  chat exactly what is running and how long it should take.
+
+## The studio's memory (read at the start of every engagement)
+
+- `research/founder-taste.md` — the founder's recorded taste. Binding.
+- `research/doctrine/` — distilled operating doctrine researched from the
+  primary authorities: `google.md`, `ux-evidence.md`, `sales-psychology.md`,
+  `local-seo.md`, `design-craft.md`, `trade-market.md`. These are the
+  studio's textbook; new builds apply them, and new evidence gets appended
+  with sources, never pasted as link dumps.
+- `research/conversion-psychology.md` · `research/design-benchmarks.md` —
+  first-generation research, still valid where doctrine doesn't supersede.
+- `research/direction-ledger.md` — every shipped design direction; a new
+  client may share at most ONE of the five design axes with any row (the
+  standing shared axis is the live-hero floor itself).
+- `kit/` — the starter kit: intake questionnaire, hero recipes, shared
+  tools, and the new-client checklist. Start every build from here.
 
 ## Reference docs
 
-`BUILD.md` (the prompt) · `BUILD_PROCESS.md` (phases and gates) ·
+`MASTER_PROMPT.md` (the build order) · `BUILD_PROCESS.md` (phases and gates) ·
 `AUDIENCE.md` (the end customer) · `RESEARCH.md` (market) ·
 `COMMERCIALS.md` (pricing) · `OUTREACH.md` (prospecting)
