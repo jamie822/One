@@ -1,0 +1,38 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import Hero from '../../components/Hero.astro';
+import CtaBand from '../../components/CtaBand.astro';
+import { href, itemListSchema } from '../../lib/site.js';
+import { client, areas } from '../../data/client.js';
+
+const listed = areas.map((a) => ({ name: a.name, path: `/areas/${a.slug}/` }));
+---
+<Layout
+  path="/areas/"
+  title="Areas we cover"
+  description={`NICEIC registered electrician covering ${areas.slice(0, -1).map((a) => a.name).join(', ')} and ${areas.at(-1).name}. What the wiring is like in each.`}
+  crumbs={[{ name: 'Home', path: '/' }, { name: 'Areas', path: '/areas/' }]}
+  schemas={[itemListSchema(`Areas ${client.name} covers`, listed)]}
+>
+  <Hero inner={true}>
+    <p class="eyebrow">Coverage</p>
+    <h1>Areas we cover</h1>
+    <p class="hero__sub">Where we actually work, not a radius on a map.</p>
+  </Hero>
+
+  <section class="section">
+    <div class="container">
+      <div class="grid grid--3">
+        {areas.map((a, i) => (
+          <a class="card reveal" style={`transition-delay:${(i % 3) * 70}ms`} href={href(`/areas/${a.slug}/`)}>
+            <h2>{a.name}</h2>
+            <p>{a.travelNote || a.housingStock}</p>
+            <span class="card__link">Electrician in {a.name} <span aria-hidden="true">→</span></span>
+          </a>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <CtaBand />
+</Layout>

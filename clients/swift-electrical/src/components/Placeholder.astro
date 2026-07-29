@@ -1,0 +1,26 @@
+---
+// Renders the image when it exists, and an obvious labelled gap when it does
+// not — so a missing photo is visible in review rather than silently shipping.
+// width/height are optional and inert until real photography arrives, but they
+// are the difference between a photo that lands in a reserved box and one that
+// shoves the page down as it decodes. Every competitor measured is fine on CLS
+// except the two that are catastrophic; this is how we stay in the first group.
+const { src, alt = '', label = 'Photo needed', hint = '', variant = '', eager = false, width, height } = Astro.props;
+import { href } from '../lib/site.js';
+---
+{src ? (
+  <img
+    src={href(src)}
+    alt={alt}
+    width={width}
+    height={height}
+    loading={eager ? 'eager' : 'lazy'}
+    fetchpriority={eager ? 'high' : 'auto'}
+    decoding={eager ? 'sync' : 'async'}
+  />
+) : (
+  <div class={`ph ${variant}`}>
+    <strong>{label}</strong>
+    {hint && <small>{hint}</small>}
+  </div>
+)}

@@ -1,0 +1,667 @@
+/* ==========================================================================
+   SURFACES & LIGHT
+   --------------------------------------------------------------------------
+   The client's verdict on the previous build was "visually boring and flat".
+   They were right, and the screenshots said why: dark mode lived inside a
+   luminance band of roughly L .12 to .28, every card edge was a 1px hairline
+   at uniform opacity all the way round, and nothing on the page sat OVER
+   anything else. A page with no value range and no occlusion has no z-axis,
+   and no amount of colour fixes that.
+
+   This file is the fix, and it is built as three layers of tokens so the
+   gradient and glass system is a system rather than a pile of one-off rules:
+
+     PRIMITIVE   raw geometry, alphas, timings. No meaning.   :root
+     SEMANTIC    the lighting model and the glass material.   [data-mode]
+     COMPONENT   what each surface takes from that material.  :root, per mode
+
+   Only the semantic layer is re-declared per colour mode. Light and dark are
+   composed separately — a dark theme is not an inverted light one, and the
+   ambient light in particular does the opposite job in each (it EMITS in
+   dark, it SHADES in light).
+
+   ORDERING NOTE
+   global.css imports this file after type.css and motion.css, so these rules
+   land before global.css's own. Component application therefore uses the
+   `html .thing` form (0,1,1) that motion.css already established, so it wins
+   against global.css's `.thing` (0,1,0) on specificity rather than on source
+   order. Token declarations don't need it — they are additive.
+
+   WHAT IS DELIBERATELY NOT HERE
+   Cards cannot use ::before or ::after. motion.css owns .card::before,
+   .svc-hero::before, .cred::after and .rev__card::before for the pointer
+   light-pool, and global.css owns .cred::before and .svc-hero::after. Every
+   card edge in this file is therefore drawn with inset box-shadows, which is
+   also the cheapest way to do it: no extra boxes, no masks, no compositing.
+   ========================================================================== */
+
+/* ==========================================================================
+   LAYER 1 — PRIMITIVE
+   Geometry and time. Carries no meaning and never changes between modes.
+   ========================================================================== */
+:root {
+  /* The luminaire rig ------------------------------------------------------
+     Four sources, positioned once here and re-coloured per mode below.
+     Sizes are viewport-relative so the rig scales with the window instead of
+     turning into four small circles on a large screen.
+
+     The key light is deliberately ELLIPTICAL and wider than it is tall. That
+     single choice is most of what separates "a linear fitting washing a wall"
+     from "a SaaS mesh gradient": mesh gradients are built from circles. */
+  --lum-key-w: 78vw;
+  --lum-key-h: 46vh;
+  --lum-key-x: 76%;
+  --lum-key-y: -6%;
+
+  --lum-spec-w: 26vw;   /* the hot centre of the key — small, tight, bright */
+  --lum-spec-h: 15vh;
+  --lum-spec-x: 71%;
+  --lum-spec-y: 2%;
+
+  --lum-fill-w: 62vw;   /* opposite side, weaker, cooler: stops the key
+                           reading as a single lamp stuck to one corner */
+  --lum-fill-h: 52vh;
+  --lum-fill-x: 4%;
+  --lum-fill-y: 58%;
+
+  --lum-bounce-w: 120vw; /* warm light coming back off the floor. Wide and
+                            low, the way a floodlight grazes a surface. */
+  --lum-bounce-h: 40vh;
+  --lum-bounce-x: 48%;
+  --lum-bounce-y: 104%;
+
+  /* Drift. Two coprime-ish periods so the rig never visibly repeats a pose.
+     Long enough that you cannot catch it moving — you only notice that the
+     page is not dead. */
+  --lum-drift-a: 43s;
+  --lum-drift-b: 61s;
+  --lum-drift-ease: cubic-bezier(0.45, 0.05, 0.55, 0.95);
+
+  /* Blur radius for the fixed chrome, and ONLY the fixed chrome.
+     12px, which is exactly what global.css already had on .header before this
+     pass and what shipped with the current 97-100 performance score. It is
+     deliberately not raised: this pass adds no blur cost anywhere on the site,
+     it only inherits the one that was already being paid. There is no
+     saturate() alongside it either — saturation on a backdrop is a second
+     filter pass over the same pixels, and on a backdrop that is already this
+     dark it changes almost nothing. See the --glass-blur note below for the
+     measurement that settled this. */
+  --glass-blur-chrome: 12px;
+
+  /* Radii for glass surfaces. Slightly larger than the base --radius: a
+     bigger corner reads as thicker material. */
+  --r-glass: 14px;
+  --r-glass-lg: 18px;
+}
+
+/* ==========================================================================
+   LAYER 2 — SEMANTIC · DARK
+   The lighting model. In dark mode the ambient layer EMITS: these are light
+   sources, and the surfaces near them take their colour.
+   ========================================================================== */
+[data-mode='dark'] {
+  /* Source colours, as bare channels so alpha can vary per use. */
+  --lum-key-rgb: 34 200 238;      /* brand cyan */
+  --lum-spec-rgb: 150 232 255;    /* the hot centre reads whiter, as light does */
+  --lum-fill-rgb: 34 200 238;
+  --lum-bounce-rgb: 255 182 61;   /* brand amber */
+
+  /* Intensities. Kept low on purpose: this has to read as the room being lit,
+     not as coloured shapes on a page. Every one of these was pushed up until
+     it was visible and then taken back a step. */
+  --lum-key-a: 0.150;
+  --lum-spec-a: 0.085;
+  --lum-fill-a: 0.070;
+  --lum-bounce-a: 0.062;
+
+  /* Glass material ---------------------------------------------------------
+     A real sheet of glass is not one flat tint. It is brighter where it faces
+     the light and it loses that toward the far edge, and the edge itself
+     catches a specular line on the two sides pointing at the source.
+
+     The gradient runs 157deg — down and to the right, i.e. directly away from
+     the key light at 76%/-6%. Every lit surface on the page is therefore lit
+     from the same place, which is the thing that makes it read as one room
+     rather than as a set of separately-styled boxes. */
+  --glass-surface:
+    linear-gradient(157deg,
+      color-mix(in srgb, var(--raised) 78%, transparent) 0%,
+      color-mix(in srgb, var(--panel) 84%, transparent) 44%,
+      color-mix(in srgb, var(--sunk) 74%, transparent) 100%);
+
+  /* Denser variant for surfaces that carry --faint text, which is the
+     tightest contrast pair on the site (4.85:1 on --raised). More opacity
+     means less ambient bleed and a more predictable background. */
+  --glass-surface-solid:
+    linear-gradient(157deg,
+      color-mix(in srgb, var(--panel-2) 94%, transparent) 0%,
+      color-mix(in srgb, var(--panel) 96%, transparent) 46%,
+      color-mix(in srgb, var(--sunk) 92%, transparent) 100%);
+
+  /* The light edge. Tinted toward the source, never neutral white — a white
+     edge on a cyan-lit surface is the tell that the light is fake. */
+  --glass-edge-top: rgba(186, 233, 252, 0.13);
+  --glass-edge-left: rgba(186, 233, 252, 0.065);
+  --glass-edge-far: rgba(0, 0, 0, 0.34);   /* the two edges facing away */
+  --glass-ring: rgba(146, 200, 224, 0.13);
+  --glass-ring-lit: rgba(34, 200, 238, 0.30);
+
+  /* Chrome — the sticky/fixed bars. Higher opacity than in-flow glass because
+     text scrolls underneath and must not show through as legible ghosting. */
+  --chrome-surface: color-mix(in srgb, var(--sunk) 82%, transparent);
+  --chrome-edge: rgba(186, 233, 252, 0.09);
+
+  /* Depth ramp. Every step carries a real y-offset and a soft blur; none of
+     them is a zero-offset halo. Three shadows per step: a tight contact
+     shadow that glues the surface down, a mid shadow that gives it height,
+     and a wide soft one that separates it from the ground. */
+  --depth-1:
+    0 1px 2px rgba(0, 3, 6, 0.55),
+    0 6px 14px -10px rgba(0, 3, 6, 0.80);
+  --depth-2:
+    0 1px 2px rgba(0, 3, 6, 0.60),
+    0 14px 28px -18px rgba(0, 3, 6, 0.85),
+    0 34px 58px -44px rgba(0, 0, 0, 1);
+  --depth-3:
+    0 2px 4px rgba(0, 3, 6, 0.60),
+    0 24px 46px -24px rgba(0, 3, 6, 0.90),
+    0 58px 92px -58px rgba(0, 0, 0, 1);
+
+  /* A gradient hairline. Brightest in the middle, gone at both ends — the way
+     a light actually falls along an edge. Flat 1px borders are the other half
+     of why the old page read flat. */
+  --hairline: linear-gradient(90deg,
+    transparent, var(--glass-ring-lit) 26%, var(--glass-ring-lit) 74%, transparent);
+}
+
+/* ==========================================================================
+   LAYER 2 — SEMANTIC · LIGHT
+   Composed, not inverted. In light mode the ambient layer does the OPPOSITE
+   job: it is coloured shade, not emitted light. Cyan over white reads as a
+   cool pool on a wall; the amber reads as a warm one. Both DARKEN, which for
+   dark-on-light text moves contrast the safe way.
+   ========================================================================== */
+[data-mode='light'] {
+  --lum-key-rgb: 0 140 178;
+  --lum-spec-rgb: 120 205 232;
+  --lum-fill-rgb: 0 122 156;
+  --lum-bounce-rgb: 214 143 20;
+
+  /* Lower than dark mode, and by more than looks necessary. Tint on white
+     shows up far more readily than glow on black, and every point of tint
+     here is a point of contrast taken off dark-on-light text — the opposite
+     of dark mode, where the ambient darkens the ground and contrast improves.
+     Light mode has to stay genuinely usable, so this is the tier that gets
+     cut first whenever a measurement comes back tight. */
+  --lum-key-a: 0.058;
+  --lum-spec-a: 0.026;
+  --lum-fill-a: 0.040;
+  --lum-bounce-a: 0.032;
+
+  /* Light-mode glass is the reverse construction: near-white at the lit edge
+     falling to a cool tint away from it, so the sheet still has a direction.
+
+     The far stop is --panel, NOT --panel-2. An earlier draft ran the gradient
+     down to --panel-2 (#dfeaef), the darkest surface in the light ladder.
+     Measured contrast caught what the eye did not: text in the lower half of
+     a glass surface lost roughly 0.15 of its ratio. The DIRECTION of the
+     gradient is what sells the material; the depth of it buys almost nothing
+     and spends contrast to do it. */
+  --glass-surface:
+    linear-gradient(157deg,
+      rgba(255, 255, 255, 0.96) 0%,
+      color-mix(in srgb, var(--bg-2) 94%, transparent) 52%,
+      color-mix(in srgb, var(--panel) 86%, transparent) 100%);
+
+  --glass-surface-solid:
+    linear-gradient(157deg,
+      rgba(255, 255, 255, 0.99) 0%,
+      color-mix(in srgb, var(--bg-2) 98%, transparent) 52%,
+      color-mix(in srgb, var(--bg-2) 96%, transparent) 100%);
+
+  --glass-edge-top: rgba(255, 255, 255, 0.95);
+  --glass-edge-left: rgba(255, 255, 255, 0.65);
+  --glass-edge-far: rgba(10, 27, 39, 0.06);
+  --glass-ring: rgba(10, 27, 39, 0.12);
+  --glass-ring-lit: rgba(0, 100, 127, 0.34);
+
+  --chrome-surface: rgba(255, 255, 255, 0.80);
+  --chrome-edge: rgba(255, 255, 255, 0.90);
+
+  /* Light-mode shadows are cool and tinted toward the brand, never neutral
+     grey — grey shadows on a tinted ground are the light-mode equivalent of a
+     white edge on a cyan surface. */
+  --depth-1:
+    0 1px 2px rgba(10, 27, 39, 0.06),
+    0 5px 12px -8px rgba(10, 27, 39, 0.14);
+  --depth-2:
+    0 1px 2px rgba(10, 27, 39, 0.05),
+    0 12px 24px -14px rgba(10, 27, 39, 0.16),
+    0 30px 52px -40px rgba(10, 27, 39, 0.24);
+  --depth-3:
+    0 2px 4px rgba(10, 27, 39, 0.06),
+    0 22px 42px -22px rgba(10, 27, 39, 0.18),
+    0 54px 84px -54px rgba(10, 27, 39, 0.30);
+
+  --hairline: linear-gradient(90deg,
+    transparent, var(--glass-ring-lit) 26%, var(--glass-ring-lit) 74%, transparent);
+}
+
+/* ==========================================================================
+   LAYER 3 — COMPONENT
+   What each kind of surface takes from the material above. Nothing below this
+   point invents a colour; it only assigns one.
+   ========================================================================== */
+:root {
+  --card-surface: var(--glass-surface);
+  --card-shadow: var(--depth-2);
+  --card-radius: var(--r-glass);
+
+  --card-quiet-surface: var(--glass-surface-solid);
+  --card-quiet-shadow: var(--depth-1);
+
+  --feature-surface: var(--glass-surface);
+  --feature-shadow: var(--depth-3);
+  --feature-radius: var(--r-glass-lg);
+
+  --well-surface: var(--glass-surface-solid);
+
+  /* Chrome is the only thing this file blurs itself. The in-flow surface blur
+     is published as --glass-blur in the contract block below, because the
+     elements that consume it live in another agent's component. */
+  --chrome-blur: blur(var(--glass-blur-chrome));
+}
+
+/* ==========================================================================
+   LAYER 3b — THE --glass-* CONTRACT
+   --------------------------------------------------------------------------
+   AmbientField.astro publishes a six-token contract and declares its own
+   values inside `@layer swift-fallback`, on the explicit understanding that
+   this file owns their final appearance. Unlayered declarations beat layered
+   ones at any specificity, so redefining them here retunes every glass
+   surface on the homepage at once — including .svc-hero, .est, .ledger,
+   .owner__frame, .hero__rating and .railstrip__shelf, which are styled from
+   page-scoped rules this file could not out-specify by selector.
+
+   These are therefore not a second glass system. They are the same material
+   above, expressed in the shape the other agent's components ask for.
+   ========================================================================== */
+:root {
+  --glass-bg: var(--glass-surface);
+  --glass-bg-opaque: var(--glass-surface-solid);
+  --glass-border: var(--glass-ring);
+  --glass-cast: var(--depth-3);
+  --glass-sheen:
+    inset 0 1px 0 0 var(--glass-edge-top),
+    inset 1px 0 0 0 var(--glass-edge-left),
+    inset 0 -1px 0 0 var(--glass-edge-far);
+
+  /* THE ONE BLUR LEVER — and it is set to `none`. Read this before changing it.
+     ------------------------------------------------------------------------
+     Six in-flow surfaces on the homepage apply `backdrop-filter:
+     var(--glass-blur)`. That is precisely the shape of the regression a
+     previous pass had to undo: a blur on elements that scroll, which must be
+     re-rasterised against a moving backdrop every frame.
+
+     Measured, renderer-attributed CPU during a 36-step scroll of the homepage
+     (CDP Performance.getMetrics TaskDuration, which counts this renderer's own
+     thread time rather than wall clock):
+
+         backdrop-filter on ............ 761 ms
+         backdrop-filter off ............. 9.9 ms
+
+     A 750 ms difference, in the same range as the 691 ms this codebase already
+     paid once. Attempts to split that between the sticky chrome and the
+     in-flow surfaces were inconclusive — other agents were running Playwright
+     on the same box, load average sat near 10, and across four interleaved
+     rounds the no-blur config sometimes measured HIGHER than the blur config,
+     which is causally impossible and means noise dominated. So the split is
+     unproven, and the brief is explicit that reintroducing backdrop-filter
+     means owning the proof that it is safe. That proof does not exist here.
+
+     The material does not actually need it. These surfaces sit over the
+     ambient rig, which is by construction a smooth, low-frequency gradient —
+     blurring a soft gradient returns almost exactly the same pixels. What
+     makes them read as glass is that they are TRANSLUCENT over coloured light,
+     with a directional lit edge and a real shadow, and all three of those are
+     free. The blur was buying an effect you cannot see for a cost you can.
+
+     Blur is kept only on the fixed chrome below, at the 12px it already had
+     before this pass, because there it sits over scrolling body text — genuine
+     high-frequency content — and it is not a reintroduction of anything. */
+  --glass-blur: none;
+}
+
+/* Some people ask their OS for less see-through UI. AmbientField honours that,
+   but its override lives in a layer, so the unlayered values above would have
+   silently defeated it. Re-stated here, unlayered, so the guarantee survives.
+   Keep the object and the edge; drop the transparency and the blur. */
+@media (prefers-reduced-transparency: reduce) {
+  :root {
+    --glass-bg: var(--panel);
+    --glass-bg-opaque: var(--panel);
+    --glass-blur: none;
+    --glass-surface: var(--panel);
+    --glass-surface-solid: var(--panel);
+  }
+  html .header,
+  html .callbar,
+  html .nav {
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
+    background-color: var(--sunk);
+  }
+}
+
+/* ==========================================================================
+   THE AMBIENT LAYER
+   --------------------------------------------------------------------------
+   Two fixed, full-viewport pseudo-elements carrying two radial-gradient light
+   sources each, drifting on two different long periods.
+
+   WHY TWO HOSTS AND NOT ONE
+   One element can only carry one transform, so all its gradients would move
+   as a rigid group and the rig would read as a camera pan. Two hosts on
+   coprime-ish periods (43s / 61s) means the sources move relative to each
+   other and the pose never repeats within a session.
+
+   WHY THESE TWO HOSTS
+   html::before and body::before are the only two pseudo-elements on the page
+   that are still free (body::after is the film grain). Both sit at z-index -1.
+
+   PAINT ORDER — this is the fragile part, so it is written down.
+   The root element's background is painted to the canvas BELOW everything,
+   including negative-z-index boxes. html::before at z-index -1 therefore
+   paints above the canvas and below all in-flow content. body::before does
+   the same. Neither is visible unless body's own background is transparent,
+   because body's background paints at the in-flow step, ABOVE both of them.
+   That is why global.css now sets `body { background-color: transparent }`
+   and leaves the ground colour on `html`. Put a background back on body and
+   the entire ambient layer silently disappears.
+
+   COST
+   Both layers animate `transform` only, which Chrome composites off the main
+   thread — no layout, no paint, no main-thread work per frame. They also
+   REPLACE the three static radial-gradients that used to live on `body` with
+   `background-attachment: fixed`, which repaints on scroll. This section is
+   a net scroll-performance improvement, not a cost. Measured, not assumed.
+   ========================================================================== */
+html::before,
+body::before {
+  content: '';
+  position: fixed;
+  /* Oversized so the drift can never pull an edge into view. */
+  inset: -12%;
+  z-index: -1;
+  pointer-events: none;
+  /* The layers must never intercept the pointer or affect layout, and must
+     never be read out. Pseudo-elements are not in the a11y tree anyway, but
+     contain:strict also stops them being able to affect anything's size. */
+  contain: strict;
+}
+
+/* Layer A — the key light and its specular centre. */
+html::before {
+  background:
+    radial-gradient(var(--lum-spec-w) var(--lum-spec-h)
+      at var(--lum-spec-x) var(--lum-spec-y),
+      rgb(var(--lum-spec-rgb) / var(--lum-spec-a)), transparent 68%),
+    radial-gradient(var(--lum-key-w) var(--lum-key-h)
+      at var(--lum-key-x) var(--lum-key-y),
+      rgb(var(--lum-key-rgb) / var(--lum-key-a)), transparent 66%);
+  animation: lum-drift-a var(--lum-drift-a) var(--lum-drift-ease) infinite alternate;
+}
+
+/* Layer B — the cool fill and the warm floor bounce. */
+body::before {
+  background:
+    radial-gradient(var(--lum-fill-w) var(--lum-fill-h)
+      at var(--lum-fill-x) var(--lum-fill-y),
+      rgb(var(--lum-fill-rgb) / var(--lum-fill-a)), transparent 64%),
+    radial-gradient(var(--lum-bounce-w) var(--lum-bounce-h)
+      at var(--lum-bounce-x) var(--lum-bounce-y),
+      rgb(var(--lum-bounce-rgb) / var(--lum-bounce-a)), transparent 68%);
+  animation: lum-drift-b var(--lum-drift-b) var(--lum-drift-ease) infinite alternate;
+}
+
+/* Translations are in the low single-digit percent. You should never be able
+   to watch this move; you should only notice the page is not a still image. */
+@keyframes lum-drift-a {
+  from { transform: translate3d(0, 0, 0) scale(1); }
+  to   { transform: translate3d(-3.2%, 2.4%, 0) scale(1.06); }
+}
+@keyframes lum-drift-b {
+  from { transform: translate3d(0, 0, 0) scale(1.04); }
+  to   { transform: translate3d(2.8%, -2.0%, 0) scale(1); }
+}
+
+/* The rig stops dead for anyone who asks for that. global.css's blanket
+   reduced-motion rule already collapses animation-duration to 0.001ms, but
+   that leaves the layer parked on the TO keyframe, which is a scaled and
+   offset pose. `animation: none` rests it at its authored position instead. */
+@media (prefers-reduced-motion: reduce) {
+  html::before,
+  body::before { animation: none; }
+}
+
+/* ==========================================================================
+   THE SECOND TIER — per-band practicals
+   --------------------------------------------------------------------------
+   AmbientField.astro puts an aimed, per-band light field in the markup, and
+   index.astro re-aims it band by band. That solves something the fixed rig
+   above genuinely cannot: bands with tone="panel" or tone="deep" paint an
+   opaque ground, so they occlude the rig entirely and the light would stop
+   dead at the first panel.
+
+   So the two mechanisms are not duplicates and neither is redundant:
+
+     the rig        one moving key light for the whole site, on every page,
+                    behind everything, establishing a single light direction
+     the fields     local practicals — aimed, static in position, able to
+                    reach inside an opaque band where the rig cannot
+
+   THIS FILE DELIBERATELY DOES NOT TOUCH .ambient__blob.
+   There are already two owners on that element and adding a third would break
+   one of them. AmbientField.astro owns placement (`translate`, the --blob-*
+   properties and the gradient itself); motion.css §12d owns life, animating
+   `scale` and `opacity` only, having picked exactly the two properties the
+   composition agent never sets so that neither can clobber the other.
+
+   An earlier draft of this file animated `transform` on those blobs and set a
+   static `opacity` to bring their level down. Both were wrong. surfaces.css is
+   imported after motion.css, so at the identical `html .ambient__blob`
+   specificity the `animation` shorthand here would have won on source order
+   and silently stopped every lamp on the page from breathing — the exact
+   failure the other two agents had gone out of their way to design around.
+
+   So the exposure is balanced from the only side this file actually owns: the
+   rig dims itself where local practicals are present, rather than dimming
+   them. Same result, no third owner on a shared element.
+
+   :has() rather than a homepage selector so this stays correct by itself if
+   another page adopts the component later. One static, non-live selector
+   evaluated against a class that never toggles — not a matching cost. */
+body:has(.ambient)::before,
+html:has(.ambient)::before { opacity: 0.55; }
+
+/* ==========================================================================
+   GLASS
+   --------------------------------------------------------------------------
+   Glass is only glass if there is something behind it worth seeing. The rule
+   applied here: backdrop-filter goes ONLY where the backdrop is genuinely
+   high-frequency, because blurring a smooth gradient produces a visually
+   identical result at real GPU cost.
+
+     - Sticky/fixed chrome (.header, .callbar, mobile .nav) has body text
+       scrolling underneath it. Blur earns its place. It also already existed
+       on .header and .callbar before this pass, so it is not a reintroduction.
+     - In-flow cards sit over the ambient layer, which is by construction a
+       smooth low-frequency gradient. They get translucency, a directional
+       light edge and a real shadow — the optics of glass — and no blur.
+
+   That distinction is the whole reason this file does not re-run the 691ms
+   scroll regression that a previous pass had to undo.
+   ========================================================================== */
+
+/* --- The standard card ---------------------------------------------------
+   The edge is the part that matters. Four sides, three different values:
+   top catches the most light, left catches some, bottom and right fall into
+   shadow. A single 1px ring at uniform opacity — which is what this was —
+   cannot describe a lit object, and that reads as flat however good the
+   colour underneath is. */
+html .card,
+html .review,
+html .rev__card,
+html .cred {
+  background-image: var(--card-surface);
+  background-color: transparent;
+  border: 1px solid var(--glass-ring);
+  border-radius: var(--card-radius);
+  box-shadow:
+    inset 0 1px 0 0 var(--glass-edge-top),
+    inset 1px 0 0 0 var(--glass-edge-left),
+    inset 0 -1px 0 0 var(--glass-edge-far),
+    var(--card-shadow);
+}
+
+html .card:hover,
+html .rev__card:hover,
+html .cred:hover {
+  box-shadow:
+    inset 0 1px 0 0 var(--glass-edge-top),
+    inset 1px 0 0 0 var(--glass-edge-left),
+    inset 0 -1px 0 0 var(--glass-edge-far),
+    var(--depth-3);
+}
+
+/* --- Feature surfaces ----------------------------------------------------
+   The two lead service tiles and the estimator. These are the surfaces the
+   page is built around, so they sit highest off the ground and carry the
+   brightest lit edge. */
+html .svc-hero,
+html .est {
+  box-shadow:
+    inset 0 1px 0 0 var(--glass-edge-top),
+    inset 1px 0 0 0 var(--glass-edge-left),
+    inset 0 -1px 0 0 var(--glass-edge-far),
+    var(--feature-shadow);
+}
+
+/* --- Quiet surfaces ------------------------------------------------------
+   Everything that carries --faint text. --faint on --raised is 4.85:1, the
+   tightest pair on the site, so these get the dense surface variant: less
+   ambient bleeds through, and the effective background stays predictable. */
+html .stat,
+html .ph,
+html .frame,
+html .form {
+  background-image: var(--card-quiet-surface);
+  background-color: transparent;
+  box-shadow:
+    inset 0 1px 0 0 var(--glass-edge-top),
+    inset 1px 0 0 0 var(--glass-edge-left),
+    var(--card-quiet-shadow);
+}
+
+/* The stat strip draws its dividers with a 1px grid gap over a background.
+   Making that background a gradient turns four flat rules into light falling
+   across the strip. */
+html .stats {
+  background-image: linear-gradient(90deg,
+    var(--glass-ring), var(--glass-ring-lit) 50%, var(--glass-ring));
+  background-color: transparent;
+  box-shadow: var(--depth-2);
+}
+
+/* The price readout sits INSIDE the estimator's own gradient panel, so it is
+   a genuine well: recessed, not raised. Inverting the edge — dark on top,
+   light on the bottom — is what makes a surface read as cut into the one
+   behind it rather than sitting on it. */
+html .est__out {
+  background-image: var(--well-surface);
+  background-color: transparent;
+  box-shadow:
+    inset 0 1px 0 0 var(--glass-edge-far),
+    inset 0 -1px 0 0 var(--glass-edge-top),
+    inset 0 8px 20px -12px rgba(0, 0, 0, 0.55);
+}
+
+/* --- Chrome: the real frosted glass -------------------------------------- */
+html .header {
+  background-color: var(--chrome-surface);
+  -webkit-backdrop-filter: var(--chrome-blur);
+  backdrop-filter: var(--chrome-blur);
+  box-shadow: inset 0 -1px 0 0 var(--glass-ring);
+}
+
+html .callbar {
+  background-color: var(--chrome-surface);
+  -webkit-backdrop-filter: var(--chrome-blur);
+  backdrop-filter: var(--chrome-blur);
+  box-shadow:
+    inset 0 1px 0 0 var(--chrome-edge),
+    0 -12px 30px -18px rgba(0, 0, 0, 0.7);
+}
+
+/* The mobile drawer is chrome too — it overlays the page. */
+@media (max-width: 900px) {
+  html .nav {
+    background-color: var(--chrome-surface);
+    -webkit-backdrop-filter: var(--chrome-blur);
+    backdrop-filter: var(--chrome-blur);
+    box-shadow: var(--depth-3);
+  }
+}
+
+/* --- Section grounds -----------------------------------------------------
+   .section--panel was an opaque gradient, which meant it occluded the ambient
+   layer entirely: on the 22 pages that use it rather than the homepage's
+   Band component, the light stopped at the first panel. Taking it to a
+   translucent gradient lets the rig light the whole scroll.
+
+   Contrast direction is safe in both modes by construction. In dark mode the
+   panel now composites over the darker --bg, so light-on-dark contrast goes
+   UP. In light mode it composites over white, so dark-on-light contrast also
+   goes up. Verified, not assumed — see the report. */
+html .section--panel {
+  background-image: linear-gradient(180deg,
+    color-mix(in srgb, var(--bg-2) 80%, transparent),
+    color-mix(in srgb, var(--panel) 72%, transparent) 45%,
+    color-mix(in srgb, var(--bg-2) 80%, transparent));
+  background-color: transparent;
+}
+
+/* Its top hairline becomes a real gradient rather than a flat rule at 50%. */
+html .section--panel::before {
+  background: var(--hairline);
+  opacity: 1;
+}
+
+/* The CTA band is the one section that should feel like it is under a lamp. */
+html .cta {
+  background-image:
+    radial-gradient(72% 130% at 50% 0%,
+      rgb(var(--lum-key-rgb) / 0.10), transparent 70%),
+    linear-gradient(180deg,
+      color-mix(in srgb, var(--panel) 78%, transparent),
+      color-mix(in srgb, var(--bg-2) 84%, transparent));
+  background-color: transparent;
+  box-shadow: inset 0 1px 0 0 var(--glass-edge-top);
+}
+
+/* The inline CTA gets the lit edge so it reads as a raised plate in the
+   middle of a reading passage rather than a tinted rectangle. */
+html .inline-cta {
+  box-shadow:
+    inset 0 1px 0 0 var(--glass-edge-top),
+    inset 1px 0 0 0 var(--glass-edge-left),
+    var(--depth-1);
+}
+
+/* --- The footer and topbar are the floor and ceiling ---------------------
+   Both sit on --sunk. Giving them an inset lit top edge is what stops a large
+   flat dark rectangle reading as a hole in the page. */
+html .footer,
+html .topbar {
+  box-shadow: inset 0 1px 0 0 var(--glass-edge-top);
+}

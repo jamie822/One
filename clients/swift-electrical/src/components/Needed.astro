@@ -1,0 +1,31 @@
+---
+// Renders an obvious inline gap wherever client data is missing.
+//
+// The point is that a missing fact should be VISIBLE in review, not silently
+// absent and not quietly invented. These must all be gone before launch —
+// `npm run build` prints a count.
+const { label } = Astro.props;
+---
+<span class="needed" title="Needs client input before launch">{label}</span>
+
+<style>
+  .needed {
+    display: inline-block;
+    padding: 2px 9px;
+    border: 1px dashed var(--brand-ink);
+    border-radius: 5px;
+    font-family: var(--font-display);
+    font-size: 0.78rem;
+    font-weight: 600;
+    letter-spacing: 0.03em;
+    /* --brand at 12.48px measured 1.46:1 on the light ground and failed on
+       every one of the 23 pages, 91 nodes in all. --brand-ink is the same hue
+       re-levelled for foreground use (6.7:1 on white; unchanged cyan in dark
+       mode, where it is an alias for --brand). The marker itself — the text,
+       the dashed box, the fact it is obviously unfinished — is untouched.
+       WCAG 1.4.3. */
+    color: var(--brand-ink);
+    background: var(--brand-soft);
+    white-space: nowrap;
+  }
+</style>

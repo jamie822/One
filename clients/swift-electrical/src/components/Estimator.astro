@@ -1,0 +1,149 @@
+---
+// EICR ESTIMATOR
+//
+// WY Electrical (the benchmark) runs an instant EICR quote tool, and it is one
+// of the strongest conversion devices on their site: it answers a landlord's
+// first question without a phone call. Nobody else in the competitor set has
+// one.
+//
+// The bands below are NOT the client's prices. They are placeholders and are
+// labelled as such on the page. Swap them for Adil's real figures before this
+// goes live, or take the section out.
+import Icon from './Icon.astro';
+import { href } from '../lib/site.js';
+---
+<div class="est" data-est>
+  <div class="est__grid">
+    <div>
+      <h2 style="margin-bottom:8px">What will an EICR cost me?</h2>
+      <p class="muted" style="margin-bottom:26px">
+        The honest answer is that it depends on the property. Pick the two that
+        apply and you get a realistic range in a couple of seconds.
+      </p>
+
+      {/* Exactly one option per group can be chosen and choosing one clears
+          the last, so this is a radio group, not a row of independent toggle
+          buttons. role="radiogroup"/role="radio" + aria-checked is the
+          WAI-ARIA APG pattern for it; the roving tabindex below makes each
+          group a single tab stop navigated with the arrow keys, instead of
+          ten separate stops with no signal that they are mutually exclusive.
+
+          The visible label is wired up with aria-labelledby rather than
+          duplicated into an aria-label, so the two can never drift apart. */}
+      <div class="est__q">
+        <span id="est-q-type">Property type</span>
+        <div class="est__opts" role="radiogroup" aria-labelledby="est-q-type">
+          <button class="est__opt" type="button" role="radio" data-k="type" data-v="1" aria-checked="true" tabindex="0">Flat</button>
+          <button class="est__opt" type="button" role="radio" data-k="type" data-v="1.25" aria-checked="false" tabindex="-1">Terrace</button>
+          <button class="est__opt" type="button" role="radio" data-k="type" data-v="1.45" aria-checked="false" tabindex="-1">Semi</button>
+          <button class="est__opt" type="button" role="radio" data-k="type" data-v="1.75" aria-checked="false" tabindex="-1">Detached</button>
+          <button class="est__opt" type="button" role="radio" data-k="type" data-v="2.1" aria-checked="false" tabindex="-1">HMO</button>
+        </div>
+      </div>
+
+      <div class="est__q">
+        <span id="est-q-beds">Bedrooms</span>
+        <div class="est__opts" role="radiogroup" aria-labelledby="est-q-beds">
+          <button class="est__opt" type="button" role="radio" data-k="beds" data-v="1" aria-checked="true" tabindex="0">1</button>
+          <button class="est__opt" type="button" role="radio" data-k="beds" data-v="1.15" aria-checked="false" tabindex="-1">2</button>
+          <button class="est__opt" type="button" role="radio" data-k="beds" data-v="1.32" aria-checked="false" tabindex="-1">3</button>
+          <button class="est__opt" type="button" role="radio" data-k="beds" data-v="1.5" aria-checked="false" tabindex="-1">4</button>
+          <button class="est__opt" type="button" role="radio" data-k="beds" data-v="1.7" aria-checked="false" tabindex="-1">5+</button>
+        </div>
+      </div>
+
+      <p class="est__disc">
+        A range, not a quote. If the board is buried behind a fitted wardrobe or
+        the circuits have never been labelled, it takes longer, and we would
+        rather tell you that on the phone than surprise you on the invoice.
+      </p>
+    </div>
+
+    <div class="est__out">
+      <div class="est__label">Likely range</div>
+      <div class="est__fig" data-est-out>£120 – £150</div>
+      <p class="est__note" data-est-time>Around 2 hours on site</p>
+      {/* The price and duration change silently: a screen reader user pressed
+          "Detached", heard "Detached, selected", and was told nothing else.
+          WCAG 4.1.3.
+
+          A dedicated status region rather than role="status" on .est__out,
+          because that element also holds the CTA link and a note, all of
+          which would be re-read on every single press. Empty at mount and
+          written only in response to a user action, so nothing is announced
+          on page load. Out of flow, so it cannot cost a pixel of CLS. */}
+      <p class="u-vh" role="status" data-est-say></p>
+      <a class="btn btn--act" href={href('/contact/')} style="width:100%;justify-content:center">
+        Get an exact price <Icon name="arrow" />
+      </a>
+      <p class="est__note" style="margin:14px 0 0;font-size:.8rem">
+        Remedials, if any, are quoted separately.
+      </p>
+    </div>
+  </div>
+</div>
+
+<script>
+  document.querySelectorAll('[data-est]').forEach((root) => {
+    // PLACEHOLDER BANDS — replace with the client's real pricing.
+    const BASE = 120, SPREAD = 0.25;
+    const state = { type: 1, beds: 1 };
+    const out  = root.querySelector('[data-est-out]');
+    const time = root.querySelector('[data-est-time]');
+
+    const say  = root.querySelector('[data-est-say]');
+
+    const money = (n) => '£' + (Math.round(n / 5) * 5);
+
+    // `announce` is false on the initial paint so the status region stays
+    // empty until the user actually does something. A region that is already
+    // populated at mount is either read out on load or, worse, read
+    // inconsistently between screen readers.
+    function render(announce) {
+      const mid = BASE * state.type * state.beds;
+      out.textContent = `${money(mid)} – ${money(mid * (1 + SPREAD))}`;
+      const hrs = Math.max(2, Math.round(1.4 * state.type * state.beds));
+      time.textContent = `Around ${hrs} hour${hrs > 1 ? 's' : ''} on site`;
+      if (announce && say) {
+        say.textContent = `Estimated range ${out.textContent}. ${time.textContent}.`;
+      }
+    }
+
+    function select(btn) {
+      const k = btn.dataset.k;
+      root.querySelectorAll(`.est__opt[data-k="${k}"]`).forEach((b) => {
+        const on = b === btn;
+        b.setAttribute('aria-checked', String(on));
+        // Roving tabindex: the group is one tab stop and the checked option
+        // is the one Tab lands on, per the APG Radio Group pattern.
+        b.setAttribute('tabindex', on ? '0' : '-1');
+      });
+      state[k] = parseFloat(btn.dataset.v);
+      render(true);
+    }
+
+    root.querySelectorAll('.est__opts').forEach((group) => {
+      const opts = Array.from(group.querySelectorAll('.est__opt'));
+
+      opts.forEach((btn) => btn.addEventListener('click', () => select(btn)));
+
+      // Arrow keys move AND select, which is the expected behaviour for a
+      // radio group; Home/End jump to the ends. Both directions wrap.
+      group.addEventListener('keydown', (e) => {
+        const i = opts.indexOf(document.activeElement);
+        if (i === -1) return;
+        let next = null;
+        if (e.key === 'ArrowRight' || e.key === 'ArrowDown') next = opts[(i + 1) % opts.length];
+        else if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') next = opts[(i - 1 + opts.length) % opts.length];
+        else if (e.key === 'Home') next = opts[0];
+        else if (e.key === 'End') next = opts[opts.length - 1];
+        if (!next) return;
+        e.preventDefault();
+        select(next);
+        next.focus();
+      });
+    });
+
+    render(false);
+  });
+</script>

@@ -15,3 +15,23 @@ node_modules/
 # logs / os
 *.log
 .DS_Store
+
+# client builds
+clients/*/node_modules/
+clients/*/dist/
+
+# Agent scratch measurement scripts (never part of the deliverable)
+_*.mjs
+verify-tmp.mjs
+clients/stackedout/node_modules
+
+# Python bytecode caches from skill scripts — regenerated on every run
+__pycache__/
+*.pyc
+
+# stray clone target
+hfs/
+
+# stray agent probe scripts
+clients/*/wc-*.mjs
+clients/*/_*.mjs

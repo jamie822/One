@@ -1,0 +1,29 @@
+---
+// Recreation of the client's existing logo from their Instagram profile
+// (@swiftelecsec): an electric-cyan lightning bolt, the SWIFT wordmark, and
+// ELECTRICAL & SECURITY spaced out beneath it.
+//
+// Built as SVG so it stays sharp and recolours with --brand. Ask the client for
+// the original vector file before launch — this is a faithful rebuild, not the
+// real asset.
+const { variant = 'full', height = 40 } = Astro.props;
+---
+{variant === 'mark' ? (
+  <svg class="logo-mark" viewBox="0 0 40 48" height={height} role="img" aria-label="Swift Electrical & Security">
+    <path d="M24 2 6 27h11l-3 19 20-27H23l1-17z" fill="var(--brand)" />
+  </svg>
+) : (
+  <svg class="logo" viewBox="0 0 272 60" height={height} role="img" aria-label="Swift Electrical &amp; Security">
+    <path d="M34 4 12 34h13.5l-3.5 22L46 26H31.5L34 4z" fill="var(--brand)" />
+    <text x="62" y="34"
+          font-family="Sora, system-ui, sans-serif" font-weight="800" font-size="30"
+          letter-spacing="1.5" fill="currentColor">SWIFT</text>
+    <text x="63" y="50"
+          font-family="Sora, system-ui, sans-serif" font-weight="600" font-size="10.5"
+          letter-spacing="2.85" fill="currentColor" opacity="0.85">ELECTRICAL &amp; SECURITY</text>
+  </svg>
+)}
+
+<style>
+  .logo, .logo-mark { display: block; }
+</style>

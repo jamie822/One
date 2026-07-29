@@ -1,0 +1,79 @@
+---
+import { client, services, areas } from '../data/client.js';
+import { href, hasPhone } from '../lib/site.js';
+import Needed from './Needed.astro';
+import Logo from './Logo.astro';
+import Icon from './Icon.astro';
+
+const year = new Date().getFullYear();
+const socials = Object.entries(client.social).filter(([, v]) => v);
+---
+<footer class="footer">
+  <div class="container">
+    <div class="footer__grid">
+      <div>
+        <div style="margin-bottom:16px"><Logo height={44} /></div>
+        <p class="muted" style="max-width:34ch">{client.tagline}</p>
+        <ul role="list" style="margin-top:14px">
+          <li>{hasPhone ? <a href={`tel:${client.phoneHref}`}><Icon name="phone" size={15} /> {client.phone}</a> : <Needed label="PHONE NEEDED" />}</li>
+          <li>{client.email ? <a href={`mailto:${client.email}`}><Icon name="mail" size={15} /> {client.email}</a> : <Needed label="EMAIL NEEDED" />}</li>
+          <li><span class="muted"><Icon name="clock" size={15} /> {client.hours}</span></li>
+          <li>
+            <span class="muted">
+              <Icon name="pin" size={15} />
+              {client.showAddress
+                ? `${client.address.street}, ${client.address.locality} ${client.address.postcode}`
+                : `Serving ${client.address.locality} & ${client.address.region}`}
+            </span>
+          </li>
+        </ul>
+      </div>
+
+      {/* The two hub pages had no sitewide inbound link — every route into
+          /services/ and /areas/ went through the header nav alone. Linking the
+          headings puts both hubs one hop from every page in the site. */}
+      <div>
+        <h2 class="footer__h"><a href={href('/services/')}>Services</a></h2>
+        <ul role="list">
+          {services.map((s) => <li><a href={href(`/services/${s.slug}/`)}>{s.title}</a></li>)}
+        </ul>
+      </div>
+
+      <div>
+        <h2 class="footer__h"><a href={href('/areas/')}>Areas we cover</a></h2>
+        <ul role="list">
+          {areas.map((a) => <li><a href={href(`/areas/${a.slug}/`)}>{a.name}</a></li>)}
+        </ul>
+      </div>
+
+      <div>
+        <h2 class="footer__h">Company</h2>
+        <ul role="list">
+          <li><a href={href('/about/')}>About {client.owner.name}</a></li>
+          <li><a href={href('/case-studies/')}>Our work</a></li>
+          <li><a href={href('/reviews/')}>Reviews</a></li>
+          <li><a href={href('/contact/')}>Contact</a></li>
+          <li><a href={href('/privacy/')}>Privacy</a></li>
+        </ul>
+        {socials.length > 0 && (
+          <ul role="list" style="margin-top:14px">
+            {socials.map(([n, url]) => (
+              <li><a href={url} rel="noopener" target="_blank">{n[0].toUpperCase() + n.slice(1)}</a></li>
+            ))}
+          </ul>
+        )}
+      </div>
+    </div>
+
+    <div class="footer__bottom">
+      <span>&copy; {year} {client.legalName}. All rights reserved.</span>
+      <span>
+        {client.accreditations.filter((a) => a.name).map((a) => a.number ? `${a.name} #${a.number}` : a.name).join(' · ')}
+      </span>
+    </div>
+  </div>
+</footer>
+
+<style>
+  .footer li svg { width: 15px; height: 15px; color: var(--brand); vertical-align: -2px; margin-right: 7px; }
+</style>

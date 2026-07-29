@@ -1,0 +1,142 @@
+---
+// ABOUT: the accountability page. Named person, checkable MCS number,
+// insurance, how a job actually goes.
+import Base from '../layouts/Base.astro';
+import { client } from '../data/client.js';
+
+const tel = client.phone.replace(/\s/g, '');
+const breadcrumbs = {
+  '@context': 'https://schema.org',
+  '@type': 'BreadcrumbList',
+  itemListElement: [
+    { '@type': 'ListItem', position: 1, name: 'Home', item: 'https://loxleysolar.co.uk/' },
+    { '@type': 'ListItem', position: 2, name: 'About', item: 'https://loxleysolar.co.uk/about/' },
+  ],
+};
+const person = {
+  '@context': 'https://schema.org',
+  '@type': 'Person',
+  name: client.owner,
+  jobTitle: 'Solar installer',
+  worksFor: { '@id': 'https://loxleysolar.co.uk/#business' },
+};
+---
+<Base
+  title="About Loxley Solar | MCS Installer in Sheffield"
+  description={`Loxley Solar is run by ${client.owner}: MCS certified, ${client.installsCompleted} installs across South Yorkshire since ${client.founded}, and an estimate that shows its workings.`}
+  current="/about/"
+  schema={[breadcrumbs, person]}
+>
+  <section class="section" style="padding-bottom: var(--s-4);">
+    <div class="wrap">
+      <h1 style="max-width: 17ch;">The installer who shows you the maths first.</h1>
+      <p class="hero__sub" style="margin-top: var(--s-3);">
+        Solar has a salesman problem. Our fix is boring: put the workings on
+        the table, price the job in writing, and let the spreadsheet do the
+        talking.
+      </p>
+    </div>
+  </section>
+
+  <section class="section" aria-labelledby="short-h" style="padding-top: 0;">
+    <div class="wrap">
+      <h2 id="short-h" class="rise">The short version</h2>
+      <ul class="about__facts">
+        <li class="rise" style="--i:0"><strong>{client.owner}</strong> founder, on the tools since {client.founded} <!-- TEMP --></li>
+        <li class="rise" style="--i:1"><strong>{client.accreditation}, {client.accreditationNumber}</strong> the certification export payments require <!-- TEMP --></li>
+        <li class="rise" style="--i:2"><strong>{client.installsCompleted} installs</strong> across South Yorkshire <!-- TEMP --></li>
+        <li class="rise" style="--i:3"><strong>{client.guarantee}</strong> panel and inverter warranties on top <!-- TEMP --></li>
+        <li class="rise" style="--i:4"><strong>{client.liabilityCover}</strong> because roof work <!-- TEMP --></li>
+        <li class="rise" style="--i:5"><strong>No commission, no canvassers</strong> and no finance upsell</li>
+      </ul>
+    </div>
+  </section>
+
+  <section class="section" aria-labelledby="how-h" style="padding-top: 0;">
+    <div class="wrap">
+      <h2 id="how-h" class="rise">How a job goes</h2>
+      <ol class="steps">
+        <li class="rise" style="--i:0">
+          <div>
+            <strong>Two bills and a postcode.</strong>
+            The desktop estimate lands inside two working days, with the assumptions listed.
+          </div>
+        </li>
+        <li class="rise" style="--i:1">
+          <div>
+            <strong>The survey.</strong>
+            Roof, loft, fuse board, shading, ladder up. The estimate becomes a
+            fixed written quote, or we tell you to keep your money.
+          </div>
+        </li>
+        <li class="rise" style="--i:2">
+          <div>
+            <strong>The install.</strong>
+            Scaffold one day, panels the next, commissioned and generating
+            before the scaffold comes down.
+          </div>
+        </li>
+        <li class="rise" style="--i:3">
+          <div>
+            <strong>The paperwork.</strong>
+            MCS certificate, DNO sign-off, export registration, and a handover
+            where you watch the app do something.
+          </div>
+        </li>
+      </ol>
+    </div>
+  </section>
+
+  <section class="section" aria-labelledby="gt-h" style="padding-top: 0;">
+    <div class="wrap">
+      <h2 id="gt-h" class="rise">The guarantee</h2>
+      <p class="rise" style="margin-top: var(--s-2); color: var(--ink-soft);">
+        Ten years on our workmanship, in writing. Panels and inverters carry
+        their makers' warranties on top, and because we are MCS certified
+        those warranties survive us: the certification body backs the install
+        if we ever stop trading. Check {client.accreditationNumber} on the
+        MCS register before you sign anything, ours or anyone else's. <!-- TEMP number -->
+      </p>
+    </div>
+  </section>
+
+  <div class="pine">
+    <section class="section" aria-labelledby="cta-h">
+      <div class="wrap">
+        <h2 id="cta-h" class="rise">Want the maths for your roof?</h2>
+        <div class="hero__acts rise" style="--i:1">
+          <a class="btn btn--quote" href="/#quote">Get a quote</a>
+          <a class="btn btn--call" style="color: var(--ink); border-color: color-mix(in srgb, var(--ink) 40%, transparent);" href={`tel:${tel}`}>Call Dan</a>
+        </div>
+      </div>
+    </section>
+  </div>
+</Base>
+
+<style>
+  .about__facts { list-style: none; padding: 0; margin-top: var(--s-3); display: grid; gap: 0; max-width: 640px; }
+  .about__facts li {
+    padding-block: 14px;
+    border-top: 1px solid var(--edge);
+    font-size: var(--t-small); color: var(--ink-soft);
+  }
+  .about__facts li:first-child { border-top-color: var(--pine-700); }
+  .about__facts strong {
+    display: block;
+    font: 700 1.05rem var(--font-display);
+    letter-spacing: -.02em;
+    color: var(--ink);
+  }
+  .steps { list-style: none; padding: 0; counter-reset: step; display: grid; gap: var(--s-3); margin-top: var(--s-4); max-width: 620px; }
+  .steps li { counter-increment: step; display: grid; grid-template-columns: 44px 1fr; gap: 14px; color: var(--ink-soft); }
+  .steps li::before {
+    content: counter(step);
+    font: 500 1rem var(--font-data);
+    color: var(--pine-700);
+    border: 1.5px solid var(--edge);
+    border-radius: 50%;
+    width: 40px; height: 40px;
+    display: grid; place-items: center;
+  }
+  .steps strong { display: block; color: var(--ink); font-family: var(--font-display); letter-spacing: -.02em; font-size: 1.08rem; }
+</style>

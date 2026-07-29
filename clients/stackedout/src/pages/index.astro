@@ -1,0 +1,311 @@
+---
+// THE STACKED OUT SITE.
+//
+// Structure is brand guide §7, in its order, with nothing added:
+//   Hero → The work → What it costs → How it goes → Who I am → One way to get in touch.
+//
+// Every section uses a different layout family, because repeating one is what
+// makes a page read as a template: split hero, asymmetric grid, centred single
+// focus, numbered rail, offset split, full bleed band. No two the same, and no
+// third consecutive image-and-text split anywhere.
+//
+// Zero eyebrows. The small uppercase label above every heading is the single most
+// overused device in generated pages and the headline carries these sections on
+// its own.
+//
+// ONE SIGNATURE GRADIENT, and on this page it is the current trail photograph:
+// the brand's yellow to cyan as actual light rather than as clipped text. That is
+// why the 25 below is flat yellow and the nav mark runs the story variant.
+//
+// IMAGERY. Two photographs, both generated through the Higgsfield MCP and both
+// checked by eye before they went in. A third was generated and rejected: a
+// spiral bound diary on a wall, which read as a small notepad and would have
+// competed with the calendar hero directly above it. No photograph of the founder
+// and no client screenshots, because we do not have either and inventing them is
+// the one thing the brand guide rules out absolutely.
+import Site from '../layouts/Site.astro';
+import PaperHero from '../components/hero/PaperHero.astro';
+import WallCalendar from '../components/hero/WallCalendar.astro';
+import { studio } from '../data/studio.js';
+import '../styles/paper-hero.css';
+import '../styles/wall-calendar.css';
+
+const mailto = `mailto:${studio.contact.email}`;
+const { ownSite } = studio.proof;
+
+// Four steps, written as a description of the service rather than a promise about
+// time. studio.pricing.turnaround is still null, so nothing here says how long it
+// takes.
+const steps = [
+  {
+    t: 'One call',
+    b: 'You tell me the trade, the patch you cover and the work you want more of. No slides, no discovery workshop.',
+  },
+  {
+    t: 'I build it',
+    b: 'You get a link to look at. Not a login, not a content questionnaire, not a list of homework.',
+  },
+  {
+    t: 'You mark it up',
+    b: 'Tell me what is wrong and it changes. Nothing goes into a change request queue.',
+  },
+  {
+    t: 'It goes live',
+    b: 'Domain, email and the rest of it, handed over working.',
+  },
+];
+---
+<Site
+  title="Websites for electricians and solar installers. Stacked Out"
+  blurb="Websites built for electricians and solar installers by a spark with 25 years on the tools."
+>
+  <!-- 1. HERO. The film, then the copy underneath it. -->
+  <section class="wcp">
+    <PaperHero />
+
+    <div class="wcp__copy">
+      <div>
+        <!-- Never animated. This is the LCP element. -->
+        <h1 class="wcp__h">
+          Websites for electricians and solar installers, built by a spark.
+        </h1>
+        <p class="wcp__lead">
+          {studio.founder.yearsOnTools} years on the tools, {studio.founder.yearsSelfEmployed} of
+          them working for myself. I build them now because the marketing lot never
+          understood the trade.
+        </p>
+      </div>
+
+      <div class="wcp__act">
+        <a class="btn btn--action" href={mailto}>Book yours in</a>
+        <p class="wcp__mail">{studio.contact.email}</p>
+        <p class="wcp__note">
+          The paper is a photograph. The diary underneath it is real markup.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- 1b. THE DIARY. A deviation from guide §7's order, and a deliberate one.
+       The film sells the feeling and its printed grid is deliberately empty,
+       because generated video cannot spell and asking it for dates produces
+       garbled glyphs. So the claim the whole brand is built on — the diary is
+       stacked out and there is one slot left — has to be stated somewhere it can
+       actually be read. This is that place, and it is the mark unrolled: a real
+       month, every day carrying a real job type, and one Friday ringed. It reads
+       as the hero's second beat rather than a section of its own, which is why it
+       has no heading. -->
+  <section class="diaryband">
+    <WallCalendar />
+    <p class="diaryband__note shell">
+      Illustrative. Real job types and a real August, not a record of bookings.
+      The ringed day is the point: five booked, one free, and that is the mark on
+      every page of this site.
+    </p>
+  </section>
+
+  <!-- 2. THE WORK. Asymmetric two cell grid, 7fr and 5fr. -->
+  <section class="sec" id="work">
+    <div class="shell">
+      <h2 class="sec__h rise">The work</h2>
+      <p class="sec__lead rise">
+        One site so far, and it is my own. I would rather show you that than pad
+        this page out with sites I had nothing to do with.
+      </p>
+
+      <div class="work__grid">
+        <article class="work__card rise">
+          <!-- Deliberately an empty framed plate rather than a div dressed up as a
+               browser window. A hand built fake of a real site that exists would be
+               a lie about the one piece of proof on the page, and it would also be
+               the exact tell every generated portfolio has. The frame holds the
+               aspect ratio so nothing shifts when the capture drops in. -->
+          <div class="work__plate">
+            <span class="needs">Screenshot needed</span>
+            <p class="work__plate-note">
+              A real capture of the live site, 1600 by 1000. Not a mockup and not a
+              drawn browser frame.
+            </p>
+          </div>
+
+          <h3 class="work__name">{ownSite.label}</h3>
+          <p class="work__body">
+            My own electrical business in {studio.founder.trade === 'electrician' ? 'West Yorkshire' : 'the trade'}.
+            I built the site, I answer the phone it rings, and it is the only one I
+            can currently point at and stand behind.
+          </p>
+
+          <dl class="work__meta">
+            <div class="work__k">
+              <dt>Trade</dt>
+              <dd>Electrical</dd>
+            </div>
+            <div class="work__k">
+              <dt>Built by</dt>
+              <dd>Me</dd>
+            </div>
+            <div class="work__k">
+              <dt>Position</dt>
+              {/* No ranking claim without a checkable position. The moment
+                  rankingEvidence is filled in, this cell states it instead. */}
+              <dd>{ownSite.rankingEvidence || <span class="needs">Needed</span>}</dd>
+            </div>
+          </dl>
+
+          <p class="work__link">
+            <a href={ownSite.url} rel="noopener">{ownSite.url.replace('https://', '')}</a>
+          </p>
+        </article>
+
+        <!-- The open cell. This is the mark's sixth slot at page scale: five booked,
+             one free, never all six. The one real gap in the portfolio gets to
+             carry the brand's own idea instead of being papered over. -->
+        <article class="work__open rise">
+          <p class="figure work__open-n">02</p>
+          <div>
+            <h3 class="work__open-h">The next one is open</h3>
+            <p class="work__open-p">
+              Second slot, unfilled, and I am not going to pretend otherwise. If you
+              want yours to be the site I point at next, that is the conversation.
+            </p>
+          </div>
+          <p><a class="btn btn--ghost" href={mailto}>Take the slot</a></p>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- 3. WHAT IT COSTS. Centred single focus. The whole section is one number. -->
+  <section class="sec cost" id="cost">
+    <div class="shell cost__in">
+      <h2 class="cost__h rise">What it costs</h2>
+
+      {/* Three empty slots, drawn, not typed. The first version of this set the
+          figure as a pound sign and three em dashes, which rendered as three heavy
+          bars and read as a redacted number — the exact opposite of what the
+          section says. It also put dashes in customer facing copy, which the brand
+          rules out. Drawn slots read as "a number goes here". aria-hidden because
+          the chip underneath is the accessible version of the same fact. */}
+      <p class="cost__slot rise" aria-hidden="true">
+        <span class="figure cost__cur">&pound;</span>
+        <span class="cost__digit"></span>
+        <span class="cost__digit"></span>
+        <span class="cost__digit"></span>
+      </p>
+      <p class="rise"><span class="needs">Price needed</span></p>
+
+      <p class="cost__p rise">
+        A real number belongs in that space. Every agency I ever dealt with put
+        theirs behind a form and a discovery call, and I am not doing that to you.
+        It goes on this page, in public, as soon as I have set it.
+      </p>
+
+      <ul class="cost__rules rise">
+        <li>You see the price before we speak, not after</li>
+        <li>Told to you in full, once</li>
+        <li>Electricians and solar installers only</li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- 4. HOW IT GOES. Numbered vertical rail. -->
+  <section class="sec" id="process">
+    <div class="shell">
+      <h2 class="sec__h rise">How it goes</h2>
+      <p class="sec__lead rise">
+        Four steps. You are on the tools all day, so almost none of it lands on you.
+      </p>
+
+      <ol class="proc__list">
+        {steps.map((s, i) => (
+          <li class="proc__step rise">
+            <p class="figure proc__n">{String(i + 1).padStart(2, '0')}</p>
+            <div>
+              <p class="proc__t">{s.t}</p>
+              <p class="proc__b">{s.b}</p>
+            </div>
+          </li>
+        ))}
+      </ol>
+    </div>
+  </section>
+
+  <!-- 5. WHO I AM. Offset split. Short, as the guide asks. -->
+  <section class="sec" id="who">
+    <div class="shell">
+      <h2 class="sec__h rise">Who I am</h2>
+
+      <div class="who__grid">
+        <div class="rise">
+          <div class="who__figs">
+            <div class="who__fig">
+              {/* Yellow, not the gradient. The signature on this page is the
+                  photograph below, and spending it twice is a brand breach. */}
+              <p class="figure who__n who__n--action">{studio.founder.yearsOnTools}</p>
+              <p class="who__cap">years on the tools</p>
+            </div>
+            <div class="who__fig">
+              <p class="figure who__n">{studio.founder.yearsSelfEmployed}</p>
+              <p class="who__cap">of them self employed</p>
+            </div>
+          </div>
+
+          <p class="who__body">
+            <strong>I am a spark, building for sparks.</strong> That is the whole
+            pitch and it is the reason this exists.
+          </p>
+          <p class="who__body">
+            Every marketing company I ever paid sold me the same website with a
+            different photograph on it. None of them could tell you what an EICR is,
+            why a Friday afternoon call is a different job from a Tuesday morning
+            one, or that the phone ringing is the only number that counts. So I do
+            it myself now, and only for electricians and solar installers.
+          </p>
+
+          <p class="who__by">
+            <span class="needs">Name needed</span>
+            <span class="who__by-note">
+              A real photograph too, when you have one you like. Never a stock
+              portrait, on a page whose entire argument is that I actually do this.
+            </span>
+          </p>
+        </div>
+
+        <!-- Stranded copper conductor. Generated through the Higgsfield MCP, then
+             looked at before it was used. Sized and dimensioned in the markup so it
+             reserves its own space and contributes no layout shift. -->
+        <figure class="who__media rise">
+          <img
+            src="/img/copper-conductor.webp"
+            width="1400" height="781"
+            loading="lazy" decoding="async"
+            alt="Close up of the stripped copper strands at the end of a heavy cable, lit warm from the left and falling off to cold blue on the right."
+          />
+        </figure>
+      </div>
+    </div>
+  </section>
+
+  {/* The current trail photograph used to run full bleed here, the brand's yellow
+      to cyan as real light. It has come out, and the reason is a rule rather than
+      taste: one signature gradient per page, and the hero wordmark now takes it.
+      The founder asked twice for the colour to wash across the wordmark left to
+      right, so that is where the signature belongs, and a second yellow to cyan
+      moment further down the same page is the breach the guide names outright.
+      The asset stays in the repo: it is the right transition for a client build
+      whose hero does not already spend the gradient. */}
+
+  <!-- 6. ONE WAY TO GET IN TOUCH. Full bleed band. Guide §7: "Not four." -->
+  <section class="contact" id="contact">
+    <div class="shell contact__in">
+      <h2 class="contact__h">One way to get in touch</h2>
+      <p class="contact__p">Email. It comes to me and I answer it myself.</p>
+      <p class="contact__mail"><a href={mailto}>{studio.contact.email}</a></p>
+      <p><a class="btn btn--action" href={mailto}>Send it</a></p>
+      <p class="contact__note">
+        A phone number goes here as soon as there is a line I am happy to publish.
+        One channel that works beats four that half do.
+      </p>
+    </div>
+  </section>
+</Site>

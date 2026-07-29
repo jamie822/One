@@ -1,0 +1,748 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Hero from '../components/Hero.astro';
+import Band from '../components/Band.astro';
+import TrustBar from '../components/TrustBar.astro';
+import Reviews from '../components/Reviews.astro';
+import CtaBand from '../components/CtaBand.astro';
+import Placeholder from '../components/Placeholder.astro';
+import Needed from '../components/Needed.astro';
+import Icon from '../components/Icon.astro';
+import Estimator from '../components/Estimator.astro';
+import { href, hasRating, hasPhone } from '../lib/site.js';
+import { client, services, areas, faqs } from '../data/client.js';
+
+// The two the reviews actually evidence lead the section at full size.
+const lead = services.filter((s) => ['eicr-landlord-certificates', 'cctv-security'].includes(s.slug));
+const rest = services.filter((s) => !lead.includes(s));
+
+// The proof numbers, read as a ledger rail rather than four equal tiles.
+const ledger = [
+  { n: client.google.rating, l: 'Google rating' },
+  { n: client.google.reviewCount, l: 'Reviews, every one 5★' },
+  { n: '3', l: 'Reviews name Adil' },
+  { n: '8pm', l: 'Open until' },
+];
+
+const faqSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'FAQPage',
+  mainEntity: faqs.filter((f) => f.a).map((f) => ({
+    '@type': 'Question', name: f.q, acceptedAnswer: { '@type': 'Answer', text: f.a },
+  })),
+};
+---
+<Layout
+  path="/"
+  title="Electrician in Bradford"
+  description="NICEIC registered electrician and security installer, Bradford and West Yorkshire. Landlord EICRs, fault finding, CCTV. You'll know the price before we start."
+  schemas={[faqSchema]}
+>
+  <Hero>
+    {hasRating && (
+      <p class="rise hero__rating glass">
+        <span class="stars" aria-hidden="true">{'★'.repeat(Math.round(client.google.rating))}</span>
+        <strong>{client.google.rating}</strong>
+        <span class="muted">from {client.google.reviewCount} Google reviews</span>
+      </p>
+    )}
+    <h1 class="rise">Electrician &amp; security installer in Bradford</h1>
+    <h2 class="hero__strapline rise"><span class="hl">Swift</span> by name. You'll know the price before we start.</h2>
+    <p class="hero__sub rise">
+      NICEIC registered, working across Bradford and West Yorkshire. Landlord
+      EICRs, fault finding, CCTV and alarms, lighting, rewires.
+    </p>
+    <div class="hero__actions rise">
+      {hasPhone
+        ? <a class="btn btn--act btn--lg" href={`tel:${client.phoneHref}`}><Icon name="phone" /> {client.phone}</a>
+        : <Needed label="PHONE NUMBER NEEDED — add to Google too" />}
+      <a class="btn btn--ghost btn--lg" href={href('/contact/')}>Get a price</a>
+    </div>
+  </Hero>
+
+  <!-- ═══ COMPRESSION ═══════════════════════════════════════════════════════
+       Credentials as an instrument rail directly against the hero: no band, no
+       heading, no air. The page's first move after all that space is to clamp
+       shut.
+
+       It is now a physical shelf pulled UP over the hero's bottom edge rather
+       than a strip butted against it. Two things fall out of that. The hero
+       had roughly 200px of dead ground under the CTA row at 1440 — measured,
+       not guessed — and the shelf now occupies it, so the fold stops ending in
+       a void. And it is the page's first statement that things here sit ON TOP
+       OF other things, which is the whole argument the rest of the page then
+       makes. -->
+  <div class="railstrip">
+    <div class="container">
+      <div class="railstrip__shelf glass"><TrustBar /></div>
+    </div>
+  </div>
+
+  <!-- ═══ RELEASE — editorial spread ════════════════════════════════════════
+       The statement hangs in the left margin and stays there while the argument
+       scrolls past it. Widest gutter on the page. -->
+  <Band tone="plain" ambient="split" edge="bottom" class="spread-band">
+    <div class="container spread">
+      <div class="spread__aside reveal reveal--left">
+        <h2 class="spread__title">Two trades,<br />one van</h2>
+        <p class="spread__deck">
+          Someone gave you our name and you want to check we're real. That's
+          most of our visitors, and it's the right instinct.
+        </p>
+      </div>
+
+      <div class="spread__body reveal">
+        <p class="lead">
+          Swift Electrical &amp; Security does the wiring and the security. Most
+          electricians stop at the consumer unit and hand you to a camera firm,
+          and most camera firms aren't qualified to touch a circuit. Doing both
+          means one visit, and one person who knows where the cables run when
+          something stops working.
+        </p>
+        <p class="muted">
+          Day to day it's houses and rented property: EICR inspections and
+          certificates, fault finding, fuse board changes, extra sockets, indoor
+          and outdoor lighting, partial and full rewires. The security half is
+          cameras, alarms, door entry and floodlights, specified for the
+          building rather than pulled off a shelf.
+        </p>
+        <p class="muted">
+          We test to BS 7671 and certify the work. Notifiable jobs go to Building
+          Control, so you hold the compliance paperwork your solicitor asks for
+          the day you sell.
+        </p>
+      </div>
+    </div>
+
+    <!-- Breaks the text column and spans the full container: the passage ends
+         and the page asks for something. -->
+    <div class="container">
+      <div class="inline-cta reveal">
+        <p>Not sure which of those you need?</p>
+        <a class="btn btn--act" href={href('/contact/')}>Describe the job <Icon name="arrow" /></a>
+      </div>
+    </div>
+  </Band>
+
+  <!-- ═══ PEAK 1 — SERVICES ═════════════════════════════════════════════════
+       The widest, densest band on the page, drawn on the hero's own grid and
+       wired to it with circuit rails. Two unequal, offset tiles, then a hard
+       switch to a tight list. -->
+  <Band tone="panel" grid rails seam ambient="brand" class="svc">
+    <div class="container container--wide">
+      <div class="svc__head reveal">
+        <h2>What we get called out for</h2>
+        <p>The two at the top are what the reviews keep coming back to.</p>
+      </div>
+
+      <div class="svc-lead">
+        {lead.map((s, i) => (
+          <a class={`svc-hero glass glass--panel reveal ${i === 0 ? 'reveal--left' : 'reveal--right'}`} href={href(`/services/${s.slug}/`)}>
+            <span class="svc-hero__tag">{s.slug === 'cctv-security' ? 'The half most electricians hand off' : 'Two reviews, both landlords'}</span>
+            <h3>{s.title}</h3>
+            <p>{s.symptom}</p>
+            <span class="svc-hero__go">See how it works <Icon name="arrow" /></span>
+          </a>
+        ))}
+      </div>
+
+      <div class="svc-list reveal">
+        {rest.map((s) => (
+          <a class="svc-row" href={href(`/services/${s.slug}/`)}>
+            <span class="svc-row__ico"><Icon name={s.icon} /></span>
+            <span>
+              <h3>{s.title}</h3>
+              <p>{s.short}</p>
+            </span>
+            <span class="svc-row__arrow"><Icon name="arrow" /></span>
+          </a>
+        ))}
+      </div>
+    </div>
+  </Band>
+
+  <!-- ═══ PEAK 2 — THE PRICE ════════════════════════════════════════════════
+       The one thing on the page that answers a question without a phone call.
+       Given the most air, the brightest light, and the bolt behind it — mirrored
+       off the left edge so it bookends the hero. -->
+  <Band tone="deep" lit seam bolt="left" ambient="split" class="est-band">
+    <div class="container container--wide reveal reveal--scale">
+      <Estimator />
+    </div>
+  </Band>
+
+  <!-- The numbers are the base plate under that instrument, not a fifth peak:
+       one hairline rail, baseline-set, solder pad at every junction.
+
+       "Base plate" was only ever a description; it is now the actual
+       construction. The plate is pulled up so its top edge runs UNDER the
+       estimator's band and it reads as the thing the instrument is bolted to.
+       The band itself went transparent to allow that — a deep tone here would
+       have painted a rectangle straight over the cove light it is supposed to
+       be sitting inside. -->
+  <Band tone="plain" class="proof">
+    <div class="container container--wide">
+      <div class="ledger glass reveal">
+        {ledger.map((s) => (
+          <div class="ledger__cell">
+            <span class="ledger__n">{s.n}</span>
+            <span class="ledger__l">{s.l}</span>
+          </div>
+        ))}
+      </div>
+    </div>
+  </Band>
+
+  <!-- ═══ PEAK 3 — THE PERSON ═══════════════════════════════════════════════
+       Runs off the left edge of the screen. Nothing else on the page bleeds
+       this way, so the one human moment is the one that breaks the grid. -->
+  <Band tone="plain" grid ambient="cool" class="owner">
+    <div class="owner__spread">
+      <div class="owner__frame glass reveal reveal--left">
+        <Placeholder
+          src={client.owner.photo}
+          alt={`${client.owner.name} of ${client.name}`}
+          label="Photo of Adil needed"
+          hint="A real photo, even one off a phone. This is the highest-trust image on the site and there is nothing here yet."
+          variant="ph--portrait"
+        />
+      </div>
+      <div class="owner__body reveal reveal--right">
+        <h2>You'll be dealing with Adil</h2>
+        <p class="owner__quote">{client.owner.bio}</p>
+        <p class="muted">
+          In one of those reviews the power kept tripping, and several
+          electricians had already been out without finding why. In another, he
+          drove forty minutes out of his way to sort a lighting fault.
+        </p>
+        <p><Needed label="Adil's surname, years trading, qualifications" /></p>
+        <div class="owner__actions">
+          <a class="btn btn--act" href={href('/contact/')}>Get a price <Icon name="arrow" /></a>
+          <a class="btn btn--ghost" href={href('/about/')}>More about us</a>
+        </div>
+      </div>
+    </div>
+  </Band>
+
+  <!-- ═══ REVIEWS — bleeds off the right ════════════════════════════════════
+       The deliberate mirror of the owner block. The track running past the edge
+       is the structure saying "there are more of these". -->
+  <Band tone="panel" seam edge="bottom" class="reviews">
+    <div class="container reviews__head reveal">
+      <h2>Seven reviews. Seven fives.</h2>
+      <p>Seven isn't many. They're copied off Google word for word, typos included.</p>
+    </div>
+    <div class="rev-bleed reveal reveal--right"><Reviews /></div>
+  </Band>
+
+  <!-- ═══ COMPRESSION ═══════════════════════════════════════════════════════
+       Coverage is a fact, not an argument. Narrow, small type, tight padding —
+       the page's quietest beat, so the FAQ that follows can breathe. -->
+  <Band tone="plain" class="areas">
+    <div class="container">
+      <div class="areas__head reveal">
+        <h2>Where we work</h2>
+        <p>Bradford and out along the Aire valley. Each page says what the wiring is usually like round there.</p>
+      </div>
+      <div class="areas__field reveal">
+        {areas.map((a) => (
+          <a class="pill" href={href(`/areas/${a.slug}/`)}>{a.name}</a>
+        ))}
+      </div>
+    </div>
+  </Band>
+
+  <!-- ═══ RELEASE — the close ═══════════════════════════════════════════════
+       The only centred alignment on the page. Everything converges before the
+       final ask. -->
+  <Band tone="plain" ambient="warm" class="faq-band">
+    <div class="container container--reading">
+      <div class="section__head is-center reveal">
+        <h2>Straight answers</h2>
+        <p>Including the one about EICR codes that stops you being sold work you don't need.</p>
+      </div>
+      <div class="faq reveal">
+        {faqs.map((f) => (
+          <details>
+            <summary>{f.q}</summary>
+            <div class="faq__body">{f.a || <Needed label="ANSWER NEEDED" />}</div>
+          </details>
+        ))}
+      </div>
+      <div class="inline-cta reveal">
+        <p>Question that isn't up there? Send it over.</p>
+        <a class="btn btn--act" href={href('/contact/')}>Ask a question <Icon name="arrow" /></a>
+      </div>
+    </div>
+  </Band>
+
+  <CtaBand title="Want a price?" />
+</Layout>
+
+<style>
+  /* =========================================================================
+     HOMEPAGE COMPOSITION
+     Page-scoped on purpose: these are the rhythm decisions for this one
+     surface, not system rules. The shared primitives they lean on
+     (.container--wide, .container--reading, .section--air/--tight) live in
+     global.css.
+
+     The pacing, top to bottom:
+       hero        release   full        lit
+       rail        clamp     full-bleed  hairline
+       spread      release   asymmetric  plain
+       services    PEAK      widest      grid + rails
+       estimator   PEAK      wide        lit + bolt
+       ledger      clamp     full-bleed  hairline
+       owner       PEAK      bleeds L    grid
+       reviews     medium    bleeds R    panel
+       areas       clamp     narrow      plain
+       faq         release   reading     centred
+     ========================================================================= */
+
+  /* -------------------------------------------------------------------------
+     VERTICAL PACING
+     A band's padding is not chosen for the band. It is chosen for the SEAM it
+     produces with its neighbour, because a seam is padB(prev) + padT(next) and
+     nothing else sits between them. Setting one generous value at both ends of
+     every band double-charges every seam, which is how 156+156 became 312px of
+     nothing four times over.
+
+     Seams at 1440 / 390:
+       hero      -> rail        0    0     hard join, no interval at all
+       rail      -> spread     88   48     release out of the clamp
+       spread    -> services  152   88     widest break on the page, into peak 1
+       services  -> price     136   76
+       price     -> ledger     64   36     base plate, stays against its instrument
+       ledger    -> owner     128   72
+       owner     -> reviews   112   64
+       reviews   -> areas      80   48     tightening toward the quietest beat
+       areas     -> faq       120   68
+       faq       -> cta        96   52
+     Range 64–152. That is a 2.4x contrast between the tightest and the most
+     generous interval, with no interval large enough to read as absence.
+     ------------------------------------------------------------------------- */
+  .spread-band { padding-top: clamp(48px, 6.1vw, 88px); padding-bottom: clamp(44px, 5.3vw, 76px); }
+  .svc         { padding-top: clamp(44px, 5.3vw, 76px); padding-bottom: clamp(40px, 5vw, 72px); }
+  .est-band    { padding-block: clamp(36px, 4.4vw, 64px); }
+  .proof       { padding-top: 0; padding-bottom: clamp(32px, 3.9vw, 56px); }
+  .owner       { padding-top: clamp(40px, 5vw, 72px); padding-bottom: clamp(32px, 3.9vw, 56px); }
+  .reviews     { padding-block: clamp(32px, 3.9vw, 56px) clamp(28px, 3.3vw, 48px); }
+  .areas       { padding-block: clamp(20px, 2.2vw, 32px) clamp(28px, 3.3vw, 48px); }
+  .faq-band    { padding-top: clamp(40px, 5vw, 72px); padding-bottom: clamp(52px, 6.7vw, 96px); }
+
+  /* .inline-cta ships with `margin: 34px 0`. Where it closes a band that bottom
+     margin lands on top of the band's padding and the seam silently stops being
+     the composed value. Both homepage instances close their band. */
+  .inline-cta:last-child { margin-bottom: 0; }
+
+  /* -------------------------------------------------------------------------
+     DEPTH
+     The page had one plane. Every band was a coloured strip butted against the
+     next, every card sat flat inside its own strip, and nothing was ever in
+     front of anything. That is what "flat" meant here, and no amount of extra
+     spacing was ever going to fix it, because spacing is the other axis.
+
+     Depth is now bought in three ways, and only these three, so it stays a
+     system rather than an effect:
+       1. LIGHT     bands emit (AmbientField), so a surface can be nearer or
+                    further from a source instead of being a fill.
+       2. MATERIAL  six objects are glass and everything else is matte. Glass
+                    is reserved for things that genuinely float over a lit
+                    field, so the material carries information.
+       3. OVERLAP   three objects cross a band boundary — the spec rail over
+                    the hero, the ledger plate under the estimator, the review
+                    track past the right edge. An object crossing an edge is
+                    the cheapest honest proof that the page has a Z axis.
+
+     The vertical rhythm below is untouched by all of it. Overlaps are paid for
+     with matching padding so every documented seam still measures what it says
+     it measures.
+     ------------------------------------------------------------------------- */
+
+  /* Glass consumers. These read the --glass-* token contract rather than
+     hardcoding the material, so the surfaces layer can retune every one of
+     them from its own file without having to out-specify a page-scoped rule.
+     See the note in AmbientField.astro for why the tokens exist. */
+  .hero__rating,
+  .railstrip__shelf,
+  .svc :global(.svc-hero),
+  .est-band :global(.est),
+  .ledger,
+  .owner__frame {
+    background: var(--glass-bg);
+    border: 1px solid var(--glass-border);
+    -webkit-backdrop-filter: var(--glass-blur);
+    backdrop-filter: var(--glass-blur);
+    box-shadow: var(--glass-cast), var(--glass-sheen);
+  }
+  @supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+    .hero__rating,
+    .railstrip__shelf,
+    .svc :global(.svc-hero),
+    .est-band :global(.est),
+    .ledger,
+    .owner__frame { background: var(--glass-bg-opaque); }
+  }
+
+  /* --- Hero furniture ------------------------------------------------------
+     The rating was a bare line of text lying directly on the ground. As the
+     first thing above the headline it is also the first chance to establish
+     that this page has a foreground, so it becomes a physical chip.
+     The <h1> immediately below it is untouched — not wrapped, not delayed,
+     not moved. It is the LCP element and LCP still equals FCP. */
+  .hero__rating {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+    width: auto;
+    margin: 0 0 20px;
+    padding: 7px 16px 7px 14px;
+    border-radius: 999px;
+    font-size: var(--step--1);
+  }
+  .hero__rating :global(.stars) { color: var(--accent-ink); letter-spacing: 0.1em; }  /* #c07800 was 3.5:1 on white */
+  .hero__rating strong { font-family: var(--font-display); color: var(--text); }
+
+  /* --- Credential rail: a shelf over the hero, not a strip under it --------
+     The strip's own background and bottom rule are gone. Two competing
+     materials in 60px of vertical space read as indecision, so the shelf is
+     the object and the band it sits in is nothing at all. */
+  .railstrip {
+    position: relative;
+    z-index: 1;
+    /* Pulls up into the hero's dead ground. The hero__inner keeps its
+       clamp(64px, 9vw, 128px) bottom padding — that lives in global.css — so
+       this is the only lever available, and it is the right one anyway: the
+       shelf overlapping is the point, not merely the tightening. */
+    margin-top: clamp(-66px, -4.6vw, -28px);
+  }
+  .railstrip__shelf {
+    border-radius: var(--radius);
+    padding: 4px clamp(14px, 2vw, 24px);
+  }
+  .railstrip :global(.trustbar) {
+    border-top: 0;
+    border-bottom: 0;
+    padding: 13px 0;
+    gap: 12px 28px;
+    font-size: 0.9rem;
+  }
+
+  /* --- Editorial spread --------------------------------------------------- */
+  .spread {
+    display: grid;
+    grid-template-columns: minmax(0, 0.78fr) minmax(0, 1.22fr);
+    gap: clamp(28px, 7vw, 110px);
+    align-items: start;
+  }
+  .spread__aside { position: sticky; top: 104px; }
+  .spread__title {
+    font-size: clamp(2.3rem, 5.4vw, 3.9rem);
+    letter-spacing: -0.038em;
+    line-height: 1.02;
+    margin: 0 0 20px;
+  }
+  .spread__deck {
+    color: var(--brand);
+    font-size: clamp(1.02rem, 1.4vw, 1.14rem);
+    line-height: 1.6;
+    max-width: 32ch;
+    margin: 0;
+    padding-left: 16px;
+    border-left: 1px solid color-mix(in srgb, var(--brand) 45%, transparent);
+  }
+  .spread__body > :first-child { margin-top: 0; }
+  .spread__body p { max-width: 62ch; }
+  .spread__body .lead { margin-bottom: 26px; }
+  .spread__body .muted { margin-bottom: 18px; }
+
+  @media (max-width: 940px) {
+    .spread { grid-template-columns: 1fr; gap: 26px; }
+    .spread__aside { position: static; }
+    .spread__deck { max-width: none; }
+  }
+
+  /* --- PEAK 1: services --------------------------------------------------- */
+  /* Px, not ch: on the wrapper a ch unit resolves against the inherited body
+     size, which is a third of the heading it is meant to be measuring. */
+  .svc__head { max-width: 640px; margin-bottom: clamp(34px, 4.5vw, 56px); }
+  .svc__head p { max-width: 46ch; }
+  .svc__head h2 {
+    font-size: clamp(2.15rem, 4.6vw, 3.35rem);
+    letter-spacing: -0.035em;
+    margin-bottom: 12px;
+  }
+  .svc__head p { color: var(--muted); margin: 0; }
+
+  /* Unequal and offset. The most-booked tile is physically larger and sits
+     higher; the second steps down. Equal tiles were the flatness. */
+  .svc :global(.svc-lead) {
+    grid-template-columns: minmax(0, 1.22fr) minmax(0, 1fr);
+    gap: clamp(18px, 2.4vw, 30px);
+    align-items: start;
+    margin-bottom: clamp(30px, 4vw, 54px);
+  }
+  /* min-height was buying the size difference and paying for it with a void:
+     .svc-hero is a column with justify-content:flex-end and an auto-margin tag,
+     so every pixel of unused min-height opens up between the tag and the
+     heading. The inequality now comes from column width and heading size, which
+     cost nothing, and the tiles are sized by their own content. The stagger is
+     the offset alone. */
+  .svc :global(.svc-lead > *) { min-height: 0; }
+  .svc :global(.svc-lead > :last-child) { margin-top: clamp(0px, 4.4vw, 56px); }
+  .svc :global(.svc-lead > :first-child h3) { font-size: clamp(1.7rem, 3vw, 2.4rem); }
+  .svc :global(.svc-lead > :first-child .svc-hero__tag) { margin-bottom: clamp(28px, 4vw, 52px); }
+  .svc :global(.svc-lead > :last-child .svc-hero__tag) { margin-bottom: clamp(24px, 3.2vw, 40px); }
+
+  @media (max-width: 860px) {
+    .svc :global(.svc-lead) { grid-template-columns: minmax(0, 1fr); }
+    .svc :global(.svc-lead > :last-child) { margin-top: 0; }
+  }
+
+  /* --- PEAK 2: the price -------------------------------------------------- */
+  .est-band :global(.est) { padding: clamp(28px, 4.4vw, 54px); }
+  .est-band :global(.est__grid) { grid-template-columns: minmax(0, 1.25fr) minmax(0, 0.75fr); }
+  /* nowrap: the range is one figure, and letting "£120 – £150" break after the
+     dash reads as two prices. */
+  .est-band :global(.est__fig) { font-size: clamp(2.1rem, 3.7vw, 2.9rem); white-space: nowrap; }
+  @media (max-width: 880px) {
+    .est-band :global(.est__grid) { grid-template-columns: 1fr; }
+  }
+
+  /* --- The ledger: a plate crossing the seam -------------------------------
+     Was a full-bleed hairline rail lying flat on the ground. It is the same
+     four figures in the same order at the same size — but it is now a physical
+     plate whose top edge crosses up into the estimator's band, so it reads as
+     the base the instrument is bolted to rather than as a fifth section.
+
+     The pull is a margin, so it moves this band and everything after it up by
+     the same amount. Every seam BELOW the plate is therefore unchanged without
+     compensating for anything — ledger -> owner is still padB(proof) 56 +
+     padT(owner) 72 = 128, exactly as documented. The one seam that changes is
+     the one being deliberately spent: est -> ledger, which stops being a 64px
+     interval and becomes an overlap.
+
+     What makes it read as a base rather than as a second panel is WIDTH, not
+     z-order. Tucking the plate behind the band above was tried and is wrong:
+     the band's ground is opaque, so it swallows the figures, and clipping the
+     solder pads off the plate's top edge costs one of the four marks the whole
+     page is built from. Instead the estimator is inset and the plate is not,
+     so the instrument is visibly narrower than the thing it stands on. The
+     estimator's cast then falls through the glass onto the plate, which is
+     what actually sells the contact. */
+  .proof { margin-top: clamp(-46px, -3.2vw, -24px); }
+  .est-band :global(.est) { margin-inline: clamp(0px, 2.8vw, 40px); }
+  .ledger {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    border-radius: var(--radius);
+    padding-inline: clamp(8px, 1.4vw, 18px);
+  }
+  .ledger__cell {
+    display: flex;
+    align-items: baseline;
+    gap: 11px;
+    padding: 20px clamp(10px, 1.6vw, 22px);
+    border-left: 1px solid var(--line);
+    position: relative;
+  }
+  .ledger__cell:first-child { border-left: 0; }
+  /* Solder pad at every junction — the hero's pads, doing a job. */
+  .ledger__cell:not(:first-child)::before {
+    content: '';
+    position: absolute; left: -3px; top: -3px;
+    width: 5px; height: 5px; border-radius: 50%;
+    background: var(--brand);
+    box-shadow: 0 0 8px 1px color-mix(in srgb, var(--brand) 55%, transparent);
+  }
+  .ledger__n {
+    font-family: var(--font-display);
+    font-weight: 800;
+    font-size: clamp(1.45rem, 2.1vw, 1.85rem);
+    letter-spacing: -0.03em;
+    color: var(--brand);
+    line-height: 1;
+  }
+  .ledger__l { color: var(--muted); font-size: 0.86rem; line-height: 1.35; }
+
+  @media (max-width: 760px) {
+    .ledger { grid-template-columns: 1fr 1fr; }
+    .ledger__cell { padding: 16px 14px; }
+    .ledger__cell:nth-child(odd) { border-left: 0; }
+    .ledger__cell:nth-child(n + 3) { border-top: 1px solid var(--line); }
+    .ledger__cell:nth-child(3)::before { display: none; }
+  }
+
+  /* --- PEAK 3: the person, bleeding off the left edge --------------------- */
+  .owner__spread {
+    display: grid;
+    grid-template-columns: minmax(240px, 0.68fr) minmax(0, 1fr);
+    gap: clamp(26px, 5vw, 76px);
+    align-items: center;
+    /* % padding resolves against the band, so the right edge lands exactly on
+       the container gutter while the left column keeps running off-screen. */
+    padding-right: max(22px, calc((100% - var(--maxw)) / 2 + 22px));
+  }
+  .owner__frame {
+    border: 1px solid var(--line);
+    border-left: 0;
+    border-radius: 0 var(--radius-lg) var(--radius-lg) 0;
+    overflow: hidden;
+    background: var(--panel);
+    box-shadow: 24px 28px 70px -40px rgba(0, 0, 0, 0.95);
+  }
+  .owner__frame :global(img) { width: 100%; object-fit: cover; }
+  /* place-items alone splits the two lines across two stretched rows and puts
+     a third of the panel between them. Centre the block, not each row. */
+  .owner__frame :global(.ph) { border: 0; border-radius: 0; align-content: center; }
+  .owner__body h2 {
+    font-size: clamp(2rem, 3.6vw, 2.9rem);
+    letter-spacing: -0.032em;
+    margin-bottom: 18px;
+  }
+  .owner__quote {
+    font-size: clamp(1.14rem, 1.8vw, 1.4rem);
+    line-height: 1.5;
+    color: var(--text);
+    max-width: 44ch;
+    margin-bottom: 20px;
+  }
+  .owner__body .muted { max-width: 56ch; }
+  .owner__actions { display: flex; gap: 12px; flex-wrap: wrap; margin-top: 24px; }
+
+  @media (max-width: 900px) {
+    .owner__spread {
+      grid-template-columns: 1fr;
+      padding-right: 22px;
+      padding-left: 22px;
+      gap: 30px;
+    }
+    .owner__frame {
+      border-left: 1px solid var(--line);
+      border-radius: var(--radius-lg);
+      margin-left: -22px;
+      margin-right: 30%;
+    }
+  }
+
+  /* --- Reviews, bleeding off the right ------------------------------------ */
+  /* Measure goes on the text, never on the container: capping .container turns
+     its auto margins into an indent and the head drifts off the card edge. */
+  .reviews__head { margin-bottom: 34px; }
+  .reviews__head h2 { margin-bottom: 10px; max-width: 20ch; }
+  .reviews__head p { color: var(--muted); margin: 0; max-width: 46ch; }
+  .rev-bleed { padding-left: max(22px, calc((100% - var(--maxw)) / 2 + 22px)); }
+  .rev-bleed :global(.rev__track) { padding-right: 22px; }
+
+  /* --- Areas: the page's quietest beat ------------------------------------ */
+  .areas__head { display: flex; flex-wrap: wrap; align-items: baseline; gap: 6px 18px; margin-bottom: 18px; }
+  .areas__head h2 {
+    font-size: clamp(1.35rem, 2.2vw, 1.7rem);
+    letter-spacing: -0.02em;
+    margin: 0;
+    flex: 0 0 auto;
+  }
+  .areas__head p { color: var(--muted); font-size: 0.94rem; margin: 0; flex: 1 1 22ch; min-width: 0; }
+  .areas__field { display: flex; flex-wrap: wrap; gap: 8px; }
+
+  /* --- The close ---------------------------------------------------------- */
+  .faq-band .section__head { margin-bottom: 40px; }
+  .faq-band :global(.faq summary) { padding: 22px 0; }
+  .faq-band :global(.inline-cta) { margin-top: 40px; }
+
+  /* -------------------------------------------------------------------------
+     LIGHTING PLAN
+     Each band aims its own lamps. The page is read top to bottom, so the
+     source walks across it rather than sitting in the same corner eight times
+     — right in the hero, left through the argument, back right and hot at the
+     two peaks, low and warm at the close. A light that never moves is
+     wallpaper; a light that tracks the reading order is a room.
+     ------------------------------------------------------------------------- */
+  .spread-band :global(.ambient__blob--a) { --blob-x: 18%; --blob-y: 34%; --blob-w: 78%; --blob-h: 96%; --blob-a: 13%; }
+  .spread-band :global(.ambient__blob--b) { --blob-x: 88%; --blob-y: 82%; --blob-w: 62%; --blob-h: 78%; --blob-a: 9%; }
+  .spread-band :global(.ambient__blob--c) { --blob-a: 0%; }
+  .spread-band :global(.grad-edge--bottom) { --edge-c: var(--bg-2); --edge-h: 180px; }
+
+  .svc :global(.ambient__blob--a) { --blob-x: 88%; --blob-y: 16%; --blob-w: 82%; --blob-h: 88%; --blob-a: 17%; }
+  .svc :global(.ambient__blob--b) { --blob-x: 4%;  --blob-y: 74%; --blob-w: 58%; --blob-h: 76%; --blob-a: 10%; }
+  .svc :global(.ambient__blob--c) { --blob-x: 44%; --blob-y: 108%; --blob-a: 7%; }
+
+  /* Peak 2 is the brightest thing on the page and should read that way: the
+     cove light, the mirrored bolt and both lamps all land on one object. */
+  .est-band :global(.ambient__blob--a) { --blob-x: 72%; --blob-y: 46%; --blob-w: 88%; --blob-h: 120%; --blob-a: 21%; }
+  .est-band :global(.ambient__blob--b) { --blob-x: 10%; --blob-y: 62%; --blob-w: 64%; --blob-h: 96%; --blob-a: 15%; }
+  .est-band :global(.ambient__blob--c) { --blob-a: 0%; }
+
+  .owner :global(.ambient__blob--a) { --blob-x: 24%; --blob-y: 50%; --blob-w: 74%; --blob-h: 108%; --blob-a: 14%; }
+  .owner :global(.ambient__blob--b) { --blob-x: 92%; --blob-y: 22%; --blob-w: 56%; --blob-h: 70%; --blob-a: 8%; }
+  .owner :global(.ambient__blob--c) { --blob-a: 0%; }
+
+  .faq-band :global(.ambient__blob--a) { --blob-x: 50%; --blob-y: 96%; --blob-w: 96%; --blob-h: 74%; --blob-a: 11%; }
+  .faq-band :global(.ambient__blob--b) { --blob-x: 50%; --blob-y: 8%;  --blob-w: 76%; --blob-h: 46%; --blob-a: 8%; }
+  .faq-band :global(.ambient__blob--c) { --blob-a: 0%; }
+
+  .reviews :global(.grad-edge--bottom) { --edge-c: var(--bg); --edge-h: 150px; }
+
+  /* -------------------------------------------------------------------------
+     MATERIAL ADJUSTMENTS
+     Where an element already carried a background from global.css, the glass
+     rule above replaced it. These are the corrections that go with that.
+     ------------------------------------------------------------------------- */
+
+  /* .svc-hero shipped with its own hover lift and glow. Glass changes what is
+     being lifted, so the resting shadow has to be the one the hover grows out
+     of, or the tile appears to gain a shadow from nowhere on first hover. */
+  .svc :global(.svc-hero:hover) {
+    box-shadow: 0 40px 90px -40px rgba(0, 0, 0, 0.95), var(--glass-sheen), var(--glow);
+  }
+
+  /* The estimator keeps its own corner wash — that gradient is what points the
+     eye at the figure — laid over the glass rather than instead of it. */
+  .est-band :global(.est) {
+    background:
+      radial-gradient(120% 90% at 0% 0%, color-mix(in srgb, var(--brand) 15%, transparent), transparent 58%),
+      var(--glass-bg);
+    border-color: var(--line-strong);
+  }
+
+  /* The owner frame bleeds off the left edge, so it has no left border to
+     catch the sheen and its cast has to throw right and down, away from the
+     edge it is running off. */
+  .owner__frame {
+    border-left: 0;
+    box-shadow: 30px 34px 78px -44px rgba(0, 0, 0, 0.95), var(--glass-sheen);
+  }
+
+  @media (max-width: 900px) {
+    /* Once the frame stops bleeding it gets its border back, and with it a
+       normal all-round cast. */
+    .owner__frame {
+      border-left: 1px solid var(--glass-border);
+      box-shadow: var(--glass-cast), var(--glass-sheen);
+    }
+  }
+
+  /* Backdrop blur is the one genuinely expensive thing added here. Six
+     elements is affordable; six elements all repainting behind a moving
+     ken-burns photo would not be, so if real hero photography ever lands the
+     estimator and the tiles should be re-measured. Under reduced motion the
+     page is static anyway and this costs one paint. */
+  @media (max-width: 560px) {
+    /* Small screens are also the slowest devices, and at this width the tiles
+       are full-bleed with almost nothing visible behind them to refract. The
+       blur buys nothing here and costs the most. */
+    .svc :global(.svc-hero),
+    .est-band :global(.est) {
+      -webkit-backdrop-filter: none;
+      backdrop-filter: none;
+      background: var(--glass-bg-opaque);
+    }
+    .est-band :global(.est) {
+      background:
+        radial-gradient(120% 90% at 0% 0%, color-mix(in srgb, var(--brand) 15%, transparent), transparent 58%),
+        var(--glass-bg-opaque);
+    }
+  }
+</style>

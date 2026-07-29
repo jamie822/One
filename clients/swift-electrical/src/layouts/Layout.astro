@@ -1,0 +1,562 @@
+---
+import { client } from '../data/client.js';
+import { href, absUrl, businessSchema, businessId, breadcrumbSchema, hasPhone } from '../lib/site.js';
+import Needed from '../components/Needed.astro';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import '../styles/global.css';
+// Accessibility corrections layer. Must come after global.css (which imports
+// type.css and motion.css) so its overrides win on source order as well as on
+// specificity. See the header of a11y.css for what is in it and why.
+import '../styles/a11y.css';
+
+const {
+  title,
+  description,
+  path = '/',
+  // Pass an array of { name, path } to emit BreadcrumbList schema + a visible trail.
+  crumbs = null,
+  // Extra JSON-LD blocks (Service, FAQPage, …)
+  schemas = [],
+} = Astro.props;
+
+// Absolute and base-path-correct. `new URL(path, client.url)` used to throw the
+// "/One/" sub-path away, so every canonical on the site pointed at a host root
+// where nothing is served. See absUrl() in lib/site.js.
+const canonical = absUrl(path);
+
+/* Titles.
+   The old suffix was " | Swift Electrical & Security · 5★ from 7 reviews" —
+   49 characters before the page had said anything. Every one of the 23 titles
+   came out over 60 and several over 95, so Google would have truncated or
+   rewritten the lot and the brand name, the part this audience is actually
+   checking, was the first thing cut. AUDIENCE.md §1: for most visitors the site
+   is a verification channel. They were given a name and are confirming it
+   exists, so the name has to survive into the SERP.
+
+   The rating is dropped from the title and kept where it persuades — the hero,
+   the trust bar and the description. What is left is a budget: full brand if it
+   fits in 60, short brand if that fits, page title alone if neither does. */
+const BRAND = client.name;
+const BRAND_SHORT = 'Swift Electrical';
+
+function composeTitle(t) {
+  if (!t) return `${BRAND} — ${client.tagline}`;
+  // Pages whose own title already names the business must not repeat it.
+  if (t.toLowerCase().includes(BRAND_SHORT.toLowerCase())) return t;
+  const long = `${t} | ${BRAND}`;
+  if (long.length <= 60) return long;
+  const short = `${t} | ${BRAND_SHORT}`;
+  return short.length <= 60 ? short : t;
+}
+
+const fullTitle = composeTitle(title);
+const metaDesc = description || client.tagline;
+
+// The 404 is the one page that must never be indexed. It was shipping
+// "index, follow" like everything else.
+const noindex = path === '/404/';
+
+/* Every block that references the business must reference the SAME node, or the
+   graph silently falls apart into unlinked fragments. about.astro hand-builds
+   `worksFor: { '@id': `${client.url}/#business` }`, and because client.url ends
+   in a slash that produced ".../One//#business" — one character away from the
+   real node and therefore pointing at nothing.
+
+   Normalising here rather than at each call site means no page can drift again,
+   whoever writes it. Only values that are already meant to be the business node
+   are touched: a string ending in "#business" and nothing else. */
+function normaliseIds(value) {
+  if (Array.isArray(value)) return value.map(normaliseIds);
+  if (value && typeof value === 'object') {
+    return Object.fromEntries(Object.entries(value).map(([k, v]) => [k, normaliseIds(v)]));
+  }
+  if (typeof value === 'string' && value.endsWith('#business')) return businessId;
+  return value;
+}
+
+const allSchemas = [
+  businessSchema(),
+  ...(crumbs ? [breadcrumbSchema(crumbs)] : []),
+  ...schemas,
+].map(normaliseIds);
+---
+<!doctype html>
+<html
+  lang="en-GB"
+  data-mode={client.mode}
+  style={`--brand:${client.brandColor};--brand-dark:${client.brandColorDark};--brand-soft:color-mix(in srgb, ${client.brandColor} 12%, transparent);`}
+>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{fullTitle}</title>
+    <meta name="description" content={metaDesc} />
+    <link rel="canonical" href={canonical} />
+    <meta name="robots" content={noindex ? 'noindex, follow' : 'index, follow'} />
+
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content={client.name} />
+    <meta property="og:title" content={fullTitle} />
+    <meta property="og:description" content={metaDesc} />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:locale" content="en_GB" />
+    {/* summary_large_image with no og:image renders as a broken card. The card
+        upgrades itself the moment client.heroImage lands. */}
+    <meta name="twitter:card" content={client.heroImage ? 'summary_large_image' : 'summary'} />
+    {client.heroImage && <meta property="og:image" content={absUrl(client.heroImage)} />}
+
+    <link rel="icon" href={href('/favicon.svg')} type="image/svg+xml" />
+    <link rel="sitemap" href={href('/sitemap-index.xml')} />
+
+    <!-- Fonts are self-hosted. No third-party request, nothing render-blocking,
+         and the page cannot silently fall back if a CDN is slow or blocked.
+
+         All ten woff2 files get fetched regardless, because every @font-face is
+         referenced by some rule that runs on every page. So preload is not
+         deciding WHETHER a font loads, only which four jump the queue — which
+         is precisely why the list has to stay short. Promote everything and you
+         have promoted nothing.
+
+         The four below were picked by measuring painted text area inside the
+         initial viewport at 1280x900 and 390x844, on the homepage, an area page
+         and a service page — not by reading the stylesheet:
+
+           Sora 800    118,464px²  the <h1>. This is the LCP element.
+           Inter 500    48k-143k   hero strapline; the housing-stock lead, which
+                                   is the largest single block on an area page.
+           Inter 400     28k-47k   hero sub. Above the fold on 3 of the 4.
+           Inter 600     8.7k-11k  every button, including the header CTA.
+
+         Deliberately NOT preloaded, and worth saying why rather than quietly
+         appending them:
+
+         · Sora 600 measures larger above the fold (18k) than Inter 600 does,
+           which looks like an omission until you check what is setting it: it
+           is almost entirely the "PHONE NUMBER NEEDED" placeholder markers.
+           That is scaffolding. It disappears the day Adil gives us a number, so
+           preloading for it would be optimising a state that must never ship.
+         · Sora 700 is 301px² on the homepage. It only looks significant on an
+           area page at exactly 900px tall, where the viewport clips the top of
+           the first <h2>. Not worth a fifth slot.
+         · IBM Plex Mono 400/500/600 are the trust bar and eyebrows — 3.8k at
+           most, and the metric-matched Plex Fallback in type.css already covers
+           the swap. -->
+    <link rel="preload" as="font" type="font/woff2" href={href('/fonts/sora-latin-800-normal.woff2')} crossorigin />
+    <link rel="preload" as="font" type="font/woff2" href={href('/fonts/inter-latin-400-normal.woff2')} crossorigin />
+    <link rel="preload" as="font" type="font/woff2" href={href('/fonts/inter-latin-500-normal.woff2')} crossorigin />
+    <link rel="preload" as="font" type="font/woff2" href={href('/fonts/inter-latin-600-normal.woff2')} crossorigin />
+
+    {allSchemas.map((s) => (
+      <script type="application/ld+json" set:html={JSON.stringify(s)} />
+    ))}
+  </head>
+  <body>
+    <a class="skip" href="#main">Skip to content</a>
+
+    <!-- The page's one authored motion moment: a live circuit down the page,
+         filling as you scroll. Decorative, so hidden from assistive tech. -->
+    <div class="spine" aria-hidden="true">
+      <div class="spine__fill" data-spine-fill></div>
+      <div class="spine__head" data-spine-head></div>
+    </div>
+    <Header path={path} />
+
+    {crumbs && crumbs.length > 1 && (
+      <nav class="crumbs" aria-label="Breadcrumb">
+        <div class="container">
+          {crumbs.map((c, i) => (
+            <>
+              {i > 0 && <span>/</span>}
+              {i === crumbs.length - 1
+                ? <span aria-current="page">{c.name}</span>
+                : <a href={href(c.path)}>{c.name}</a>}
+            </>
+          ))}
+        </div>
+      </nav>
+    )}
+
+    <main id="main"><slot /></main>
+
+    <!-- Mobile action bar. Roughly 70% of this audience is on a phone, and
+         contact details outrank price and reviews as a trust factor. -->
+    <div class="callbar">
+      {hasPhone
+        ? <a class="btn btn--act" href={`tel:${client.phoneHref}`}>Call {client.phone}</a>
+        : <Needed label="PHONE NEEDED" />}
+      <a class="btn btn--ghost" href={href('/contact/')}>Get a price</a>
+    </div>
+    <Footer />
+
+    <script>
+      // Header border on scroll.
+      const header = document.querySelector('.header');
+      const onScroll = () => header?.classList.toggle('is-scrolled', window.scrollY > 8);
+      onScroll();
+      window.addEventListener('scroll', onScroll, { passive: true });
+
+      // Mobile nav.
+      const toggle = document.querySelector('.nav-toggle');
+      const nav = document.querySelector('.nav');
+      toggle?.addEventListener('click', () => {
+        const open = nav?.classList.toggle('is-open');
+        toggle.setAttribute('aria-expanded', String(Boolean(open)));
+      });
+
+      // Spine: fills as the page scrolls. rAF-throttled so the scroll handler
+      // never blocks; skipped entirely under reduced-motion.
+      const fill = document.querySelector('[data-spine-fill]');
+      const head = document.querySelector('[data-spine-head]');
+      if (fill && !matchMedia('(prefers-reduced-motion: reduce)').matches) {
+        let ticking = false;
+        const draw = () => {
+          const max = document.documentElement.scrollHeight - window.innerHeight;
+          const pct = max > 0 ? Math.min(1, window.scrollY / max) : 0;
+          const h = pct * window.innerHeight;
+          fill.style.height = h + 'px';
+          // Position the head with a transform rather than `top`. Writing
+          // `top` every scroll frame moved a painted element, which Chrome
+          // records as a layout shift (it was the page's only CLS source) and
+          // forced a layout pass per frame. translateY is composited and
+          // pixel-identical. The spine itself is unchanged.
+          if (head) head.style.transform = 'translate3d(0,' + h + 'px,0)';
+          ticking = false;
+        };
+        window.addEventListener('scroll', () => {
+          if (!ticking) { ticking = true; requestAnimationFrame(draw); }
+        }, { passive: true });
+        draw();
+      }
+
+      // Scroll reveal. IntersectionObserver only — no scroll handler, so this
+      // costs nothing on the main thread and cannot hurt INP.
+      const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+      const items = document.querySelectorAll('.reveal');
+      if (reduce || !('IntersectionObserver' in window)) {
+        items.forEach((el) => el.classList.add('is-in'));
+      } else {
+        const io = new IntersectionObserver(
+          (entries) => entries.forEach((e) => {
+            if (e.isIntersecting) { e.target.classList.add('is-in'); io.unobserve(e.target); }
+          }),
+          { threshold: 0.1, rootMargin: '0px 0px -40px' }
+        );
+        items.forEach((el) => io.observe(el));
+
+        /* Safety net against a self-deadlocking reveal.
+           IntersectionObserver measures the *clipped* intersection rect, so
+           any hidden state that clips or masks an element to zero area makes
+           it permanently unable to meet the threshold — it never receives
+           .is-in, so the state never opens, so it stays invisible. That is a
+           silent content-loss bug, not a missing animation.
+
+           This pass re-tests with getBoundingClientRect, which ignores
+           clipping and therefore cannot deadlock. It unbinds itself as soon
+           as every reveal has landed, so a settled page pays nothing. */
+        /* The furthest the fold line has ever reached, in DOCUMENT
+           coordinates. Hardening, not a fix for an observed defect — and
+           worth being precise about which, because the investigation that
+           produced it very nearly recorded the opposite.
+
+           A scripted scroll to the bottom of /areas/shipley/ and back left
+           `.cta__inner.reveal` at opacity 0 in 3 of 6 runs, which looked
+           exactly like a content-loss bug in the reveal system. It was not.
+           global.css sets `html { scroll-behavior: smooth }`, so the test's
+           `window.scrollTo` calls were being animated and continuously
+           retargeted, and the page only ever reached 2207px of a possible
+           4790. The elements had never been scrolled to. With the test
+           forcing instant scrolling, the original code was clean.
+
+           The reason the change stays is that the viewport-relative test
+           below is still genuinely amnesiac: it asks only where the element
+           is now. An element passed during a scroll faster than the
+           observer sampled it, on a page the visitor has since scrolled
+           back up, fails every subsequent test and stays hidden until they
+           happen to go down again. A high-water mark cannot forget. It
+           subsumes the old test — at rest, `seenTo` IS the current fold
+           line — so it is strictly more permissive and cannot regress
+           anything. Verified clean either way. */
+        let seenTo = 0;
+        const rescue = () => {
+          seenTo = Math.max(seenTo, window.scrollY + window.innerHeight - 40);
+          document.querySelectorAll('.reveal:not(.is-in)').forEach((el) => {
+            const r = el.getBoundingClientRect();
+            // Anything whose top has passed the fold line has been reached —
+            // including elements already scrolled off the top, which a fast
+            // scroll can carry past before the observer ever samples them.
+            // Leaving one of those hidden is content loss, not a missed
+            // animation, so the test is deliberately one-sided.
+            if (r.height && r.top + window.scrollY < seenTo) el.classList.add('is-in');
+          });
+          if (!document.querySelector('.reveal:not(.is-in)')) {
+            window.removeEventListener('scroll', onScroll);
+            window.removeEventListener('scrollend', rescue);
+          }
+        };
+        // rAF-coalesced and time-gated, so a long continuous scroll is swept
+        // while it is still moving rather than only once it stops.
+        let last = 0;
+        let queued = false;
+        const onScroll = () => {
+          if (queued) return;
+          queued = true;
+          requestAnimationFrame(() => {
+            queued = false;
+            // The high-water mark is updated on EVERY sampled frame, before
+            // the throttle, because it is the one piece of state that cannot
+            // be reconstructed later. The sweep itself can safely wait; a
+            // scroll position that has been and gone cannot.
+            seenTo = Math.max(seenTo, window.scrollY + window.innerHeight - 40);
+            const now = performance.now();
+            if (now - last < 150) return;
+            last = now;
+            rescue();
+          });
+        };
+        window.addEventListener('scroll', onScroll, { passive: true });
+        window.addEventListener('scrollend', rescue, { passive: true });
+        setTimeout(rescue, 400);
+        setTimeout(rescue, 1600);
+
+        /* Focus must never land on something that is still invisible.
+           Tabbing to a control below the fold scrolls it into view, but the
+           IntersectionObserver only reports on a later frame, so for one or
+           two frames the focus ring sits on an element at opacity 0 that is
+           also mid-transform. A sighted keyboard user sees the ring vanish.
+
+           `focusin` fires before that gap rather than after it, and it
+           bubbles, so one listener on the document covers every control on
+           the page. Resolving the reveal ancestor immediately closes the
+           gap at the only moment it can occur. The entrance is skipped
+           rather than played for this one element, which is the correct
+           trade: a keyboard user who has just arrived somewhere needs to
+           see it, not watch it animate in.
+
+           Deliberately inside the non-reduced-motion branch. The other
+           branch has already added .is-in to everything, so there is
+           nothing there for this to fix. */
+        document.addEventListener('focusin', (e) => {
+          const host = e.target instanceof Element ? e.target.closest('.reveal:not(.is-in)') : null;
+          if (!host) return;
+          // Order matters. .is-in--now suppresses transitions across the
+          // subtree, .is-in changes the state, and reading offsetWidth
+          // forces the browser to commit that state to the current frame
+          // while transitions are still off — so the section is simply
+          // there, rather than fading in underneath the focus ring.
+          host.classList.add('is-in--now');
+          host.classList.add('is-in');
+          void host.offsetWidth;
+          // Straight back off, or this subtree loses hover and press
+          // feedback for the rest of the page's life. The end state is
+          // already committed, so restoring transitions animates nothing.
+          requestAnimationFrame(() => host.classList.remove('is-in--now'));
+        });
+      }
+
+      /* ====================================================================
+         INTERACTION LAYER
+         Everything below is motion that CSS genuinely cannot express: values
+         that depend on the pointer, on a number's value, or on gesture
+         velocity. All of it is inert under reduced motion, and none of it
+         touches a layout property.
+         ==================================================================== */
+      const fine = matchMedia('(hover: hover) and (pointer: fine)').matches;
+
+      /* --- 1. Light follows the cursor ---------------------------------
+         The trade is lighting, so a pointer crossing a surface should drag a
+         highlight over it. --mx/--my are registered with inherits:false in
+         motion.css, so writing them invalidates only that one element.
+         Primary CTAs additionally get a small magnetic pull toward the
+         cursor; the CSS transition on transform smooths and retargets it, so
+         it stays interruptible rather than fighting a running animation. */
+      if (fine && !reduce) {
+        const LIT = '.card, .cred, .rev__card, .svc-hero, .btn--primary, .btn--act';
+        const MAGNETIC = 6; // px — felt, not seen
+        let frame = 0;
+        let pending = null;
+
+        const apply = () => {
+          frame = 0;
+          if (!pending) return;
+          const { el, x, y, rect, magnetic } = pending;
+          pending = null;
+          el.style.setProperty('--mx', x + 'px');
+          el.style.setProperty('--my', y + 'px');
+          if (magnetic) {
+            const dx = (x / rect.width - 0.5) * 2 * MAGNETIC;
+            const dy = (y / rect.height - 0.5) * 2 * MAGNETIC;
+            el.style.setProperty('--magnet-x', dx.toFixed(2) + 'px');
+            el.style.setProperty('--magnet-y', dy.toFixed(2) + 'px');
+          }
+        };
+
+        document.addEventListener('pointermove', (e) => {
+          const el = e.target instanceof Element ? e.target.closest(LIT) : null;
+          if (!el) return;
+          const rect = el.getBoundingClientRect();
+          pending = {
+            el,
+            x: e.clientX - rect.left,
+            y: e.clientY - rect.top,
+            rect,
+            magnetic: el.classList.contains('btn'),
+          };
+          if (!frame) frame = requestAnimationFrame(apply);
+        }, { passive: true });
+
+        // Release the magnet on the way out so the button springs home.
+        document.addEventListener('pointerout', (e) => {
+          const el = e.target instanceof Element ? e.target.closest('.btn') : null;
+          if (!el || el.contains(e.relatedTarget)) return;
+          el.style.setProperty('--magnet-x', '0px');
+          el.style.setProperty('--magnet-y', '0px');
+        }, { passive: true });
+      }
+
+      /* --- 2. Stat count-up --------------------------------------------
+         The final value is already in the HTML, so if this never runs the
+         correct number is on screen. Only plain numerics are touched, which
+         is why "8pm" is skipped. motion.css sets tabular-nums on .stat__n so
+         the digits cannot change width: the count cannot shift layout. */
+      if (!reduce && 'IntersectionObserver' in window) {
+        const nums = [...document.querySelectorAll('.stat__n, .ledger__n')].filter((el) =>
+          /^\d+(\.\d+)?$/.test(el.textContent.trim())
+        );
+        const countIO = new IntersectionObserver((entries) => {
+          entries.forEach((e) => {
+            if (!e.isIntersecting) return;
+            countIO.unobserve(e.target);
+            const el = e.target;
+            const raw = el.textContent.trim();
+            const target = parseFloat(raw);
+            const dp = (raw.split('.')[1] || '').length;
+            const DURATION = 1100;
+            const start = performance.now();
+            const tick = (now) => {
+              const t = Math.min(1, (now - start) / DURATION);
+              // Same strong ease-out as the CSS curve, so the number settles
+              // on the same beat as the tile it sits in.
+              const eased = 1 - Math.pow(1 - t, 3);
+              el.textContent = (target * eased).toFixed(dp);
+              if (t < 1) requestAnimationFrame(tick);
+              else el.textContent = raw;
+            };
+            requestAnimationFrame(tick);
+          });
+        }, { threshold: 0.4 });
+        nums.forEach((el) => countIO.observe(el));
+      }
+
+      /* --- 3. Estimator: the price should not teleport ------------------
+         A MutationObserver keeps this out of the component's own code. The
+         figure gets a short lift-and-glow so a changed price is noticed. */
+      if (!reduce) {
+        const retick = (el) => {
+          if (!el) return;
+          el.classList.remove('is-tick');
+          void el.offsetWidth; // restart the keyframes
+          el.classList.add('is-tick');
+        };
+        document.querySelectorAll('[data-est]').forEach((root) => {
+          const fig = root.querySelector('[data-est-out]');
+          const note = root.querySelector('[data-est-time]');
+          if (fig) {
+            new MutationObserver(() => { retick(fig); retick(note); })
+              .observe(fig, { childList: true, characterData: true, subtree: true });
+          }
+          // Latch feedback on the option itself, on pointer-down rather than
+          // click, so the press is acknowledged the instant it happens.
+          root.querySelectorAll('.est__opt').forEach((btn) => {
+            btn.addEventListener('pointerdown', () => {
+              btn.classList.remove('is-latched');
+              void btn.offsetWidth;
+              btn.classList.add('is-latched');
+            });
+            btn.addEventListener('animationend', () => btn.classList.remove('is-latched'));
+          });
+        });
+      }
+
+      /* --- 4. Carousel drag with momentum ------------------------------
+         The track already scrolls and snaps natively, which covers touch.
+         Mouse users had only the arrows. This adds 1:1 pointer tracking with
+         a proper velocity handoff: on release the resting point is projected
+         from the flick using the exponential-decay model, then snapped to the
+         nearest card — so a flick throws the carousel instead of stopping
+         dead where the finger left it. */
+      if (fine) {
+        // Apple's projection function from Designing Fluid Interfaces.
+        const project = (velocity, decelerationRate = 0.998) =>
+          ((velocity / 1000) * decelerationRate) / (1 - decelerationRate);
+
+        document.querySelectorAll('[data-rev-track]').forEach((track) => {
+          let down = false, dragging = false;
+          let startX = 0, startScroll = 0, lastX = 0, lastT = 0, velocity = 0;
+
+          track.addEventListener('pointerdown', (e) => {
+            if (e.pointerType !== 'mouse' || e.button !== 0) return;
+            down = true;
+            dragging = false;
+            startX = lastX = e.clientX;
+            startScroll = track.scrollLeft;
+            lastT = e.timeStamp;
+            velocity = 0;
+          });
+
+          track.addEventListener('pointermove', (e) => {
+            if (!down) return;
+            const dx = e.clientX - startX;
+            // ~10px of hysteresis before committing to a drag, so a click on
+            // a card is never stolen.
+            if (!dragging && Math.abs(dx) < 10) return;
+            if (!dragging) {
+              dragging = true;
+              track.classList.add('is-dragging');
+              track.setPointerCapture(e.pointerId);
+            }
+            const dt = e.timeStamp - lastT;
+            if (dt > 0) velocity = ((e.clientX - lastX) / dt) * 1000; // px/s
+            lastX = e.clientX;
+            lastT = e.timeStamp;
+            track.scrollLeft = startScroll - dx;
+            e.preventDefault();
+          });
+
+          const release = (e) => {
+            if (!down) return;
+            down = false;
+            if (!dragging) return;
+            dragging = false;
+            track.classList.remove('is-dragging');
+            if (track.hasPointerCapture?.(e.pointerId)) track.releasePointerCapture(e.pointerId);
+
+            // Where would this come to rest if we just let it run?
+            const projected = track.scrollLeft - project(velocity);
+            const cards = [...track.children];
+            let best = cards[0];
+            let bestGap = Infinity;
+            cards.forEach((c) => {
+              const gap = Math.abs(c.offsetLeft - track.offsetLeft - projected);
+              if (gap < bestGap) { bestGap = gap; best = c; }
+            });
+            track.scrollTo({
+              left: best.offsetLeft - track.offsetLeft,
+              behavior: reduce ? 'auto' : 'smooth',
+            });
+          };
+
+          track.addEventListener('pointerup', release);
+          track.addEventListener('pointercancel', release);
+          // A drag that ends over a card must not also fire that card's click.
+          track.addEventListener('click', (e) => {
+            if (track.classList.contains('is-dragging')) {
+              e.preventDefault();
+              e.stopPropagation();
+            }
+          }, true);
+        });
+      }
+    </script>
+  </body>
+</html>

@@ -1,0 +1,59 @@
+---
+import { studio } from '../../data/studio.js';
+
+const { yearsOnTools, yearsSelfEmployed } = studio.founder;
+const { email } = studio.contact;
+const site = studio.proof.ownSite;
+const host = site.url.replace('https://', '');
+
+// Verified facts only. studio.js marks everything else NEEDED, and a NEEDED
+// value renders as a visible placeholder rather than a guess.
+const facts = [
+  { n: String(yearsOnTools),      t: 'years on the tools.' },
+  { n: String(yearsSelfEmployed), t: 'of those self employed.' },
+];
+---
+<section class="bwhy shell">
+  <h2 class="bwhy__h">Built by a spark, not a marketer.</h2>
+
+  <p class="bwhy__p">
+    This studio exists because of one thing: marketing companies that didn’t
+    understand the trade. Nobody here needs you to explain what notifiable work
+    is, or why a rewire isn’t a two day job.
+  </p>
+
+  <ul class="bfacts">
+    {facts.map((f) => (
+      <li class="bfact">
+        <span class="figure bfact__n">{f.n}</span>
+        <span class="bfact__t">{f.t}</span>
+      </li>
+    ))}
+    <li class="bfact">
+      <span class="figure bfact__n">1</span>
+      <span class="bfact__t">
+        site of our own, live right now.
+        <a href={site.url} rel="noopener">{host}</a>
+      </span>
+    </li>
+
+    <li class="bfact bfact--todo">
+      <span class="label">Not set yet</span>
+      <!-- Written to the visitor, not to ourselves. The previous version
+           quoted our own brand guide at a spark who has never seen it. -->
+      <span class="bfact__t">
+        Price and turnaround. Neither is settled yet, so you get a gap here,
+        not a number we made up. Ask and we’ll tell you straight.
+      </span>
+    </li>
+  </ul>
+
+  <!-- The address in plain text as well as behind the button. Both CTAs on
+       this page were mailto links and nothing else, so a visitor on a machine
+       with no mail client had no way to reach anyone. The diary candidate
+       already does this; the board had missed it. -->
+  <div class="bwhy__do">
+    <a class="btn btn--action" href={`mailto:${email}`}>Get in touch</a>
+    <p class="bwhy__addr">{email}</p>
+  </div>
+</section>

@@ -1,0 +1,360 @@
+/* ==========================================================================
+   TYPE — Swift Electrical & Security
+   --------------------------------------------------------------------------
+   Three voices, and each one has a job. If a piece of text does not belong
+   to one of these jobs, it is in the wrong voice.
+
+     Sora          DISPLAY   Headlines and the wordmark. Nothing else may
+                             use it. Scarcity is what makes it read as a
+                             display face instead of "the bold font".
+     Inter         TEXT      Sentences. Prose, decks, navigation, buttons,
+                             anything a person reads left to right.
+     IBM Plex Mono TECHNICAL Labels, certificate names, ratings, prices,
+                             counts. This trade runs on test results and
+                             paperwork, so the numbers get an instrument
+                             face with tabular figures and a slashed zero.
+
+   The site has no photography, so type carries the whole page. That means
+   the scale has to do the work photography would normally do: big intervals
+   at the top so a headline is an event, tight intervals in the reading range
+   so prose stays comfortable.
+   ========================================================================== */
+
+@font-face{font-family:'IBM Plex Mono';src:url('/fonts/ibm-plex-mono-latin-400-normal.woff2') format('woff2');font-weight:400;font-style:normal;font-display:swap}
+@font-face{font-family:'IBM Plex Mono';src:url('/fonts/ibm-plex-mono-latin-500-normal.woff2') format('woff2');font-weight:500;font-style:normal;font-display:swap}
+@font-face{font-family:'IBM Plex Mono';src:url('/fonts/ibm-plex-mono-latin-600-normal.woff2') format('woff2');font-weight:600;font-style:normal;font-display:swap}
+
+/* ==========================================================================
+   METRIC-MATCHED FALLBACKS — dimensionally neutral font swap
+   --------------------------------------------------------------------------
+   `font-display: swap` guarantees text paints immediately, and guarantees a
+   second layout when the real face lands. The whole page was stable except
+   the nav: it is the right-hand item of a space-between header, so it is
+   shrink-to-fit, and when Inter replaced the system fallback it lost 24px of
+   width and slid right. 0.000408 CLS, every run, with no scrolling.
+
+   These faces make the pre-swap render the same size as the post-swap one.
+   Three things to know about them:
+
+   1. They cost ZERO bytes. `local()` only, no `url()`. Nothing is fetched;
+      the browser just re-measures a font the machine already has.
+   2. Arial is pinned deliberately rather than leaving `system-ui` first.
+      system-ui is a different typeface on every OS, so it cannot be
+      corrected with one number. Arial is present on Windows and macOS, and
+      Liberation Sans is its metric clone on Linux, so one size-adjust is
+      correct on all three.
+   3. size-adjust is per weight. `local('Arial')` resolves to Arial REGULAR
+      whatever weight the @font-face declares, and a matched face is never
+      synthetically emboldened, so every ratio below is measured against
+      Arial Regular. Getting that wrong first time round is what left the
+      CTA 6px short: 600 had been fitted against Arial Bold. The trade is
+      that a 600/700 element renders un-emboldened for the few hundred ms
+      of the swap window. Dimensionally right beats tonally right there.
+
+   Every number below was measured in this engine against the real strings
+   on this page, not taken from a table. size-adjust is webfont-width /
+   fallback-width over all shrink-to-fit text at that weight. ascent and
+   descent come from the rendered line box, divided by their own size-adjust
+   because the overrides are a percentage of the already-adjusted em.
+   ========================================================================== */
+
+@font-face { font-family: 'Inter Fallback'; font-style: normal; font-weight: 400;
+  src: local('Arial'), local('Liberation Sans'), local('Helvetica');
+  size-adjust: 106.483%; ascent-override: 91.00%; descent-override: 22.63%; line-gap-override: 0%; }
+@font-face { font-family: 'Inter Fallback'; font-style: normal; font-weight: 500;
+  src: local('Arial'), local('Liberation Sans'), local('Helvetica');
+  size-adjust: 107.434%; ascent-override: 90.19%; descent-override: 22.43%; line-gap-override: 0%; }
+@font-face { font-family: 'Inter Fallback'; font-style: normal; font-weight: 600;
+  src: local('Arial'), local('Liberation Sans'), local('Helvetica');
+  size-adjust: 107.431%; ascent-override: 90.20%; descent-override: 22.43%; line-gap-override: 0%; }
+@font-face { font-family: 'Inter Fallback'; font-style: normal; font-weight: 700;
+  src: local('Arial'), local('Liberation Sans'), local('Helvetica');
+  size-adjust: 109.324%; ascent-override: 88.64%; descent-override: 22.04%; line-gap-override: 0%; }
+/* Sora 600 is fitted well below 700/800 on purpose. Every shrink-to-fit
+   thing set in Sora 600 on this site is a tracked uppercase label, and Sora's
+   caps are proportionally narrower against Arial than its lowercase is. Fitted
+   on mixed case it ran 8% wide and moved the hero action row by 17px. */
+@font-face { font-family: 'Sora Fallback'; font-style: normal; font-weight: 600;
+  src: local('Arial'), local('Liberation Sans'), local('Helvetica');
+  size-adjust: 104.830%; ascent-override: 92.53%; descent-override: 27.66%; line-gap-override: 0%; }
+@font-face { font-family: 'Sora Fallback'; font-style: normal; font-weight: 700;
+  src: local('Arial'), local('Liberation Sans'), local('Helvetica');
+  size-adjust: 114.136%; ascent-override: 84.99%; descent-override: 25.41%; line-gap-override: 0%; }
+/* Sora 800 is fitted on LINE COUNT, not on width, and that is why this number
+   looks wrong next to the others.
+   --------------------------------------------------------------------------
+   Every other face here is fitted by matching advance width, because every
+   other face is used on shrink-to-fit elements where a width error moves a
+   sibling sideways. Sora 800 has exactly one job on this site: the <h1>. An
+   h1 is a full-width block, so its width error moves nothing — what moves the
+   page is the h1 taking a DIFFERENT NUMBER OF LINES in the fallback than in
+   Sora, because then every section below it jumps by a whole 44px line when
+   the swap lands.
+
+   Fitting on width gives ~108.7% (the h1 strings measure 105.578%-111.101%
+   against Arial). Measured, that is one of the worst possible values: line
+   counts disagree on 34 of 264 page x width combinations. Line breaking is
+   quantised at word boundaries, so the value that matches average advance is
+   not the value that reproduces the break positions.
+
+   Swept 104%-124% over all 22 sitemap pages x 12 viewports, counting h1s
+   whose fallback line count differs from Sora's:
+
+     104%  44      114%      12      118%   7   <- and the 7 are the mildest
+     108%  34      114.961%  12 (was in use)    119%  11
+     112%  15      117%       7                 124%  26
+
+   Then measured the CLS those mismatches actually cost, 3 runs each over the
+   13 worst combos, font responses delayed 700ms so the swap is observable the
+   way it is on a real connection rather than instant off localhost:
+
+     114.961%   sum of worst-case CLS  0.28695   worst single 0.04066
+     117%                              0.17890   worst single 0.03939
+     118%                              0.02420   worst single 0.02345
+
+   118% it is: a 92% reduction, and it takes /services/fault-finding/ at 768px
+   from 0.041 to 0.0001 and both /areas/bradford/ and /areas/keighley/ at 600
+   and 900px from 0.038 to 0.0002.
+
+   One case survives at every value from 114% to 118%: the h1 on
+   /services/eicr-landlord-certificates/ near 412px, 4 fallback lines against
+   3 real ones, ~0.023 and intermittent. No single scalar fixes it, because
+   Arial and Sora break "EICRs & Landlord Certificates in Bradford" at
+   different words no matter how the em is scaled. Left alone deliberately —
+   see the note in the report.
+
+   ascent/descent are rescaled by the same factor so the rendered line box is
+   unchanged: they are a fraction of the ALREADY-ADJUSTED em, so holding
+   ascent x size-adjust constant is what keeps the vertical metrics identical.
+     ascent   0.8438 x 1.14961 = 0.97005 -> 0.97005 / 1.18 = 82.208%
+     descent  0.2523 x 1.14961 = 0.29005 -> 0.29005 / 1.18 = 24.581% */
+@font-face { font-family: 'Sora Fallback'; font-style: normal; font-weight: 800;
+  src: local('Arial'), local('Liberation Sans'), local('Helvetica');
+  size-adjust: 118%; ascent-override: 82.208%; descent-override: 24.581%; line-gap-override: 0%; }
+
+/* Monospace advances are a fixed fraction of the em, so Plex and the Courier
+   New / Liberation Mono family already agree to within 0.02%. The overrides
+   are doing the work here, not the size-adjust: Plex sits on a much taller
+   line box (1.30em against 1.13em), so without them any mono text in a
+   `line-height: normal` context would jump vertically on swap. */
+@font-face { font-family: 'Plex Fallback'; font-style: normal; font-weight: 400;
+  src: local('Courier New'), local('Liberation Mono'), local('DejaVu Sans Mono');
+  size-adjust: 99.984%; ascent-override: 102.52%; descent-override: 27.50%; line-gap-override: 0%; }
+@font-face { font-family: 'Plex Fallback'; font-style: normal; font-weight: 500;
+  src: local('Courier New'), local('Liberation Mono'), local('DejaVu Sans Mono');
+  size-adjust: 99.984%; ascent-override: 102.52%; descent-override: 27.50%; line-gap-override: 0%; }
+@font-face { font-family: 'Plex Fallback'; font-style: normal; font-weight: 600;
+  src: local('Courier New'), local('Liberation Mono'), local('DejaVu Sans Mono');
+  size-adjust: 99.984%; ascent-override: 102.52%; descent-override: 27.50%; line-gap-override: 0%; }
+
+:root {
+  /* The adjusted fallback sits immediately behind each real face. The
+     generic names after it are the net for a machine that has none of the
+     local() candidates; they are uncorrected, but they are also unreachable
+     on any mainstream OS. */
+  --face-display: 'Sora', 'Sora Fallback', system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  --face-text:    'Inter', 'Inter Fallback', system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  --face-tech:    'IBM Plex Mono', 'Plex Fallback', ui-monospace, 'SF Mono', SFMono-Regular, Menlo, Consolas, monospace;
+
+  /* Back-compat aliases: existing rules still say --font-display / --font-body. */
+  --font-display: var(--face-display);
+  --font-body:    var(--face-text);
+
+  /* --- Scale ---------------------------------------------------------------
+     Desktop: 11 / 12.5 / 14 / 17 / 22 / 30 / 44.8 / 68.8 px
+     Ratios:    1.14  1.12  1.21  1.29  1.36  1.49   1.54
+     Tight through the reading sizes, opening as it climbs into display.
+     Every clamp reaches its ceiling at roughly a 940px viewport, so the
+     scale is settled before the desktop layout is.
+     ---------------------------------------------------------------------- */
+  --step--3: 0.6875rem;
+  --step--2: 0.78125rem;
+  --step--1: 0.875rem;
+  --step-0:  1.0625rem;
+  --step-1:  clamp(1.1875rem, 1.06rem + 0.56vw, 1.375rem);
+  --step-2:  clamp(1.4375rem, 1.16rem + 1.24vw, 1.875rem);
+  --step-3:  clamp(1.95rem,   1.42rem + 2.36vw, 2.8rem);
+  --step-4:  clamp(2.6rem,    1.60rem + 4.45vw, 4.3rem);
+
+  /* --- Optical tracking ----------------------------------------------------
+     Sora ships as three static weights, so there is no opsz axis to lean on.
+     This is the same correction done by hand: the larger the setting, the
+     tighter it is tracked, because counters and sidebearings drawn for text
+     sizes look like gaps at 69px. Small sizes get opened back out.
+     ---------------------------------------------------------------------- */
+  --track-4:  -0.038em;
+  --track-3:  -0.030em;
+  --track-2:  -0.022em;
+  --track-1:  -0.014em;
+  --track-0:  -0.006em;
+  --track--1:  0.000em;
+  --track--2:  0.008em;
+  --track--3:  0.014em;
+  --track-caps:    0.14em;   /* mono, uppercase, 11px */
+  --track-caps-lg: 0.11em;   /* mono, uppercase, 12.5px+ */
+
+  /* --- Leading -------------------------------------------------------------
+     Leading falls as size rises. A 69px headline set at 1.6 is a list of
+     lines; set at 1.05 it is one object.
+     ---------------------------------------------------------------------- */
+  --leading-display: 1.05;
+  --leading-title:   1.10;
+  --leading-sub:     1.20;
+  --leading-deck:    1.42;
+  --leading-body:    1.62;
+  --leading-ui:      1.45;
+  --leading-tech:    1.35;
+
+  /* --- Measure ------------------------------------------------------------- */
+  --measure:      68ch;
+  --measure-deck: 46ch;
+}
+
+/* Light text on a dark ground optically gains weight and closes up: the glow
+   of each stem bleeds into the counter next to it. Every dark-mode setting
+   therefore gets a hair of extra tracking that light mode does not need.
+   This is the single cheapest thing that stops dark type looking clogged. */
+[data-mode='dark']  { --optical: 0.005em; }
+[data-mode='light'] { --optical: 0em; }
+
+/* ==========================================================================
+   BASE
+   ========================================================================== */
+
+body {
+  font-family: var(--face-text);
+  font-size: var(--step-0);
+  font-weight: 400;
+  line-height: var(--leading-body);
+  letter-spacing: calc(var(--track-0) + var(--optical));
+  color: var(--text-2);
+  /* Checked, not assumed: the @fontsource subsets in public/fonts keep
+     `tnum` but have the cvXX / ssXX character-variant tables stripped, so
+     there is no point declaring them. Figure alignment therefore comes from
+     tabular-nums on Inter and from the mono face everywhere numbers matter,
+     which is part of why the technical voice exists at all. */
+  font-variant-numeric: proportional-nums;
+  text-rendering: optimizeLegibility;
+}
+
+/* ==========================================================================
+   DISPLAY  —  Sora. Headlines only.
+   ========================================================================== */
+
+h1, h2, h3, h4 {
+  font-family: var(--face-display);
+  font-weight: 700;
+  line-height: var(--leading-title);
+  letter-spacing: var(--track-2);
+  color: var(--text);
+  margin: 0 0 0.5em;
+  text-wrap: balance;
+}
+
+h1 {
+  font-size: var(--step-4);
+  font-weight: 800;
+  line-height: var(--leading-display);
+  letter-spacing: var(--track-4);
+}
+
+h2 {
+  font-size: var(--step-3);
+  letter-spacing: var(--track-3);
+  line-height: var(--leading-title);
+}
+
+h3 {
+  font-size: var(--step-2);
+  letter-spacing: var(--track-2);
+  line-height: var(--leading-sub);
+}
+
+h4 {
+  font-size: var(--step-1);
+  font-weight: 600;
+  letter-spacing: var(--track-1);
+  line-height: var(--leading-sub);
+}
+
+/* The page is about light falling on things, so a headline is treated as a
+   lit surface: fractionally brighter at the top than at the foot. No hue
+   shift and no second colour — this is shading, not gradient text. Held to
+   roughly a fifth of the way from --text toward --text-2, because on a
+   two-line headline the falloff lands across the line break and anything
+   stronger reads as a rendering fault rather than as light.
+   The solid colour underneath stays the accessible value in every case. */
+@supports (background-clip: text) or (-webkit-background-clip: text) {
+  [data-mode='dark'] h1 {
+    background-image: linear-gradient(180deg,
+      var(--text) 30%,
+      color-mix(in oklab, var(--text) 80%, var(--text-2)) 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+}
+
+/* ==========================================================================
+   TEXT  —  Inter. Everything you read in sentences.
+   ========================================================================== */
+
+p {
+  margin: 0 0 1rem;
+  max-width: var(--measure);
+  text-wrap: pretty;
+}
+
+/* The deck. Currently the weakest link on the page: it was set in the same
+   weight and colour as body copy, one size up, which reads as a paragraph
+   that got lost rather than an opening statement. A deck is a distinct
+   register — brighter, half a weight up, and leaded tighter than body
+   because it is set larger. */
+.lead {
+  font-size: var(--step-1);
+  font-weight: 500;
+  line-height: var(--leading-deck);
+  letter-spacing: calc(var(--track-1) + var(--optical));
+  color: var(--text);
+  max-width: var(--measure-deck);
+}
+
+.muted { color: var(--muted); }
+.faint { color: var(--faint); }
+
+/* ==========================================================================
+   TECHNICAL  —  IBM Plex Mono. Labels, certificates, readouts.
+   --------------------------------------------------------------------------
+   Every micro-label on this site used to be the display face, shrunk and
+   letterspaced — which is what makes a page look like it has one idea in it.
+   Giving them their own face means a caption reads as a caption rather than
+   as a headline that lost an argument.
+   ========================================================================== */
+
+.eyebrow {
+  display: inline-block;
+  font-family: var(--face-tech);
+  font-size: var(--step--3);
+  font-weight: 600;
+  line-height: var(--leading-tech);
+  letter-spacing: var(--track-caps);
+  text-transform: uppercase;
+  color: var(--brand-ink);
+  margin-bottom: 14px;
+}
+
+/* Letterspacing widens the word space along with everything else, and a mono
+   space is already a full character wide. Pulling it back is the difference
+   between a tracked label and a row of stranded words. */
+.eyebrow, .section__node, .svc-hero__tag, .est__label, .est__q > span,
+.footer h4, .footer .footer__h, .beforeafter figcaption, .stat__l,
+.ph strong, .pill {
+  word-spacing: -0.14em;
+}
+
+/* Numbers are data. Data is set in figures that line up: tabular on Inter,
+   inherently so on the mono face. */
+.stars, .rev__stars, .stat__n, .est__fig, .rev__meta, .trustbar__item,
+.crumbs, .footer__bottom, time, .est__label, .review__meta {
+  font-variant-numeric: tabular-nums;
+}

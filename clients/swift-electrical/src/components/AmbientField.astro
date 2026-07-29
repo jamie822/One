@@ -1,0 +1,221 @@
+---
+// AMBIENT FIELD — the gradient ground the rest of the page is lit by.
+//
+// WHY THIS EXISTS
+// The page was criticised as flat, and it was: the ground is a near-black
+// (#040d13) with two very weak radial washes on it, and the hero's own scrim
+// paints over most of those. Nothing on the page emits light, so every band
+// reads at the same volume and the client's bolt reads as a smudge. This
+// component supplies the missing light source as markup.
+//
+// THE CONTRACT WITH THE SURFACES LAYER
+// The class names below — `ambient`, `ambient__blob`, `glass`, `glass--panel`,
+// `grad-edge` — are the agreed hooks. src/styles/surfaces.css owns their final
+// appearance; this file owns only their MARKUP and their POSITION.
+//
+// The appearance rules at the bottom are a deliberate fallback, wrapped in
+// `@layer swift-fallback`. Unlayered declarations beat layered ones at any
+// specificity, so the moment surfaces.css defines `.glass` or `.ambient` — as
+// ordinary unlayered rules, which is how every other stylesheet here is
+// written — its values win outright and nothing below has to be deleted or
+// fought with. That is what makes it safe to compose against a stylesheet that
+// does not exist yet, and it is why these are in a layer rather than merely
+// being written weakly.
+//
+// PERFORMANCE
+// The blobs are radial-gradients, not blurred boxes. A `filter: blur()` on a
+// 900px element promotes a compositing layer and costs real paint time on
+// every scroll; a radial-gradient with soft colour stops has the same falloff
+// for free. Nothing here animates, and the whole field is inert to the
+// pointer and to assistive tech.
+const {
+  tone = 'brand',        // brand | warm | split | cool
+  class: cls = '',
+  blobs = 3,
+} = Astro.props;
+---
+<div class={`ambient ambient--${tone} ${cls}`.trim()} aria-hidden="true">
+  <span class="ambient__blob ambient__blob--a"></span>
+  {blobs > 1 && <span class="ambient__blob ambient__blob--b"></span>}
+  {blobs > 2 && <span class="ambient__blob ambient__blob--c"></span>}
+</div>
+
+<style is:global>
+  @layer swift-fallback {
+    /* ---------------------------------------------------------------------
+       AMBIENT — the light itself
+       --------------------------------------------------------------------- */
+    .ambient {
+      position: absolute;
+      inset: 0;
+      z-index: -1;
+      pointer-events: none;
+      overflow: clip;
+      /* Paint containment keeps a band's light from forcing work outside it. */
+      contain: paint;
+    }
+
+    /* Each blob is a full-bleed box painting one positioned radial gradient,
+       NOT an oversized positioned element.
+       That distinction is load-bearing. Sized-and-offset child boxes are the
+       obvious way to build this and they were the first attempt, but a blob
+       aimed at 78% of the field and 94% wide necessarily sticks out past the
+       right edge — clipped and unscrollable, so `scrollWidth` stays clean, but
+       still an element whose border box is outside the viewport. That trips
+       every honest overflow audit (it tripped 72 of 88 page/width combos
+       here), and it would become genuine overflow the day anything removed the
+       clip above. A gradient cannot overflow anything. Same API, same look,
+       one fewer way to break.
+       --blob-w/h stay DIAMETERS so the tuned values read naturally; the
+       gradient wants radii, hence the halving. */
+    .ambient__blob {
+      position: absolute;
+      inset: 0;
+      display: block;
+      /* SCALE HEADROOM — the seam with the motion layer.
+         motion.css animates these blobs with `scale: 1 -> 1.14` (its `lamp`
+         keyframes), which is the right call and uses my hooks exactly as
+         intended. But a box that already fills the field and is then scaled to
+         1.14 has a border box 14% wider than the viewport. It is clipped, so
+         it can never be scrolled to and `scrollWidth` stays clean — but it is
+         still an element measurably outside the frame, and the responsive
+         audit counts those (it counted 72 of 88).
+         The individual `scale` property and the `transform` property both
+         apply and compose, in that order. motion.css claimed `scale` and
+         `opacity`; `transform` is free. Pre-shrinking by 0.87 means their peak
+         lands at 0.87 x 1.14 = 0.99 of the field and the box never leaves it.
+         The breathing amplitude is identical, it just breathes inside the
+         frame instead of over its edge. Nothing in either file had to change
+         to accommodate the other.
+         If the motion layer ever raises that 1.14, this is the one number
+         that moves with it: keep 0.87 x peak <= 1. */
+      transform: scale(0.87);
+      background-image: radial-gradient(
+        calc(var(--blob-w, 68%) / 2) calc(var(--blob-h, 76%) / 2)
+          at var(--blob-x, 50%) var(--blob-y, 50%),
+        color-mix(in srgb, var(--blob-c, var(--brand)) var(--blob-a, 20%), transparent) 0%,
+        color-mix(in srgb, var(--blob-c, var(--brand)) calc(var(--blob-a, 20%) / 2.6), transparent) 46%,
+        transparent 100%
+      );
+    }
+
+    /* Default placement: a main source high and right, a warm counter-light
+       low and left, a faint floor bounce. Consumers override the three
+       --blob-* custom properties to re-aim the light for their own band. */
+    .ambient__blob--a { --blob-x: 76%; --blob-y: 22%; --blob-w: 86%; --blob-h: 96%; --blob-a: 22%; }
+    .ambient__blob--b { --blob-x: 12%; --blob-y: 88%; --blob-w: 64%; --blob-h: 72%; --blob-a: 13%; --blob-c: var(--accent); }
+    .ambient__blob--c { --blob-x: 46%; --blob-y: 104%; --blob-w: 92%; --blob-h: 52%; --blob-a: 9%; }
+
+    /* The homepage carries six of these and at most two are ever on screen.
+       Skipping the rendering of the off-screen ones is free correctness: an
+       ambient field is absolutely positioned at inset:0, contributes nothing
+       to flow, and is aria-hidden, so nothing about layout, measurement or the
+       a11y tree can notice. Measured on a 4x-throttled full-page scroll it is
+       directionally favourable, though this machine is too contended to call
+       the margin precisely.
+       Band fields only, never the hero's: that one is above the fold and must
+       be lit in the first paint, not after an intersection is resolved. */
+    .band__ambient { content-visibility: auto; }
+
+    .ambient--warm .ambient__blob--a { --blob-c: var(--accent); --blob-a: 15%; }
+    .ambient--warm .ambient__blob--b { --blob-c: var(--brand); --blob-a: 16%; }
+    .ambient--cool .ambient__blob--b { --blob-c: var(--brand); --blob-a: 12%; }
+    .ambient--split .ambient__blob--a { --blob-x: 84%; --blob-a: 19%; }
+    .ambient--split .ambient__blob--b { --blob-x: 6%; --blob-c: var(--accent); --blob-a: 15%; }
+
+    /* Light mode: the same lamps, turned right down. Cyan and amber at dark-mode
+       strength over white read as a stain rather than as light. */
+    [data-mode='light'] .ambient__blob { --blob-a: 9%; }
+    [data-mode='light'] .ambient__blob--a { --blob-a: 11%; }
+    [data-mode='light'] .ambient__blob--b { --blob-a: 8%; }
+    [data-mode='light'] .ambient__blob--c { --blob-a: 6%; }
+
+    /* ---------------------------------------------------------------------
+       GLASS — foreground furniture that sits OVER the light
+       Used only where an object genuinely floats above a lit field: the spec
+       rail, the two lead service tiles, the estimator, the ledger plate, the
+       owner frame, the hero's rating chip. Everything else on the page stays
+       matte, so the material means something.
+
+       WHY TOKENS AND NOT JUST RULES
+       A layered `.glass { background }` yields to *every* unlayered rule, not
+       only to surfaces.css — including global.css's own `.svc-hero` and `.est`
+       backgrounds, which are the two places on the homepage that most need the
+       material. Those two therefore have to be styled from an unlayered
+       page-scoped rule to win at all.
+       So the material is expressed as tokens. The page-scoped rules consume
+       `var(--glass-bg)` and friends rather than hardcoding values, which means
+       surfaces.css can retune every glass surface on the site — including the
+       two it cannot reach by selector — just by redefining these six custom
+       properties unlayered. One contract, no override war.
+       --------------------------------------------------------------------- */
+    :root {
+      --glass-bg: color-mix(in srgb, var(--panel) 46%, transparent);
+      --glass-bg-opaque: color-mix(in srgb, var(--panel) 58%, transparent);
+      --glass-border: color-mix(in srgb, var(--brand) 15%, var(--line));
+      --glass-blur: blur(16px) saturate(1.3);
+      /* A real offset and a soft blur — an object casting onto the ground. */
+      --glass-cast: 0 28px 64px -32px rgba(0, 0, 0, 0.9), 0 2px 10px -4px rgba(0, 0, 0, 0.5);
+      /* The 1px top sheen. This is the detail that reads as a pane of material
+         rather than as a translucent rectangle. */
+      --glass-sheen: inset 0 1px 0 color-mix(in srgb, #fff 9%, transparent);
+    }
+
+    [data-mode='light'] {
+      --glass-bg: color-mix(in srgb, #fff 62%, transparent);
+      --glass-bg-opaque: color-mix(in srgb, #fff 78%, transparent);
+      --glass-border: color-mix(in srgb, var(--brand) 22%, var(--line));
+      --glass-cast: 0 28px 64px -34px rgba(10, 27, 39, 0.34), 0 2px 8px -4px rgba(10, 27, 39, 0.14);
+      --glass-sheen: inset 0 1px 0 color-mix(in srgb, #fff 70%, transparent);
+    }
+
+    .glass {
+      position: relative;
+      background: var(--glass-bg-opaque);
+      border: 1px solid var(--glass-border);
+      box-shadow: var(--glass-cast), var(--glass-sheen);
+    }
+
+    @supports (backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px)) {
+      .glass {
+        -webkit-backdrop-filter: var(--glass-blur);
+        backdrop-filter: var(--glass-blur);
+        background: var(--glass-bg);
+      }
+    }
+
+    .glass--panel { border-radius: var(--radius-lg); }
+
+    /* Some people ask the OS for less see-through UI. Honour it: keep the
+       object, drop the transparency. Retuning the token covers every glass
+       surface at once, including the page-scoped ones. */
+    @media (prefers-reduced-transparency: reduce) {
+      :root {
+        --glass-bg: var(--panel);
+        --glass-bg-opaque: var(--panel);
+        --glass-blur: none;
+      }
+    }
+
+    /* ---------------------------------------------------------------------
+       GRAD-EDGE — dissolves a band boundary into its neighbour, so the page
+       reads as one continuously lit surface instead of a stack of strips.
+       --------------------------------------------------------------------- */
+    .grad-edge {
+      position: absolute;
+      left: 0;
+      right: 0;
+      height: var(--edge-h, 120px);
+      z-index: -1;
+      pointer-events: none;
+    }
+    .grad-edge--top {
+      top: 0;
+      background: linear-gradient(to bottom, var(--edge-c, var(--bg)), transparent);
+    }
+    .grad-edge--bottom {
+      bottom: 0;
+      background: linear-gradient(to top, var(--edge-c, var(--bg)), transparent);
+    }
+  }
+</style>

@@ -1,0 +1,91 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import Hero from '../../components/Hero.astro';
+import TrustBar from '../../components/TrustBar.astro';
+import CtaBand from '../../components/CtaBand.astro';
+import Icon from '../../components/Icon.astro';
+import { href, primaryArea, serviceSchema } from '../../lib/site.js';
+import { client, services, areas, caseStudies } from '../../data/client.js';
+
+export function getStaticPaths() {
+  return services.map((service) => ({ params: { slug: service.slug }, props: { service } }));
+}
+
+const { service } = Astro.props;
+const path = `/services/${service.slug}/`;
+const related = caseStudies.filter((c) => c.service === service.slug).slice(0, 2);
+---
+<Layout
+  path={path}
+  title={`${service.title} in ${primaryArea.name}`}
+  description={service.short}
+  crumbs={[{ name: 'Home', path: '/' }, { name: 'Services', path: '/services/' }, { name: service.title, path }]}
+  schemas={[serviceSchema(service, primaryArea.name)]}
+>
+  <Hero inner={true}>
+    <p class="eyebrow">{service.title}</p>
+    <h1>{service.title} in {primaryArea.name}</h1>
+    <!-- Opens with the symptom, not the service. -->
+    <p class="hero__sub">{service.symptom}</p>
+    <div class="hero__actions">
+      <a class="btn btn--primary btn--lg" href={`tel:${client.phoneHref}`}>
+        <Icon name="phone" /> {client.phone}
+      </a>
+      <a class="btn btn--ghost btn--lg" href={href('/contact/')}>Request a quote</a>
+    </div>
+  </Hero>
+
+  <div class="container"><TrustBar /></div>
+
+  <section class="section">
+    <div class="container container--narrow reveal">
+      <h2>What's involved</h2>
+      <p class="lead">{service.body}</p>
+
+      {service.deliverable && (
+        <p><strong>What you get:</strong> {service.deliverable}</p>
+      )}
+
+      <h2 style="margin-top:44px">What it costs</h2>
+      <p>
+        {service.priceFrom
+          ? <>From <strong>{service.priceFrom}</strong>. {service.priceNote}</>
+          : service.priceNote || 'Priced after we’ve seen the job — no guesses over the phone.'}
+      </p>
+    </div>
+  </section>
+
+  {related.length > 0 && (
+    <section class="section section--panel">
+      <div class="container">
+        <div class="section__head reveal">
+          <p class="eyebrow">Recent work</p>
+          <h2>{service.title} we've done</h2>
+        </div>
+        <div class="grid grid--2">
+          {related.map((c) => (
+            <a class="card reveal" href={href(`/case-studies/${c.slug}/`)}>
+              <h3>{c.title}</h3>
+              <p>{c.problem}</p>
+              <span class="card__link">See the job →</span>
+            </a>
+          ))}
+        </div>
+      </div>
+    </section>
+  )}
+
+  <section class="section">
+    <div class="container">
+      <div class="section__head reveal">
+        <p class="eyebrow">Where we work</p>
+        <h2>{service.title} across {client.address.region}</h2>
+      </div>
+      <div class="reveal" style="display:flex;flex-wrap:wrap;gap:10px">
+        {areas.map((a) => <a class="pill" href={href(`/areas/${a.slug}/`)}>{service.title} in {a.name}</a>)}
+      </div>
+    </div>
+  </section>
+
+  <CtaBand title={`Need ${service.title.toLowerCase()} in ${primaryArea.name}?`} />
+</Layout>

@@ -1,0 +1,73 @@
+---
+// The Stacked Out mark, blown up to hero scale and made live.
+//
+// GEOMETRY IS THE MARK'S, NOT MINE. Every dimension below is a multiple of one
+// viewBox unit (`--u` = board width / 72), taken straight from the production SVG
+// in brand guide section 2 and from Mark.astro:
+//
+//   rings   cx 26 / 46,  cy 9,  r 3.6,  stroke 4
+//   body    x 6  y 12  w 60  h 64  rx 13
+//   rule    y 30, x 6 to 66
+//   slots   x 12 / 29 / 46,  y 37 / 55,  14 x 14, rx 3.5
+//
+// So the horizontal pitch is 17 (gap 3) and the vertical pitch is 18 (gap 4).
+// The grid box is therefore 48 x 32 units at 12,37. Nothing is redrawn; the
+// object is the logo at 6x, which is the whole point of the concept.
+//
+// Stroke weights are the one deliberate optical departure: a 4 unit stroke is
+// right for a 72px logo and reads as a slab at 440px, so strokes resolve to
+// hairlines per brand guide section 4 ("hairline rgba(255,255,255,.10) border").
+//
+// The five job labels are trade work types, not clients. Nothing here claims a
+// customer, a count or a booking. The diary belongs to the visitor.
+
+interface Props { class?: string }
+const { class: klass = '' } = Astro.props;
+
+// Uneven delays on purpose. Evenly spaced fills read as a progress bar; work
+// does not arrive on a metronome. This is the difference between the animation
+// meaning "a job landed" and meaning "loading".
+const jobs = [
+  { label: 'EICR',       gx: 0,  gy: 0,  delay: '0.45s' },
+  { label: 'Board swap', gx: 17, gy: 0,  delay: '1.14s' },
+  { label: 'EV charger', gx: 34, gy: 0,  delay: '1.61s' },
+  { label: 'Solar PV',   gx: 0,  gy: 18, delay: '2.54s' },
+  { label: 'Rewire',     gx: 17, gy: 18, delay: '3.01s' },
+];
+---
+<div class={`diary ${klass}`}>
+  <div class="diary__stage">
+    <!-- Binding rings sit behind the page, exactly as the mark stacks them. -->
+    <span class="diary__ring diary__ring--a" aria-hidden="true"></span>
+    <span class="diary__ring diary__ring--b" aria-hidden="true"></span>
+
+    <div class="diary__body">
+      <div class="diary__head">
+        <!-- The wire goes through these. Without them the rings read as discs. -->
+        <span class="diary__punch diary__punch--a" aria-hidden="true"></span>
+        <span class="diary__punch diary__punch--b" aria-hidden="true"></span>
+        <span class="diary__headline label">Your week</span>
+      </div>
+
+      <ul class="diary__grid">
+        {jobs.map((j) => (
+          <li
+            class="diary__slot diary__slot--booked"
+            style={`--gx:${j.gx}; --gy:${j.gy}; --in:${j.delay};`}
+          >
+            <span class="diary__fill" aria-hidden="true"></span>
+            <span class="diary__job">{j.label}</span>
+          </li>
+        ))}
+
+        <!-- The sixth slot. Filling it breaks the brand and loses the argument. -->
+        <li class="diary__slot diary__slot--free">
+          <span class="diary__free label">Free</span>
+        </li>
+      </ul>
+
+      <!-- One pass of raked light once the week is booked. Clipped to the page. -->
+      <span class="diary__sweep" aria-hidden="true"></span>
+    </div>
+  </div>
+</div>

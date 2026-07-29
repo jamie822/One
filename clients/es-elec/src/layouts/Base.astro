@@ -1,0 +1,171 @@
+---
+// Base layout: head, schema, nav, sticky bar, footer. Every page uses it.
+import Nav from '../components/Nav.astro';
+import Footer from '../components/Footer.astro';
+import { client } from '../data/client.js';
+import '../styles/tokens.css';
+import '../styles/base.css';
+import '../styles/site.css';
+
+interface Props {
+  title: string;
+  description: string;
+  current?: string;
+  /** extra JSON-LD blocks, already-built objects */
+  schema?: object[];
+  /** preload the hero image on pages that have one */
+  preloadImage?: string;
+  /** responsive preload: srcset + sizes matching the hero <img> */
+  preloadSrcset?: string;
+  preloadSizes?: string;
+}
+const { title, description, current = '', schema = [], preloadImage, preloadSrcset, preloadSizes } = Astro.props;
+const tel = client.phone.replace(/\s/g, '');
+// Home and Services carry their own quote form; everywhere else hops home.
+const quoteHref = ['/', '/services/'].includes(current) ? '#quote' : '/#quote';
+
+// The business, stated once, on every page. Electrician subtype, never
+// generic LocalBusiness. aggregateRating is TEMP demo data: it swaps or goes
+// at go-live per MASTER_PROMPT Part 6.
+const business = {
+  '@context': 'https://schema.org',
+  '@type': 'Electrician',
+  '@id': 'https://eselec.co.uk/#business',
+  name: client.name,
+  legalName: client.legalName,
+  telephone: client.phone,
+  email: client.email,
+  url: 'https://eselec.co.uk/',
+  image: 'https://eselec.co.uk/img/van-dusk.webp',
+  priceRange: '££',
+  address: {
+    '@type': 'PostalAddress',
+    streetAddress: client.address.street,
+    addressLocality: client.address.locality,
+    addressRegion: client.address.region,
+    postalCode: client.address.postcode,
+    addressCountry: 'GB',
+  },
+  geo: { '@type': 'GeoCoordinates', latitude: client.geo.lat, longitude: client.geo.lng },
+  areaServed: client.areas.map((a) => ({ '@type': 'Place', name: a })),
+  openingHoursSpecification: {
+    '@type': 'OpeningHoursSpecification',
+    dayOfWeek: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'],
+    opens: '07:30', closes: '18:00',
+  },
+  aggregateRating: {
+    '@type': 'AggregateRating',
+    ratingValue: client.google.rating,
+    reviewCount: client.google.reviewCount,
+  },
+};
+---
+<!doctype html>
+<html lang="en-GB">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <link rel="canonical" href={new URL(Astro.url.pathname, 'https://eselec.co.uk')} />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:type" content="website" />
+    <meta property="og:image" content="https://eselec.co.uk/img/van-dusk.webp" />
+    <meta name="theme-color" content="#16130f" />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="preload" href="/fonts/clash-display-700.woff2" as="font" type="font/woff2" crossorigin />
+    <link rel="preload" href="/fonts/satoshi-400.woff2" as="font" type="font/woff2" crossorigin />
+    {preloadImage && (
+      <link
+        rel="preload"
+        as="image"
+        href={preloadSrcset ? undefined : preloadImage}
+        imagesrcset={preloadSrcset}
+        imagesizes={preloadSizes}
+        fetchpriority="high"
+      />
+    )}
+    <script type="application/ld+json" set:html={JSON.stringify(business)} />
+    {schema.map((s) => <script type="application/ld+json" set:html={JSON.stringify(s)} />)}
+  </head>
+  <body>
+    <a class="skip" href="#main">Skip to content</a>
+    <Nav current={current} />
+    <main id="main">
+      <slot />
+    </main>
+    <Footer />
+
+    {/* Mobile: call and quote, thumb height, arriving once the visitor has
+        scrolled past the hero and shown intent. */}
+    <nav class="bar" data-bar aria-label="Quick contact">
+      <a class="bar__call" href={`tel:${tel}`}>
+        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+        Call Eddie
+      </a>
+      <a class="bar__quote" href={quoteHref}>Get a quote</a>
+    </nav>
+    <script is:inline>
+      // Two observers, no scroll listeners. The html.js stamp is what arms the
+      // .rise hidden state, so a browser without JS just sees the page.
+      (function () {
+        if (!('IntersectionObserver' in window)) return;
+        document.documentElement.classList.add('js');
+
+        // Landing on an anchor (/#quote from another page): show that section
+        // instantly instead of making the arrival wait for a reveal.
+        if (location.hash) {
+          var target = document.querySelector(location.hash);
+          if (target) target.querySelectorAll('.rise').forEach(function (el) { el.classList.add('is-in'); });
+          if (target && target.classList.contains('rise')) target.classList.add('is-in');
+        }
+
+        // Reveals: fire once on first entry, then leave the page alone.
+        var io = new IntersectionObserver(function (entries) {
+          entries.forEach(function (e) {
+            if (e.isIntersecting) { e.target.classList.add('is-in'); io.unobserve(e.target); }
+          });
+        }, { rootMargin: '0px 0px -8% 0px' });
+        document.querySelectorAll('.rise').forEach(function (el) { io.observe(el); });
+
+        // Count-ups: figures roll to their value the first time they appear.
+        var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+        var cio = new IntersectionObserver(function (entries) {
+          entries.forEach(function (e) {
+            if (!e.isIntersecting) return;
+            cio.unobserve(e.target);
+            var el = e.target;
+            var end = parseFloat(el.dataset.count);
+            var dp = (el.dataset.count.split('.')[1] || '').length;
+            var fmt = function (n) {
+              return n.toLocaleString('en-GB', { minimumFractionDigits: dp, maximumFractionDigits: dp });
+            };
+            if (reduce) { el.textContent = fmt(end); return; }
+            var t0 = null;
+            function step(t) {
+              if (!t0) t0 = t;
+              var p = Math.min((t - t0) / 900, 1);
+              var eased = 1 - Math.pow(1 - p, 3);
+              el.textContent = fmt(end * eased);
+              if (p < 1) requestAnimationFrame(step);
+            }
+            requestAnimationFrame(step);
+          });
+        }, { rootMargin: '0px 0px -8% 0px' });
+        document.querySelectorAll('[data-count]').forEach(function (el) { cio.observe(el); });
+
+        // The bar waits for intent: one viewport of scroll.
+        var bar = document.querySelector('[data-bar]');
+        if (!bar) return;
+        var s = document.createElement('div');
+        s.style.cssText = 'position:absolute;top:520px;height:1px;width:1px;pointer-events:none;';
+        document.body.prepend(s);
+        new IntersectionObserver(function (e) {
+          if (e[0].boundingClientRect.top < 0) bar.setAttribute('data-on', '');
+          else bar.removeAttribute('data-on');
+        }).observe(s);
+      })();
+    </script>
+  </body>
+</html>

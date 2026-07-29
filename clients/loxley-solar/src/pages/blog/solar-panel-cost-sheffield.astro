@@ -1,0 +1,139 @@
+---
+// The flagship post. Direct answer first, real table, GEO-quotable blocks.
+import Base from '../../layouts/Base.astro';
+import { client } from '../../data/client.js';
+
+const tel = client.phone.replace(/\s/g, '');
+const article = {
+  '@context': 'https://schema.org',
+  '@type': 'Article',
+  headline: 'How much do solar panels cost in Sheffield? 2026 prices',
+  datePublished: '2026-07-28',
+  dateModified: '2026-07-28',
+  author: { '@type': 'Person', name: client.owner, jobTitle: 'Solar installer' },
+  publisher: { '@id': 'https://loxleysolar.co.uk/#business' },
+};
+const breadcrumbs = {
+  '@context': 'https://schema.org',
+  '@type': 'BreadcrumbList',
+  itemListElement: [
+    { '@type': 'ListItem', position: 1, name: 'Home', item: 'https://loxleysolar.co.uk/' },
+    { '@type': 'ListItem', position: 2, name: 'Blog', item: 'https://loxleysolar.co.uk/blog/' },
+    { '@type': 'ListItem', position: 3, name: 'Solar panel cost in Sheffield', item: 'https://loxleysolar.co.uk/blog/solar-panel-cost-sheffield/' },
+  ],
+};
+
+const table = [
+  ['Small terrace', '6', '£4,400 to £5,200', '£390 to £470'],
+  ['Semi, the common case', '10', '£5,900 to £7,500', '£640 to £790'],
+  ['Large semi or detached', '12', '£7,200 to £8,600', '£770 to £940'],
+  ['Big detached, dual aspect', '14+', '£8,200 to £9,500+', '£900 to £1,100+'],
+];
+---
+<Base
+  title="How Much Do Solar Panels Cost in Sheffield? 2026 Prices"
+  description="Solar panels in Sheffield cost £4,400 to £9,500 installed in 2026 depending on system size. An MCS installer breaks down real prices and what moves them."
+  current="/blog/"
+  schema={[article, breadcrumbs]}
+>
+  <article>
+    <div class="wrap article">
+      <header class="article__head">
+        <h1>How much do solar panels cost in Sheffield? 2026 prices</h1>
+        <p class="article__meta">
+          By {client.owner}, MCS installer, {client.name} · July 2026 <!-- TEMP author -->
+        </p>
+      </header>
+
+      <div class="article__body">
+        <p>
+          A solar installation in Sheffield costs £4,400 to £9,500 in 2026:
+          that is 6 to 14 panels, installed, with scaffolding, MCS paperwork
+          and export registration included. Add £2,800 to £4,500 for a
+          battery. Those are installed prices from jobs we quoted this year,
+          not a lead-generation site's teaser figures, and VAT on domestic
+          solar is zero-rated until 2027. <!-- TEMP figures throughout -->
+        </p>
+
+        <div class="table-scroll">
+        <table class="costs" aria-describedby="costs-note">
+          <thead>
+            <tr>
+              <th scope="col">System</th>
+              <th scope="col">Panels</th>
+              <th scope="col">Installed price</th>
+              <th scope="col">Year-one benefit</th>
+            </tr>
+          </thead>
+          <tbody>
+            {table.map(([house, panels, price, benefit]) => (
+              <tr><td><strong>{house}</strong></td><td class="fig">{panels}</td><td>{price}</td><td>{benefit}</td></tr>
+            ))}
+          </tbody>
+        </table>
+        </div>
+        <p class="table-note" id="costs-note">
+          Installed, incl. scaffolding, MCS certificate, DNO and export
+          registration. Your written quote is the real number; this table is
+          for orientation.
+        </p>
+
+        <h2>What moves the price</h2>
+        <p>
+          Scaffolding first: a terraced street with no rear access costs more
+          to wrap than a driveway semi. Then the roof itself: Sheffield's
+          stone-built terraces often need longer anchors and more careful
+          slating than a 1970s concrete-tile semi. Then the electrics: a
+          tired fuse board adds a day and a few hundred pounds. Panel brand
+          moves the price less than people expect; labour and access move it
+          more.
+        </p>
+
+        <h2>Does a battery pay its way?</h2>
+        <p>
+          Sometimes. Without one, a working household uses under half of what
+          the roof makes; the rest exports at around 15p while you buy
+          evenings back at 27p. A battery closes that gap and pushes self-use
+          towards 80 percent. On a 10-panel system that is roughly £250 to
+          £350 a year of extra benefit against £2,800 to £4,500 of cost, so
+          the battery case rests on how much you are home, your tariff, and
+          whether you charge a car. We price it separately in every estimate
+          so you can drop it without dropping the panels. <!-- TEMP figures -->
+        </p>
+
+        <h2>How to read a solar quote</h2>
+        <p>
+          A real quote names the panel count and layout drawn on your roof,
+          the inverter model, the scaffolding, the MCS and DNO paperwork, and
+          who registers your export payments. If any of those is missing, the
+          price is not finished. Two red flags worth walking away from: a
+          price that only holds "if you sign today", and a yield figure with
+          no assumptions attached. Ask any installer, us included, for the
+          MCS number and check it on the register before you pay a deposit.
+        </p>
+
+        <h2>What happens on the job</h2>
+        <p>
+          Scaffold goes up one day, panels and inverter the next, and the
+          system is commissioned and generating before the scaffold comes
+          down, usually inside the same week. The paperwork takes longer than
+          the roof: allow three weeks for MCS, DNO and export registration to
+          clear. You get the certificates, the layout drawing and the
+          handover walkthrough, then the app takes over.
+        </p>
+
+        <div class="band">
+          <h2 style="font-size: 1.35rem;">Want the number for your actual roof?</h2>
+          <p style="color: var(--ink-soft); font-size: var(--t-small);">
+            Two bills and a postcode gets you a written estimate with the
+            assumptions listed, inside two working days. <!-- TEMP -->
+          </p>
+          <div class="acts">
+            <a class="btn btn--quote" href="/#quote">Get a quote</a>
+            <a class="btn btn--call" href={`tel:${tel}`}>Call Dan</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </article>
+</Base>

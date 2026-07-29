@@ -1,0 +1,45 @@
+---
+// One beat of the founder's story.
+//
+// The chapter box is the thing the scroll timeline is attached to (see
+// hero-timeline.css). It is deliberately never sticky, because a sticky box
+// freezes its own view() timeline. Its children may be sticky; they inherit
+// the animated --tl-fill and --tl-hold values from here.
+//
+// Chapter three has no number. That is the point of it, so `figure` is
+// optional and `said` takes its place.
+interface Props {
+  n: number;                 // 1 based, for the rail node and a11y
+  figure?: string;           // the numeral, e.g. "25"
+  unit?: string;             // what the numeral counts, e.g. "years"
+  said?: string;             // the founder's own words, where a number would be
+  heading: string;
+  payoff?: boolean;          // carries the page's one signature gradient
+  openNode?: boolean;        // rail node left unfilled
+}
+const { n, figure, unit, said, heading, payoff = false, openNode = false } = Astro.props;
+---
+<article class={`tl-ch ${payoff ? 'tl-ch--payoff' : ''}`} aria-label={`Chapter ${n}. ${heading}`}>
+  <div class="tl-ch__rail" aria-hidden="true">
+    <span class="tl-ch__railfill"></span>
+    <span class="tl-ch__node">{!openNode && <span></span>}</span>
+  </div>
+
+  {/* The numeral is two stacked layers: a ghost at 10% ink and a yellow copy
+      clipped by --tl-fill. The ghost has to sit far below contrast minimums
+      for the fill to read at all, so the whole figure is exposed to assistive
+      tech as a single labelled image rather than as text. */}
+  {figure && (
+    <div class="tl-fig" role="img" aria-label={unit ? `${figure} ${unit}` : figure}>
+      <span class="tl-fig__num" data-n={figure} aria-hidden="true">{figure}</span>
+      {unit && <span class="label tl-fig__unit" aria-hidden="true">{unit}</span>}
+    </div>
+  )}
+
+  {said && <p class="tl-said">{said}</p>}
+
+  <div class="tl-ch__body">
+    <h2 class="tl-ch__h">{heading}</h2>
+    <slot />
+  </div>
+</article>

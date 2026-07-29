@@ -1,0 +1,14 @@
+User-agent: *
+Allow: /
+
+# AI crawlers are deliberately NOT blocked.
+# 45% of consumers now ask an AI assistant for local recommendations, and those
+# referrals convert at roughly 15.9% against 1.76% for Google organic. For a
+# business with 7 reviews and no phone number on its Google profile, being
+# citable is worth far more than being withheld. Revisit only if Adil asks.
+
+# Was pointing at https://example.co.uk/sitemap-index.xml — a host nobody owns.
+# Change this line and client.url together at launch. Note that on a GitHub
+# Pages project site robots.txt is only honoured at the domain root, never under
+# /One/, so the preview deploy has no effective robots.txt either way.
+Sitemap: https://jamie822.github.io/sitemap-index.xml

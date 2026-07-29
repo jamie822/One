@@ -1,0 +1,79 @@
+---
+// The real site shell. Distinct from Shell.astro, which exists only to hold the
+// four hero candidates side by side for comparison and carries a switcher no
+// visitor should ever see.
+//
+// ONE GRADIENT PER PAGE, and on this page it is the 25 in "Who you are" — a big
+// Clash Display number, which is exactly what guide §7 asks the hero moment to
+// be. So the mark here runs the guide's sanctioned `story` variant (four booked
+// yellow, one arrived cyan, one open) rather than the gradient fill. Putting the
+// signature on a 30px nav mark and then denying it to the largest numeral on the
+// page would spend it on the smallest thing in view.
+import '../styles/brand.css';
+import '../styles/site.css';
+import Mark from '../components/Mark.astro';
+import { studio } from '../data/studio.js';
+
+interface Props { title: string; blurb: string }
+const { title, blurb } = Astro.props;
+
+// Guide §7: "One clear way to get in touch. Not four." Email is the only
+// verified channel — studio.contact.phone is empty and stays out until it isn't.
+const mailto = `mailto:${studio.contact.email}`;
+
+// Nav must render on one desktop line (Higgsfield 4.7). Four items, short labels.
+const nav = [
+  { href: '#work',    label: 'The work' },
+  { href: '#cost',    label: 'What it costs' },
+  { href: '#process', label: 'How it goes' },
+  { href: '#who',     label: 'Who I am' },
+];
+---
+<!doctype html>
+<html lang="en-GB">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>{title}</title>
+  <meta name="description" content={blurb} />
+  <meta name="robots" content="noindex" /><!-- design review, not for indexing yet -->
+  <meta name="theme-color" content="#08090b" />
+  <link rel="preload" as="font" type="font/woff2" href="/fonts/clash-display-700.woff2" crossorigin />
+  <link rel="preload" as="font" type="font/woff2" href="/fonts/satoshi-400.woff2" crossorigin />
+</head>
+<body>
+  <a class="skip" href="#main">Skip to content</a>
+
+  <header class="nav">
+    <a class="nav__brand" href="/">
+      <Mark size={28} id="nav-site" variant="story" />
+      <span class="nav__word">Stacked&nbsp;Out</span>
+    </a>
+
+    <nav class="nav__links" aria-label="Sections">
+      {nav.map((n) => <a class="nav__link" href={n.href}>{n.label}</a>)}
+    </nav>
+
+    <a class="btn btn--action nav__cta" href={mailto}>Get in touch</a>
+  </header>
+
+  <main id="main" tabindex="-1">
+    <slot />
+  </main>
+
+  <footer class="foot">
+    <div class="shell foot__in">
+      <p class="foot__line">
+        {studio.parent} &middot; {studio.proposition} for {studio.audience.join(' and ')}.
+      </p>
+      <p class="foot__line foot__line--muted">
+        Nothing on this page is invented. Anything not supplied yet is marked as
+        missing rather than filled with a guess.
+      </p>
+      <p class="foot__line">
+        <a href={mailto}>{studio.contact.email}</a>
+      </p>
+    </div>
+  </footer>
+</body>
+</html>

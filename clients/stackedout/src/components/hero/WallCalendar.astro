@@ -1,0 +1,610 @@
+---
+// WALL CALENDAR — the hero.
+//
+// THE TURN. A hand turns a wall calendar by the bottom right corner, so that is
+// where this starts. Two things happen at once, and both are needed:
+//
+//   1. THE PEEL. A fold line at 45 degrees travels diagonally up and left across
+//      the sheet. Everything past the fold has left the printed face and is now
+//      rolled paper, so the face is clipped back to the un-peeled polygon and the
+//      month underneath shows through the corner.
+//   2. THE SWING. The sheet rotates about the wire at its top edge, up and over,
+//      accelerating once it is past vertical because at that point gravity is
+//      doing the work rather than the hand.
+//
+// THE CURL IS DRAWN IN CANVAS, NOT IN CSS. This is the part that three CSS
+// attempts could not make read, and the reason is geometric rather than a bug: a
+// CSS transform moves a flat plane, a flat plane has one surface normal, and one
+// surface normal catches light evenly, so it has no shading and disappears into a
+// dark sheet. Paper reads as paper because it curves — the normal turns through
+// the curl and the light falls off across it. So the lifted part is a real
+// developable surface: a mesh whose curl radius opens out toward the ends of the
+// fold, which is what makes it a cone rather than a tube, shaded per facet from
+// the facet's own normal, painted into one canvas that rotates with the sheet.
+// One canvas is also cheaper than the ~200 composited layers the same mesh would
+// need in DOM.
+//
+// GSAP drives it: two nested timelines on a master clock, so the peel and the
+// swing can overlap and be scrubbed frame by frame while tuning. gsap.matchMedia
+// gates the whole thing on prefers-reduced-motion and reverts it cleanly.
+//
+// WITHOUT JAVASCRIPT, AND WITH REDUCED MOTION, the two turning sheets are never
+// shown at all: the hero is the settled August sheet with its one open day, which
+// is where the sequence lands anyway. No blank box, no half state.
+//
+// Binding is real twin loop wire-o: a slanted wire through rectangular punch
+// holes, which is what these calendars are actually bound with. Drawn in SVG so
+// it stays crisp instead of reading as a row of typed letter o.
+import { studio } from '../../data/studio.js';
+
+// Real months, so the grid is honest: a real August 2026 starts on a Saturday.
+// Job labels are illustrative trade work, never a claim about bookings.
+const MONTHS = [
+  {
+    name: 'June', year: 2026, startDow: 1, days: 30,
+    jobs: { 2: 'Rewire', 5: 'CU upgrade', 9: 'Fault find', 12: 'Solar PV', 17: 'EICR', 23: 'Board swap', 26: 'EV charger' },
+    open: null,
+  },
+  {
+    name: 'July', year: 2026, startDow: 3, days: 31,
+    jobs: { 1: 'EICR', 3: 'Board swap', 6: 'Consumer unit', 8: 'Solar PV', 10: 'Fault find', 14: 'EV charger',
+            16: 'EICR remedials', 20: 'Rewire', 22: 'CU upgrade', 24: 'Solar PV', 28: 'EICR', 30: 'Board swap' },
+    open: null,
+  },
+  {
+    name: 'August', year: 2026, startDow: 6, days: 31,
+    jobs: { 1: 'Board swap', 3: 'Solar PV', 4: 'Rewire', 5: 'Fault find', 6: 'CU upgrade', 8: 'EICR remedials',
+            10: 'Board swap', 11: 'EV charger', 12: 'Solar PV', 13: 'Rewire', 14: 'Fault find', 15: 'CU upgrade',
+            17: 'EICR remedials', 18: 'EICR', 19: 'Board swap', 20: 'EV charger', 21: 'Solar PV', 22: 'Rewire',
+            24: 'CU upgrade', 25: 'Consumer unit', 26: 'EICR remedials', 27: 'EICR', 28: 'Board swap',
+            29: 'EV charger', 31: 'Rewire' },
+    open: 7,          // the one day left. The brand's empty slot, at hero scale.
+  },
+];
+
+const DOW = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+
+// Lay a month out into 7-column weeks, with lead-in blanks.
+function weeksOf(m) {
+  const cells = [];
+  for (let i = 1; i < m.startDow; i++) cells.push(null);
+  for (let d = 1; d <= m.days; d++) cells.push(d);
+  while (cells.length % 7) cells.push(null);
+  const weeks = [];
+  for (let i = 0; i < cells.length; i += 7) weeks.push(cells.slice(i, i + 7));
+  return weeks;
+}
+
+const LOOPS = 26;      // wire loops across the head
+---
+<div class="wc" aria-hidden="true">
+  <!-- Twin loop wire binding. One <use> per loop so the geometry is authored once. -->
+  <svg class="wc__wire" viewBox={`0 0 ${LOOPS * 40} 62`} preserveAspectRatio="none">
+    <defs>
+      <linearGradient id="wcWire" x1="0" y1="0" x2="0.2" y2="1">
+        <stop offset="0"    stop-color="#e8ebef" />
+        <stop offset="0.36" stop-color="#aeb5bf" />
+        <stop offset="0.62" stop-color="#6f767f" />
+        <stop offset="1"    stop-color="#3b4048" />
+      </linearGradient>
+      <!-- One loop: down the back, over the head, and through the punch hole.
+           Slanted, because twin loop wire is fed on a diagonal. -->
+      <path id="wcLoop" d="M5 50 C 2 18, 11 5, 21 5 C 31 5, 33 19, 29 50"
+            fill="none" stroke="url(#wcWire)" stroke-width="5" stroke-linecap="round" />
+    </defs>
+    {Array.from({ length: LOOPS }).map((_, i) => (
+      <use href="#wcLoop" x={i * 40} y="0" />
+    ))}
+  </svg>
+
+  <!-- The head board the sheets hang from. Supplier name sits here, modest, the way
+       it does on a calendar a firm gives away. -->
+  <div class="wc__head">
+    <span class="wc__brand">{studio.name}</span>
+    <span class="wc__strap">Web design for electricians and solar installers</span>
+  </div>
+
+  <div class="wc__pad">
+    {MONTHS.map((m, i) => (
+      <div class="wc__sheet" data-sheet={i} style={`--i:${i}`}>
+        <!-- FACE. The printed side, and the paper itself: the sheet element is only
+             a hinge, so that the back can be a face of its own. -->
+        <div class="wc__face">
+          <div class="wc__punches">
+            {Array.from({ length: LOOPS }).map(() => <span class="wc__punch" />)}
+          </div>
+          <div class="wc__masthead">
+            <h2 class="wc__month">{m.name}</h2>
+            <span class="wc__year">{m.year}</span>
+          </div>
+          <div class="wc__dows">
+            {DOW.map((d) => <span class="wc__dow">{d}</span>)}
+          </div>
+          <div class="wc__grid">
+            {weeksOf(m).map((wk) => (
+              <div class="wc__week">
+                {wk.map((d) => (
+                  <div class={`wc__day${d === null ? ' wc__day--blank' : ''}${d === m.open ? ' wc__day--open' : ''}`}>
+                    {d !== null && <span class="wc__date">{d}</span>}
+                    {d !== null && m.jobs[d] && <span class="wc__job">{m.jobs[d]}</span>}
+                  </div>
+                ))}
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {i > 0 && (
+          <!-- The shadow the sheet above throws down here as it swings off. Lives on
+               the sheet that is being revealed, so it stays flat while the page moves. -->
+          <div class="wc__lit"></div>
+        )}
+
+        {i < 2 && (
+          <Fragment>
+            <!-- REVERSE. Unprinted stock, and the only thing on the sheet that is
+                 light: this is the side you see once the page is past vertical. -->
+            <div class="wc__back">
+              <div class="wc__punches">
+                {Array.from({ length: LOOPS }).map(() => <span class="wc__punch" />)}
+              </div>
+            </div>
+            <!-- THE CURL. Mesh, shading and cast shadow, drawn here. -->
+            <canvas class="wc__curl"></canvas>
+          </Fragment>
+        )}
+      </div>
+    ))}
+
+    <!-- The light that crosses the finished sheet, left to right, once.
+         The wrapper is load bearing, not decoration. The gleam is a wide band that
+         starts and finishes outside the sheet, so it has to travel further than the
+         paper is wide. The pad clips its own children with clip-path rather than
+         overflow, because the sheets have to be free to swing up above the wire,
+         and clip-path is a paint operation: it hides the band but the band still
+         counts toward the document's scrollable width. That measured 965px of
+         horizontal overflow on a 390px screen. Wrapping just the gleam in its own
+         overflow: hidden layer contains it without putting a lid on the sheets. -->
+    <div class="wc__gleamwrap">
+      <div class="wc__gleam"></div>
+    </div>
+  </div>
+</div>
+
+<!-- GSAP, vendored rather than bundled: two classic deferred scripts execute in
+     document order before DOMContentLoaded, which is a shorter and more obvious
+     load contract than mixing a module graph into a page whose h1 is the LCP
+     element. Neither script blocks the parser. -->
+<script is:inline defer src="/vendor/gsap.min.js"></script>
+<script is:inline defer src="/vendor/CustomEase.min.js"></script>
+<script is:inline>
+document.addEventListener('DOMContentLoaded', function () {
+  var gsap = window.gsap;
+  var root = document.querySelector('.wc');
+  var pad  = root && root.querySelector('.wc__pad');
+  if (!gsap || !pad) return;                 // no GSAP: settled August sheet, as served
+  if (window.CustomEase) gsap.registerPlugin(window.CustomEase);
+
+  /* ---- palette -----------------------------------------------------------
+     Nothing new. PAPER is the printed stock already on the sheet; the four
+     greys are the wire's own gradient stops, reused because the reverse of a
+     calendar page is unprinted metallic-grey stock and the wire has already
+     established that ramp on this page. */
+  var PAPER = [18, 21, 26];                                                   // #12151a
+  // #3b4048 / #6f767f / #aeb5bf. The wire's fourth stop, #e8ebef, is deliberately
+  // left off: it is a specular highlight on polished metal, not a paper value.
+  var WIRE  = [[59, 64, 72], [111, 118, 127], [174, 181, 191]];
+
+  var LX = -0.20, LY = -0.55, LZ = 0.81;     // light: front, above, to the left
+  var SQ = Math.SQRT1_2;
+  var PERSP = 1600;                          // matches --wc-persp in the stylesheet
+
+  function clamp(v, lo, hi) { return v < lo ? lo : v > hi ? hi : v; }
+
+  function rampCss(t) {
+    t = clamp(t, 0, 1) * (WIRE.length - 1);
+    var i = Math.min(WIRE.length - 2, Math.floor(t)), f = t - i;
+    var a = WIRE[i], b = WIRE[i + 1];
+    return 'rgb(' + Math.round(a[0] + (b[0] - a[0]) * f) + ',' +
+                    Math.round(a[1] + (b[1] - a[1]) * f) + ',' +
+                    Math.round(a[2] + (b[2] - a[2]) * f) + ')';
+  }
+  function paperCss(k) {
+    return 'rgb(' + Math.round(PAPER[0] * k) + ',' +
+                    Math.round(PAPER[1] * k) + ',' +
+                    Math.round(PAPER[2] * k) + ')';
+  }
+
+  /* ---- the un-peeled polygon --------------------------------------------
+     Everything past the fold has left the face. The fold is the half plane
+     x + y <= C in sheet pixels, so clip the sheet rectangle against it. Doing
+     this in pixels rather than percentages is what keeps the fold at 45
+     degrees on a sheet that is not square. */
+  function faceClip(W, H, C) {
+    var rect = [[0, 0], [W, 0], [W, H], [0, H]], out = [];
+    for (var i = 0; i < 4; i++) {
+      var a = rect[i], b = rect[(i + 1) % 4];
+      var da = a[0] + a[1] - C, db = b[0] + b[1] - C;
+      if (da <= 0) out.push(a);
+      if ((da <= 0) !== (db <= 0)) {
+        var t = da / (da - db);
+        out.push([a[0] + (b[0] - a[0]) * t, a[1] + (b[1] - a[1]) * t]);
+      }
+    }
+    return out;
+  }
+  function polyCss(pts, mirrorW) {
+    if (pts.length < 3) return 'polygon(0 0, 0 0, 0 0)';
+    var s = [];
+    for (var i = 0; i < pts.length; i++) {
+      var x = mirrorW ? mirrorW - pts[i][0] : pts[i][0];
+      s.push(x.toFixed(1) + 'px ' + pts[i][1].toFixed(1) + 'px');
+    }
+    return 'polygon(' + s.join(',') + ')';
+  }
+
+  /* ---- one turning sheet ------------------------------------------------ */
+  // Mesh: facets across the fold, and along the roll. Heavily biased toward the
+  // roll, because that is the direction the light falls off in — the shading barely
+  // changes along the fold, but it swings the full way round it.
+  // Enough facets that the light's fall-off around the roll steps by about a level
+  // per facet and the tapering silhouette has no staircase in it. Ordered dither at
+  // a third of a step was tried instead of resolving the mesh and is worse: a facet
+  // is thirty pixels across, so a Bayer pattern over facets is visible hatching
+  // rather than dither.
+  var NX = 36, NY = 56;
+
+  // Shade a normal. The printed side is the same dark stock as the sheet and only
+  // ever a little lighter or darker than it, because it is the same paper barely
+  // tilted — pushing it further reads as a grey stain on the page rather than as
+  // a fold. The reverse is unprinted, so it runs the wire's grey ramp and is the
+  // one thing here that is properly light.
+  function shade(nx, ny, nz, front) {
+    var lam = Math.max(0, nx * LX + ny * LY + nz * LZ);
+    // The ramp deliberately stops short of the top of the wire's gradient. A page
+    // folded flat back on itself faces the light square on, so it is the brightest
+    // thing in the frame whatever you do; let it reach #e8ebef and it stops being
+    // paper and becomes a white wedge sitting on the calendar.
+    return front ? paperCss(clamp(lam / LZ, 0.72, 1.18))
+                 : rampCss(0.05 + 0.90 * lam);
+  }
+
+  function Turn(sheet, below) {
+    this.sheet = sheet;
+    this.face  = sheet.querySelector('.wc__face');
+    this.back  = sheet.querySelector('.wc__back');
+    this.cv    = sheet.querySelector('.wc__curl');
+    this.ctx   = this.cv.getContext('2d');
+    this.lit   = below ? below.querySelector('.wc__lit') : null;
+    this.peel  = 0; this.rot = 0; this.needs = true;
+    this.measure();
+  }
+
+  Turn.prototype.measure = function () {
+    var r = this.sheet.getBoundingClientRect();
+    this.W = Math.max(1, Math.round(r.width));
+    this.H = Math.max(1, Math.round(r.height));
+    // How far up and left the fold travels, and how tightly the paper rolls.
+    this.FMAX = 0.26 * (this.W + this.H);
+    // The canvas covers only the part of the sheet the curl can ever reach — the
+    // fold's own travel plus the reach of the tongue folded back over it — and it
+    // is rasterised at 1.5x rather than at the display's ratio. Both are about the
+    // texture: a full-sheet canvas at 2x is three megapixels cleared, redrawn and
+    // handed to the compositor on every frame of the turn, for a shape that has no
+    // fine detail in it and occupies a third of the sheet.
+    this.x0 = Math.max(0, this.W - this.FMAX - this.H * 0.45);
+    this.cw = this.W - this.x0;
+    this.dpr = Math.min(window.devicePixelRatio || 1, 1.5);
+    this.cv.style.left  = this.x0 + 'px';
+    this.cv.style.width = this.cw + 'px';
+    this.cv.width  = Math.round(this.cw * this.dpr);
+    this.cv.height = Math.round(this.H * this.dpr);
+    // Curl radius is a property of the stock, not of how far the fold has run, so
+    // it is constant through the turn. It is also the one number that decides
+    // whether any of this reads, and the constraint is not obvious: the reverse of
+    // the page is only visible where the paper has turned past 90 degrees, so the
+    // lit band is exactly R wide and only reaches that width where the fold has
+    // run at least pi*R. Roll it fatter and you see less of the light side, not
+    // more. R around a twelfth of the sheet's height is the balance — a tight roll
+    // at the fold, and a folded-back tongue behind it that carries the light.
+    this.R0 = 0.085 * this.H;
+    this.needs = true;
+  };
+
+  // Local fold frame: origin at the bottom right corner, u along the fold
+  // (up and to the right), v toward the corner. The fold sits at v = -d.
+  Turn.prototype.pt = function (x, v, z, o) {
+    var sx = this.W + (x + v) * SQ, sy = this.H + (v - x) * SQ;
+    var k = PERSP / (PERSP - z);             // the curl stands off the sheet, so it grows
+    o[0] = (this.ox + (sx - this.ox) * k - this.x0) * this.dpr;
+    o[1] = (this.oy + (sy - this.oy) * k) * this.dpr;
+  };
+
+  Turn.prototype.render = function () {
+    var W = this.W, H = this.H, ctx = this.ctx;
+    ctx.setTransform(1, 0, 0, 1, 0, 0);
+    ctx.clearRect(0, 0, this.cv.width, this.cv.height);
+
+    this.rot = gsap.getProperty(this.sheet, 'rotationX') || 0;
+    // Past about 75 degrees the curl is edge-on: a whole roll of paper squashed
+    // into a forty-pixel band, which reads as a grey slab laid over the binding
+    // rather than as paper. Retire it and let the reverse of the sheet carry the
+    // top of the arc, which is the only thing that should be visible up there.
+    this.cv.style.opacity = clamp((96 - this.rot) / 21, 0, 1).toFixed(3);
+    var F = this.peel * this.FMAX;           // length of the fold's legs from the corner
+    var d = F * SQ;                          // perpendicular distance corner to fold
+    var C = W + H - F;
+    this.face.style.clipPath = polyCss(faceClip(W, H, C), 0);
+    this.back.style.clipPath = polyCss(faceClip(W, H, C), W);
+    // The sheet below is now in the fold's shade, and that is what makes the opened
+    // corner read as a second plane rather than as a hole. The shadow is a band
+    // hugging the bottom of the sheet, slid up to sit under the lifting page's own
+    // bottom edge — so it travels across the month below as the page rises, instead
+    // of being a fixed wash that spends the swing hidden behind the page casting it.
+    // Where that edge lands is the same projection the mesh uses: rotate the sheet's
+    // bottom corner about the top edge, then divide through the perspective.
+    if (this.lit) {
+      var th = this.rot * Math.PI / 180;
+      var f = 0.34 + (Math.cos(th) - 0.34) * (PERSP / (PERSP - H * Math.sin(th)));
+      this.lit.style.transform = 'translate3d(0,' + ((clamp(f, -0.2, 1) - 1) * 100).toFixed(2) + '%,0)';
+      this.lit.style.opacity = ((0.16 * clamp(this.peel * 2.2, 0, 1) +
+                                 0.62 * clamp(this.rot / 26, 0, 1)) *
+                                clamp((162 - this.rot) / 56, 0, 1)).toFixed(3);
+    }
+    if (d < 3) return;
+
+    this.ox = W * 0.5; this.oy = H * 0.34;   // perspective origin, as set in CSS
+    var R0 = this.R0, PI = Math.PI;
+
+    // Columns of the mesh. The fold is cut short where it has already run off
+    // the left or the top of the sheet.
+    var xlo = Math.max(-d, -W * Math.SQRT2 * 0.5);
+    var xhi = Math.min(d, H * Math.SQRT2 * 0.5);
+    if (xhi - xlo < 2) return;
+
+    var P = [], i, j, x, absx;
+    for (i = 0; i <= NX; i++) {
+      x = xlo + (xhi - xlo) * (i / NX);
+      absx = Math.abs(x);
+      // Curl radius opens out a little toward the ends of the fold, so the
+      // surface is a cone rather than a tube and its normal changes along the
+      // fold as well as around it. Gently: most of the taper wants to come from
+      // the material running out, below. Opening it hard puts a needle in the
+      // middle of the fold and a slab at each end.
+      var R = R0 * (1 + 0.5 * Math.pow(Math.min(1, absx / Math.max(d, 1)), 2));
+      // Arc of paper available in this column, between the fold and the sheet's edges.
+      var vhi = -absx;
+      var vlo = Math.max(-d, -W * Math.SQRT2 - x, x - H * Math.SQRT2);
+      var s0 = vlo + d, s1 = Math.max(s0, vhi + d);
+      var col = [];
+      for (j = 0; j <= NY; j++) {
+        var s = s0 + (s1 - s0) * (j / NY);
+        var th = s / R, v, z;
+        if (th <= PI) {                      // on the roll
+          v = -d + R * Math.sin(th);
+          z = R * (1 - Math.cos(th));
+        } else {                             // past the roll: the sheet folded back,
+          var R2 = 8 * R;                    // drooping gently rather than dead flat
+          var t2 = (s - PI * R) / R2, ext = 0;
+          if (t2 > 0.30) { ext = (t2 - 0.30) * R2; t2 = 0.30; }
+          v = -d - R2 * Math.sin(t2) - ext * Math.cos(t2);
+          z = Math.max(1, 2 * R - R2 * (1 - Math.cos(t2)) - ext * Math.sin(t2));
+        }
+        col.push([x, v, z]);
+      }
+      P.push(col);
+    }
+
+    /* ---- the shadow the lifted paper throws ---------------------------
+       Cast along the light direction onto the sheet plane, so it travels with
+       the fold and slides out from under it as the paper rises. Two passes:
+       the soft body of the shadow, and a tight dark one at the contact line. */
+    var alpha = clamp(1 - this.rot / 70, 0, 1);
+    if (alpha > 0.01) {
+      ctx.save();
+      this.shadowPass(P, 0, NY, 0.05 * d + 8, 0.24 * alpha);
+      // Where the roll meets the sheet: the tight dark line that says the paper is
+      // standing off the page rather than printed on it.
+      this.shadowPass(P, 0, Math.max(1, Math.round(NY * 0.3)), 0.014 * d + 3, 0.38 * alpha);
+      // And under the folded-back tongue, which is the highest part and therefore
+      // throws the most legible edge onto the month it is lying across.
+      this.shadowPass(P, Math.round(NY * 0.55), NY, 0.02 * d + 4, 0.34 * alpha);
+      ctx.restore();
+    }
+
+    /* ---- the paper -----------------------------------------------------
+       Facet normals first, then averaged onto the grid points, so each facet is
+       shaded from the mean of its four corner normals rather than from its own
+       flat one. That is what stops the facets reading as ribs. A gradient per
+       facet is the obvious alternative and it does not work: a canvas linear
+       gradient is constant along lines perpendicular to its axis, the facets here
+       are slanted quads, and the mismatch draws a lattice over the whole curl.
+       Facets are drawn from the fold outward, and z rises monotonically along the
+       roll, so painting in that order puts near over far with no depth sort. */
+    var FN = [], VN = [], nx, ny, nz, len;
+    for (i = 0; i < NX; i++) {
+      FN.push([]);
+      for (j = 0; j < NY; j++) {
+        var p00 = P[i][j], p10 = P[i + 1][j], p01 = P[i][j + 1];
+        var e1x = p10[0] - p00[0], e1y = p10[1] - p00[1], e1z = p10[2] - p00[2];
+        var e2x = p01[0] - p00[0], e2y = p01[1] - p00[1], e2z = p01[2] - p00[2];
+        nx = e1y * e2z - e1z * e2y; ny = e1z * e2x - e1x * e2z; nz = e1x * e2y - e1y * e2x;
+        len = Math.sqrt(nx * nx + ny * ny + nz * nz) || 1;
+        FN[i].push([nx / len, ny / len, nz / len]);
+      }
+    }
+    for (i = 0; i <= NX; i++) {
+      VN.push([]);
+      for (j = 0; j <= NY; j++) {
+        nx = 0; ny = 0; nz = 0;
+        for (var di = -1; di < 1; di++) for (var dj = -1; dj < 1; dj++) {
+          var f = FN[i + di] && FN[i + di][j + dj];
+          if (f) { nx += f[0]; ny += f[1]; nz += f[2]; }
+        }
+        len = Math.sqrt(nx * nx + ny * ny + nz * nz) || 1;
+        VN[i].push([nx / len, ny / len, nz / len]);
+      }
+    }
+
+    var a = [0, 0], b = [0, 0], c = [0, 0], e = [0, 0];
+    for (j = 0; j < NY; j++) {
+      for (i = 0; i < NX; i++) {
+        var fn = FN[i][j];
+        var front = fn[2] > 0;               // printed side toward us, or the reverse
+        var s = front ? 0.25 : -0.25;
+        var t0 = VN[i][j], t1 = VN[i + 1][j], b0 = VN[i][j + 1], b1 = VN[i + 1][j + 1];
+        this.pt(P[i][j][0], P[i][j][1], P[i][j][2], a);
+        this.pt(P[i + 1][j][0], P[i + 1][j][1], P[i + 1][j][2], b);
+        this.pt(P[i + 1][j + 1][0], P[i + 1][j + 1][1], P[i + 1][j + 1][2], c);
+        this.pt(P[i][j + 1][0], P[i][j + 1][1], P[i][j + 1][2], e);
+        ctx.fillStyle = shade(s * (t0[0] + t1[0] + b0[0] + b1[0]),
+                              s * (t0[1] + t1[1] + b0[1] + b1[1]),
+                              s * (t0[2] + t1[2] + b0[2] + b1[2]), front);
+        // Facets are grown a fraction of a pixel out of their own centre so that
+        // neighbours overlap. The alternative — stroking each facet — draws a
+        // visible outline round every one of them, which is what banding is.
+        grow(a, b, c, e);
+        ctx.beginPath();
+        ctx.moveTo(a[0], a[1]); ctx.lineTo(b[0], b[1]);
+        ctx.lineTo(c[0], c[1]); ctx.lineTo(e[0], e[1]);
+        ctx.closePath();
+        ctx.fill();
+      }
+    }
+  };
+
+  function grow(a, b, c, e) {
+    var cx = (a[0] + b[0] + c[0] + e[0]) / 4, cy = (a[1] + b[1] + c[1] + e[1]) / 4;
+    var q = [a, b, c, e];
+    for (var k = 0; k < 4; k++) {
+      var dx = q[k][0] - cx, dy = q[k][1] - cy;
+      var m = Math.sqrt(dx * dx + dy * dy);
+      if (m > 0.001) { q[k][0] += (dx / m) * 0.4; q[k][1] += (dy / m) * 0.4; }
+    }
+  }
+
+  Turn.prototype.promote = function (on) {
+    this.sheet.style.willChange = on ? 'transform' : 'auto';
+    this.face.style.willChange = on ? 'transform, clip-path' : 'auto';
+    if (this.lit) this.lit.style.willChange = on ? 'transform, opacity' : 'auto';
+  };
+
+  // One blurred silhouette of rows [j0, j1] of the mesh, projected to the sheet.
+  Turn.prototype.shadowPass = function (P, j0, j1, blur, alpha) {
+    var ctx = this.ctx, o = [0, 0], i, p;
+    ctx.filter = 'blur(' + blur.toFixed(1) + 'px)';
+    ctx.fillStyle = 'rgba(0,0,0,' + alpha.toFixed(3) + ')';
+    ctx.beginPath();
+    for (i = 0; i <= NX; i++) {
+      p = P[i][j0];
+      this.pt(p[0] + p[2] * (LX / LZ) * -1, p[1] + p[2] * (LY / LZ) * -1, 0, o);
+      i ? ctx.lineTo(o[0], o[1]) : ctx.moveTo(o[0], o[1]);
+    }
+    for (i = NX; i >= 0; i--) {
+      p = P[i][j1];
+      this.pt(p[0] + p[2] * (LX / LZ) * -1, p[1] + p[2] * (LY / LZ) * -1, 0, o);
+      ctx.lineTo(o[0], o[1]);
+    }
+    ctx.closePath();
+    ctx.fill();
+    ctx.filter = 'none';
+  };
+
+  /* ---- the clock -------------------------------------------------------
+     One turn is 1.62s, which is about how long a hand takes. Two of them, and
+     the ink and the light wash that the stylesheet already runs, land the whole
+     sequence at six seconds. */
+  var D = 1.62, T1 = 0.55, T2 = 2.35;
+  // The hand: a quick pinch to get the corner off the wall, then a steady travel
+  // up and left with the pace coming off at the end as the wrist runs out.
+  var peelEase = window.CustomEase
+    ? window.CustomEase.create('wcPeel', 'M0,0 C0.02,0.13 0.09,0.27 0.25,0.40 0.47,0.58 0.73,0.87 1,1')
+    : 'power1.out';
+
+  var mm = gsap.matchMedia();
+  mm.add('(prefers-reduced-motion: no-preference)', function () {
+    root.classList.add('wc--live');
+    var sheets = root.querySelectorAll('.wc__sheet');
+    var turns = [new Turn(sheets[0], sheets[1]), new Turn(sheets[1], sheets[2])];
+
+    // Two beats, and the order matters. The peel has to be most of the way done
+    // while the sheet is still nearly flat against the wall, because that is the
+    // only moment the curl is face-on and can be read at all; once the page is
+    // past about 50 degrees it is foreshortened and the swing is carrying the
+    // motion instead. So: peel hard for the first third, then turn.
+    function leg(t) {
+      var tl = gsap.timeline();
+      tl.to(t, { peel: 0.74, duration: D * 0.31, ease: peelEase }, 0);
+      tl.to(t, { peel: 1, duration: D * 0.40, ease: 'none' }, D * 0.31);
+      // The corner comes off the wall while it is being peeled — a few degrees,
+      // enough that the paper is standing proud of the sheet under it.
+      tl.to(t.sheet, { rotationX: 9, duration: D * 0.31, ease: 'power2.out' }, 0);
+      // The swing, on the sheet's own transform so GSAP owns it and render() can
+      // read the live angle back. Decelerating into the balance point where the
+      // page is standing on its crease, then ease-in past it — the one place an
+      // ease-in belongs, because past vertical it is gravity and not the hand.
+      tl.to(t.sheet, { rotationX: 92, duration: D * 0.45, ease: 'power1.out' }, D * 0.33);
+      tl.to(t.sheet, { rotationX: 172, duration: D * 0.22, ease: 'power2.in' }, D * 0.78);
+      tl.to(t.sheet, { autoAlpha: 0, duration: D * 0.11, ease: 'none' }, D * 0.89);
+      tl.eventCallback('onUpdate', function () { t.needs = true; });
+      // The sheet and its face are promoted to their own compositor layers for the
+      // duration of the turn, which is the whole reason the peel holds its frame
+      // rate. Once the page is gone they are two idle layers the size of the hero,
+      // held for the rest of the session. Hand them back, and take them again if
+      // the timeline is ever run backwards.
+      tl.eventCallback('onComplete', function () { t.promote(false); });
+      tl.eventCallback('onReverseComplete', function () { t.promote(true); });
+      return tl;
+    }
+
+    var tl = gsap.timeline();
+    tl.add(leg(turns[0]), T1);
+    tl.add(leg(turns[1]), T2);
+    tl.eventCallback('onUpdate', function () {
+      for (var i = 0; i < turns.length; i++) {
+        if (turns[i].needs) { turns[i].render(); turns[i].needs = false; }
+      }
+    });
+    // Retire the two turned sheets out of layout, not just out of sight.
+    // autoAlpha finishes them on visibility: hidden, which stops them painting but
+    // leaves them in the box tree — and each one is left holding an inline
+    // rotationX of 172deg inside a 1600px perspective, so its projected box is
+    // about 33px wider than the pad at each edge. Measured: 1449px of scrollable
+    // width on a 1440px viewport, which is a horizontal scrollbar on the finished
+    // hero. display: none takes them out of the overflow calculation entirely.
+    // Reversing the timeline puts them back, because the review handles below are
+    // the only thing that ever runs it backwards.
+    tl.eventCallback('onComplete', function () {
+      turns[0].sheet.style.display = 'none';
+      turns[1].sheet.style.display = 'none';
+    });
+    tl.eventCallback('onReverseComplete', function () {
+      turns[0].sheet.style.display = '';
+      turns[1].sheet.style.display = '';
+    });
+    turns[0].render(); turns[1].render();
+    // Handles for frame-by-frame review. The calendar is aria-hidden decoration
+    // and holds no state, so exposing the clock costs nothing and reviewing a
+    // 1.6s turn without being able to stop it is guesswork.
+    window.__wcTl = tl;
+    window.__wcTurns = turns;
+
+    var rz;
+    function onResize() {
+      clearTimeout(rz);
+      rz = setTimeout(function () {
+        for (var i = 0; i < turns.length; i++) { turns[i].measure(); turns[i].render(); }
+      }, 140);
+    }
+    window.addEventListener('resize', onResize);
+
+    return function () {
+      for (var i = 0; i < turns.length; i++) turns[i].promote(false);
+      window.removeEventListener('resize', onResize);
+      clearTimeout(rz);
+      root.classList.remove('wc--live');
+      window.__wcTl = null;
+    };
+  });
+});
+</script>

@@ -1,0 +1,96 @@
+name: Competitor audit
+
+# Fetches competitor electrician websites, screenshots them, extracts design and
+# SEO signals, and runs Lighthouse — then commits the results to research-output/.
+#
+# Why this exists: the Claude Code container's network policy blocks outbound
+# HTTPS, so live sites can't be inspected from there. GitHub's runners have
+# unrestricted internet, so the audit runs here and the findings get committed
+# back for analysis.
+#
+# Run it manually: Actions → Competitor audit → Run workflow.
+
+on:
+  # workflow_dispatch only registers once this file reaches the default branch.
+  # Until then, the push trigger below is how it runs: touch .github/audit.trigger
+  # and push.
+  push:
+    branches:
+      - claude/electrician-website-template-a3751a
+    paths:
+      - '.github/audit.trigger'
+      - '.github/scripts/audit.mjs'
+  workflow_dispatch:
+    inputs:
+      urls:
+        description: 'Comma-separated URLs (leave blank for the default competitor set)'
+        required: false
+        default: ''
+      lighthouse:
+        description: 'Run Lighthouse (slower, ~1 min per site)'
+        type: boolean
+        default: true
+
+permissions:
+  contents: write
+
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          # Check out the branch itself, not a detached SHA, so results can be
+          # committed back.
+          ref: ${{ github.ref_name }}
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      # Install in a scratch dir, NOT the repo — npm install in the workspace
+      # would modify the repo's own package.json and leave unstaged changes
+      # that block the rebase-and-push at the end.
+      - name: Install tooling
+        run: |
+          mkdir -p "$RUNNER_TEMP/audit"
+          cd "$RUNNER_TEMP/audit"
+          npm init -y >/dev/null 2>&1
+          npm install --no-audit --no-fund playwright cheerio lighthouse chrome-launcher >/dev/null 2>&1
+          npx playwright install --with-deps chromium >/dev/null 2>&1
+          echo "installed to $RUNNER_TEMP/audit"
+
+      - name: Run audit
+        env:
+          INPUT_URLS: ${{ inputs.urls }}
+          # On a push trigger `inputs.lighthouse` is null, and in GitHub
+          # expressions `null == false` is TRUE — so the obvious ternary
+          # silently disabled Lighthouse. Compare against the string instead.
+          RUN_LH: ${{ inputs.lighthouse == 'false' && 'false' || 'true' }}
+        run: |
+          cp "$GITHUB_WORKSPACE/.github/scripts/audit.mjs" "$RUNNER_TEMP/audit/"
+          cd "$RUNNER_TEMP/audit"
+          OUT_DIR="$GITHUB_WORKSPACE/research-output" node audit.mjs
+          # Confirm the repo checkout is still clean apart from the results.
+          cd "$GITHUB_WORKSPACE" && git status --short
+
+      - name: Commit results
+        run: |
+          git config user.name  "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add research-output/
+          if git diff --cached --quiet; then
+            echo "No changes."
+          else
+            git commit -m "Competitor audit results ($(date -u +%Y-%m-%d))"
+            # The branch may have moved while the audit was running — rebase
+            # onto it rather than failing the run.
+            for i in 1 2 3; do
+              git pull --rebase origin ${{ github.ref_name }} || true
+              git push origin HEAD:${{ github.ref_name }} && exit 0
+              echo "push rejected, retrying ($i)"; sleep 5
+            done
+            echo "::error::could not push results after 3 attempts"; exit 1
+          fi

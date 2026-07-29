@@ -1,0 +1,46 @@
+---
+import { client } from '../data/client.js';
+const tel = client.phone.replace(/\s/g, '');
+const year = 2026;
+---
+<footer class="footer">
+  <div class="wrap">
+    <div class="footer__grid">
+      <div>
+        <h2>{client.name}</h2>
+        <p style="color: var(--ink-soft); font-size: var(--t-small); max-width: 38ch; margin-top: 10px;">
+          {client.role} covering {client.areas.slice(0, -1).join(', ')} and {client.areas.at(-1)}.
+        </p>
+        <p style="margin-top: 8px;">
+          <a href={`tel:${tel}`} style="font-family: var(--font-data); color: var(--ink); display: inline-block; padding-block: 6px;">{client.phone}</a><br />
+          <a href={`mailto:${client.email}`} style="display: inline-block; padding-block: 6px;">{client.email}</a>
+        </p>
+      </div>
+      <nav aria-label="Services">
+        <h2>Work</h2>
+        <ul>
+          <li><a href="/services/#solar">Solar panels</a></li>
+          <li><a href="/services/#battery">Battery storage</a></li>
+          <li><a href="/services/#solarplus">Solar plus battery</a></li>
+          <li><a href="/services/#ev">EV chargers</a></li>
+          <li><a href="/services/#health">Health checks</a></li>
+        </ul>
+      </nav>
+      <nav aria-label="Company">
+        <h2>Company</h2>
+        <ul>
+          <li><a href="/about/">About</a></li>
+          <li><a href="/blog/">Blog</a></li>
+          <li><a href="/#quote">Get a quote</a></li>
+        </ul>
+      </nav>
+    </div>
+    <div class="footer__meta">
+      <span>{client.address.street}, {client.town} {client.address.postcode} <!-- TEMP --></span>
+      <span>{client.accreditation}, {client.accreditationNumber}</span>
+      <span>{client.liabilityCover}</span>
+      <span>{client.hours}</span>
+      <span>&copy; {year} {client.legalName}</span>
+    </div>
+  </div>
+</footer>

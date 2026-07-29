@@ -1,0 +1,153 @@
+---
+// Shared shell for the three hero candidates.
+// Deliberately thin: the heroes are being compared, so anything in here that
+// isn't identical between them corrupts the comparison.
+import '../styles/brand.css';
+import Mark from '../components/Mark.astro';
+import { studio } from '../data/studio.js';
+
+interface Props { title: string; variant: string; blurb: string; }
+const { title, variant, blurb } = Astro.props;
+
+const candidates = [
+  { slug: 'hero',     label: 'Calendar hero' },
+  { slug: 'diary',    label: 'The diary fills' },
+  { slug: 'board',    label: 'The board comes alive' },
+  { slug: 'timeline', label: '25 years, scrubbed' },
+];
+---
+<!doctype html>
+<html lang="en-GB">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>{title}</title>
+  <meta name="description" content={blurb} />
+  <meta name="robots" content="noindex" /><!-- design spike, not for indexing -->
+  <!-- The ground, so the browser chrome matches the page instead of framing it in white. -->
+  <meta name="theme-color" content="#08090b" />
+  <!-- Two preloads, not five. The three unpreloaded faces were measured against
+       this exact page: adding them removed the swap shift only when the network
+       was fast enough for the font to win the race to first paint, and did nothing
+       at all (0.2179) once it did not. brand.css fixes that structurally, and with
+       the metric matched fallbacks in place the extra three change no measured
+       number. These two stay because they carry the wordmark and the body copy
+       into the first paint, which is a text painting win, not a CLS one. -->
+  <link rel="preload" as="font" type="font/woff2" href="/fonts/clash-display-700.woff2" crossorigin />
+  <link rel="preload" as="font" type="font/woff2" href="/fonts/satoshi-400.woff2" crossorigin />
+</head>
+<body>
+  <a class="skip" href="#main">Skip to content</a>
+  <header class="topbar">
+    <a class="topbar__brand" href="/">
+      {/* One signature gradient per page. Measured per route rather than assumed:
+          / , /board/ and /timeline/ each carry exactly one, this mark. /diary/ is
+          the exception, because its hero IS the mark at scale with five gradient
+          slot fills, so the topbar mark would be a second object using the
+          signature on the same page. The guide's sanctioned story variant, four
+          yellow and one cyan with no gradient, resolves it without inventing a
+          treatment. Note this is NOT applied globally: doing that would leave
+          /board/ and /timeline/ with no signature moment anywhere, since the
+          board's busbar is a grey ramp and the timeline's payoff numeral is
+          yellow only. */}
+      <Mark size={30} id={`nav-${variant}`} variant={variant === 'diary' ? 'story' : 'gradient'} />
+      <span class="topbar__word">Stacked&nbsp;Out</span>
+    </a>
+    <nav class="switch" aria-label="Hero candidates">
+      <span class="label switch__lead">Hero option</span>
+      {candidates.map((c, i) => (
+        <a
+          class="switch__link"
+          href={`/${c.slug}/`}
+          aria-current={c.slug === variant ? 'page' : undefined}
+        >
+          <span class="switch__num">{i + 1}</span>{c.label}
+        </a>
+      ))}
+    </nav>
+  </header>
+
+  <main id="main" tabindex="-1">
+    <slot />
+  </main>
+
+  <footer class="foot">
+    <p class="label">
+      {studio.parent}. Design spike, {candidates.length} hero candidates.
+      Nothing on this page is invented. Facts we do not have yet show as visible placeholders.
+    </p>
+  </footer>
+
+<style>
+  .topbar {
+    position: sticky; top: 0; z-index: 90;
+    display: flex; align-items: center; justify-content: space-between;
+    gap: var(--s-3); flex-wrap: wrap;
+    padding: 12px clamp(16px, 3vw, 32px);
+    background: color-mix(in srgb, var(--ground) 82%, transparent);
+    /* Candidate 3's display numerals are large enough to read straight through an
+       82% ground. Blur rather than raising opacity, so the bar still reads as glass.
+       Chrome blur was measured expensive on the last build, so this is 10px with no
+       saturate(), and it is the only backdrop-filter on the page. */
+    -webkit-backdrop-filter: blur(10px);
+    backdrop-filter: blur(10px);
+    border-bottom: 1px solid var(--edge);
+  }
+  .topbar__brand {
+    display: inline-flex; align-items: center; gap: 12px;
+    text-decoration: none; color: var(--ink);
+  }
+  .topbar__word {
+    font-family: var(--font-display); font-weight: 700;
+    font-size: var(--t-h4); letter-spacing: -0.03em;
+    /* Same Clash Display narrow-space problem as headings, but this is a span so
+       the h1-h4 rule in brand.css never reached it. Without this the wordmark reads
+       "StackedOut", which is the one spelling the brand guide forbids outright. */
+    word-spacing: 0.14em;
+  }
+
+  .switch { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
+  .switch__lead { margin-right: 4px; }
+  .switch__link {
+    display: inline-flex; align-items: center; gap: 8px;
+    font-size: var(--t-label); font-weight: 500; color: var(--ink-muted);
+    text-decoration: none; padding: 9px 14px;
+    /* Guide §4: 34px desktop, 44px phone. Trades read these in a van with cold hands. */
+    min-height: 34px;
+    border: 1px solid var(--edge); border-radius: var(--r-chip);
+    transition: color 160ms var(--ease-ui), border-color 160ms var(--ease-ui), background-color 160ms var(--ease-ui);
+  }
+  .switch__link:hover { color: var(--ink); border-color: var(--ink-muted); }
+  .switch__link[aria-current='page'] {
+    color: var(--ground); background: var(--action); border-color: var(--action);
+    font-weight: 700;
+  }
+  .switch__num {
+    font-family: var(--font-display); font-weight: 700;
+    font-variant-numeric: tabular-nums;
+    /* No opacity here, deliberately. opacity: .65 composited the muted ink down to
+       #676c73 against the ground, which axe measured at 3.76:1 against a required
+       4.5:1. It reported that as "incomplete / shortTextContent" only because the
+       content is a single digit, and axe takes that branch exclusively when the
+       ratio has already failed. So the incomplete was a failure wearing a hat, not
+       an ambiguity, and it was also quietly minting an eighth colour.
+       Inheriting the link's colour instead passes in all three states outright:
+       muted 7.6:1 at rest, ink 18.4:1 on hover, ground on yellow 14.8:1 when
+       current. The numeral still reads as its own thing because it is set in the
+       display face against the body face, which is the brand's own device. */
+  }
+
+  .foot {
+    padding: var(--s-4) clamp(16px, 3vw, 32px) var(--s-5);
+    border-top: 1px solid var(--edge);
+  }
+  .foot .label { text-transform: none; letter-spacing: 0; max-width: 70ch; }
+
+  @media (max-width: 720px) {
+    .topbar { position: static; }
+    .switch__link { flex: 1 1 auto; justify-content: center; min-height: 44px; }
+    .topbar__brand { min-height: 44px; }
+  }
+</style>
+</body>
+</html>

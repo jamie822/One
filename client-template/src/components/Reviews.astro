@@ -1,0 +1,26 @@
+---
+// Real reviews only. Where the review names the electrician, show the name —
+// research found this is the most under-used trust signal in the market.
+import { reviews } from '../data/client.js';
+const { limit = 3 } = Astro.props;
+const shown = reviews.slice(0, limit);
+---
+{shown.length > 0 ? (
+  <div class="grid grid--3">
+    {shown.map((r, i) => (
+      <figure class="review reveal" style={`transition-delay:${i * 80}ms`}>
+        <blockquote class="review__quote">“{r.quote}”</blockquote>
+        <figcaption class="review__meta">
+          <strong>{r.author}</strong>
+          {[r.location, r.electrician && `worked with ${r.electrician}`, r.platform]
+            .filter(Boolean).join(' · ')}
+        </figcaption>
+      </figure>
+    ))}
+  </div>
+) : (
+  <div class="ph" style="aspect-ratio:auto;padding:38px">
+    <strong>No reviews added yet</strong>
+    <small>Add real reviews to the <code>reviews</code> array in src/data/client.js. Never write placeholder testimonials — they go live by accident.</small>
+  </div>
+)}

@@ -1,0 +1,160 @@
+---
+// BAND — the page's structural unit below the hero.
+//
+// The hero speaks in four marks: a technical grid, circuit rails with solder
+// pads, the client's bolt, and a cove light along an edge. Below the hero the
+// old page dropped all four and reverted to coloured strips. A Band puts them
+// back as the *construction* of a section — the grid is the paper the section
+// is drawn on, the rails wire it to the one above, the bolt is a wall behind
+// the instrument. Nothing here moves: the hero and the spine own the motion,
+// so these stay still and stay cheap.
+//
+// Two marks are new, and they exist because the four above are all *drawing*
+// and none of them is *light*. A page built only from ink on paper is exactly
+// the page that got called flat. So:
+//
+//   `ambient`  puts a gradient ground inside the band, the same lamp the hero
+//              uses, so a section can emit light rather than only bear marks.
+//   `edge`     dissolves the band's own boundary into its neighbour. Bands
+//              butt-joined against each other are what makes a page read as a
+//              stack of coloured strips; a gradient edge makes the same
+//              sequence read as one continuous lit surface with events on it.
+//
+// Both are off by default, so no existing band changes unless it asks.
+import AmbientField from './AmbientField.astro';
+
+const {
+  tone = 'plain',    // plain | panel | deep
+  grid = false,
+  rails = false,
+  bolt = null,       // 'left' | 'right'
+  lit = false,       // cove light along the top edge
+  seam = false,      // hairline where the band meets the one above
+  ambient = false,   // true | 'brand' | 'warm' | 'split' | 'cool'
+  edge = false,      // 'top' | 'bottom' | 'both'
+  class: cls = '',
+  ...rest            // forwards the caller's scope attribute onto the root
+} = Astro.props;
+
+const cn = ['band', `band--${tone}`, lit && 'is-lit', seam && 'has-seam', ambient && 'has-ambient', cls]
+  .filter(Boolean)
+  .join(' ');
+
+const edgeTop = edge === 'top' || edge === 'both';
+const edgeBottom = edge === 'bottom' || edge === 'both';
+---
+<section class={cn} {...rest}>
+  {grid && <div class="band__grid" aria-hidden="true"></div>}
+
+  {ambient && <AmbientField tone={typeof ambient === 'string' ? ambient : 'brand'} class="band__ambient" />}
+
+  {edgeTop && <div class="grad-edge grad-edge--top" aria-hidden="true"></div>}
+  {edgeBottom && <div class="grad-edge grad-edge--bottom" aria-hidden="true"></div>}
+
+  {rails && (
+    <svg class="band__rails" viewBox="0 0 1440 720" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+      <g fill="none" stroke="currentColor" stroke-width="1" stroke-linejoin="round" stroke-linecap="square">
+        <path d="M-40 88 H196 l68 68 H560" />
+        <path d="M1480 156 H1214 l-76 76 V512 l-86 86 H742" />
+        <path d="M96 792 V486 l72 -72 H386" />
+      </g>
+      <g fill="currentColor">
+        <circle cx="264" cy="156" r="3.4" />
+        <circle cx="1138" cy="232" r="3.4" />
+        <circle cx="168" cy="414" r="3.4" />
+      </g>
+    </svg>
+  )}
+
+  {bolt && (
+    <svg class={`band__bolt band__bolt--${bolt}`} viewBox="0 0 200 300" aria-hidden="true" preserveAspectRatio="xMidYMid meet">
+      <path class="band__bolt-fill" d="M132 8 30 168h62l-16 124 98-166h-62L132 8z" />
+      <path class="band__bolt-edge" d="M132 8 30 168h62l-16 124 98-166h-62L132 8z" fill="none" stroke-width="1.6" stroke-linejoin="round" />
+    </svg>
+  )}
+
+  <slot />
+</section>
+
+<style>
+  /* overflow:clip, not hidden — clip does not create a scroll container, so
+     sticky children inside a band still stick. */
+  .band { position: relative; isolation: isolate; overflow: clip; }
+
+  .band--panel {
+    background: linear-gradient(180deg, var(--bg-2), var(--panel) 46%, var(--bg-2));
+  }
+  .band--deep {
+    background:
+      radial-gradient(130% 80% at 50% 0%, var(--bg-2), transparent 70%),
+      var(--bg);
+  }
+
+  .has-seam::before {
+    content: ''; position: absolute; inset: 0 0 auto; height: 1px; z-index: 1;
+    background: linear-gradient(90deg, transparent, var(--line-strong) 22%, var(--line-strong) 78%, transparent);
+  }
+
+  /* Drawing paper. Same 64px module as the hero so the page reads as one sheet. */
+  .band__grid {
+    position: absolute; inset: 0; z-index: -4; pointer-events: none;
+    background-image:
+      linear-gradient(to right, color-mix(in srgb, var(--brand) 6%, transparent) 1px, transparent 1px),
+      linear-gradient(to bottom, color-mix(in srgb, var(--brand) 6%, transparent) 1px, transparent 1px);
+    background-size: 64px 64px;
+    -webkit-mask-image: radial-gradient(120% 80% at 50% 0%, #000 6%, transparent 68%);
+    mask-image: radial-gradient(120% 80% at 50% 0%, #000 6%, transparent 68%);
+  }
+
+  /* Wiring and mark both sit ABOVE the band's ambient light, in DOM order,
+     for the same reason they do in the hero: a mark lit from behind reads as
+     an object, a mark painted under the light reads as a stain. This was the
+     single thing most wrong with the bolt on the old hero. */
+  .band__rails {
+    position: absolute; inset: 0; z-index: -1; pointer-events: none;
+    color: var(--brand); opacity: 0.42;
+  }
+
+  .band__bolt {
+    position: absolute; z-index: -1; pointer-events: none;
+    top: 50%; height: 96%; width: auto;
+    /* Offset cast + tighter bloom, matching the hero. A zero-offset halo is
+       decoration; a shadow with an offset is an object above a surface. */
+    filter:
+      drop-shadow(0 22px 40px rgba(0, 0, 0, 0.6))
+      drop-shadow(0 0 30px color-mix(in srgb, var(--brand) 22%, transparent));
+  }
+  .band__bolt--left  { left: -7%;  transform: translateY(-50%) rotate(-7deg) scaleX(-1); }
+  .band__bolt--right { right: -6%; transform: translateY(-50%) rotate(6deg); }
+  .band__bolt-fill { fill: color-mix(in srgb, var(--brand) 13%, transparent); }
+  .band__bolt-edge { stroke: color-mix(in srgb, var(--brand) 46%, transparent); }
+
+  /* A band that emits light needs a slightly deeper floor to emit it against,
+     or the lamp just lifts the whole band uniformly and nothing has gained
+     any depth. Only applied where the band did not already choose a ground. */
+  .band--plain.has-ambient {
+    background: radial-gradient(150% 100% at 50% 50%, var(--sunk), transparent 76%);
+  }
+
+  /* Cove light: a linear luminaire on the top edge, throwing down into the band.
+     Shadow carries a real offset, not a zero-offset halo. */
+  .is-lit::after {
+    content: ''; position: absolute; z-index: -1; pointer-events: none;
+    top: 0; left: 50%; transform: translateX(-50%);
+    width: min(1040px, 94%); height: 420px;
+    background: radial-gradient(58% 100% at 50% 0%,
+      color-mix(in srgb, var(--brand) 15%, transparent), transparent 70%);
+  }
+  .is-lit.has-seam::before {
+    background: linear-gradient(90deg, transparent, var(--brand) 50%, transparent);
+    box-shadow: 0 1px 20px 1px color-mix(in srgb, var(--brand) 45%, transparent);
+    opacity: 0.9;
+  }
+
+  @media (max-width: 900px) {
+    .band__bolt { height: 62%; opacity: 0.55; }
+    .band__bolt--left { left: -22%; }
+    .band__bolt--right { right: -22%; }
+    .band__rails { opacity: 0.18; }
+  }
+</style>

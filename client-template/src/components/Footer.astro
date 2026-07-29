@@ -1,0 +1,74 @@
+---
+import { client, services, areas } from '../data/client.js';
+import { href } from '../lib/site.js';
+import Icon from './Icon.astro';
+
+const year = new Date().getFullYear();
+const socials = Object.entries(client.social).filter(([, v]) => v);
+---
+<footer class="footer">
+  <div class="container">
+    <div class="footer__grid">
+      <div>
+        <h4>{client.name}</h4>
+        <p class="muted" style="max-width:34ch">{client.tagline}</p>
+        <ul style="margin-top:14px">
+          <li><a href={`tel:${client.phoneHref}`}><Icon name="phone" /> {client.phone}</a></li>
+          <li><a href={`mailto:${client.email}`}><Icon name="mail" /> {client.email}</a></li>
+          <li><span class="muted"><Icon name="clock" /> {client.hours}</span></li>
+          <li>
+            <span class="muted">
+              <Icon name="pin" />
+              {client.showAddress
+                ? `${client.address.street}, ${client.address.locality} ${client.address.postcode}`
+                : `Serving ${client.address.locality} & ${client.address.region}`}
+            </span>
+          </li>
+        </ul>
+      </div>
+
+      <div>
+        <h4>Services</h4>
+        <ul>
+          {services.map((s) => <li><a href={href(`/services/${s.slug}/`)}>{s.title}</a></li>)}
+        </ul>
+      </div>
+
+      <div>
+        <h4>Areas we cover</h4>
+        <ul>
+          {areas.slice(0, 8).map((a) => <li><a href={href(`/areas/${a.slug}/`)}>{a.name}</a></li>)}
+        </ul>
+      </div>
+
+      <div>
+        <h4>Company</h4>
+        <ul>
+          <li><a href={href('/about/')}>About {client.owner.name}</a></li>
+          <li><a href={href('/case-studies/')}>Our work</a></li>
+          <li><a href={href('/reviews/')}>Reviews</a></li>
+          <li><a href={href('/contact/')}>Contact</a></li>
+          <li><a href={href('/privacy/')}>Privacy</a></li>
+        </ul>
+        {socials.length > 0 && (
+          <ul style="margin-top:14px">
+            {socials.map(([n, url]) => (
+              <li><a href={url} rel="noopener" target="_blank">{n[0].toUpperCase() + n.slice(1)}</a></li>
+            ))}
+          </ul>
+        )}
+      </div>
+    </div>
+
+    <div class="footer__bottom">
+      <span>&copy; {year} {client.legalName}. All rights reserved.</span>
+      <span>
+        {client.accreditations.filter((a) => a.name).map((a) => a.name).join(' · ')}
+      </span>
+    </div>
+  </div>
+</footer>
+
+<style>
+  .footer li svg { width: 15px; height: 15px; color: var(--brand); vertical-align: -2px; margin-right: 7px; }
+</style>

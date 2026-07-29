@@ -1,0 +1,233 @@
+---
+// PAPER HERO — the photographic wall diary.
+//
+// The film is the paper and the turn. Everything printed ON the paper is real DOM
+// text laid over it, and that split is deliberate rather than a compromise:
+// generated video cannot spell, so asking the model for dates and job names would
+// have produced garbled glyphs. Keeping the type in the document means it is crisp
+// at any density, selectable, translatable, and above all CORRECT — real months,
+// real job types, and one free day ringed, which is the claim the brand rests on.
+//
+// EACH PAGE IS A WHOLE PRINTED SHEET. Masthead, month, day names and entries are
+// all inside one .ph__page, because that is what has to leave together when the
+// sheet turns. The first version had the masthead as a layer over the film, so the
+// paper rolled away and the logo sat there: printing stuck to the lens instead of
+// to the page. The fold in paper-hero.css is what carries it off now.
+//
+// Three months, and each has to fit the seven columns by five rows the photograph
+// is printed with. That is not automatic: August 2026 starts on a Saturday and
+// needs 36 cells. May, June and July 2026 start Friday, Monday and Wednesday and
+// need 35, 30 and 33. So those are the three, consecutive and real.
+import Mark from '../Mark.astro';
+import { studio } from '../../data/studio.js';
+
+// Real job types this trade actually does. Illustrative of a full diary, never a
+// claim about bookings — the caption under the hero says exactly that.
+const MONTHS = [
+  {
+    name: 'May', year: 2026, startDow: 4, days: 31, open: 22,
+    jobs: {
+      1: 'EICR', 2: 'Board swap', 4: 'Rewire', 5: 'Fault find', 6: 'CU upgrade',
+      7: 'Solar PV', 8: 'EV charger', 11: 'EICR', 12: 'Consumer unit',
+      13: 'Fault find', 14: 'Rewire', 15: 'Board swap', 18: 'Solar PV',
+      19: 'EICR remedials', 20: 'CU upgrade', 21: 'EV charger', 25: 'Rewire',
+      26: 'Fault find', 27: 'EICR', 28: 'Board swap', 29: 'Solar PV',
+    },
+  },
+  {
+    name: 'June', year: 2026, startDow: 1, days: 30, open: 19,
+    jobs: {
+      1: 'Rewire', 2: 'CU upgrade', 3: 'Fault find', 4: 'Solar PV', 5: 'EICR',
+      8: 'Board swap', 9: 'EV charger', 10: 'Consumer unit', 11: 'Rewire',
+      12: 'Fault find', 15: 'EICR remedials', 16: 'Solar PV', 17: 'CU upgrade',
+      18: 'Board swap', 22: 'EICR', 23: 'EV charger', 24: 'Rewire',
+      25: 'Fault find', 26: 'Solar PV', 29: 'Board swap', 30: 'CU upgrade',
+    },
+  },
+  {
+    name: 'July', year: 2026, startDow: 3, days: 31, open: 24,
+    jobs: {
+      1: 'EICR', 2: 'Fault find', 3: 'Board swap', 6: 'Consumer unit',
+      7: 'Rewire', 8: 'Solar PV', 9: 'CU upgrade', 10: 'Fault find',
+      13: 'EICR remedials', 14: 'EV charger', 15: 'Rewire', 16: 'Solar PV',
+      17: 'Board swap', 20: 'Rewire', 21: 'EICR', 22: 'CU upgrade',
+      23: 'Fault find', 27: 'EICR', 28: 'Board swap', 29: 'Solar PV',
+      30: 'EV charger', 31: 'Rewire',
+    },
+  },
+];
+
+// Flatten each month to exactly 35 cells so the overlay always matches the printed
+// grid. Leading blanks come from the real first weekday.
+const PAGES = MONTHS.map((m) => {
+  const cells = [];
+  for (let i = 0; i < m.startDow; i++) cells.push(null);
+  for (let d = 1; d <= m.days; d++) cells.push({ d, job: m.jobs[d] || '', open: d === m.open });
+  while (cells.length < 35) cells.push(null);
+  return { name: m.name, year: m.year, cells: cells.slice(0, 35) };
+});
+
+const DOWS = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+---
+<div class="ph" data-paper-hero>
+  <div class="ph__stage">
+    <video
+      class="ph__film"
+      poster="/img/hero-calendar.webp"
+      width="1344" height="576"
+      muted playsinline loop preload="auto"
+      aria-hidden="true" tabindex="-1"
+    >
+      <source src="/video/hero-turn.mp4" type="video/mp4" />
+    </video>
+
+    {/* All three sheets are in the document and one is shown at a time, so a turn
+        never waits on a render. data-first marks the sheet that is on the pad when
+        the page loads: it is the only one whose printing arrives by inking in,
+        because the other two arrive by being uncovered. */}
+    <div class="ph__diary" data-diary>
+      {PAGES.map((p, i) => (
+        <div
+          class="ph__page"
+          data-page={i}
+          data-on={i === 0 ? 'true' : undefined}
+          data-first={i === 0 ? 'true' : undefined}
+          aria-hidden="true"
+        >
+          <div class="ph__mast">
+            <Mark class="ph__mark" size={44} variant="story" rings={false} id={`ph-mark-${i}`} />
+            <p class="ph__word">Stacked&nbsp;Out</p>
+            <p class="ph__month">
+              <span class="ph__month-n">{p.name}</span>
+              <span class="ph__month-y">{p.year}</span>
+            </p>
+            <span class="ph__rule"></span>
+          </div>
+
+          <div class="ph__dows">{DOWS.map((d) => <span>{d}</span>)}</div>
+
+          <div class="ph__grid">
+            {p.cells.map((c, n) => (
+              <div
+                class={`ph__cell${c ? '' : ' ph__cell--blank'}${c && c.open ? ' ph__cell--open' : ''}`}
+                style={`--i:${n}`}
+              >
+                {c && <span class="ph__date">{c.d}</span>}
+                {c && c.job && <span class="ph__job">{c.job}</span>}
+                {c && c.open && <span class="ph__free">Free</span>}
+              </div>
+            ))}
+          </div>
+        </div>
+      ))}
+    </div>
+
+    <button class="ph__play" type="button" hidden data-play>
+      <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true" fill="currentColor">
+        <path d="M8 5v14l11-7z" />
+      </svg>
+      Play the turn
+    </button>
+  </div>
+
+  {/* One statement of what the picture is doing, for anyone who cannot see it. The
+      sheets themselves are aria-hidden: thirty five dates read aloud is noise, and
+      none of it is information the copy below does not already carry. */}
+  <p class="ph__sr">
+    {studio.name}. A wall diary turning through {PAGES.map((p) => p.name).join(', ')} 2026,
+    every working day carrying a job, one day each month left free.
+  </p>
+</div>
+
+<script is:inline>
+  (function () {
+    var host = document.querySelector('[data-paper-hero]');
+    if (!host) return;
+    var film = host.querySelector('.ph__film');
+    var diary = host.querySelector('[data-diary]');
+    if (!film) return;
+
+    var pages = diary ? diary.querySelectorAll('[data-page]') : [];
+    var button = host.querySelector('[data-play]');
+    var still = window.matchMedia('(prefers-reduced-motion: reduce)');
+    var started = false;
+
+    // The turn window, read off the delivered frames rather than guessed: the
+    // corner is lifting by 0.55s and the sheet underneath is flat by 2.45s.
+    var TURN_IN = 0.55;
+    var TURN_OUT = 2.45;
+    var idx = 0;
+    var turning = false;
+
+    film.addEventListener('playing', function () {
+      started = true;
+      host.classList.add('ph--live');
+      if (button) button.hidden = true;
+    });
+
+    // timeupdate is enough. It fires several times a second and all it does is set
+    // two attributes; the fold itself is a CSS animation on the film's own timing,
+    // so nothing here runs per frame.
+    film.addEventListener('timeupdate', function () {
+      if (!pages.length) return;
+      var inTurn = film.currentTime > TURN_IN && film.currentTime < TURN_OUT;
+      if (inTurn === turning) return;
+      turning = inTurn;
+
+      if (inTurn) {
+        // BOTH sheets are on screen through the turn, which is the whole point:
+        // the outgoing one is wiped away along the fold while the incoming one is
+        // uncovered along the same line. They are two halves of one edge.
+        var next = (idx + 1) % pages.length;
+        pages[idx].setAttribute('data-out', 'true');
+        pages[idx].removeAttribute('data-first');
+        pages[next].setAttribute('data-on', 'true');
+        pages[next].setAttribute('data-in', 'true');
+      } else {
+        pages[idx].removeAttribute('data-out');
+        pages[idx].removeAttribute('data-on');
+        idx = (idx + 1) % pages.length;
+        pages[idx].removeAttribute('data-in');
+      }
+    });
+
+    function offer() { if (!started && button) button.hidden = false; }
+
+    function play() {
+      var p = film.play();
+      // Blocked autoplay, an iframe without allow="autoplay", data saver, low power
+      // mode: all land here, and one click recovers all of them.
+      if (p && p.catch) p.catch(offer);
+    }
+
+    function arm() {
+      if (still.matches) { offer(); return; }
+      if (film.readyState >= 3) play();
+      else film.addEventListener('canplaythrough', play, { once: true });
+      setTimeout(offer, 2500);
+    }
+    film.addEventListener('error', offer);
+
+    if (button) {
+      button.addEventListener('click', function () {
+        try { film.currentTime = 0; } catch (e) {}
+        film.play();
+      });
+    }
+
+    if ('IntersectionObserver' in window) {
+      var io = new IntersectionObserver(function (entries) {
+        entries.forEach(function (e) {
+          if (e.isIntersecting) { io.disconnect(); arm(); }
+        });
+      }, { threshold: 0.25 });
+      io.observe(host);
+    } else {
+      arm();
+    }
+
+    still.addEventListener('change', function () {
+      if (still.matches) { film.pause(); host.classList.remove('ph--live'); }
+    });
+  })();
+</script>

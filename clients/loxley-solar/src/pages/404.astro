@@ -1,0 +1,29 @@
+---
+// Branded 404: back onto a converting path.
+import Base from '../layouts/Base.astro';
+import { client } from '../data/client.js';
+const tel = client.phone.replace(/\s/g, '');
+---
+<Base
+  title="Page not found | Loxley Solar"
+  description="That page does not exist. If you were after a price or an estimate, the form is the quickest route."
+  current=""
+>
+  <section class="section">
+    <div class="wrap">
+      <p class="kicker">404</p>
+      <h1 style="margin-top: var(--s-2); max-width: 16ch;">No sun here. Try the homepage.</h1>
+      <p class="hero__sub" style="margin-top: var(--s-3);">
+        That page does not exist. If you were after a price or an estimate,
+        the form is the quickest route.
+      </p>
+      <div class="hero__acts">
+        <a class="btn btn--quote" href="/#quote">Get a quote</a>
+        <a class="btn btn--call" href={`tel:${tel}`}>Call Dan</a>
+      </div>
+      <p style="margin-top: var(--s-4); font-size: var(--t-small); color: var(--ink-soft);">
+        Or start again at the <a href="/" style="color: var(--ink);">homepage</a>.
+      </p>
+    </div>
+  </section>
+</Base>

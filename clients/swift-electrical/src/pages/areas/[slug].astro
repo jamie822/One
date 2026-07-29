@@ -1,0 +1,183 @@
+---
+// LOCATION PAGES — the ranking engine.
+//
+// Every competitor studied produces near-identical location pages. Elite
+// Electrical in Leeds runs five keyword variants of the same page; KHL
+// Manchester uses one title template across every suburb. Both are thin-content
+// risks and both read as machine-written.
+//
+// What makes these pages distinct is `landmarks` and `housingStock` in
+// client.js — real streets and the real electrical characteristics of the local
+// housing. If those are empty for a town, delete the town rather than ship a
+// templated page.
+import Layout from '../../layouts/Layout.astro';
+import Hero from '../../components/Hero.astro';
+import TrustBar from '../../components/TrustBar.astro';
+import Reviews from '../../components/Reviews.astro';
+import CtaBand from '../../components/CtaBand.astro';
+import Icon from '../../components/Icon.astro';
+import Needed from '../../components/Needed.astro';
+import { href, hasPhone, areaServiceSchema } from '../../lib/site.js';
+import { client, services, areas, caseStudies } from '../../data/client.js';
+
+export function getStaticPaths() {
+  return areas.map((area) => ({ params: { slug: area.slug }, props: { area } }));
+}
+
+const { area } = Astro.props;
+const path = `/areas/${area.slug}/`;
+const jobHere = caseStudies.find((c) => c.area === area.slug);
+// Was .slice(0, 6) of the seven other areas, which quietly orphaned one area
+// from every page in the cluster. Link all of them; seven pills is not a lot.
+const others = areas.filter((a) => a.slug !== area.slug);
+
+/* TITLE.
+   Bradford is flagged primary, and its old title — "Electrician in Bradford" —
+   was character-for-character the homepage's. Two URLs competing for one query
+   with one title is cannibalisation, and Google picks the winner, not us. The
+   homepage keeps the head term. This page takes the business's own framing,
+   which is also the honest one: it is the only page in the cluster whose
+   subject is the whole city rather than a district of it. */
+const title = area.primary
+  ? `${area.name} Electrician & Security Installer`
+  : `Electrician in ${area.name}`;
+
+/* DESCRIPTION.
+   Every area page previously shipped the same sentence with the town swapped —
+   "Swift Electrical & Security — electrical work in Bingley.  ", trailing double
+   space included, because travelNote and responsePromise are both still empty.
+   That is the meta-layer version of a doorway page, and it wasted the one thing
+   this cluster genuinely has: eight paragraphs of real, non-interchangeable
+   Bradford housing-stock knowledge sitting in client.js.
+
+   So the description is built from that paragraph, clipped on a sentence break
+   where one falls inside the budget and on a word boundary otherwise. Nothing is
+   written here that is not already on the page. */
+const DANGLERS =
+  /\s+(a|an|the|and|or|of|in|on|at|to|with|for|from|as|is|are|was|were|that|which|but|most|much|it|its|by|into|around|over|under|than|so|up|had|has|been|not|no|nor|if|when|where|while|there|their)$/i;
+
+function describe(a) {
+  const prefix = `NICEIC registered electrician covering ${a.name}. `;
+  const budget = 157 - prefix.length;
+  const stock = (a.housingStock || '').trim();
+  if (!stock) return `${prefix}${client.tagline}`.trim();
+  if (stock.length <= budget) return prefix + stock;
+
+  // A complete sentence always beats a truncated one, even a shorter complete
+  // sentence, so take a sentence break wherever one falls in the back two
+  // thirds of the budget.
+  const window = stock.slice(0, budget);
+  const lastStop = Math.max(window.lastIndexOf('. '), window.lastIndexOf('; '));
+  if (lastStop > budget * 0.35) return prefix + window.slice(0, lastStop + 1);
+
+  // Otherwise clip on a word boundary, then walk back off any trailing article,
+  // preposition or conjunction — "…through terraces in the…" reads as a fault,
+  // "…through terraces…" reads as an edit.
+  let tail = window.slice(0, window.lastIndexOf(' '));
+  let prev;
+  do { prev = tail; tail = tail.replace(/[,;:—-]$/, '').replace(DANGLERS, ''); } while (tail !== prev);
+  return `${prefix}${tail}…`;
+}
+---
+<Layout
+  path={path}
+  title={title}
+  description={describe(area)}
+  crumbs={[{ name: 'Home', path: '/' }, { name: 'Areas', path: '/areas/' }, { name: area.name, path }]}
+  schemas={[areaServiceSchema(area)]}
+>
+  <Hero inner={true}>
+    <p class="eyebrow">{area.name}</p>
+    <h1>Electrician in {area.name}</h1>
+    {/* travelNote is still NEEDED. Rendering it unconditionally shipped an
+        empty <p> on all eight pages. */}
+    {area.travelNote && <p class="hero__sub">{area.travelNote}</p>}
+    <div class="hero__actions">
+      {/* phoneHref is empty, so this was `href="tel:"` wrapping an icon and
+          nothing else — a dead link with no accessible name, on every area
+          page. NAP has to degrade honestly, not fabricate a number. */}
+      {hasPhone
+        ? <a class="btn btn--primary btn--lg" href={`tel:${client.phoneHref}`}>
+            <Icon name="phone" /> {client.phone}
+          </a>
+        : <Needed label="PHONE NUMBER NEEDED — add to Google too" />}
+      <a class="btn btn--ghost btn--lg" href={href('/contact/')}>Request a quote</a>
+    </div>
+  </Hero>
+
+  <div class="container"><TrustBar /></div>
+
+  <section class="section">
+    <div class="container container--narrow reveal">
+      <h2>Working in {area.name}</h2>
+
+      {area.housingStock && <p class="lead">{area.housingStock}</p>}
+
+      {area.landmarks?.length > 0 && (
+        <p>
+          We work regularly around {area.landmarks.slice(0, -1).join(', ')}
+          {area.landmarks.length > 1 ? ' and ' : ''}{area.landmarks.at(-1)}.
+        </p>
+      )}
+
+      {!area.housingStock && (
+        <div class="ph" style="aspect-ratio:auto;padding:30px;margin:24px 0">
+          <strong>This page is not ready to publish</strong>
+          <small>
+            Add `housingStock` and `landmarks` for {area.name} in src/data/client.js,
+            or remove the area. A location page without local specifics is thin content.
+          </small>
+        </div>
+      )}
+    </div>
+  </section>
+
+  <section class="section section--panel">
+    <div class="container">
+      <div class="section__head reveal">
+        <p class="eyebrow">Services</p>
+        <h2>What we do in {area.name}</h2>
+      </div>
+      <div class="grid grid--3">
+        {services.map((s, i) => (
+          <a class="card reveal" style={`transition-delay:${(i % 3) * 80}ms`} href={href(`/services/${s.slug}/`)}>
+            <span class="card__icon"><Icon name={s.icon} /></span>
+            <h3>{s.title}</h3>
+            <p>{s.short}</p>
+            <span class="card__link">Read more <span aria-hidden="true">→</span></span>
+          </a>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  {jobHere && (
+    <section class="section">
+      <div class="container container--narrow reveal">
+        <p class="eyebrow">A job in {area.name}</p>
+        <h2>{jobHere.title}</h2>
+        <p class="lead">{jobHere.problem}</p>
+        <p>{jobHere.work}</p>
+        <a class="btn btn--ghost" href={href(`/case-studies/${jobHere.slug}/`)}>See the full job</a>
+      </div>
+    </section>
+  )}
+
+  <section class="section section--panel">
+    <div class="container">
+      <div class="section__head reveal"><h2>Reviews</h2></div>
+      <Reviews limit={3} />
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="container reveal">
+      <h2>Nearby</h2>
+      <div style="display:flex;flex-wrap:wrap;gap:10px;margin-top:16px">
+        {others.map((a) => <a class="pill" href={href(`/areas/${a.slug}/`)}>{a.name}</a>)}
+      </div>
+    </div>
+  </section>
+
+  <CtaBand title={`Need an electrician in ${area.name}?`} />
+</Layout>

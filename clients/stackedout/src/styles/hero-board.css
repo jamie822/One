@@ -1,0 +1,649 @@
+/* ============================================================================
+   hero-board.css — candidate 02, "The board comes alive".
+
+   Component tokens only. Every value below resolves to a token already in
+   brand.css, or to a color-mix of two of them. There is no eighth colour here;
+   if you find a raw hex that is not #0000 / transparent, it is a bug.
+
+   Layering follows the three tier rule: brand.css holds primitives and
+   semantics, this file holds component tokens (--bd-*) and nothing else.
+   ========================================================================== */
+
+:root { color-scheme: dark; }
+
+/* Strong curves. The CSS built ins are too weak to read as mechanism. */
+.boardpage {
+  --ease-out:  cubic-bezier(.23, 1, .32, 1);
+  /* Snap action. A toggle mechanism loads against its spring, whips over centre
+     and slams into a hard stop. It does not overshoot and settle back. */
+  --ease-snap: cubic-bezier(.62, .01, .16, 1);
+  --ease-trip: cubic-bezier(.9, .02, .12, 1);     /* a trip is violent and stops */
+}
+
+/* ---------------------------------------------------------------- hero ---- */
+
+.bhero { padding-block: var(--s-5) var(--s-6); }
+
+.bhero__grid {
+  display: grid;
+  gap: var(--s-4);
+  align-items: center;
+}
+
+.bhero__say { display: grid; gap: var(--s-2); justify-items: start; }
+
+/* LCP element. Never animated, never gradient filled, present at first paint. */
+.bhero__h {
+  font-size: clamp(2.125rem, 6.4vw, 3.5rem);
+  max-width: 15ch;
+}
+
+.bhero__lead {
+  font-size: var(--t-lead);
+  color: var(--ink-muted);
+  max-width: 46ch;
+  text-wrap: pretty;
+  margin-top: 2px;
+}
+
+.bhero__do {
+  display: flex; flex-wrap: wrap; gap: 12px;
+  margin-top: var(--s-3);
+  width: 100%;
+}
+
+/* ============================================================================
+   THE BOARD
+   A 12 module consumer unit, cover off, on charcoal. Read top to bottom:
+   top flange and cover screws / busbar / DIN rail with the modules clipped to
+   it / flying neutral tails / neutral and earth bars / schedule card.
+   ========================================================================== */
+
+.bd {
+  /* --- component tokens ------------------------------------------------- */
+  --bd-face:   color-mix(in srgb, var(--ink)  8%, var(--panel));  /* enclosure  */
+  --bd-cavity: color-mix(in srgb, var(--ink)  2%, var(--ground)); /* recess     */
+  --bd-metal:  color-mix(in srgb, var(--ink) 22%, var(--panel));  /* rail, bars */
+  /* Devices are light grey plastic, because that is what they are. A near
+     black breaker on a near black board is a designer's idea of a board. */
+  --bd-mod:    color-mix(in srgb, var(--ink) 58%, var(--panel));
+  --bd-seam:   color-mix(in srgb, var(--ground) 55%, transparent);
+  --bd-line:   rgba(255, 255, 255, .10);
+  --bd-live:   var(--incoming);                                   /* current    */
+  --bd-attn:   var(--action);                                     /* press me   */
+
+  --bd-cols: 8;                          /* 6 ways plus a 2 module main switch */
+  --bd-pad: clamp(9px, 1.3vw, 18px);
+  --bd-throw: 130%;                       /* toggle travel, on to off           */
+
+  position: relative;
+  border-radius: var(--r-card);
+  background: var(--bd-face);
+  border: 1px solid var(--bd-line);
+  padding: var(--bd-pad);
+  /* Depth with a real offset and a real blur. Not a halo. */
+  box-shadow: 0 18px 44px -24px rgba(0, 0, 0, .9),
+              inset 0 1px 0 rgba(255, 255, 255, .07);
+  container-type: inline-size;
+}
+
+/* Four cover screws. Boards have them; drawings of boards do not. */
+.bd__screw {
+  position: absolute; width: 7px; height: 7px; border-radius: 50%;
+  background:
+    linear-gradient(120deg, rgba(255, 255, 255, .30), rgba(255, 255, 255, .04)),
+    var(--bd-metal);
+  box-shadow: inset 0 0 0 1px rgba(0, 0, 0, .5);
+}
+.bd__screw::after {                       /* the slot */
+  content: ''; position: absolute; inset: 2.4px 1px;
+  background: rgba(0, 0, 0, .55); transform: rotate(38deg);
+}
+.bd__screw--tl { top: 7px;    left: 7px; }
+.bd__screw--tr { top: 7px;    right: 7px; }
+.bd__screw--bl { bottom: 7px; left: 7px; }
+.bd__screw--br { bottom: 7px; right: 7px; }
+
+.bd__cavity {
+  border-radius: 10px;
+  background: var(--bd-cavity);
+  box-shadow: inset 0 2px 6px rgba(0, 0, 0, .6),
+              inset 0 0 0 1px rgba(0, 0, 0, .5);
+  padding: clamp(8px, 1.1vw, 14px);
+  display: grid;
+  gap: 0;
+}
+
+/* -------------------------------------------------------------- busbar ---- */
+/* THE ONE SIGNATURE GRADIENT ON THIS PAGE. It is the live busbar, and the
+   gradient runs the way the current does: yellow at the main switch end,
+   cyan at the far end. Used once here. Nowhere else on the page. */
+
+/* The comb starts at the first device. The main switch is fed by the tails and
+   feeds the comb through a link, so the bar does not run over it. */
+.bd__busrow {
+  display: grid;
+  grid-template-columns: calc(200% / var(--bd-cols)) 1fr;
+  align-items: stretch;
+  height: clamp(8px, 1vw, 13px);
+}
+
+.bd__link {                               /* main switch outgoing to the comb */
+  align-self: end;
+  height: 55%;
+  margin-inline: 44% 0;
+  background: var(--bd-metal);
+  transition: background-color 200ms var(--ease-out);
+}
+.bd[data-phase='main'] .bd__link,
+.bd[data-phase='live'] .bd__link { background: var(--action); }
+
+.bd__bus {
+  position: relative;
+  border-radius: 2px 2px 0 0;
+  background: var(--bd-metal);
+  overflow: hidden;
+  isolation: isolate;
+}
+
+.bd__bus::before {                        /* the energised copper */
+  content: ''; position: absolute; inset: 0;
+  background: var(--hero-gradient);
+  clip-path: inset(0 100% 0 0);           /* current arrives from the main switch */
+  /* De-energising is not the reverse of energising. Pulling the main switch
+     kills the bar at once; it does not drain back down it over most of a
+     second. Slow on the way up, snap on the way down. */
+  transition: clip-path 130ms var(--ease-out);
+}
+.bd[data-phase='main'] .bd__bus::before,
+.bd[data-phase='live'] .bd__bus::before {
+  clip-path: inset(0 0 0 0);
+  transition-duration: 900ms;
+}
+
+/* Travelling current. transform only, so it stays on the compositor. */
+.bd__pulse {
+  position: absolute; inset-block: 0; left: 0;
+  width: 18%;
+  background: linear-gradient(90deg, transparent,
+              color-mix(in srgb, var(--ink) 75%, transparent), transparent);
+  opacity: 0;
+  transform: translateX(-140%);
+  pointer-events: none;
+}
+@media (prefers-reduced-motion: no-preference) {
+  .bd[data-phase='live'] .bd__pulse { opacity: .8; animation: bd-run 3.4s linear infinite; }
+  /* Nothing should animate forever to an empty room. The observer that starts
+     the sequence also reports when the board leaves the viewport, and the
+     travelling current parks until it comes back. */
+  .bd[data-vis='out'] .bd__pulse { animation-play-state: paused; }
+}
+@keyframes bd-run {
+  from { transform: translateX(-140%); }
+  to   { transform: translateX(660%); }
+}
+
+/* ------------------------------------------------------------ DIN rail ---- */
+
+.bd__rail { position: relative; }
+
+/* 35mm top hat rail. Visible past the last device at either end, which is
+   where you actually see it on a board. */
+.bd__rail::before {
+  content: ''; position: absolute; inset-inline: 0; top: 6%; height: 62%;
+  border-radius: 2px;
+  background: linear-gradient(180deg,
+              color-mix(in srgb, var(--ink) 30%, var(--panel)),
+              color-mix(in srgb, var(--ink) 13%, var(--panel)) 30%,
+              color-mix(in srgb, var(--ink)  6%, var(--panel)) 72%,
+              color-mix(in srgb, var(--ink) 20%, var(--panel)));
+}
+
+.bd__row {
+  position: relative;
+  display: grid;
+  grid-auto-flow: column;
+  grid-auto-columns: 1fr;
+  gap: 0;                                  /* DIN modules butt up. No gaps. */
+}
+
+/* ---------------------------------------------------------- one module ---- */
+
+.way {
+  position: relative;
+  display: grid;
+  grid-template-rows: auto auto auto;      /* busbar tooth / face / neutral tail */
+  align-content: start;
+  gap: 0; padding: 0; border: 0; margin: 0;
+  background: none; font: inherit; color: inherit;
+  cursor: pointer; text-align: center;
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+  appearance: none;
+}
+.way:focus-visible { outline: 2px solid var(--incoming); outline-offset: 2px; border-radius: 3px; z-index: 2; }
+.way--main { grid-column: span 2; }
+
+/* The busbar tooth. Copper, and it stays copper. Current is read off the bar
+   itself, not by lighting up eleven little tabs. */
+.way__tap {
+  height: clamp(5px, .62vw, 8px);
+  margin-inline: 33%;
+  background: linear-gradient(90deg,
+              color-mix(in srgb, var(--ink) 16%, var(--panel)),
+              color-mix(in srgb, var(--ink) 40%, var(--panel)),
+              color-mix(in srgb, var(--ink) 16%, var(--panel)));
+}
+.way--main .way__tap { visibility: hidden; }   /* no comb tooth on a main switch */
+
+/* The device face. aspect-ratio keeps DIN proportions honest at every width:
+   one module is 17.5mm wide, the face standing proud is about 4.2 times that.
+   Everything inside is placed as a percentage of that face, so the whole
+   device scales as one object rather than drifting apart at breakpoints. */
+.way__face {
+  position: relative;
+  aspect-ratio: 1 / 4.2;
+  background: linear-gradient(90deg,
+              color-mix(in srgb, var(--ink) 38%, var(--panel)),
+              var(--bd-mod) 22%,
+              var(--bd-mod) 78%,
+              color-mix(in srgb, var(--ground) 22%, var(--bd-mod)));
+  border-inline-end: 1px solid var(--bd-seam);     /* the seam between devices */
+  transition: filter 220ms var(--ease-out);
+  transition-delay: var(--d, 0ms);
+  filter: brightness(.62) saturate(0);
+}
+.way--main .way__face { aspect-ratio: 2 / 4.2; }
+.way:last-child .way__face { border-inline-end: 0; }
+
+.bd[data-phase='live'] .way__face,
+.bd[data-phase='main'] .way--main .way__face { filter: brightness(1); }
+.bd[data-phase='live'] .way[data-state='off'] .way__face { filter: brightness(.78); }
+
+@media (hover: hover) and (pointer: fine) {
+  .way:hover .way__face { filter: brightness(1.12); }
+}
+
+/* The two cable terminal screws, top and bottom. Line in at the top from the
+   busbar, load out at the bottom to the circuit. */
+.way__face::before,
+.way__face::after {
+  content: ''; position: absolute; left: 18%; right: 18%; height: 4.4%;
+  border-radius: 1px;
+  background: linear-gradient(180deg,
+              color-mix(in srgb, var(--ground) 70%, transparent),
+              color-mix(in srgb, var(--ground) 40%, transparent));
+  box-shadow: inset 0 -1px 0 rgba(255, 255, 255, .18);
+}
+.way__face::before { top: 3.4%; }
+.way__face::after  { bottom: 3.4%; }
+
+/* rating, printed on the front of the device. Dark on light, the way round
+   the brand guide asks for. */
+.way__rating {
+  position: absolute; top: 11%; left: 0; right: 0;
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+  /* The container is the board, which tops out near 750px, so 1.15cqw peaked
+     at 8.6px and the 13px ceiling was unreachable: this printed at its 8px
+     floor on a 1440px desktop. 1.7cqw actually reaches the ceiling. */
+  font-size: clamp(8px, 1.7cqw, 13px);
+  letter-spacing: .01em;
+  line-height: 1;
+  color: var(--ground);
+}
+.way--main .way__rating { top: 8%; }
+
+/* the toggle window and the toggle. About a fifth of the device face, which
+   is what it is in life. */
+.way__slot {
+  position: absolute; top: 36%; height: 17%; left: 22%; right: 22%;
+  border-radius: 2px;
+  /* A shallow recess in the same grey plastic, not a black hole. The nub has
+     to read dark against light or you cannot see which way it is thrown. */
+  background: linear-gradient(180deg,
+              color-mix(in srgb, var(--ground) 40%, var(--bd-mod)),
+              color-mix(in srgb, var(--ground) 22%, var(--bd-mod)));
+  box-shadow: inset 0 1px 1px rgba(0, 0, 0, .55), inset 0 -1px 0 rgba(255, 255, 255, .1);
+  overflow: hidden;
+}
+.way--main .way__slot { top: 34%; height: 21%; left: 33%; right: 33%; }
+
+.way__lever {
+  position: absolute; inset-inline: 9%; top: 5%;
+  height: 40%;
+  border-radius: 1.5px;
+  background: linear-gradient(180deg,
+              color-mix(in srgb, var(--ink) 26%, var(--ground)),
+              color-mix(in srgb, var(--ground) 94%, var(--ink)));
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, .3), 0 1px 2px rgba(0, 0, 0, .8);
+  /* Breakers snap. They do not glide. Short, hard, a touch of over centre. */
+  transition: transform 100ms var(--ease-snap);
+  /* No will-change. There are eleven of these and they are idle until tapped,
+     so hinting them all promotes eleven permanent compositor layers to serve a
+     100ms transform the browser promotes on its own anyway. */
+}
+
+.way[data-state='off']  .way__lever { transform: translateY(var(--bd-throw)); }
+/* Mid trip. Not off. This is why you knock one fully off before it will reset. */
+.way[data-state='trip'] .way__lever {
+  transform: translateY(calc(var(--bd-throw) * .55));
+  transition-duration: 70ms;
+  transition-timing-function: var(--ease-trip);
+}
+.way:active .way__lever { filter: brightness(1.5); }
+
+/* test button and trip flag. Every RCBO carries both on its face. */
+.way__test {
+  position: absolute; top: 58%; left: 31%; right: 31%;
+  aspect-ratio: 1.3; border-radius: 1.5px;
+  background: color-mix(in srgb, var(--ground) 34%, var(--bd-mod));
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, .25), inset 0 -1px 0 rgba(0, 0, 0, .35);
+  display: grid; place-items: center;
+  font-family: var(--font-body); font-weight: 700; line-height: 1;
+  font-size: clamp(5px, .78cqw, 9px);
+  color: color-mix(in srgb, var(--ground) 78%, transparent);
+}
+
+.way__flag {
+  position: absolute; top: 72%; left: 34%; right: 34%;
+  aspect-ratio: 1.9; border-radius: 1px;
+  background: color-mix(in srgb, var(--ground) 88%, var(--panel));
+  box-shadow: inset 0 0 0 1px rgba(0, 0, 0, .65);
+  transition: background-color 200ms var(--ease-out);
+  transition-delay: var(--d, 0ms);
+}
+.bd[data-phase='live'] .way[data-state='on'] .way__flag {
+  background: color-mix(in srgb, var(--bd-live) 74%, var(--ground));
+}
+.way[data-state='trip'] .way__flag {
+  background: var(--bd-attn);
+  box-shadow: inset 0 0 0 1px rgba(0, 0, 0, .45);
+  transition-duration: 90ms; transition-delay: 0ms;
+  transition-timing-function: var(--ease-trip);
+}
+.way--main .way__test, .way--main .way__flag { display: none; }
+
+/* I and O beside the main switch toggle. Isolators carry these markings;
+   MCBs and RCBOs do not, so only the main switch gets them. */
+.way__io {
+  position: absolute; left: 0; right: 0;
+  font-family: var(--font-body); font-weight: 700; line-height: 1;
+  font-size: clamp(6px, .78cqw, 10px);
+  color: color-mix(in srgb, var(--ground) 55%, transparent);
+}
+.way__io--i { top: 27%; }
+.way__io--o { top: 57.5%; }
+@media (max-width: 699px) { .way__io { display: none; } }
+
+/* ----------------------------------------------- flying neutral tails ---- */
+/* Every RCBO has one, looping down to the neutral bar. Nobody outside the
+   trade draws these, which is exactly why they are here. */
+
+.way__lead {
+  display: block; width: 100%;
+  height: clamp(13px, 2.1vw, 26px);
+  overflow: visible;
+}
+.way__lead path {
+  fill: none;
+  stroke: color-mix(in srgb, var(--ink) 40%, var(--panel));
+  stroke-width: 2.2;
+  stroke-linecap: round;
+  vector-effect: non-scaling-stroke;
+}
+.way--main .way__lead { visibility: hidden; }
+
+/* ------------------------------------------------- neutral / earth bars --- */
+
+.bd__bars { display: grid; gap: 4px; margin-top: 1px; padding-inline: 1.5%; }
+.bd__bar {
+  height: clamp(8px, .95vw, 12px);
+  border-radius: 2px;
+  background-image:
+    radial-gradient(circle at 50% 50%, rgba(0, 0, 0, .62) 0 1.6px, transparent 1.7px),
+    linear-gradient(180deg,
+      color-mix(in srgb, var(--ink) 42%, var(--panel)),
+      color-mix(in srgb, var(--ink) 27%, var(--panel)) 45%,
+      color-mix(in srgb, var(--ink) 13%, var(--panel)));
+  background-size: 5.4% 100%, 100% 100%;
+  background-repeat: repeat-x, no-repeat;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, .18), 0 1px 2px rgba(0, 0, 0, .6);
+}
+.bd__bar--e {
+  background-image:
+    radial-gradient(circle at 50% 50%, rgba(0, 0, 0, .62) 0 1.6px, transparent 1.7px),
+    linear-gradient(180deg,
+      color-mix(in srgb, var(--ink) 29%, var(--panel)),
+      color-mix(in srgb, var(--ink) 18%, var(--panel)) 45%,
+      color-mix(in srgb, var(--ink)  8%, var(--panel)));
+}
+
+/* ----------------------------------------------------- schedule card ------ */
+
+.bd__sched {
+  display: grid;
+  grid-auto-flow: column;
+  grid-auto-columns: 1fr;
+  gap: 0;
+  margin-top: clamp(8px, 1.1vw, 14px);
+  padding-top: clamp(6px, .8vw, 10px);
+  border-top: 1px dashed var(--bd-line);
+}
+.bd__sched .sc--main { grid-column: span 2; }
+
+.sc {
+  padding-inline: 3px;
+  /* Same dead clamp as the ratings: pinned to 9px at every width. 1.45cqw
+     lifts the schedule to ~11px on a desktop board without pushing the longer
+     circuit names onto a second line. */
+  font-size: clamp(9px, 1.45cqw, 12px);
+  line-height: 1.2;
+  color: var(--ink-muted);
+  overflow-wrap: break-word;
+  hyphens: none;
+  text-align: center;
+  transition: color 200ms var(--ease-out);
+  transition-delay: var(--d, 0ms);
+  border-inline-end: 1px solid var(--bd-seam);
+}
+.sc:last-child { border-inline-end: 0; }
+.sc[data-state='on'],
+.sc[data-state='trip'] { color: var(--ink); }
+.sc[data-state='trip'] { font-weight: 700; }
+
+.sc__short { display: none; }
+
+/* ---------------------------------------------------------- readout ------- */
+
+.bd__read {
+  display: flex; align-items: center; gap: 10px; flex-wrap: wrap;
+  margin-top: var(--s-2); min-height: 44px;
+}
+.bd__status {
+  font-size: var(--t-label);
+  font-variant-numeric: tabular-nums;
+  color: var(--ink-muted);
+  margin: 0;
+}
+.bd__status b { color: var(--ink); font-weight: 500; }
+
+.bd__replay {
+  margin-left: auto;
+  display: inline-flex; align-items: center; gap: 8px;
+  min-height: 44px; padding: 8px 14px;
+  background: none; border: 1px solid var(--edge); border-radius: var(--r-chip);
+  color: var(--ink-muted); font: inherit; font-size: var(--t-label);
+  cursor: pointer; touch-action: manipulation;
+  transition: color 160ms var(--ease-out), border-color 160ms var(--ease-out);
+}
+.bd__replay:hover { color: var(--ink); border-color: var(--ink-muted); }
+.bd__replay:active { transform: scale(.97); }
+.bd__replay svg { width: 14px; height: 14px; }
+
+/* ============================================================================
+   CLOSE SECTION
+   ========================================================================== */
+
+.bwhy {
+  padding-block: var(--s-6);
+  border-top: 1px solid var(--edge);
+}
+.bwhy__h { font-size: var(--t-h3); max-width: 20ch; }
+.bwhy__p { margin-top: var(--s-3); color: var(--ink-muted); font-size: var(--t-lead); }
+
+.bfacts {
+  list-style: none; margin: var(--s-5) 0 0; padding: 0;
+  display: grid; gap: 0;
+  grid-template-columns: 1fr;
+}
+.bfact {
+  padding: var(--s-3) 0;
+  border-top: 1px solid var(--edge);
+  display: grid; gap: 4px;
+}
+.bfact__n {
+  font-size: var(--t-h2);
+  color: var(--action);
+}
+.bfact__t { color: var(--ink-muted); font-size: var(--t-body); }
+/* Cold hands, in a van. A bare inline link is a 20px target. */
+.bfact a {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  font-weight: 700;
+  touch-action: manipulation;
+}
+
+/* The figures arrive rather than being already there. Scroll driven, so it runs
+   off the main thread with no observer and no library.
+
+   The rise carries NO opacity fade, and that is the whole point. A view()
+   timeline parks its element on the `from` keyframe whenever the timeline never
+   advances, and it never advances in a full page screenshot, in print, or in
+   any client where the range does not resolve. This block used to start at
+   `opacity: 0`, so the only proof on the page (25, 13, the one live site, the
+   price placeholder) rendered as an empty gap in exactly the two places the
+   work gets reviewed and sent. Measured: opacity 0 under print emulation and in
+   a full page capture.
+
+   Translating only means the worst case is a 10px offset nobody will see,
+   instead of content nobody can. The diary candidate reached the same
+   conclusion and dropped its below-fold reveal outright; this keeps the motion
+   and removes the failure mode. */
+@media (prefers-reduced-motion: no-preference) {
+  @supports (animation-timeline: view()) {
+    .bfact {
+      animation: bd-rise 420ms var(--ease-out) both;
+      animation-timeline: view();
+      animation-range: entry 4% cover 22%;
+    }
+    .bfacts .bfact:nth-child(2) { animation-range: entry 4% cover 26%; }
+    .bfacts .bfact:nth-child(3) { animation-range: entry 4% cover 30%; }
+  }
+}
+@keyframes bd-rise {
+  from { transform: translateY(10px); }
+  to   { transform: none; }
+}
+
+/* Belt and braces: paper never runs a timeline. */
+@media print {
+  .bfact { animation: none !important; transform: none !important; opacity: 1 !important; }
+}
+.bfact a { color: var(--incoming); }
+
+/* An unsupplied fact renders as a visible placeholder. It never renders as a
+   guess. Brand guide: no invented numbers, not once. */
+.bfact--todo {
+  border: 1px dashed color-mix(in srgb, var(--ink-muted) 55%, transparent);
+  border-radius: var(--r-chip);
+  padding: var(--s-3);
+  margin-top: var(--s-3);
+  align-content: center;
+}
+.bfact--todo .label { color: var(--ink-muted); display: block; margin-bottom: 6px; }
+
+.bwhy__do {
+  margin-top: var(--s-5);
+  display: grid;
+  justify-items: start;
+  gap: var(--s-2);
+}
+.bwhy__addr { font-size: var(--t-label); color: var(--ink-muted); }
+
+/* ============================================================================
+   RESPONSIVE
+   Mobile first. A 12 way board at 390px is unreadable, so on a phone it
+   becomes a 6 way board. That is not a shrunken 12 way, it is a real object:
+   consumer units come in 6, 8, 10 and 12 way, and a small flat gets a 6.
+   The board also goes full bleed there, which is what buys every breaker a
+   44px tap target on a phone in a van with cold hands.
+
+   Below 390px even six ways cannot hold 44px: an 8 module rail inside a 320px
+   screen gives 36px a way. So the smallest phones get a 4 way board, which is
+   again a real object rather than a squeeze, and the four kept are the ones
+   this studio sells to: lights, sockets, the charge point and the inverter.
+   ========================================================================== */
+
+.way--drop, .way--xs { display: none; }
+.sc--drop,  .sc--xs  { display: none; }
+.sc__short { display: block; }
+.sc__full  { display: none; }
+
+@media (max-width: 699px) {
+  .bhero { padding-block: var(--s-4) var(--s-5); }
+  .bhero__grid { gap: var(--s-3); }
+  .bhero__do { margin-top: var(--s-2); }
+  .bhero__board { margin-inline: calc(var(--s-3) * -1 + 2px); }
+  .bd { border-radius: 10px; --bd-pad: 7px; }
+  .bd__cavity { padding: 6px; }
+  .bwhy { padding-block: var(--s-5); }
+  .bd__screw { display: none; }            /* too small to read, so drop them */
+
+  /* The board is deliberately full bleed here. The readout under it is not:
+     it is prose, and it belongs on the same left edge as the headline rather
+     than 2px off the glass. max() keeps it clear of a notch in landscape. */
+  .bd__read {
+    padding-left:  max(calc(var(--s-3) - 2px), env(safe-area-inset-left));
+    padding-right: max(calc(var(--s-3) - 2px), env(safe-area-inset-right));
+  }
+}
+
+@media (max-width: 389px) {
+  .bd { --bd-cols: 6; }                    /* 4 ways plus the main switch */
+}
+
+@media (min-width: 390px) {
+  .way--xs { display: grid; }
+  .sc--xs  { display: block; }
+}
+
+@media (min-width: 700px) {
+  .way--drop { display: grid; }
+  .sc--drop  { display: block; }
+  .sc__short { display: none; }
+  .sc__full  { display: block; }
+  .bd        { --bd-cols: 12; }          /* 10 ways plus the main switch */
+  .bd__row   { margin-inline: 0; }
+}
+
+@media (min-width: 1060px) {
+  .bhero { padding-block: var(--s-5) var(--s-7); }
+  .bhero__grid {
+    grid-template-columns: minmax(300px, 0.92fr) minmax(0, 1.6fr);
+    gap: clamp(32px, 4vw, 64px);
+  }
+  .bhero__do { width: auto; }
+  .bfacts { grid-template-columns: repeat(3, 1fr); gap: var(--s-4); }
+  .bfact { border-top: 1px solid var(--edge); }
+  .bfact--todo { grid-column: 1 / -1; margin-top: 0; }
+  .bwhy__h { font-size: var(--t-h2); }
+}
+
+@media (max-width: 1059px) {
+  .bhero__grid { grid-template-columns: 1fr; }
+  .bhero__say  { max-width: 46ch; }
+}

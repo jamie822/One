@@ -1,0 +1,75 @@
+---
+// BLOG index. One flagship post at launch; the list grows without layout work.
+import Base from '../../layouts/Base.astro';
+
+const posts = [
+  {
+    href: '/blog/rewire-cost-leeds/',
+    title: 'How much does a rewire cost in Leeds? 2026 prices',
+    summary: 'Real figures by house type, what moves them, and when you do not need a rewire at all.',
+    date: 'Updated July 2026',
+  },
+  {
+    href: '/blog/eicr-landlords-leeds/',
+    title: 'EICR for Leeds landlords: the 2026 rules, costs and fines',
+    summary: 'The five rules that bite, what an inspection costs, and how to read the codes without being upsold on a pass.',
+    date: 'July 2026',
+  },
+  {
+    href: '/blog/fuse-board-upgrade-signs/',
+    title: 'Fuse board upgrade: 7 signs yours is due, and 2026 costs',
+    summary: 'Fuse wire, missing test buttons, buzzing, no spare ways: the honest checklist, plus what a swap really costs.',
+    date: 'July 2026',
+  },
+];
+---
+<Base
+  title="Advice from a Leeds electrician | ES Elec blog"
+  description="Straight answers to the questions people ring an electrician with: costs, certificates, solar payback. Written by the spark who does the work."
+  current="/blog/"
+>
+  <section class="section" style="padding-bottom: var(--s-4);">
+    <div class="wrap">
+      <h1>Advice, from the tools</h1>
+      <p class="hero__sub" style="margin-top: var(--s-2);">
+        Three honest reads, each one answering a question I get on the phone
+        every week, with the prices I quote and the rules I work to.
+      </p>
+    </div>
+  </section>
+
+  <div class="paper">
+    <section class="section" aria-label="Articles">
+      <div class="wrap">
+        <ul class="postlist">
+          {posts.map((p) => (
+            <li class="rise">
+              <a href={p.href}>
+                <h2>{p.title}</h2>
+                <p>{p.summary}</p>
+                <span>{p.date}</span>
+              </a>
+            </li>
+          ))}
+        </ul>
+      </div>
+    </section>
+  </div>
+</Base>
+
+<style>
+  .postlist { list-style: none; padding: 0; display: grid; gap: var(--s-3); max-width: 720px; }
+  .postlist a {
+    display: grid; gap: 8px;
+    text-decoration: none;
+    padding: 26px;
+    background: var(--surface);
+    border: 1px solid var(--edge);
+    border-radius: var(--r-box);
+    transition: border-color 170ms var(--ease-ui);
+  }
+  .postlist a:hover { border-color: var(--accent); }
+  .postlist h2 { font-size: 1.4rem; }
+  .postlist p { color: var(--ink-soft); font-size: var(--t-small); }
+  .postlist span { font: 700 var(--t-label) var(--font-body); color: var(--accent); }
+</style>

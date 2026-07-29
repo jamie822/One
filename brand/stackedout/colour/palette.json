@@ -1,0 +1,30 @@
+{
+  "name": "Stacked Out",
+  "mode": "dark-first",
+  "colours": {
+    "ground":      { "hex": "#08090b", "role": "page background",                 "onIt": "#f5f6f8" },
+    "panel":       { "hex": "#0d0f13", "role": "cards and raised surfaces",       "onIt": "#f5f6f8" },
+    "action":      { "hex": "#ffdd33", "role": "buttons, prices, primary CTA",    "onIt": "#08090b" },
+    "actionDeep":  { "hex": "#ffd60a", "role": "hover and pressed state",         "onIt": "#08090b" },
+    "incoming":    { "hex": "#3fe3ff", "role": "links, new, enquiries",           "onIt": "#08090b" },
+    "ink":         { "hex": "#f5f6f8", "role": "body and headline text on dark"                     },
+    "inkMuted":    { "hex": "#9aa1ab", "role": "captions and secondary text"                        },
+    "edge":        { "hex": "rgba(255,255,255,0.10)", "role": "hairline separator"                  }
+  },
+  "gradient": {
+    "hero": "linear-gradient(100deg, #ffdd33, #3fe3ff)",
+    "rule": "One per page. Logo, or one headline, or one primary button. Never body text."
+  },
+  "contrast": {
+    "ink-on-ground": 18.4, "ink-on-panel": 17.7,
+    "inkMuted-on-ground": 7.6, "inkMuted-on-panel": 7.4,
+    "action-on-ground": 14.8, "incoming-on-ground": 12.9,
+    "ground-on-action": 14.8, "ground-on-incoming": 12.9
+  },
+  "never": [
+    "Any colour outside this list",
+    "The gradient more than once on a page",
+    "Yellow text on white",
+    "Cyan text on yellow"
+  ]
+}

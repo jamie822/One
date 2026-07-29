@@ -1,0 +1,411 @@
+/* ==========================================================================
+   a11y.css — accessibility corrections layer
+
+   Loaded LAST, after global.css (which itself imports type.css and motion.css).
+   Everything here exists to satisfy a specific WCAG 2.2 success criterion, and
+   every rule says which one. Nothing here is a styling preference.
+
+   It is a separate file on purpose: global.css, type.css and motion.css are
+   owned by another workstream, so accessibility corrections that would
+   otherwise belong in them live here instead and are annotated so they can be
+   folded back in later without archaeology.
+
+   Where a rule has to restate a value that already exists elsewhere, the
+   source is named in the comment. Those are the only places this file can
+   drift, and they are all cosmetic if they do.
+   ========================================================================== */
+
+/* --------------------------------------------------------------------------
+   1. VISUALLY HIDDEN
+   Text that exists for assistive technology only. Not display:none — that
+   would remove it from the accessibility tree, which is the opposite of the
+   point. The clip-path/1px pattern keeps it in the tree and in the reading
+   order while occupying no visual space.
+   -------------------------------------------------------------------------- */
+.u-vh {
+  position: absolute !important;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  clip-path: inset(50%);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* --------------------------------------------------------------------------
+   2. CLOSED MOBILE NAV MUST NOT BE FOCUSABLE
+   WCAG 2.4.3 Focus Order, 2.4.7 Focus Visible, 4.1.2 Name Role Value
+
+   motion.css sets `html .nav a { opacity: 0 }` below 900px and the drawer is
+   clipped by `max-height: 0; overflow: hidden`. Neither of those removes an
+   element from the tab order, so seven controls — six nav links and the
+   header CTA — sat at opacity 0 while still focusable and still exposed to
+   screen readers. A keyboard user tabbed through seven invisible controls
+   before reaching the page.
+
+   Header.astro applies `inert` to the closed drawer, which is the real fix.
+   This rule is the no-JavaScript safety net: without JS the drawer can never
+   open, so its contents must never be reachable.
+
+   It is an animation rather than a transition on purpose. `visibility` has to
+   flip only AFTER the drawer has finished collapsing, or the close animation
+   vanishes instead of playing. A transition would mean restating motion.css's
+   `transition: max-height 380ms var(--ease-drawer)` here and owning a
+   duplicate of its timing; an animation carries its own delay and leaves the
+   transition entirely alone.
+   -------------------------------------------------------------------------- */
+@media (max-width: 900px) {
+  html .nav:not(.is-open) {
+    animation: a11y-nav-conceal 1ms linear 420ms both;
+  }
+  html .nav.is-open {
+    animation: none;
+  }
+}
+@keyframes a11y-nav-conceal {
+  from { visibility: visible; }
+  to   { visibility: hidden; }
+}
+
+/* An inert drawer must not be readable as a live surface either. */
+html .nav[inert] {
+  pointer-events: none;
+}
+
+/* --------------------------------------------------------------------------
+   3. FOCUS VISIBILITY
+   WCAG 2.4.7 Focus Visible, 1.4.11 Non-text Contrast, 2.4.13 Focus Appearance
+
+   motion.css already gives .btn, .est__opt, .rev__btn, .pill, .svc-row,
+   .svc-hero, .card and .faq summary a 2px amber ring. Everything else fell
+   through to the user-agent ring, and form controls had it removed outright
+   (`.field input:focus { outline: none }` in global.css) leaving a 1px border
+   colour change as the only cue — under the 2px minimum and, on a focused
+   field sitting on --panel, under 3:1.
+
+   --accent is a legal indicator colour in both modes: #ffb63d is 11:1 on the
+   dark ground, #c07800 is 3.5:1 on white.
+
+   :where() keeps this at zero specificity so the richer per-component rules
+   in motion.css continue to win where they exist; this only fills the gaps.
+   -------------------------------------------------------------------------- */
+:where(a, button, summary, [tabindex], input, select, textarea):focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 3px;
+}
+
+/* Form controls need the higher specificity to beat global.css's
+   `.field input:focus { outline: none }`. */
+html .field input:focus-visible,
+html .field select:focus-visible,
+html .field textarea:focus-visible,
+html .form input:focus-visible,
+html .form select:focus-visible,
+html .form textarea:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+/* The skip link paints onto the brand fill, where amber is the wrong cue. */
+html .skip:focus-visible {
+  outline: 3px solid var(--text);
+  outline-offset: -6px;
+}
+
+/* --------------------------------------------------------------------------
+   4. FOCUS MUST NOT BE OBSCURED
+   WCAG 2.4.11 Focus Not Obscured (Minimum) — AA in WCAG 2.2
+
+   .header is sticky at top:0 (z-index 50) and .callbar is fixed to the bottom
+   below 860px (z-index 90). Tabbing to a control just outside the viewport
+   scrolls it flush to the edge, i.e. underneath one of them. Reserving scroll
+   padding the size of each keeps the focused control clear of both.
+
+   Layout-neutral: scroll-padding changes where the scroll container comes to
+   rest, not the box model, so this cannot move a pixel or cost any CLS.
+   -------------------------------------------------------------------------- */
+html {
+  scroll-padding-top: 86px;   /* topbar + sticky .header */
+}
+@media (max-width: 860px) {
+  html {
+    scroll-padding-bottom: 92px;  /* .callbar + safe-area inset */
+  }
+}
+
+/* --------------------------------------------------------------------------
+   5. TARGET SIZE — CAROUSEL DOTS
+   WCAG 2.5.8 Target Size (Minimum), AA in WCAG 2.2
+
+   global.css draws the dots at 7x7 (26x7 when active). axe reported 31 such
+   targets across 9 pages, and on a phone they are close to unhittable.
+
+   The padding grows the target to 25x25 while `background-clip: content-box`
+   keeps the painted dot at exactly 7x7 — the visual is unchanged, only the
+   region that accepts a tap grows. The gap moves onto the padding so the row
+   does not get wider than the phone it has to fit on.
+   -------------------------------------------------------------------------- */
+html .rev__dots {
+  gap: 0;
+  margin-left: 0;
+}
+html .rev__dot {
+  width: 25px;
+  height: 25px;
+  padding: 9px;
+  box-sizing: border-box;
+  border-radius: 50%;
+}
+/* background-clip has to be restated per state. global.css and motion.css
+   both set the active and hover colours with the `background` SHORTHAND,
+   which silently resets background-clip to border-box — so without this the
+   selected dot paints across the whole 44x25 hit area as a fat slab. */
+html .rev__dot,
+html .rev__dot:hover,
+html .rev__dot:focus-visible,
+html .rev__dot.is-on,
+html .rev__dot.is-on:hover {
+  background-clip: content-box;
+}
+/* Inner radius = outer minus padding, so the active pill keeps the 4px
+   corners global.css gives it (4 + 9 = 13). */
+html .rev__dot.is-on {
+  width: 44px;
+  border-radius: 13px;
+}
+/* motion.css transitions width/background/border-radius on the element. The
+   painted box is now the content box, which those still drive, so the pill
+   expansion survives untouched.
+
+   The glow does need re-hanging. box-shadow traces the BORDER box, which is
+   now a 44x25 transparent hit area, so motion.css's version bloomed a solid
+   amber slab around an invisible rectangle. drop-shadow traces the painted
+   pixels instead, so the halo goes back to hugging the 26x7 pill. */
+html .rev__dot.is-on {
+  box-shadow: none;
+  filter: drop-shadow(0 0 5px color-mix(in srgb, var(--accent) 70%, transparent));
+}
+html .rev__dot:focus-visible {
+  outline-offset: -1px;
+}
+
+/* --------------------------------------------------------------------------
+   6. CAROUSEL SCROLL CONTAINER
+   WCAG 2.1.1 Keyboard, 2.5.7 Dragging Movements
+
+   Reviews.astro now marks the track focusable so it can be scrolled with the
+   arrow keys — the keyboard equivalent of the pointer drag. A focusable
+   region needs a ring of its own, inset so it does not overlap the cards.
+   -------------------------------------------------------------------------- */
+html .rev__track:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: -2px;
+  border-radius: 16px;
+}
+
+/* --------------------------------------------------------------------------
+   7. ESTIMATOR SELECTED STATE
+   WCAG 4.1.2 Name, Role, Value
+
+   The two option groups are single-select, so they are a radio group, not a
+   set of independent toggle buttons: Estimator.astro now exposes
+   role="radiogroup"/role="radio" with aria-checked and roving tabindex, per
+   the WAI-ARIA APG Radio Group pattern.
+
+   global.css keys the selected style off [aria-pressed='true'], which is the
+   attribute that had to go — aria-pressed is not valid on role="radio". This
+   mirrors that rule onto aria-checked. Values copied verbatim from
+   global.css `.est__opt[aria-pressed='true']`; if that rule is restyled this
+   one needs the same edit, and the [aria-pressed] version there is now dead.
+   -------------------------------------------------------------------------- */
+html .est__opt[aria-checked='true'] {
+  background: var(--brand);
+  border-color: var(--brand);
+  color: var(--on-brand);
+  box-shadow: 0 0 22px -6px color-mix(in srgb, var(--brand) 80%, transparent);
+}
+
+/* --------------------------------------------------------------------------
+   8. HEADING ORDER IN CARD GRIDS
+   WCAG 1.3.1 Info and Relationships
+
+   /areas/ and /services/ jumped h1 -> h3 because the cards were h3. The cards
+   are the page's top-level sections, so they are h2 now. This restates
+   global.css `.card h3` for the promoted level so nothing changes visually.
+   -------------------------------------------------------------------------- */
+html .card h2 {
+  font-size: var(--step-1);
+  letter-spacing: var(--track-1);
+  line-height: var(--leading-sub);
+  margin-bottom: 8px;
+}
+
+/* --------------------------------------------------------------------------
+   9. REDUCED MOTION
+   WCAG 2.3.3 Animation from Interactions
+
+   global.css and motion.css already collapse CSS motion under
+   prefers-reduced-motion. This covers the piece CSS cannot reach: a
+   programmatic smooth scroll ignores the media query, so scroll-behavior is
+   forced to auto on the two scroll containers the carousel drives. The
+   scrollIntoView / scrollBy calls in Reviews.astro read the media query too;
+   this is the belt to that pair of braces.
+   -------------------------------------------------------------------------- */
+@media (prefers-reduced-motion: reduce) {
+  html .rev__track,
+  html {
+    scroll-behavior: auto !important;
+  }
+}
+
+/* --------------------------------------------------------------------------
+   10. BREADCRUMB CURRENT-PAGE LABEL
+   WCAG 1.4.3 Contrast (Minimum)
+
+   global.css:502 dims every span in the trail with `opacity: .5` to fade the
+   "/" separators. The current-page label is also a span, so it inherited the
+   fade: --faint at 50% over --bg measures 2.64:1 dark and 2.26:1 light, on
+   ~20 of the 23 pages. Only the separators should be dimmed.
+   -------------------------------------------------------------------------- */
+html .crumbs span[aria-current] {
+  opacity: 1;
+}
+
+/* --------------------------------------------------------------------------
+   11. LINKS MUST NOT BE IDENTIFIED BY COLOUR ALONE
+   WCAG 1.4.1 Use of Color — Level A
+
+   global.css sets `a { text-decoration: none }` with the underline only on
+   :hover, which touch and keyboard users never see. Against the text they sit
+   in, links measure 1.39:1 in prose and 1.00:1 in the footer's first column —
+   the phone link there is literally the same colour as the address beside it.
+   3:1 is the floor for colour as the sole distinguishing signal.
+
+   Deliberately scoped rather than blanket. Nav, buttons, cards, pills and the
+   service rows are self-evidently interactive by position and shape and are
+   exempt; running text is not.
+   -------------------------------------------------------------------------- */
+html .container--reading p a:not(.btn):not(.pill),
+html .container--narrow p a:not(.btn):not(.pill),
+html .prose a:not(.btn):not(.pill),
+html .faq__body a:not(.btn):not(.pill),
+html .lead a:not(.btn):not(.pill),
+html .footer ul a:not(.btn),
+html .topbar a:not(.btn) {
+  text-decoration: underline;
+  text-underline-offset: 0.18em;
+  text-decoration-thickness: from-font;
+}
+
+/* --------------------------------------------------------------------------
+   12. FORCED COLOURS
+   WCAG 1.4.3, 1.4.8
+
+   type.css paints the dark-mode h1 with `background-clip: text` +
+   `-webkit-text-fill-color: transparent`. Forced-colors mode strips
+   background-image but has no override for the non-standard
+   -webkit-text-fill-color, so the fill stays transparent and the primary
+   heading of all 23 pages renders as nothing. Same root cause when printed.
+
+   Inactive for every ordinary user, changes paint only, touches no geometry —
+   so the LCP h1 is neither wrapped, moved nor restructured, and CLS cannot
+   move.
+   -------------------------------------------------------------------------- */
+@media (forced-colors: active) {
+  html h1,
+  html .hl {
+    -webkit-text-fill-color: currentColor;
+    background-image: none;
+  }
+  /* Forced-colors replaces outline colours with the system highlight; keep
+     the ring, drop the hard-coded hue. */
+  :where(a, button, summary, [tabindex], input, select, textarea):focus-visible {
+    outline-color: Highlight;
+  }
+}
+@media print {
+  html h1,
+  html .hl {
+    -webkit-text-fill-color: currentColor;
+    background-image: none;
+  }
+}
+
+/* --------------------------------------------------------------------------
+   13. FAQ MARKER GLYPH
+   WCAG 1.1.1 Non-text Content
+
+   motion.css:662 sets `content: ''` on the summary marker, but
+   global.css:447 sets `content: '−'` for [open] at higher specificity, so the
+   rule motion.css wrote to remove the character never wins. The U+2212 is
+   rendered at font-size 0 — invisible, but still generated content in the
+   accessibility tree. The visible bar comes from width/height/background and
+   is unaffected by this.
+   -------------------------------------------------------------------------- */
+html body .faq details[open] summary::after {
+  content: '';
+}
+
+/* --------------------------------------------------------------------------
+   14. REFLOW AT 320px
+   WCAG 1.4.10 Reflow — AA
+
+   /contact/ and /reviews/ scrolled horizontally at 320px: 382px and 331px of
+   content in a 320px viewport.
+
+   Neither is a width that was authored. Both are single-column grids at that
+   breakpoint — `.split` at 1fr, `.grid--3` at 1fr — and a `1fr` track's
+   automatic minimum is `min-content`, not zero. So a track that should have
+   been 276px was sized by its widest item instead: 360px and 348.7px, both
+   punching straight through the container.
+
+   minmax(0, 1fr) is the standard correction: it caps the track at the space
+   available and lets the content wrap, which is what a single-column layout
+   was always meant to do. Scoped to the breakpoints where global.css has
+   already collapsed these grids to one column, so no multi-column layout is
+   touched.
+   -------------------------------------------------------------------------- */
+@media (max-width: 880px) {
+  html .split {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+@media (max-width: 620px) {
+  html .grid--2,
+  html .grid--3,
+  html .grid--4 {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  html .field--row {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+/* Same failure, different mechanism: a text input carries an intrinsic width
+   from its `size` default, and as a grid item that intrinsic width becomes
+   its automatic minimum. The enquiry form's fields therefore refused to go
+   below ~177px each and pushed /contact/ to 353px. min-width: 0 lets them
+   size to the track they are in. */
+html .field input,
+html .field select,
+html .field textarea {
+  min-width: 0;
+  max-width: 100%;
+}
+
+/* --------------------------------------------------------------------------
+   15. PLACEHOLDER SCAFFOLDING CONTRAST
+   WCAG 1.4.3 Contrast (Minimum)
+
+   Belt-and-braces alongside the fix in Needed.astro. The NEEDED markers are
+   scaffolding, but they render on the live page and were failing at 1.46:1 in
+   light mode across all 23 pages, so they are a real failure until the client
+   data lands. The markers themselves are untouched — they must stay visible.
+   -------------------------------------------------------------------------- */
+html .needed {
+  color: var(--brand-ink);
+  border-color: var(--brand-ink);
+}

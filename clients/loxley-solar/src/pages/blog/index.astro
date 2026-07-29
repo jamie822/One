@@ -1,0 +1,75 @@
+---
+// BLOG index. One flagship post at launch; the list grows without layout work.
+import Base from '../../layouts/Base.astro';
+import { client } from '../../data/client.js';
+const tel = client.phone.replace(/\s/g, '');
+
+const posts = [
+  {
+    href: '/blog/solar-panel-cost-sheffield/',
+    title: 'How much do solar panels cost in Sheffield? 2026 prices',
+    summary: 'Real installed prices by system size, what moves them, and when a battery earns its place.',
+    date: 'July 2026',
+  },
+];
+---
+<Base
+  title="Solar Advice for Sheffield Homes | Loxley Solar"
+  description="Straight answers on solar costs, batteries and payback for Sheffield houses, written by the installer who does the surveys."
+  current="/blog/"
+>
+  <section class="section" style="padding-bottom: var(--s-4);">
+    <div class="wrap">
+      <h1>Advice, with the workings shown</h1>
+      <p class="hero__sub" style="margin-top: var(--s-2);">
+        What things cost, what pays back and what does not. No scare stories,
+        no countdown timers, no "free solar" bait.
+      </p>
+    </div>
+  </section>
+
+  <section class="section" aria-label="Articles" style="padding-top: 0;">
+    <div class="wrap">
+      <ul class="postlist">
+        {posts.map((p) => (
+          <li class="rise">
+            <a href={p.href}>
+              <h2>{p.title}</h2>
+              <p>{p.summary}</p>
+              <span class="fig">{p.date}</span>
+            </a>
+          </li>
+        ))}
+      </ul>
+    </div>
+  </section>
+
+  <div class="pine">
+    <section class="section" aria-labelledby="cta-h">
+      <div class="wrap">
+        <h2 id="cta-h" class="rise">Rather have the numbers for your own roof?</h2>
+        <div class="hero__acts rise" style="--i:1">
+          <a class="btn btn--quote" href="/#quote">Get a quote</a>
+          <a class="btn btn--call" style="color: var(--ink); border-color: color-mix(in srgb, var(--ink) 40%, transparent);" href={`tel:${tel}`}>Call Dan</a>
+        </div>
+      </div>
+    </section>
+  </div>
+</Base>
+
+<style>
+  .postlist { list-style: none; padding: 0; display: grid; gap: var(--s-3); max-width: 720px; }
+  .postlist a {
+    display: grid; gap: 8px;
+    text-decoration: none;
+    padding: 26px;
+    background: var(--surface);
+    border: 1px solid var(--edge);
+    border-radius: var(--r-box);
+    transition: border-color 170ms var(--ease-ui);
+  }
+  .postlist a:hover { border-color: var(--pine-700); }
+  .postlist h2 { font-size: 1.35rem; }
+  .postlist p { color: var(--ink-soft); font-size: var(--t-small); }
+  .postlist span { font-size: var(--t-label); color: var(--pine-700); }
+</style>

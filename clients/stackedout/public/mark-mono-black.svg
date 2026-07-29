@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 72 82" width="288" height="328" role="img" aria-label="Stacked Out">
+  <title>Stacked Out — one colour, for light grounds and print</title>
+  <circle cx="26" cy="9" r="3.6" fill="none" stroke="#08090b" stroke-width="4"/>
+  <circle cx="46" cy="9" r="3.6" fill="none" stroke="#08090b" stroke-width="4"/>
+  <rect x="6" y="12" width="60" height="64" rx="13" fill="none" stroke="#08090b" stroke-width="4"/>
+  <line x1="6" y1="30" x2="66" y2="30" stroke="#08090b" stroke-width="3"/>
+  <g fill="#08090b">
+    <rect x="12" y="37" width="14" height="14" rx="3.5"/>
+    <rect x="29" y="37" width="14" height="14" rx="3.5"/>
+    <rect x="46" y="37" width="14" height="14" rx="3.5"/>
+    <rect x="12" y="55" width="14" height="14" rx="3.5"/>
+    <rect x="29" y="55" width="14" height="14" rx="3.5"/>
+  </g>
+  <rect x="46" y="55" width="14" height="14" rx="3.5" fill="none" stroke="#08090b" stroke-width="3" opacity=".55"/>
+</svg>

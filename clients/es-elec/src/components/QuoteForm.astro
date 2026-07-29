@@ -1,0 +1,83 @@
+---
+// The quote form, canonical v3 spec (COPY.md §13): 6 fields, 4 required.
+// One per page at most (the script binds by [data-quote]). With
+// client.conversion.formEndpoint set it POSTs there; empty = demo mode,
+// composing an email to client.email so an enquiry is never silently lost.
+import { client } from '../data/client.js';
+---
+<form
+  class="rise"
+  style="--i:1"
+  method={client.conversion.formEndpoint ? 'post' : 'get'}
+  action={client.conversion.formEndpoint || `mailto:${client.email}`}
+  data-quote
+  data-endpoint={client.conversion.formEndpoint}
+  data-email={client.email}
+>
+  <div class="field">
+    <label for="q-name">Name</label>
+    <input id="q-name" name="name" autocomplete="name" required />
+    <p class="err">Your name is missing.</p>
+  </div>
+  <div class="field">
+    <label for="q-phone">Phone</label>
+    <input id="q-phone" name="phone" type="tel" autocomplete="tel" required />
+    <p class="err">A phone number is how I reach you. Landline or mobile both fine.</p>
+  </div>
+  <div class="field">
+    <label for="q-postcode">Postcode</label>
+    <input id="q-postcode" name="postcode" autocomplete="postal-code" required />
+    <p class="err">The postcode tells me you are in reach.</p>
+  </div>
+  <div class="field">
+    <label for="q-jobtype">What needs doing</label>
+    <select id="q-jobtype" name="jobtype" required>
+      <option value="" selected disabled>Pick the closest</option>
+      {client.services.map((s) => <option value={s.name}>{s.name}</option>)}
+      <option value="Something else">Something else</option>
+    </select>
+    <p class="err">Pick the closest thing. "Something else" counts.</p>
+  </div>
+  <div class="field">
+    <label for="q-detail">Anything useful to know <span class="field__opt">(optional)</span></label>
+    <textarea id="q-detail" name="detail"
+      placeholder="Age of the house, what's tripping, what you've noticed. Photos can wait."></textarea>
+  </div>
+  <div class="field">
+    <label for="q-email">Email <span class="field__opt">(optional)</span></label>
+    <input id="q-email" name="email" type="email" autocomplete="email" />
+  </div>
+  <button class="btn btn--call" type="submit">Get a quote</button>
+  <p class="confirm" data-confirm>
+    You'll hear back within the working hour. <!-- TEMP promise -->
+    Your details go to {client.owner.split(' ')[0]} and nowhere else.
+  </p>
+</form>
+<script is:inline>
+  (function () {
+    var form = document.querySelector('[data-quote]');
+    if (!form || form.dataset.bound) return;
+    form.dataset.bound = '1';
+    form.setAttribute('novalidate', '');
+    form.addEventListener('submit', function (e) {
+      var bad = false;
+      form.querySelectorAll('.field').forEach(function (f) {
+        var input = f.querySelector('input, textarea, select');
+        if (input && input.required && !input.value.trim()) { f.setAttribute('data-bad', ''); bad = true; }
+        else f.removeAttribute('data-bad');
+      });
+      if (bad) { e.preventDefault(); form.querySelector('[data-bad] input, [data-bad] textarea, [data-bad] select').focus(); return; }
+      if (form.dataset.endpoint) return; // real handler takes it from here
+      e.preventDefault();
+      var v = function (n) { var el = form.querySelector('[name=' + n + ']'); return el ? el.value.trim() : ''; };
+      var subject = 'Quote request from ' + v('name') + ' (' + v('postcode') + '): ' + v('jobtype');
+      var body = 'Name: ' + v('name') + '\nPhone: ' + v('phone') + '\nPostcode: ' + v('postcode') +
+        '\nJob: ' + v('jobtype') + (v('email') ? '\nEmail: ' + v('email') : '') +
+        (v('detail') ? '\n\nDetails:\n' + v('detail') : '');
+      var confirm = form.querySelector('[data-confirm]');
+      if (confirm) confirm.textContent = 'Your email app should open with everything filled in. If it does not, ring me instead.';
+      window.location.href = 'mailto:' + form.dataset.email +
+        '?subject=' + encodeURIComponent(subject) + '&body=' + encodeURIComponent(body);
+    });
+  })();
+</script>

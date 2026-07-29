@@ -1,0 +1,23 @@
+/* Stacked Out — the palette. Nothing outside this list, ever.
+   Dark-first: charcoal is the brand, not a "dark mode". */
+:root{
+  --ground:       #08090b;  /* page background, the default state of everything */
+  --panel:        #0d0f13;  /* cards and raised surfaces sitting on the ground   */
+  --action:       #ffdd33;  /* buttons, prices, the thing you want clicked        */
+  --action-deep:  #ffd60a;  /* hover / pressed state of the above                 */
+  --incoming:     #3fe3ff;  /* links, new things, enquiries — anything arriving    */
+  --ink:          #f5f6f8;  /* body copy and headlines on dark                     */
+  --ink-muted:    #9aa1ab;  /* captions, labels, supporting lines                  */
+
+  /* HERO MOMENTS ONLY — one per page. Never body text, never twice. */
+  --hero: linear-gradient(100deg, #ffdd33, #3fe3ff);
+
+  /* hairline separator on the dark ground */
+  --edge: rgba(255,255,255,.10);
+}
+
+/* correct pairings — every ratio computed, AA needs 4.5:1 text / 3:1 non-text
+   ink       on ground  18.4:1      yellow on ground  14.8:1
+   ink       on panel   17.7:1      cyan   on ground  12.9:1
+   ink-muted on ground   7.6:1      ground on yellow  14.8:1  <- yellow buttons
+   ink-muted on panel    7.4:1      ground on cyan    12.9:1                      */

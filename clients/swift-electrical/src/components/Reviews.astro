@@ -1,0 +1,109 @@
+---
+// Reviews carousel. Real reviews only — see client.js.
+import { reviews } from '../data/client.js';
+const { limit = 7 } = Astro.props;
+const shown = reviews.slice(0, limit);
+const initial = (n) => (n || '?').trim().charAt(0).toUpperCase();
+---
+{shown.length > 0 ? (
+  <div class="rev" data-rev role="group" aria-roledescription="carousel" aria-label="Customer reviews">
+    {/* tabindex="0" is what makes the pointer drag keyboard-equivalent: a
+        focused scroll container responds to the arrow keys, so the gesture
+        has a non-dragging alternative (WCAG 2.5.7) and the panned content is
+        reachable without a mouse (2.1.1). It also resolves axe
+        scrollable-region-focusable, which fired because the cards contain no
+        focusable descendants of their own. */}
+    <div
+      class="rev__track"
+      data-rev-track
+      tabindex="0"
+      role="group"
+      aria-label={`${shown.length} customer reviews, scrollable`}
+    >
+      {shown.map((r) => (
+        <figure class="rev__card">
+          <div class="rev__quote-mark" aria-hidden="true">&ldquo;</div>
+          {/* aria-label is prohibited on a plain div (role="generic"), so the
+              rating needs a role that can carry a name. Without it the glyphs
+              are read out as "black star" five times. */}
+          <div class="rev__stars" role="img" aria-label="Rated 5 out of 5">★★★★★</div>
+          <blockquote class="rev__text">{r.quote}</blockquote>
+          <figcaption class="rev__by">
+            <span class="rev__av" aria-hidden="true">{initial(r.author)}</span>
+            <span>
+              <span class="rev__name">{r.author}</span>
+              <span class="rev__meta">
+                {[r.electrician && `worked with ${r.electrician}`, r.platform, r.date].filter(Boolean).join(' · ')}
+              </span>
+            </span>
+          </figcaption>
+        </figure>
+      ))}
+    </div>
+
+    <div class="rev__nav">
+      <button class="rev__btn" type="button" data-rev-prev aria-label="Previous review">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6" /></svg>
+      </button>
+      <button class="rev__btn" type="button" data-rev-next aria-label="Next review">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6" /></svg>
+      </button>
+      <div class="rev__dots" data-rev-dots></div>
+    </div>
+  </div>
+) : (
+  <div class="ph" style="aspect-ratio:auto;padding:40px">
+    <strong>No reviews added yet</strong>
+    <small>Sync real reviews into src/data/client.js. Never write placeholder testimonials.</small>
+  </div>
+)}
+
+<script>
+  document.querySelectorAll('[data-rev]').forEach((root) => {
+    const track = root.querySelector('[data-rev-track]');
+    const dots  = root.querySelector('[data-rev-dots]');
+    const cards = Array.from(track.children);
+    if (!cards.length) return;
+
+    // A programmatic scroll ignores prefers-reduced-motion entirely — the
+    // media query only governs CSS. Read it here so the controls honour it
+    // too, and re-read it per call so a mid-session OS change is picked up.
+    const reduce = () => window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const behavior = () => (reduce() ? 'auto' : 'smooth');
+
+    cards.forEach((_, i) => {
+      const b = document.createElement('button');
+      b.className = 'rev__dot' + (i === 0 ? ' is-on' : '');
+      b.type = 'button';
+      // "Review 3 of 7" rather than "Review 3": the set size is the half of
+      // the position that the dots convey visually and were not conveying at
+      // all to anyone else.
+      b.setAttribute('aria-label', `Review ${i + 1} of ${cards.length}`);
+      if (i === 0) b.setAttribute('aria-current', 'true');
+      b.addEventListener('click', () => cards[i].scrollIntoView({ behavior: behavior(), inline: 'start', block: 'nearest' }));
+      dots.appendChild(b);
+    });
+
+    const step = () => (cards[1] ? cards[1].offsetLeft - cards[0].offsetLeft : cards[0].offsetWidth + 20);
+    root.querySelector('[data-rev-prev]').addEventListener('click', () => track.scrollBy({ left: -step(), behavior: behavior() }));
+    root.querySelector('[data-rev-next]').addEventListener('click', () => track.scrollBy({ left: step(), behavior: behavior() }));
+
+    // Mark the dot for whichever card is furthest into view. `is-on` is the
+    // visual half; aria-current is the same fact for anyone who cannot see
+    // which dot is wider. Without it the carousel had no programmatic
+    // position at all (WCAG 4.1.2).
+    const io = new IntersectionObserver((entries) => {
+      entries.forEach((e) => {
+        if (e.intersectionRatio > 0.6) {
+          const i = cards.indexOf(e.target);
+          dots.querySelectorAll('.rev__dot').forEach((d, j) => {
+            d.classList.toggle('is-on', j === i);
+            if (j === i) d.setAttribute('aria-current', 'true');
+            else d.removeAttribute('aria-current');
+          });
+        }
+      });
+    }, { root: track, threshold: [0.6] });
+    cards.forEach((c) => io.observe(c));
+  });
+</script>

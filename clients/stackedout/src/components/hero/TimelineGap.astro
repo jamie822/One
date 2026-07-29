@@ -1,0 +1,22 @@
+---
+// A fact the founder has not supplied yet.
+//
+// The brand guide is blunt about this: "Fake testimonials, invented client
+// counts, inflated numbers. Ever. Not once." So a missing fact renders as a
+// visible request rather than a plausible guess. Cyan, because cyan is the
+// brand's colour for things arriving.
+interface Props {
+  need: string;      // what is missing
+  ask: string;       // what to send, in plain words
+  variant?: 'inline' | 'portrait';
+}
+const { need, ask, variant = 'inline' } = Astro.props;
+---
+<div class={`tl-gap ${variant === 'portrait' ? 'tl-gap--portrait' : ''}`}>
+  <p class="label tl-gap__label">Needed from you</p>
+  <p class="tl-gap__ask"><strong>{need}.</strong> {ask}</p>
+</div>
+
+<style>
+  .tl-gap__ask strong { color: var(--ink); font-weight: 700; }
+</style>

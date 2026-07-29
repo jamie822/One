@@ -1,0 +1,138 @@
+---
+// The flagship post. Direct answer first, real structure, GEO-quotable blocks.
+import Base from '../../layouts/Base.astro';
+import { client } from '../../data/client.js';
+
+const tel = client.phone.replace(/\s/g, '');
+const article = {
+  '@context': 'https://schema.org',
+  '@type': 'Article',
+  headline: 'How much does a rewire cost in Leeds? 2026 prices',
+  datePublished: '2026-07-28',
+  dateModified: '2026-07-29',
+  author: { '@type': 'Person', name: client.owner, jobTitle: 'Electrician' },
+  publisher: { '@id': 'https://eselec.co.uk/#business' },
+};
+const breadcrumbs = {
+  '@context': 'https://schema.org',
+  '@type': 'BreadcrumbList',
+  itemListElement: [
+    { '@type': 'ListItem', position: 1, name: 'Home', item: 'https://eselec.co.uk/' },
+    { '@type': 'ListItem', position: 2, name: 'Blog', item: 'https://eselec.co.uk/blog/' },
+    { '@type': 'ListItem', position: 3, name: 'Rewire cost in Leeds', item: 'https://eselec.co.uk/blog/rewire-cost-leeds/' },
+  ],
+};
+
+// The ONE shared rewire model: same numbers as the home-page Reckoner
+// and the services table (client.reckoner).
+const HOUSE = { 2: '2-bed terrace', 3: '3-bed semi', 4: '4-bed detached', 5: '5-bed detached' };
+const table = Object.entries(client.reckoner.beds).map(([n, m]) => [
+  HOUSE[n],
+  `£${m.low.toLocaleString('en-GB')} to £${m.high.toLocaleString('en-GB')}`,
+  `${m.daysLow} to ${m.daysHigh} days`,
+]);
+---
+<Base
+  title="How Much Does a Rewire Cost in Leeds? 2026 Prices"
+  description="A full rewire in Leeds costs £3,200 to £8,500 in 2026 depending on size. A Leeds electrician breaks down real prices per house type and what moves them."
+  current="/blog/"
+  schema={[article, breadcrumbs]}
+>
+  <article class="paper">
+    <div class="wrap article">
+      <header class="article__head">
+        <h1>How much does a rewire cost in Leeds? 2026 prices</h1>
+        <p class="article__meta">
+          By {client.owner}, electrician, ES Elec · July 2026 <!-- TEMP author -->
+        </p>
+      </header>
+
+      <div class="article__body">
+        <p>
+          A full house rewire in Leeds costs between £3,200 and £8,500 in 2026.
+          A 2-bed terrace sits at the bottom of that range, a 5-bed detached at
+          the top. Partial rewires run £1,200 to £2,800. Those are working
+          figures from jobs quoted this year, not national averages: Leeds
+          labour rates run under London by a good margin, and most of the
+          housing stock here is terraces and semis that wire predictably.
+          <!-- TEMP figures throughout -->
+        </p>
+
+        <table class="costs">
+          <caption>
+            Full rewire, materials and labour, certificate and notification
+            included. Your written quote is the real number; this table is for
+            orientation.
+          </caption>
+          <thead>
+            <tr><th scope="col">House</th><th scope="col">Days</th><th scope="col">2026 price</th></tr>
+          </thead>
+          <tbody>
+            {table.map(([house, price, days]) => (
+              <tr><td><strong>{house}</strong></td><td>{days}</td><td>{price}</td></tr>
+            ))}
+          </tbody>
+        </table>
+
+        <p>
+          Living in the house through the rewire? Add about
+          £{client.reckoner.occupied.price} and a couple of days across the
+          board. That covers sheeting, furniture moves and keeping your power
+          on every night, and it's the same modifier the Reckoner on my
+          <a href="/">home page</a> uses. <!-- TEMP model -->
+        </p>
+
+        <h2>What moves the price</h2>
+        <p>
+          Walls and floors first: solid floors and lath-and-plaster walls slow
+          the chasing right down. Then how much you want moved rather than
+          replaced like for like. Then the finish: brushed steel sockets across
+          a whole house add hundreds on their own. Occupied houses go slower
+          than empty ones because putting your rooms back together every
+          evening is real work. Nobody itemises that last one, which is why two
+          quotes for the same house can sit £1,000 apart.
+        </p>
+
+        <h2>Do you need a full rewire at all?</h2>
+        <p>
+          Probably not, if the wiring is PVC and the problems are localised. A
+          house fails on specifics, not on age. An EICR (£140, half a morning)
+          tells you what state yours is in before you commit to anything. I
+          have talked more than one caller out of a rewire after the inspection
+          came back cleaner than they feared. Rubber or fabric-insulated cable,
+          though, or a fuse box with a wooden back: stop reading and book the
+          inspection this week.
+        </p>
+
+        <h2>How to read a rewire quote</h2>
+        <p>
+          Four things to demand before you compare numbers. An itemised
+          room-by-room breakdown: if it's one number on a text, you're not
+          comparing quotes, you're comparing guesses. Who makes good the
+          plaster, in writing. Whether testing and certification are inside
+          the price. And the payment schedule. The cheapest of three quotes
+          is usually the one that's missing a line.
+        </p>
+
+        <h2>What happens on the job</h2>
+        <p>
+          Day one is protection and first fix upstairs. Power stays on
+          overnight, every night. Kitchens and bathrooms get planned around
+          your mornings. Last day is testing, every circuit, and you get the
+          EIC certificate before the van leaves the street.
+        </p>
+
+        <div class="band">
+          <h2 style="font-size: 1.4rem;">Want the real number for your house?</h2>
+          <p style="color: var(--ink-soft); font-size: var(--t-small);">
+            Room-by-room written price, usually within 48 hours of a look.
+          </p>
+          <div class="acts">
+            <a class="btn btn--call" href={`tel:${tel}`}>Call Eddie</a>
+            <a class="btn btn--quote" href="/#quote">Get a quote</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </article>
+</Base>

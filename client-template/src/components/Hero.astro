@@ -1,0 +1,65 @@
+---
+// LIVE HERO — see MASTER_PROMPT.md §6.
+//
+// Layers, back to front:
+//   1. gradient wash          (CSS, works with zero photography)
+//   2. client photo + Ken Burns  (CSS transform only, no layout cost)
+//   3. animated circuit trace (SVG line-draw, CSS only, no JS)
+//   4. content, staggered in
+//
+// The <h1> is the LCP element and is never animated or delayed. The photo,
+// when present, is eager + fetchpriority=high. All motion is disabled under
+// prefers-reduced-motion via global.css.
+import { client } from '../data/client.js';
+import { href } from '../lib/site.js';
+
+const { image = client.heroImage, inner = false } = Astro.props;
+---
+<section class={`hero${inner ? ' hero--inner' : ''}`}>
+  <div class={`hero__media${image ? ' has-photo' : ''}`}>
+    {image && (
+      <img src={href(image)} alt="" loading="eager" fetchpriority="high" decoding="sync" />
+    )}
+  </div>
+  <div class="hero__wash"></div>
+
+  {!inner && (
+    <svg class="hero__circuit" viewBox="0 0 1200 600" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+      <g fill="none" stroke="var(--brand)" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round">
+        <path class="trace" d="M-20 140 H180 l40 -40 H420 l50 50 H700" />
+        <path class="trace trace--2" d="M-20 420 H140 l60 60 H460 l40 -40 H820" />
+        <path class="trace trace--3" d="M900 -20 V120 l50 50 V320 l-40 40 V620" />
+      </g>
+      <g fill="var(--brand)">
+        <circle class="node" cx="180" cy="140" r="3" />
+        <circle class="node node--2" cx="420" cy="100" r="3" />
+        <circle class="node node--3" cx="460" cy="480" r="3" />
+        <circle class="node" cx="950" cy="170" r="3" />
+      </g>
+    </svg>
+  )}
+
+  <div class="container">
+    <div class="hero__inner"><slot /></div>
+  </div>
+</section>
+
+<style>
+  /* Line-draw: the dash offset animates, nothing reflows. */
+  .trace {
+    stroke-dasharray: 260 1400;
+    animation: flow 14s linear infinite;
+    opacity: 0.5;
+  }
+  .trace--2 { animation-duration: 19s; animation-delay: -6s; }
+  .trace--3 { animation-duration: 23s; animation-delay: -11s; }
+  @keyframes flow { to { stroke-dashoffset: -1660; } }
+
+  .node { animation: pulse 3.6s ease-in-out infinite; transform-origin: center; }
+  .node--2 { animation-delay: -1.2s; }
+  .node--3 { animation-delay: -2.4s; }
+  @keyframes pulse {
+    0%, 100% { opacity: 0.25; }
+    50% { opacity: 0.9; }
+  }
+</style>

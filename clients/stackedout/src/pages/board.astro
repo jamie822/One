@@ -1,0 +1,19 @@
+---
+// Hero candidate 02 — "The board comes alive".
+// Renders through Shell.astro exactly as index.astro does, so the three
+// candidates are compared on the idea and nothing else.
+import Shell from '../layouts/Shell.astro';
+import BoardHero from '../components/hero/BoardHero.astro';
+import BoardWhy from '../components/hero/BoardWhy.astro';
+import '../styles/hero-board.css';
+---
+<Shell
+  title="Stacked Out. The board comes alive"
+  variant="board"
+  blurb="Websites for electricians and solar installers, built by a spark."
+>
+  <div class="boardpage">
+    <BoardHero />
+    <BoardWhy />
+  </div>
+</Shell>

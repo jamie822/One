@@ -1,0 +1,697 @@
+---
+// HOME. Copy comes from COPY.md verbatim; figures from client.js, TEMP-tagged.
+import Base from '../layouts/Base.astro';
+import QuoteForm from '../components/QuoteForm.astro';
+import { client } from '../data/client.js';
+
+const tel = client.phone.replace(/\s/g, '');
+// Solar leads the ticker: it is the service the client wants more of, and the
+// first frame a visitor reads.
+const CYCLE = ['Solar', 'EV chargers', 'Rewires', 'Fuse boards', 'EICRs', 'Fault finding'];
+
+const fmt = (n) => '£' + n.toLocaleString('en-GB');
+const svc = Object.fromEntries(client.services.map((s) => [s.id, s]));
+
+const stars = Array.from({ length: 5 });
+---
+<!-- DIRECTION CONTRACT
+THESIS: the electrician who prices before work starts, staged as a lit workshop
+at night; refuses the trade-blue hero-metric template.
+OWN-WORLD: Tungsten. Warm charcoal ground, filament amber reserved for
+conversion, Clash Display over Satoshi, one conductor line drawn by scroll,
+paper-lit middle sections between dark bookends.
+STORY: arrive at night needing help, see the promise and the price culture,
+read proof on paper in daylight, leave by phone or form.
+FIRST VIEWPORT: left, kinetic service line over a two-line H1 and 18-word sub,
+Call Eddie (lit) beside Get a quote; right, the Power Core scene booting up
+once on arrival (grid, aurora, orb ignition, rings spin-up, chips, marquee,
+~2.4s ease-out). Pause control bottom-right freezes the whole scene
+(WCAG 2.2.2); reduced motion gets the designed still. H1 stays the LCP and
+never animates. Trust marquee closes the frame.
+FORM: brief-pinned Tungsten (ledger 2026-07-28), kinetic-type masthead staging,
+seed n/a: direction pinned by founder brief, not rolled. -->
+<Base
+  title="Electrician in Leeds | Rewires, EV & Solar | ES Elec"
+  description={`NICEIC registered electrician in Leeds. Rewires, fuse boards, EICRs, EV chargers and solar, priced before work starts. Call Eddie on ${client.phone}.`}
+  current="/"
+>
+  <section class="hero hero--live">
+    {/* The scene is built, not photographed: amber aurora breathing over the
+        charcoal, a constellation of live points wiring themselves together,
+        a faint engineer's grid, and the core spinning on the right. */}
+    <div class="hero__scene" aria-hidden="true">
+      <div class="hero__aurora"><span></span><span></span><span></span></div>
+      <div class="hero__gridlines"></div>
+      <canvas class="hero__mesh" data-mesh></canvas>
+    </div>
+
+    <div class="wrap hero__inner">
+      <div class="hero__copy">
+        <p class="hero__cycle" aria-hidden="true">
+          {CYCLE.map((w, n) => <span style={`--n:${n}`}>{w}</span>)}
+        </p>
+        <h1>The Leeds electrician who <span class="hero__hl">prices the job</span> before it starts.</h1>
+        <p class="hero__sub">
+          No surprises on the invoice. The bloke who answers the phone quotes
+          the job and does the work.
+        </p>
+        <div class="hero__acts">
+          <a class="btn btn--call btn--lit" href={`tel:${tel}`}>Call Eddie</a>
+          <a class="btn btn--quote" href="#quote">Get a quote</a>
+        </div>
+        {client.emergency && (
+          <p class="hero__urgent">
+            <span class="hero__urgent-dot" aria-hidden="true"></span>
+            Something dead or tripping right now? Ring: emergencies jump the queue. <!-- TEMP promise -->
+          </p>
+        )}
+      </div>
+
+      <div class="hero__stage" aria-hidden="true">
+        <div class="core">
+          <span class="core__ring core__ring--1"></span>
+          <span class="core__ring core__ring--2"></span>
+          <span class="core__ring core__ring--3"></span>
+          <span class="core__orbit core__orbit--1"><i></i></span>
+          <span class="core__orbit core__orbit--2"><i></i></span>
+          <span class="core__orbit core__orbit--3"><i></i></span>
+          <span class="core__orb">
+            <svg viewBox="0 0 100 100" width="46%" height="46%"><path d="M54 8 26 58h18l-7 34 34-50H50z" fill="#171001"/></svg>
+          </span>
+        </div>
+        <span class="hero__chip hero__chip--a">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M13 2 4 14h6l-2 8 9-12h-6z"/></svg>
+          NICEIC Approved <!-- TEMP -->
+        </span>
+        <span class="hero__chip hero__chip--b">
+          Priced before work starts
+        </span>
+        <span class="hero__chip hero__chip--c">
+          Out across Leeds, {client.hours} <!-- TEMP -->
+        </span>
+      </div>
+    </div>
+
+    <button class="hero__pause" type="button" aria-pressed="false"
+            aria-label="Pause the animation" data-hero-pause>
+      <svg class="i-pause" width="14" height="14" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M7 4h4v16H7zM13 4h4v16h-4z"/></svg>
+      <svg class="i-play" width="14" height="14" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg>
+    </button>
+
+    <div class="hero__marquee" aria-hidden="true">
+      <div class="hero__marquee-track">
+        {Array.from({ length: 2 }).map(() => (
+          <>
+            <span>NICEIC Approved Contractor</span><i>/</i>
+            <span>Tested to BS 7671</span><i>/</i>
+            <span>Notified to Building Control</span><i>/</i>
+            <span>Priced before work starts</span><i>/</i>
+            <span>£2m insured</span><i>/</i>
+            <span>Leeds and the towns around it</span><i>/</i>
+          </>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  {/* v3 section 2: the trust shelf, pulled up over the hero's bottom edge.
+      Four counts that roll to their value once, on first sight. */}
+  <section class="trust" aria-label="Track record">
+    <div class="wrap">
+      <div class="trust__shelf">
+        <p class="trust__item">
+          <strong>
+            <span class="trust__stars" aria-hidden="true">
+              {stars.map(() => (
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2l2.9 6.6 7.1.7-5.4 4.8 1.6 7L12 17.5 5.8 21l1.6-7L2 9.3l7.1-.7z"/></svg>
+              ))}
+            </span>
+            <span data-count={client.google.rating}>{client.google.rating}</span>
+          </strong>
+          <span>Google rating <!-- TEMP --></span>
+        </p>
+        <p class="trust__item">
+          <strong><span data-count={client.google.reviewCount}>{client.google.reviewCount}</span></strong>
+          <span>reviews and counting <!-- TEMP --></span>
+        </p>
+        <p class="trust__item">
+          <strong><span data-count={client.jobsCertified}>{client.jobsCertified.toLocaleString('en-GB')}</span></strong>
+          <span>jobs certified since {client.founded} <!-- TEMP --></span>
+        </p>
+        <p class="trust__item">
+          <strong><span data-count={client.yearsTrading}>{client.yearsTrading}</span></strong>
+          <span>years on the tools in Leeds <!-- TEMP --></span>
+        </p>
+      </div>
+    </div>
+  </section>
+
+  {/* v3 section 3: the written-price spread. The market-gap claim, what the
+      written price includes, and a fragment of a real quote on raised paper. */}
+  <div class="paper">
+    <section class="section spread" aria-labelledby="spread-h">
+      <div class="wrap">
+        <div class="spread__grid">
+          <div>
+            <h2 id="spread-h" class="rise">An itemised price in writing, before a floorboard lifts.</h2>
+            <p class="spread__body rise" style="--i:1">
+              When homeowners get surveyed about quotes, barely one in three
+              has ever been handed an itemised one. <!-- TEMP: verify stat source at go-live -->
+              The rest got a number on a text message and a shrug when it
+              grew. I work the other way round. You get every line of the job
+              priced on paper before I start, and the paper is what you pay.
+            </p>
+            <ul class="spread__incl rise" style="--i:2">
+              <li>Every room and every circuit, line by line</li>
+              <li>Materials named, not "sundries"</li>
+              <li>Making good: who patches the plaster and what it costs</li>
+              <li>The certificate and the building-control notification</li>
+              <li>Anything that could move the price, flagged in advance, with the number it moves by</li>
+            </ul>
+          </div>
+          <figure class="spread__quote rise" style="--i:1">
+            <figcaption>From a written price, as it lands <!-- TEMP figures --></figcaption>
+            {client.lineItems.map(([label, n]) => (
+              <p class="spread__line"><span>{label}</span><strong>£{n}</strong></p>
+            ))}
+            <p class="spread__foot">…and every other line of the job, the same way.</p>
+          </figure>
+        </div>
+        <p class="spread__promise rise">
+          If the invoice says more than the quote and I didn't clear it with
+          you first, <strong>you pay the quote.</strong>
+        </p>
+        <p class="spread__cta rise">
+          <a href="#quote">Get a quote</a>
+          <span>A written price before any work. Always.</span>
+        </p>
+      </div>
+    </section>
+    <section class="section svc" aria-labelledby="svc-h" style="padding-top: 0;">
+      <div class="wrap">
+        <h2 id="svc-h" class="rise">The work, with honest from-prices</h2>
+        <div class="svc__leads">
+          <a class="svc__lead rise" style="--i:0" href="/services/#rewires">
+            <h3>Full and partial rewires</h3>
+            <p>
+              Two sockets a room and an extension lead behind every sofa?
+              That's a house running on 1960s wiring.
+            </p>
+            <p class="svc__anchor">
+              <strong>from {fmt(svc.rewires.from)}</strong>
+              <span>Priced room by room in writing</span>
+            </p>
+            <span class="svc__go">See what a rewire involves</span>
+          </a>
+          <a class="svc__lead rise" style="--i:1" href="/services/#solar">
+            <h3>Solar and battery</h3>
+            <p>
+              Your last bill made you wince. Panels sized on a year of your
+              actual usage, with the payback maths shown.
+            </p>
+            <p class="svc__anchor">
+              <strong>from {fmt(svc.solar.from)}</strong>
+              <span>10-year workmanship guarantee <!-- TEMP --></span>
+            </p>
+            <span class="svc__go">See the solar maths</span>
+          </a>
+        </div>
+        <ul class="svc__rows">
+          <li class="rise" style="--i:2">
+            <a href="/services/#ev">
+              <span class="svc__row-name">EV charger installation</span>
+              <span class="svc__row-line">Off the three-pin, onto a 7kW point that charges overnight on the cheap rate.</span>
+              <span class="svc__row-from">From {fmt(svc.ev.from)}</span>
+            </a>
+          </li>
+          <li class="rise" style="--i:3">
+            <a href="/services/#boards">
+              <span class="svc__row-name">Fuse boards and consumer units</span>
+              <span class="svc__row-line">Swapped in a day, every circuit tested, certificate in your hand.</span>
+              <span class="svc__row-from">From {fmt(svc.boards.from)}</span>
+            </a>
+          </li>
+          <li class="rise" style="--i:4">
+            <a href="/services/#eicr">
+              <span class="svc__row-name">EICR and landlord certificates</span>
+              <span class="svc__row-line">Booked this week, report in plain English.</span>
+              <span class="svc__row-from">From {fmt(svc.eicr.from)}</span>
+            </a>
+          </li>
+          <li class="rise" style="--i:5">
+            <a href="/services/#fault">
+              <span class="svc__row-name">Fault finding and repairs</span>
+              <span class="svc__row-line">Traced with test gear, fixed the same visit where parts allow.</span>
+              <span class="svc__row-from">From {fmt(svc.fault.from)}</span>
+            </a>
+          </li>
+          <li class="rise" style="--i:6">
+            <a href="/services/#lighting">
+              <span class="svc__row-name">Lighting design and fitting</span>
+              <span class="svc__row-line">Indoors, outdoors, and the kitchen you can finally see in.</span>
+              <span class="svc__row-from">From {fmt(svc.lighting.from)}</span>
+            </a>
+          </li>
+        </ul>
+      </div>
+    </section>
+  </div>
+
+  <div style="position: relative;">
+    <div class="conductor" aria-hidden="true"></div>
+
+    {/* v3 section 5: the Rewire Reckoner. ONE shared model — client.reckoner
+        feeds this instrument, the blog cost table and the services page. */}
+    <section class="section reck" aria-labelledby="reck-h">
+      <div class="wrap">
+        <h2 id="reck-h" class="rise">What would a rewire cost in your house?</h2>
+        <p class="reck__sub rise" style="--i:1">
+          These are the same numbers I quote from. Set the bedrooms, tell it
+          whether you're living there, read the range.
+        </p>
+        <div class="reck__panel rise" style="--i:1" data-reckoner data-model={JSON.stringify(client.reckoner)}>
+          <div class="reck__left">
+            <div class="reck__ctl">
+              <span class="reck__lbl" id="reck-beds-l">Bedrooms</span>
+              <div class="reck__step" role="group" aria-labelledby="reck-beds-l">
+                <button type="button" data-beds-down aria-label="Fewer bedrooms">&minus;</button>
+                <output data-beds-out aria-live="off">3</output>
+                <button type="button" data-beds-up aria-label="More bedrooms">+</button>
+              </div>
+            </div>
+            <div class="reck__ctl">
+              <span class="reck__lbl" id="reck-occ-l">While the work happens</span>
+              <div class="reck__tog" role="group" aria-labelledby="reck-occ-l">
+                <button type="button" data-occ="1" aria-pressed="true">We're living in it</button>
+                <button type="button" data-occ="0" aria-pressed="false">It'll be empty</button>
+              </div>
+            </div>
+            <ul class="reck__moves">
+              <li>Solid walls chase slower than plasterboard. Stone-built Headingley terraces sit at the top of the range.</li>
+              <li>Accessory spec. Brushed steel and dimmers everywhere adds real money; white plastic keeps it at the bottom.</li>
+              <li>Kitchens. Each one is a day of second fix on its own.</li>
+            </ul>
+          </div>
+          <div class="reck__right">
+            <div class="reck__result" aria-live="polite">
+              <p class="reck__price" data-price>£4,350 to £5,850</p>
+              <p class="reck__days" data-days>8 to 10 days on site</p>
+              <p class="reck__note" data-occ-note>
+                Living there adds about £350 and a couple of days. Dust
+                sheets, furniture moved room to room, and power kept on
+                every night.
+              </p>
+            </div>
+            <div class="reck__cta">
+              <a class="btn btn--quote" href="#quote">Get a quote</a>
+              <span>A proper price takes a look round. This gets you in the right street.</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    {/* v3 section 6: inline CTA band #1. The reusable band fragment. */}
+    <section class="band" aria-label="Book a job">
+      <div class="wrap band__in rise">
+        <p class="band__line">Know what you need? One call books it.</p>
+        <div class="band__act">
+          <a class="btn btn--call btn--lit" href={`tel:${tel}`}>Call Eddie</a>
+          <span class="band__risk">
+            Answered Monday to Saturday, 7.30 to 6. If it's not worth doing,
+            I'll tell you on the phone for nothing.
+          </span>
+        </div>
+      </div>
+    </section>
+
+    <div class="paper">
+      {/* v3 section 7: how a job goes — four steps on the counter rail. */}
+      <section class="section steps" aria-labelledby="steps-h">
+        <div class="wrap">
+          <h2 id="steps-h" class="rise">From first ring to certificate, four steps</h2>
+          <ol class="steps__rail">
+            <li class="rise" style="--i:0">
+              <strong>You ring, I answer.</strong>
+              <p>Not a call centre, me. Tell me the symptom or the plan and I'll tell you if it's worth a visit.</p>
+            </li>
+            <li class="rise" style="--i:1">
+              <strong>I look, then you get the price in writing.</strong>
+              <p>Room by room, line by line, usually within 48 hours of the visit.</p>
+            </li>
+            <li class="rise" style="--i:2">
+              <strong>The work happens on the dates we agreed.</strong>
+              <p>Sheets down, radio low, power back on every evening if you're living there.</p>
+            </li>
+            <li class="rise" style="--i:3">
+              <strong>You get the paperwork before I get paid.</strong>
+              <p>Certificate, building control notification, and the guarantee in writing.</p>
+            </li>
+          </ol>
+        </div>
+      </section>
+
+    </div>
+
+    {/* v3 section 8: proof — one loud quote beats three equal cards. */}
+    <section class="section proof2" aria-labelledby="proof2-h">
+      <div class="wrap">
+        <h2 id="proof2-h" class="rise">{client.google.reviewCount} reviews, one theme: no surprises <!-- TEMP count --></h2>
+        <div class="proof2__grid">
+          {client.reviews.filter((r) => r.lead).map((r) => (
+            <article class="proof2__lead rise">
+              <p class="stars" role="img" aria-label="Five star review">
+                {stars.map(() => (
+                  <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2l2.9 6.6 7.1.7-5.4 4.8 1.6 7L12 17.5 5.8 21l1.6-7L2 9.3l7.1-.7z"/></svg>
+                ))}
+              </p>
+              <blockquote>{r.quote}</blockquote>
+              <footer>{r.name}, {r.area} · {r.job} · {r.date} <!-- TEMP demo review --></footer>
+            </article>
+          ))}
+          <div class="proof2__side">
+            {client.reviews.filter((r) => !r.lead).map((r, i) => (
+              <article class="proof2__item rise" style={`--i:${i + 1}`}>
+                <blockquote>{r.quote}</blockquote>
+                <footer>{r.name}, {r.area} · {r.job} · {r.date} <!-- TEMP demo review --></footer>
+              </article>
+            ))}
+          </div>
+        </div>
+        <p class="proof2__reg rise">
+          I'm on the NICEIC register as {client.accreditationNumber}.<!-- TEMP number -->
+          Check it, and check anyone else who quotes you. Takes two minutes on
+          niceic.com.
+        </p>
+        <p class="proof2__cta rise">
+          <a href={`tel:${tel}`}>Call Eddie</a>
+          <span>You'll hear back within the working hour. <!-- TEMP promise --></span>
+        </p>
+      </div>
+    </section>
+
+    {/* v3 section 9: the solar band — guarantee-led, precise saving against
+        a round install price, the two-bills ask. Model: client.solarModel. */}
+    <section class="section solarband" aria-labelledby="solar-h">
+      <div class="wrap">
+        <div class="solarband__grid">
+          <div>
+            <h2 id="solar-h" class="rise">Solar that pays you back, with the maths shown</h2>
+            <p class="solarband__body rise" style="--i:1">
+              A {client.solarModel.panels}-panel system on a south-ish Leeds
+              roof generates about {client.solarModel.genKwh.toLocaleString('en-GB')} kWh
+              a year. At today's rates, between what you stop buying and what
+              you export, that's worth £{client.solarModel.valuePerYear} a
+              year. Against a {fmt(svc.solar.from)} installed price, the
+              system clears its own cost in {client.solarModel.paybackLine},
+              and the panels are warrantied for {client.solarModel.panelWarrantyYears}. <!-- TEMP model -->
+            </p>
+            <p class="solarband__ask rise" style="--i:2">
+              Send me two electricity bills. You'll get back a panel count, a
+              generation estimate for your actual roof, and the year the
+              system pays for itself. No visit needed for the first pass.
+            </p>
+            <div class="solarband__cta rise" style="--i:2">
+              <a class="btn btn--quote" href="#quote">Get a quote</a>
+              <span>A written price before any work. Always.</span>
+            </div>
+          </div>
+          <div class="solarband__aside rise" style="--i:1">
+            <ul class="solarband__gtees">
+              <li><strong>{client.solarModel.workmanshipYears}-year</strong> workmanship guarantee on the installation, in writing <!-- TEMP --></li>
+              <li><strong>{client.solarModel.panelWarrantyYears}-year</strong> output warranty on the panels themselves</li>
+              <li><strong>MCS</strong> certified installation, so export payments actually get paid <!-- TEMP --></li>
+            </ul>
+            <svg class="flow" viewBox="0 0 410 58" width="410" height="58" role="img"
+                 aria-label="Energy flows from the roof panels through the battery to the house">
+              <path d="M8 46 C 90 46, 120 12, 208 12 S 330 46, 402 46" />
+              <circle class="dot" r="3.5" />
+              <circle class="dot" r="3.5" />
+              <circle class="dot" r="3.5" />
+              <text x="4" y="34">PANELS</text>
+              <text x="182" y="30">BATTERY</text>
+              <text x="368" y="34">HOUSE</text>
+            </svg>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <div class="paper">
+
+      {/* v3 section 10: areas with substance — coverage logic, no thin
+          town pages, real housing-stock sentences. */}
+      <section class="section areas" aria-labelledby="area-h">
+        <div class="wrap">
+          <h2 id="area-h" class="rise">Leeds, and the towns within a sensible van ride</h2>
+          <div class="areas__grid">
+            {client.areaClusters.map((c, i) => (
+              <div class="areas__cell rise" style={`--i:${i}`}>
+                <h3>{c.title}</h3>
+                {c.places && <p class="areas__places">{c.places}</p>}
+                <p>{c.line}</p>
+              </div>
+            ))}
+          </div>
+          <p class="areas__overflow rise">{client.areaOverflow}</p>
+        </div>
+      </section>
+
+      {/* v3 section 11: credentials, explained in homeowner English. */}
+      <section class="section creds" aria-labelledby="creds-h" style="padding-top: 0;">
+        <div class="wrap">
+          <h2 id="creds-h" class="rise">What NICEIC actually gets you</h2>
+          <dl class="creds__list">
+            <div class="rise" style="--i:0">
+              <dt>NICEIC Approved Contractor <!-- TEMP --></dt>
+              <dd>
+                They audit me every year: test gear, paperwork, and real jobs
+                pulled apart by an assessor. If my work fails their standard,
+                they make me put it right, and their Platinum Promise backs
+                the job if I couldn't. <!-- TEMP: confirm cover wording -->
+              </dd>
+            </div>
+            <div class="rise" style="--i:1">
+              <dt>£2m public liability <!-- TEMP --></dt>
+              <dd>If the worst happens in your house, the cover is real and the certificate is on the van.</dd>
+            </div>
+            <div class="rise" style="--i:2">
+              <dt>12-month workmanship guarantee <!-- TEMP --></dt>
+              <dd>Anything I fitted plays up inside a year, I come back and sort it. The terms live on the About page, in full, not in small print.</dd>
+            </div>
+            <div class="rise" style="--i:3">
+              <dt>Part P</dt>
+              <dd>The building regulation covering electrical work in homes. I self-certify, so building control gets notified without you filling in a single form.</dd>
+            </div>
+            <div class="rise" style="--i:4">
+              <dt>BS 7671</dt>
+              <dd>The wiring regulations. Every circuit I leave behind is tested against the current edition and the readings go on your certificate.</dd>
+            </div>
+          </dl>
+        </div>
+      </section>
+
+    </div>
+
+    {/* v3 section 11b: inline CTA band #2 — keeps cadence through the
+        credential stretch. Same fragment as band #1, alternate line. */}
+    <section class="band" aria-label="Ring Eddie">
+      <div class="wrap band__in rise">
+        <p class="band__line">Credentials checked? The rest is one phone call.</p>
+        <div class="band__act">
+          <a class="btn btn--call btn--lit" href={`tel:${tel}`}>Call Eddie</a>
+          <span class="band__risk">You'll hear back within the working hour. <!-- TEMP promise --></span>
+        </div>
+      </div>
+    </section>
+
+    {/* v3 section 12: FAQ — six real phone questions, first one open.
+        FAQPage schema, genuine Q&A only. */}
+    <div class="paper">
+      <section class="section faq" aria-labelledby="faq-h">
+        <div class="wrap">
+          <h2 id="faq-h" class="rise">Straight answers to the usual questions</h2>
+          <div class="faq__list">
+            {client.faqs.map((f, i) => (
+              <details class="faq__item rise" style={`--i:${i % 3}`} open={i === 0}>
+                <summary>{f.q}<span class="faq__chev" aria-hidden="true">+</span></summary>
+                <p>{f.a} <!-- TEMP where figures --></p>
+              </details>
+            ))}
+          </div>
+        </div>
+      </section>
+    </div>
+    <script type="application/ld+json" set:html={JSON.stringify({
+      '@context': 'https://schema.org',
+      '@type': 'FAQPage',
+      mainEntity: client.faqs.map((f) => ({
+        '@type': 'Question',
+        name: f.q,
+        acceptedAnswer: { '@type': 'Answer', text: f.a },
+      })),
+    })} />
+
+    <section class="section contact" id="quote" aria-labelledby="contact-h">
+      <div class="wrap">
+        <h2 id="contact-h" class="rise">Ring now, or send the job across</h2>
+        <div class="contact__grid">
+          <div class="rise contact__info">
+            <a class="contact__tel" href={`tel:${tel}`}>{client.phone}</a>
+            <p class="contact__hours">
+              {client.hours}. Out of hours, leave a message and I call back
+              first thing.
+            </p>
+            <p class="contact__areas">
+              Out daily across {client.areas.slice(0, -1).join(', ')} and
+              {' '}{client.areas.at(-1)}.
+            </p>
+            <ul class="contact__facts">
+              <li>Prefer email? <a href={`mailto:${client.email}`}>{client.email}</a></li>
+              <li>{client.accreditation}, number {client.accreditationNumber} <!-- TEMP --></li>
+              <li>{client.guarantee} and {client.liabilityCover} behind every job <!-- TEMP --></li>
+            </ul>
+          </div>
+          <QuoteForm />
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <script is:inline>
+    // The constellation: live points drifting through the hero, wiring
+    // themselves to their neighbours. Starts after load so it never touches
+    // LCP; skips under reduced motion; pauses when the tab hides.
+    (function () { var start = function () {
+      var c = document.querySelector('[data-mesh]');
+      if (!c) return;
+      var still = matchMedia('(prefers-reduced-motion: reduce)').matches;
+      var hero = c.closest('.hero--live');
+      var x = c.getContext('2d');
+      var dpr = Math.min(devicePixelRatio || 1, 2);
+      var W, H;
+      function size() { W = c.width = c.offsetWidth * dpr; H = c.height = c.offsetHeight * dpr; }
+      size();
+      addEventListener('resize', size);
+      var N = innerWidth < 800 ? 22 : 52;
+      var LINK = 130 * dpr;
+      var ps = [];
+      for (var i = 0; i < N; i++) {
+        ps.push({
+          x: Math.random() * W,
+          y: Math.random() * H,
+          vx: (Math.random() - 0.5) * 0.22 * dpr,
+          vy: (Math.random() - 0.5) * 0.22 * dpr,
+          r: (Math.random() * 1.3 + 0.7) * dpr,
+        });
+      }
+      var running = true;
+      document.addEventListener('visibilitychange', function () {
+        running = !document.hidden;
+        if (running) requestAnimationFrame(tick);
+      });
+      function draw() {
+        x.clearRect(0, 0, W, H);
+        x.strokeStyle = '#ffb24d';
+        x.lineWidth = 1;
+        for (var i = 0; i < N; i++) {
+          for (var j = i + 1; j < N; j++) {
+            var dx = ps[i].x - ps[j].x, dy = ps[i].y - ps[j].y;
+            var d = Math.sqrt(dx * dx + dy * dy);
+            if (d < LINK) {
+              x.globalAlpha = (1 - d / LINK) * 0.16;
+              x.beginPath();
+              x.moveTo(ps[i].x, ps[i].y);
+              x.lineTo(ps[j].x, ps[j].y);
+              x.stroke();
+            }
+          }
+        }
+        x.fillStyle = '#ffb24d';
+        for (var i = 0; i < N; i++) {
+          x.globalAlpha = 0.5;
+          x.beginPath();
+          x.arc(ps[i].x, ps[i].y, ps[i].r, 0, 6.29);
+          x.fill();
+        }
+        x.globalAlpha = 1;
+      }
+      function tick() {
+        if (!running) return;
+        if (hero && hero.hasAttribute('data-paused')) { requestAnimationFrame(tick); return; }
+        for (var i = 0; i < N; i++) {
+          var p = ps[i];
+          p.x += p.vx; p.y += p.vy;
+          if (p.x < 0 || p.x > W) p.vx *= -1;
+          if (p.y < 0 || p.y > H) p.vy *= -1;
+        }
+        draw();
+        requestAnimationFrame(tick);
+      }
+      // Reduced motion: the designed still. One composed frame of the
+      // constellation, no loop, nothing blank.
+      if (still) { draw(); return; }
+      requestAnimationFrame(tick);
+    };
+    if (document.readyState === 'complete') setTimeout(start, 0);
+    else window.addEventListener('load', start);
+    })();
+
+    // Pause control: one attribute freezes every hero animation (CSS
+    // pauses the keyframes, the mesh loop idles on the same flag).
+    (function () {
+      var hero = document.querySelector('.hero--live');
+      var b = document.querySelector('[data-hero-pause]');
+      if (!hero || !b) return;
+      b.addEventListener('click', function () {
+        var on = hero.toggleAttribute('data-paused');
+        b.setAttribute('aria-pressed', on ? 'true' : 'false');
+        b.setAttribute('aria-label', on ? 'Play the animation' : 'Pause the animation');
+      });
+    })();
+
+    // The Rewire Reckoner. Reads the ONE shared model off its own data
+    // attribute; the blog table renders the same numbers server-side.
+    (function () {
+      var root = document.querySelector('[data-reckoner]');
+      if (!root) return;
+      var model = JSON.parse(root.dataset.model);
+      var beds = 3, occupied = true;
+      var out = root.querySelector('[data-beds-out]');
+      var price = root.querySelector('[data-price]');
+      var days = root.querySelector('[data-days]');
+      var note = root.querySelector('[data-occ-note]');
+      var down = root.querySelector('[data-beds-down]');
+      var up = root.querySelector('[data-beds-up]');
+      var gbp = function (n) { return '£' + n.toLocaleString('en-GB'); };
+      function render() {
+        var m = model.beds[beds];
+        var addP = occupied ? model.occupied.price : 0;
+        var addD = occupied ? model.occupied.days : 0;
+        out.textContent = beds;
+        price.textContent = gbp(m.low + addP) + ' to ' + gbp(m.high + addP);
+        days.textContent = (m.daysLow + addD) + ' to ' + (m.daysHigh + addD) + ' days on site';
+        note.hidden = !occupied;
+        down.disabled = beds <= 2;
+        up.disabled = beds >= 5;
+        [price, days].forEach(function (el) {
+          el.classList.remove('is-tick');
+          void el.offsetWidth;
+          el.classList.add('is-tick');
+        });
+      }
+      down.addEventListener('click', function () { if (beds > 2) { beds--; render(); } });
+      up.addEventListener('click', function () { if (beds < 5) { beds++; render(); } });
+      root.querySelectorAll('[data-occ]').forEach(function (b) {
+        b.addEventListener('click', function () {
+          occupied = b.dataset.occ === '1';
+          root.querySelectorAll('[data-occ]').forEach(function (o) {
+            o.setAttribute('aria-pressed', o === b ? 'true' : 'false');
+          });
+          render();
+        });
+      });
+      render();
+    })();
+  </script>
+</Base>

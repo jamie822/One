@@ -1,0 +1,56 @@
+---
+import DiaryBoard from './DiaryBoard.astro';
+import { studio } from '../../data/studio.js';
+
+const mailto = `mailto:${studio.contact.email}?subject=Website%20enquiry`;
+const ownSiteHost = studio.proof.ownSite.url.replace(/^https?:\/\//, '');
+---
+<!--
+  DIRECTION CONTRACT  (impeccable, new-work section 5. Mode: Persuade.)
+
+  THESIS: the studio's own mark, at hero scale, booking itself. It refuses the
+  category default for a web studio, which is a laptop mockup beside a promise.
+
+  OWN-WORLD: charcoal ground, one raised panel, the signature gradient held to
+  five diary tiles and nowhere else. Clash Display for the statement and the
+  numbers, Satoshi for everything else. Hairlines, no shadows, no glass.
+
+  STORY: a spark sees his own week on the screen, sees the gap in it, and reads
+  that the gap is what a website is for. He presses the one yellow thing.
+
+  FIRST VIEWPORT: static headline left, living diary right. Five tiles fill on
+  uneven timing, the sixth stays open and is the only thing that moves after.
+  Primary action sits under the lead, level with the diary's second row.
+
+  FORM: pinned by the founder ("The diary fills"), so no concept roll was run.
+  Staging: the mark's exact geometry at 6x, optically re-weighted strokes.
+-->
+<section class="hero">
+  <div class="shell hero__grid">
+    <div class="hero__copy">
+      <p class="label hero__eyebrow">Electricians and solar installers only</p>
+
+      <!-- LCP element. Never animated, never transformed, never scroll linked.
+           The last build lost 666ms to exactly this mistake. -->
+      <h1 class="hero__h1">I build websites that fill your diary.</h1>
+
+      <p class="hero__lead">
+        I’m a spark, not an agency. I got sick of marketing firms that didn’t
+        get the trade.
+      </p>
+
+      <div class="hero__actions">
+        <a class="btn btn--action hero__cta" href={mailto}>Book yours in</a>
+        <a class="hero__proof" href={studio.proof.ownSite.url} rel="noopener">
+          See the one I built for myself
+          <span class="hero__proof-url">{ownSiteHost}</span>
+        </a>
+      </div>
+    </div>
+
+    <figure class="hero__figure">
+      <DiaryBoard />
+      <figcaption class="hero__caption">The gap is what the website’s for.</figcaption>
+    </figure>
+  </div>
+</section>

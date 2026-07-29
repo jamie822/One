@@ -1,0 +1,14 @@
+---
+// The mark: a rising sun over a panel line. Pine box, sun disc, three rays
+// drawn as data ticks. Sized by prop, colours from tokens.
+interface Props { size?: number; }
+const { size = 30 } = Astro.props;
+---
+<svg class="mark" width={size} height={size} viewBox="0 0 32 32" fill="none" aria-hidden="true">
+  <rect x="1.5" y="1.5" width="29" height="29" rx="7" stroke="var(--pine-900)" stroke-width="2.4" />
+  <circle cx="16" cy="18.5" r="5.2" fill="var(--sun-500)" />
+  <path d="M16 8.2v3" stroke="var(--sun-500)" stroke-width="2.4" stroke-linecap="round" data-ray="a" />
+  <path d="M8.6 11.4l2.1 2.1" stroke="var(--sun-500)" stroke-width="2.4" stroke-linecap="round" data-ray="b" />
+  <path d="M23.4 11.4l-2.1 2.1" stroke="var(--sun-500)" stroke-width="2.4" stroke-linecap="round" data-ray="c" />
+  <path d="M7 25.5h18" stroke="var(--pine-900)" stroke-width="2.4" stroke-linecap="round" />
+</svg>

@@ -1,0 +1,326 @@
+---
+// The consumer unit. Cover off, which is the view you get when you are working
+// on one, and the only view where the busbar and the neutral tails are visible.
+//
+// The schedule is a real UK domestic board with solar and an EV point, because
+// that is who this studio sells to. Ratings are the ones you would actually
+// fit: B6 lighting, B32 ring finals, B16 immersion, B40 cooker, B45 for a
+// 10.5kW shower, B32 for a 7.4kW charge point, B20 for a 3.68kW G98 inverter.
+//
+// Illustrative, not a claim. No fact on this page depends on it.
+
+interface Way {
+  rating: string;
+  name: string;
+  short?: string;   // used when the board drops to 6 ways on a phone
+  drop?: boolean;   // hidden below 700px
+  xs?: boolean;     // also hidden below 390px, where 6 ways cannot hold 44px
+}
+
+const ways: Way[] = [
+  { rating: 'B6',  name: 'Lights up',    short: 'Lights' },
+  { rating: 'B6',  name: 'Lights down',  drop: true },
+  { rating: 'B32', name: 'Sockets up',   drop: true },
+  { rating: 'B32', name: 'Sockets down', short: 'Sockets' },
+  { rating: 'B32', name: 'Kitchen ring', drop: true },
+  { rating: 'B16', name: 'Immersion',                     xs: true },
+  { rating: 'B40', name: 'Cooker',       drop: true },
+  { rating: 'B45', name: 'Shower',                        xs: true },
+  { rating: 'B32', name: 'EV charger',   short: 'EV' },
+  { rating: 'B20', name: 'PV inverter',  short: 'PV' },
+];
+---
+
+<div class="bd" data-board data-phase="dead">
+  <span class="bd__screw bd__screw--tl" aria-hidden="true"></span>
+  <span class="bd__screw bd__screw--tr" aria-hidden="true"></span>
+  <span class="bd__screw bd__screw--bl" aria-hidden="true"></span>
+  <span class="bd__screw bd__screw--br" aria-hidden="true"></span>
+
+  <div class="bd__cavity">
+    <!-- The busbar. Fed from the main switch, feeding the line side of every
+         device on the rail. The one signature gradient on this page. -->
+    <div class="bd__busrow" aria-hidden="true">
+      <span class="bd__link"></span>
+      <div class="bd__bus"><span class="bd__pulse"></span></div>
+    </div>
+
+    <div class="bd__rail">
+      <div class="bd__row" role="group" aria-label="Consumer unit. Switch any way on or off.">
+
+        <button
+          class="way way--main"
+          type="button"
+          data-way="main"
+          data-state="off"
+          aria-pressed="false"
+          aria-label="Main switch, 100 amp double pole"
+        >
+          <span class="way__tap" aria-hidden="true"></span>
+          <span class="way__face">
+            <span class="way__rating">100A</span>
+            <span class="way__io way__io--i" aria-hidden="true">I</span>
+            <span class="way__io way__io--o" aria-hidden="true">O</span>
+            <span class="way__slot"><span class="way__lever"></span></span>
+          </span>
+          <svg class="way__lead" viewBox="0 0 62 20" preserveAspectRatio="none" aria-hidden="true" focusable="false">
+            <path d="M31 0 C31 9 12 9 12 20" />
+          </svg>
+        </button>
+
+        {ways.map((w, i) => (
+          <button
+            class:list={['way', w.drop && 'way--drop', w.xs && 'way--xs']}
+            type="button"
+            data-way={i}
+            data-state="off"
+            style={`--d:${i * 62}ms`}
+            aria-pressed="false"
+            aria-label={`${w.name}, ${w.rating}`}
+          >
+            <span class="way__tap" aria-hidden="true"></span>
+            <span class="way__face">
+              <span class="way__rating">{w.rating}</span>
+              <span class="way__slot"><span class="way__lever"></span></span>
+              <span class="way__test" aria-hidden="true">T</span>
+              <span class="way__flag" aria-hidden="true"></span>
+            </span>
+            <svg class="way__lead" viewBox="0 0 62 20" preserveAspectRatio="none" aria-hidden="true" focusable="false">
+              <path d="M31 0 C31 9 12 9 12 20" />
+            </svg>
+          </button>
+        ))}
+      </div>
+    </div>
+
+    <!-- Neutral bar, then earth bar. Where every one of those tails lands. -->
+    <div class="bd__bars" aria-hidden="true">
+      <div class="bd__bar"></div>
+      <div class="bd__bar bd__bar--e"></div>
+    </div>
+
+    <!-- The schedule card. Stuck on the front plate, same as every board. -->
+    <div class="bd__sched" aria-hidden="true">
+      <span class="sc sc--main" data-sched="main" data-state="off">Main switch</span>
+      {ways.map((w, i) => (
+        <span class:list={['sc', w.drop && 'sc--drop', w.xs && 'sc--xs']} data-sched={i} data-state="off" style={`--d:${i * 62}ms`}>
+          {w.short
+            ? (<><span class="sc__full">{w.name}</span><span class="sc__short">{w.short}</span></>)
+            : w.name}
+        </span>
+      ))}
+    </div>
+  </div>
+</div>
+
+<div class="bd__read">
+  <p class="bd__status" data-status aria-live="polite">Board dead. Main switch off.</p>
+  <button class="bd__replay" type="button" data-replay>
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+         stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+      <path d="M3 12a9 9 0 1 0 3-6.7L3 8" /><path d="M3 3v5h5" />
+    </svg>
+    Run it again
+  </button>
+</div>
+
+<script>
+  // Board controller. No framework, no animation library: every movement here
+  // is a CSS transition on a class or a data attribute, which keeps it off the
+  // main thread and interruptible. GSAP would add weight and take the motion
+  // off the compositor for a machine that only has discrete states.
+  (() => {
+    const board = document.querySelector<HTMLElement>('[data-board]');
+    const statusEl = document.querySelector<HTMLElement>('[data-status]');
+    const replay = document.querySelector<HTMLElement>('[data-replay]');
+    if (!board || !statusEl || !replay) return;
+
+    const main = board.querySelector<HTMLButtonElement>('[data-way="main"]')!;
+    const ways = [...board.querySelectorAll<HTMLButtonElement>('.way:not(.way--main)')];
+    const scheds = [...board.querySelectorAll<HTMLElement>('[data-sched]')];
+    const TRIP = 5;                       // the immersion. Way 6 on a full board.
+
+    // The board sheds ways on narrow screens, so the one that trips has to be
+    // a way that is actually on the rail: the immersion where it is showing,
+    // otherwise the last way that is. The fault line follows whichever it
+    // lands on, so the readout is never describing a breaker nobody can see.
+    const FAULTS: Record<string, string> = {
+      'Immersion':   'Immersion element gone to earth.',
+      'Shower':      'Shower element gone to earth.',
+      'EV charger':  'Charge point throwing a fault to earth.',
+      'PV inverter': 'Inverter throwing a fault to earth.',
+    };
+
+    const calm = window.matchMedia('(prefers-reduced-motion: reduce)');
+    const visible = () => ways.filter((w) => w.offsetParent !== null);
+    const wayNo = (el: HTMLElement) => visible().indexOf(el as HTMLButtonElement) + 1;
+    const nameOf = (el: HTMLElement) => (el.getAttribute('aria-label') || '').split(',')[0];
+
+    let timers: number[] = [];
+    let playing = false;
+    let tripped: HTMLButtonElement | null = null;
+    const clear = () => { timers.forEach(clearTimeout); timers = []; playing = false; };
+    const at = (ms: number, fn: () => void) => { timers.push(window.setTimeout(fn, ms)); };
+
+    function tripTarget() {
+      const v = visible();
+      return v.includes(ways[TRIP]) ? ways[TRIP] : v[v.length - 1];
+    }
+    const faultOf = (el: HTMLElement) => FAULTS[nameOf(el)] || 'Gone to earth.';
+
+    function say(html: string) { statusEl!.innerHTML = html; }
+
+    function setSched(key: string, state: string) {
+      const sc = scheds.find((s) => s.dataset.sched === key);
+      if (sc) sc.dataset.state = state;
+    }
+
+    function setWay(el: HTMLButtonElement, state: 'on' | 'off' | 'trip') {
+      el.dataset.state = state;
+      el.setAttribute('aria-pressed', String(state === 'on'));
+      setSched(el.dataset.way!, state);
+    }
+
+    function setAll(state: 'on' | 'off') { ways.forEach((w) => setWay(w, state)); }
+
+    function liveCount() {
+      return visible().filter((w) => w.dataset.state === 'on').length;
+    }
+
+    function announceLive() {
+      const n = liveCount();
+      say(`<b>${n} ${n === 1 ? 'way' : 'ways'} live.</b> Tap any breaker.`);
+    }
+
+    // ---- the sequence -----------------------------------------------------
+    // 0.0  main switch thrown, busbar energises left to right
+    // 0.9  ways come on down the board, staggered, 62ms apart
+    // 1.9  steady
+    // 4.4  the immersion trips to mid position, one way only
+    // 6.0  knocked fully off, because it will not reset from mid
+    // 6.9  back on
+    function run() {
+      clear();
+      playing = true;
+      board.dataset.phase = 'dead';
+      main.dataset.state = 'off';
+      main.setAttribute('aria-pressed', 'false');
+      setSched('main', 'off');
+      setAll('off');
+      say('Board dead. Main switch off.');
+
+      at(500, () => {
+        main.dataset.state = 'on';
+        main.setAttribute('aria-pressed', 'true');
+        setSched('main', 'on');
+        board.dataset.phase = 'main';
+        say('Main switch on. <b>100A, double pole.</b>');
+      });
+
+      at(1300, () => {
+        board.dataset.phase = 'live';
+        setAll('on');
+        say('Busbar live. Ways coming on.');
+      });
+
+      at(2500, announceLive);
+
+      at(4600, () => {
+        tripped = tripTarget();
+        setWay(tripped, 'trip');
+        say(`<b>Way ${wayNo(tripped)} tripped.</b> ${faultOf(tripped)}`);
+      });
+
+      at(5900, () => {
+        say('Everything else stayed on. That’s what you fit RCBOs for.');
+      });
+
+      at(7300, () => {
+        if (tripped) setWay(tripped, 'off');
+        say('Mid trip. Knock it fully off first, it won’t reset from there.');
+      });
+
+      at(8500, () => {
+        if (tripped) setWay(tripped, 'on');
+        say('Reset. Sorted.');
+      });
+
+      at(9600, () => { playing = false; announceLive(); });
+    }
+
+    function settle() {
+      clear();
+      board.dataset.phase = 'live';
+      main.dataset.state = 'on';
+      main.setAttribute('aria-pressed', 'true');
+      setSched('main', 'on');
+      setAll('on');
+      announceLive();
+    }
+
+    // ---- interaction ------------------------------------------------------
+    main.addEventListener('click', () => {
+      clear();
+      if (main.dataset.state === 'on') {
+        main.dataset.state = 'off';
+        setSched('main', 'off');
+        main.setAttribute('aria-pressed', 'false');
+        board.dataset.phase = 'dead';
+        say('<b>Main switch off.</b> Whole board dead.');
+      } else if (calm.matches) {
+        settle();
+      } else {
+        run();
+      }
+    });
+
+    ways.forEach((el) => {
+      el.addEventListener('click', () => {
+        clear();
+        if (board.dataset.phase !== 'live') {
+          say('Main switch is off. Nothing will come on.');
+          return;
+        }
+        const next = el.dataset.state === 'on' ? 'off' : 'on';
+        setWay(el, next);
+        say(next === 'on'
+          ? `Way ${wayNo(el)} on. <b>${nameOf(el)}.</b>`
+          : `Way ${wayNo(el)} off. <b>${nameOf(el)}.</b>`);
+      });
+    });
+
+    // Arrow keys walk the rail, the way your hand does.
+    board.querySelector('.bd__row')!.addEventListener('keydown', (e) => {
+      const ev = e as KeyboardEvent;
+      if (ev.key !== 'ArrowRight' && ev.key !== 'ArrowLeft') return;
+      const all = [main, ...visible()];
+      const i = all.indexOf(document.activeElement as HTMLButtonElement);
+      if (i < 0) return;
+      ev.preventDefault();
+      all[(i + (ev.key === 'ArrowRight' ? 1 : all.length - 1)) % all.length].focus();
+    });
+
+    replay.addEventListener('click', () => (calm.matches ? settle() : run()));
+
+    // Reduced motion gets the finished state, not the show.
+    if (calm.matches) { settle(); return; }
+
+    // Play once, when it is actually on screen. The observer is kept alive
+    // afterwards rather than disconnected, because it also parks the busbar's
+    // travelling current whenever the board scrolls away. Nothing should
+    // animate forever to an empty room.
+    let played = false;
+    const io = new IntersectionObserver((entries) => {
+      entries.forEach((en) => {
+        board.dataset.vis = en.isIntersecting ? 'in' : 'out';
+        if (en.isIntersecting && !played) { played = true; run(); }
+      });
+    }, { threshold: 0.25 });
+    io.observe(board);
+
+    // Do not keep animating to an empty room.
+    document.addEventListener('visibilitychange', () => {
+      if (document.hidden && playing) { clear(); settle(); }
+    });
+  })();
+</script>

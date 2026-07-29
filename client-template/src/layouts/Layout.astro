@@ -1,0 +1,118 @@
+---
+import { client } from '../data/client.js';
+import { href, businessSchema, breadcrumbSchema, ratingLabel } from '../lib/site.js';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import '../styles/global.css';
+
+const {
+  title,
+  description,
+  path = '/',
+  // Pass an array of { name, path } to emit BreadcrumbList schema + a visible trail.
+  crumbs = null,
+  // Extra JSON-LD blocks (Service, FAQPage, …)
+  schemas = [],
+} = Astro.props;
+
+const canonical = new URL(path, client.url).href;
+
+// Rating in the title lifts click-through on every listing the client owns.
+// Only appended when the rating is genuine — see lib/site.js.
+const suffix = ratingLabel ? ` | ${client.name} · ${ratingLabel}` : ` | ${client.name}`;
+const fullTitle = title ? `${title}${suffix}` : `${client.name} — ${client.tagline}`;
+const metaDesc = description || client.tagline;
+
+const allSchemas = [businessSchema(), ...(crumbs ? [breadcrumbSchema(crumbs)] : []), ...schemas];
+---
+<!doctype html>
+<html
+  lang="en-GB"
+  data-mode={client.mode}
+  style={`--brand:${client.brandColor};--brand-dark:${client.brandColorDark};--brand-soft:color-mix(in srgb, ${client.brandColor} 12%, transparent);`}
+>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{fullTitle}</title>
+    <meta name="description" content={metaDesc} />
+    <link rel="canonical" href={canonical} />
+    <meta name="robots" content="index, follow" />
+
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content={client.name} />
+    <meta property="og:title" content={fullTitle} />
+    <meta property="og:description" content={metaDesc} />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:locale" content="en_GB" />
+    <meta name="twitter:card" content="summary_large_image" />
+
+    <link rel="icon" href={href('/favicon.svg')} type="image/svg+xml" />
+    <link rel="sitemap" href={href('/sitemap-index.xml')} />
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Sora:wght@600;700;800&display=swap"
+    />
+
+    {allSchemas.map((s) => (
+      <script type="application/ld+json" set:html={JSON.stringify(s)} />
+    ))}
+  </head>
+  <body>
+    <a class="skip" href="#main">Skip to content</a>
+    <Header path={path} />
+
+    {crumbs && crumbs.length > 1 && (
+      <nav class="crumbs" aria-label="Breadcrumb">
+        <div class="container">
+          {crumbs.map((c, i) => (
+            <>
+              {i > 0 && <span>/</span>}
+              {i === crumbs.length - 1
+                ? <span aria-current="page">{c.name}</span>
+                : <a href={href(c.path)}>{c.name}</a>}
+            </>
+          ))}
+        </div>
+      </nav>
+    )}
+
+    <main id="main"><slot /></main>
+    <Footer />
+
+    <script>
+      // Header border on scroll.
+      const header = document.querySelector('.header');
+      const onScroll = () => header?.classList.toggle('is-scrolled', window.scrollY > 8);
+      onScroll();
+      window.addEventListener('scroll', onScroll, { passive: true });
+
+      // Mobile nav.
+      const toggle = document.querySelector('.nav-toggle');
+      const nav = document.querySelector('.nav');
+      toggle?.addEventListener('click', () => {
+        const open = nav?.classList.toggle('is-open');
+        toggle.setAttribute('aria-expanded', String(Boolean(open)));
+      });
+
+      // Scroll reveal. IntersectionObserver only — no scroll handler, so this
+      // costs nothing on the main thread and cannot hurt INP.
+      const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+      const items = document.querySelectorAll('.reveal');
+      if (reduce || !('IntersectionObserver' in window)) {
+        items.forEach((el) => el.classList.add('is-in'));
+      } else {
+        const io = new IntersectionObserver(
+          (entries) => entries.forEach((e) => {
+            if (e.isIntersecting) { e.target.classList.add('is-in'); io.unobserve(e.target); }
+          }),
+          { threshold: 0.1, rootMargin: '0px 0px -40px' }
+        );
+        items.forEach((el) => io.observe(el));
+      }
+    </script>
+  </body>
+</html>

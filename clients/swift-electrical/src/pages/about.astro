@@ -1,0 +1,156 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Hero from '../components/Hero.astro';
+import TrustBar from '../components/TrustBar.astro';
+import CtaBand from '../components/CtaBand.astro';
+import Placeholder from '../components/Placeholder.astro';
+import Needed from '../components/Needed.astro';
+import Icon from '../components/Icon.astro';
+import { href, businessId } from '../lib/site.js';
+import { client } from '../data/client.js';
+
+const personSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'Person',
+  name: client.owner.name,
+  jobTitle: client.owner.role,
+  worksFor: { '@id': businessId },
+};
+---
+<Layout
+  path="/about/"
+  title="About Swift Electrical & Security"
+  description="Run by Adil, a NICEIC registered electrician and security installer covering Bradford and West Yorkshire. What the registration means and how we price work."
+  crumbs={[{ name: 'Home', path: '/' }, { name: 'About', path: '/about/' }]}
+  schemas={[personSchema]}
+>
+  <Hero inner={true}>
+    <p class="eyebrow">About</p>
+    <h1>Who you're dealing with, and what he's registered to do.</h1>
+    <p class="hero__sub">
+      Swift Electrical &amp; Security is a NICEIC registered electrician and
+      security installer run by Adil, working across Bradford and West
+      Yorkshire.
+    </p>
+  </Hero>
+
+  <div class="container"><TrustBar /></div>
+
+  <section class="section">
+    <div class="container split">
+      <div class="frame reveal">
+        <Placeholder
+          src={client.owner.photo}
+          alt={`${client.owner.name}, ${client.name}`}
+          label="Photo of Adil needed"
+          hint="Real photo, not stock. There are 18 posts on the Instagram already — a still from one of those would do to start."
+          variant="ph--portrait"
+        />
+      </div>
+      <div class="reveal">
+        <h2>Adil</h2>
+        <p class="lead">{client.owner.bio}</p>
+        <p class="muted">
+          A landlord renewing EICRs on several properties says he struggled to
+          find anyone at all, and that the firms he did find quoted extortionate
+          prices. Another says Adil talked him through exactly what needed doing
+          before doing any of it. Three of the seven Google reviews name him.
+        </p>
+        <p class="muted">
+          The security side is half the business and it's in the name. Two of
+          the seven reviews are about camera installs, one from a customer who
+          has used the company several times.
+        </p>
+        <div class="ph" style="aspect-ratio:auto;padding:24px;margin-top:22px;text-align:left">
+          <strong>Adil's own words needed here</strong>
+          <small>
+            How he got into the trade, what he did before, why he added security
+            to the electrical side. Two or three paragraphs, first person, in
+            his voice. This is the highest-trust content on the site.
+          </small>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section section--panel">
+    <div class="container">
+      <div class="section__head reveal">
+        <h2>What NICEIC registration actually means</h2>
+        <p>
+          NAPIT has told Parliament that public awareness of the competent-person
+          schemes is low. Ask ten people what NICEIC registration involves and
+          you'll get ten shrugs, so we've written down what it buys you.
+        </p>
+      </div>
+
+      <div class="creds">
+        <div class="cred reveal">
+          <span class="cred__ico"><Icon name="shield" /></span>
+          <h3>NICEIC registered</h3>
+          <p>
+            An independent assessor inspects our work every year. Registration
+            also lets us self-certify to Building Control, so you get the
+            compliance certificate your solicitor asks for the day you sell.
+          </p>
+          <p style="margin-top:12px"><Needed label="ENROLMENT NUMBER — so you can check the register" /></p>
+        </div>
+
+        <div class="cred reveal" style="transition-delay:80ms">
+          <span class="cred__ico"><Icon name="clipboard" /></span>
+          <h3>Certified and notified</h3>
+          <p>
+            Everything gets tested to BS 7671. "Notifiable" means a new circuit,
+            a board change or anything in a bathroom, and the law puts that
+            paperwork on you, the homeowner. We file it, so it exists.
+          </p>
+        </div>
+
+        <div class="cred reveal" style="transition-delay:160ms">
+          <span class="cred__ico"><Icon name="check" /></span>
+          <h3>Qualifications</h3>
+          <p>We list the tickets behind the work so you can check them instead of taking them on trust.</p>
+          <p style="margin-top:12px"><Needed label="2391? 18th Edition? ECS card?" /></p>
+        </div>
+
+        <div class="cred reveal" style="transition-delay:240ms">
+          <span class="cred__ico"><Icon name="star" /></span>
+          <h3>Insured</h3>
+          <p>We state the public liability figure. "Fully insured" on its own tells you nothing.</p>
+          <p style="margin-top:12px"><Needed label="COVER AMOUNT" /></p>
+        </div>
+      </div>
+
+      <div class="inline-cta reveal">
+        <p>Want the numbers before you book? Ask and we'll send them over.</p>
+        <a class="btn btn--act" href={href('/contact/')}>Ask us <Icon name="arrow" /></a>
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="container container--narrow reveal">
+      <h2>How we work</h2>
+      <p>
+        Testing and fixing are two different jobs, and we keep them that way.
+        You hear what we found and what it will cost before anything starts.
+      </p>
+      <p class="muted">
+        We won't tell you something is urgent when it isn't. An old fuse board
+        is worth knowing about, and it is almost never an emergency, whatever
+        the last person through your door told you. Get a second opinion. We
+        would rather you did that than take our word for it.
+      </p>
+    </div>
+  </section>
+
+  <CtaBand title="Want a price?" />
+</Layout>
+
+<style>
+  li { display: flex; gap: 13px; align-items: flex-start; }
+  li svg { width: 20px; height: 20px; color: var(--brand); flex: 0 0 auto; margin-top: 4px; }
+  li strong { display: block; font-family: var(--font-display); margin-bottom: 3px; }
+  li span { color: var(--muted); }
+  li strong { color: var(--text); }
+</style>

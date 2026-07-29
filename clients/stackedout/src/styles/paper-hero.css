@@ -1,0 +1,491 @@
+/* PAPER HERO — the photographic wall diary, and the printing on it.
+
+   Everything here is transform, opacity, mask-position or a composited filter:
+   nothing animates a property that costs layout. The film is the only heavy thing
+   on the page and it is one element.
+
+   THREE THINGS THIS FILE IS DOING BEYOND LAYOUT.
+
+   One, it grades the film. The clip came back split toned, amber on the left and
+   teal on the right, against a near black wall — handsome, and completely wrong
+   for what this picture is supposed to mean. A diary with every day taken is
+   GOOD NEWS. So the film is lifted and de crushed here rather than re shot:
+   brightness up, contrast down so the blacks come off the floor, and a warm wash
+   over the top. Bright working daylight, not a moody studio.
+
+   Two, THE FOLD. The delivered turn was measured frame by frame: the bottom right
+   corner lifts at about 0.35s, the fold line rolls up and to the left across the
+   sheet at roughly 35 degrees above horizontal, and the sheet is gone by about
+   2.2s. So the printing is wiped along that same line at that same rate, and the
+   month underneath is uncovered along it. Both sheets are on screen at once during
+   a turn, which is what the frames show. Fading the printing out instead, which is
+   what this did first, reads as type stuck to the lens rather than ink on paper.
+
+   Three, the ink MULTIPLIES with the photograph. Ink absorbs light, so it has to
+   take the paper's own light and shade: warm on the lit left, cool towards the
+   right edge, darker in the shadow. One blend layer on the whole printing.
+
+   Registration: .ph__diary's four percentages own where the grid sits, measured off
+   the poster at 1440px. Tune those, not the layout. */
+
+.ph {
+  --film-ar: 1344 / 576;
+
+  /* The masthead band. The page box extends this far ABOVE the registration box,
+     so the printed grid stays exactly where it was measured. */
+  --mast-h: clamp(24px, 3.3vw, 58px);
+
+  /* The load reveal, keyed to the film's clock rather than chosen for feel. The
+     clip holds for 0.55s before the corner lifts, so the printing has one held
+     frame to arrive in and it takes it: mark, then the word, then the rule. */
+  --t-mark: .06s;
+  --t-slot: .18s;
+  --t-ink:  .2s;
+  --t-rule: .58s;
+  --d-ink:  .5s;
+
+  /* The fold, from the frames: 1.6s from first lift to flat paper. */
+  --d-fold: 1.62s;
+  --ease-fold: cubic-bezier(.38, .12, .72, .88);
+
+  /* Ink. Not black: a diary is written in biro, and the blue reads as written
+     rather than typeset once it is multiplying into warm paper. */
+  --pen:      33 45 74;
+  --pen-soft: 48 60 88;
+
+  position: relative;
+  width: min(100% - 2 * var(--s-3), 1560px);
+  margin-inline: auto;
+}
+
+/* Daylight spilling off the frame onto the page, so the hero sits in light
+   instead of in a black box. z-index 0 rather than -1: a negative index would
+   paint under the section background and disappear. */
+.ph::before {
+  content: '';
+  position: absolute;
+  /* Vertical only. A lateral inset here spilled 46px past the viewport and put a
+     horizontal scrollbar on the page: a negative inset is real overflow, unlike the
+     stage's box shadow, which spreads sideways for free. */
+  inset: -8% 0 -12%;
+  z-index: 0;
+  pointer-events: none;
+  background: radial-gradient(62% 68% at 50% 44%, rgba(255, 231, 176, .17), rgba(255, 231, 176, 0) 72%);
+}
+
+.ph__stage {
+  position: relative;
+  z-index: 1;
+  isolation: isolate;
+  border-radius: var(--r-card);
+  overflow: hidden;
+  /* A lip rather than a border, plus the warm spill the paper throws. */
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, .10),
+    0 34px 90px -44px rgba(255, 224, 160, .26);
+}
+
+/* The grade. brightness lifts, the sub 1 contrast pulls the crushed blacks up off
+   the floor, and the saturation trim stops the teal edge going electric once it is
+   brighter. One filter on one composited element. */
+.ph__film {
+  display: block;
+  width: 100%;
+  height: auto;
+  aspect-ratio: var(--film-ar);
+  object-fit: cover;
+  filter: brightness(1.42) contrast(.84) saturate(.96);
+  /* Belt and braces against the one frame of flash some browsers show between
+     poster and first decoded frame on a dark video. */
+  background: var(--ground);
+}
+
+/* Warm working light over the frame. Low alpha and no blend mode on purpose:
+   mix-blend-mode over a playing video pulls it off the compositor on some
+   mobile GPUs, and a flat wash buys the same warmth for nothing. */
+.ph__stage::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  background:
+    /* Sun on the paper. */
+    radial-gradient(74% 66% at 54% 30%, rgba(255, 244, 218, .19), rgba(255, 244, 218, .02) 68%),
+    /* And light on the wall behind it. An inverted vignette: nothing over the middle
+       where the paper is, lifting towards the edges where the studio left the room
+       black. That is the difference between a lit workshop and a moody set. */
+    radial-gradient(76% 84% at 50% 48%, rgba(216, 230, 248, 0) 44%, rgba(216, 230, 248, .22) 100%);
+}
+
+/* ---- The printing ------------------------------------------------------- */
+/* The registration box: where the grid printed in the photograph actually is, in
+   percentages of the stage, because both scale with the viewport. Measured off the
+   poster at 1440px — the printed grid runs 16.2% to 87% across, 24% down to 84.5%.
+   The masthead band sits above this box, added back by .ph__page. */
+.ph__diary {
+  position: absolute;
+  left: 16.2%;
+  right: 13%;
+  top: 24%;
+  bottom: 15.5%;
+  z-index: 2;
+  pointer-events: none;
+  /* Ink absorbs light. This is the single thing that stops the type reading as an
+     overlay: everything printed now picks up the raking light, the paper grain and
+     the shadow under the roll, because it is multiplying into them. */
+  mix-blend-mode: multiply;
+}
+
+/* ---- A sheet ------------------------------------------------------------ */
+/* One printed page: masthead, month, day names, entries. The whole thing is what
+   leaves when the sheet turns, so the whole thing is one element. */
+.ph__page {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: calc(-1 * var(--mast-h));
+  bottom: 0;
+  display: grid;
+  grid-template-rows: var(--mast-h) auto 1fr;
+  opacity: 0;
+  visibility: hidden;
+}
+.ph__page[data-on] { opacity: 1; visibility: visible; }
+
+/* THE FOLD. The line the roll leaves runs about 34 degrees above horizontal in the
+   delivered frames, measured across the pad. A gradient's edge is PERPENDICULAR to
+   its axis, which is the trap here: 125deg looks like the right number and wipes
+   almost vertically. 146deg is the axis whose edge lies at 34 degrees. Up-left of
+   that edge the sheet is still flat; down-right of it the sheet has gone.
+
+   The outgoing sheet keeps the up-left side, the incoming sheet keeps the down-right
+   side, and both move together: two halves of one edge. The feather is the roll
+   itself — printing on paper that is already curving is not facing us any more. */
+/* --fold is the boundary's position along that axis, 0% at the top left corner and
+   100% at the bottom right. Registering it is what makes it interpolate: animating
+   mask-position instead, which was the first attempt, does not animate at all in
+   Chromium — it jumps to the end state, so both sheets swapped instantly and the
+   whole point was lost. */
+@property --fold {
+  syntax: '<percentage>';
+  inherits: false;
+  initial-value: 100%;
+}
+
+.ph__page[data-out],
+.ph__page[data-in] {
+  -webkit-mask-repeat: no-repeat;
+          mask-repeat: no-repeat;
+  -webkit-mask-size: 100% 100%;
+          mask-size: 100% 100%;
+}
+/* The outgoing sheet keeps the up-left side of the fold. */
+.ph__page[data-out] {
+  -webkit-mask-image: linear-gradient(146deg, #000 0 var(--fold), rgba(0, 0, 0, .32) calc(var(--fold) + 4%), transparent calc(var(--fold) + 9%));
+          mask-image: linear-gradient(146deg, #000 0 var(--fold), rgba(0, 0, 0, .32) calc(var(--fold) + 4%), transparent calc(var(--fold) + 9%));
+  animation: ph-fold-out var(--d-fold) var(--ease-fold) both;
+}
+/* The incoming sheet keeps the down-right side: the same edge, the other half. */
+.ph__page[data-in] {
+  -webkit-mask-image: linear-gradient(146deg, transparent 0 var(--fold), rgba(0, 0, 0, .32) calc(var(--fold) + 4%), #000 calc(var(--fold) + 9%));
+          mask-image: linear-gradient(146deg, transparent 0 var(--fold), rgba(0, 0, 0, .32) calc(var(--fold) + 4%), #000 calc(var(--fold) + 9%));
+  animation: ph-fold-in var(--d-fold) var(--ease-fold) both;
+}
+/* The opacity tail on the way out is a safety net, not styling: in an engine without
+   registered properties the mask is invalid and does nothing, and this is what still
+   takes the old sheet's printing off the paper. */
+@keyframes ph-fold-out {
+  from { --fold: 108%; opacity: 1; }
+  88%  { opacity: 1; }
+  to   { --fold: -11%; opacity: 0; }
+}
+@keyframes ph-fold-in {
+  from { --fold: 108%; }
+  to   { --fold: -11%; }
+}
+
+/* ---- The masthead, printed at the top of the sheet ---------------------- */
+/* Where a wall planner puts its title: the mark, the word, the month opposite, and
+   a rule under all three. It is a row of the sheet's own grid, so it turns with the
+   sheet instead of hovering over it. */
+.ph__mast {
+  position: relative;
+  display: flex;
+  align-items: flex-end;
+  gap: clamp(6px, .78vw, 15px);
+  padding-bottom: .3em;
+}
+
+.ph__mark {
+  flex: none;
+  width: clamp(17px, 2.14vw, 38px);
+  height: auto;
+  align-self: center;
+}
+
+.ph__word {
+  margin: 0;
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: clamp(17px, 2.36vw, 42px);
+  line-height: .88;
+  letter-spacing: -.03em;
+  /* Clash draws a narrow word space and the guide forbids "StackedOut". */
+  word-spacing: .1em;
+  /* Revealed by a hard edged gradient used as a text clip, slid right to left
+     across a 220% wide background: the word inks in from the left, the direction a
+     hand writes. It inks in ink, not in brand colour — yellow disappears on lit
+     paper, and the colour is the mark's job. */
+  background-image: linear-gradient(100deg, rgb(var(--pen)) 0 50%, transparent 50%);
+  background-size: 220% 100%;
+  background-repeat: no-repeat;
+  background-position: 0 0;
+  -webkit-background-clip: text;
+          background-clip: text;
+  color: transparent;
+}
+
+/* The month, opposite the mark. */
+.ph__month {
+  margin: 0 0 0 auto;
+  display: flex;
+  align-items: baseline;
+  gap: .34em;
+  font-family: var(--font-display);
+  font-weight: 700;
+  letter-spacing: -.03em;
+  line-height: .9;
+  color: rgb(var(--pen));
+}
+.ph__month-n { font-size: clamp(14px, 1.98vw, 35px); }
+.ph__month-y {
+  font-size: clamp(8px, .74vw, 13px);
+  font-weight: 600;
+  letter-spacing: .04em;
+  color: rgb(var(--pen-soft) / .72);
+}
+
+/* THE one signature gradient on this page: a printer's rule under the masthead,
+   drawn left to right as the last move of the load. Two stops, the brand's own,
+   pitched deep because they are multiplying into paper. */
+.ph__rule {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: max(1.5px, .13vw);
+  border-radius: 2px;
+  background: linear-gradient(90deg, #e8bf00 0%, #12a7c8 62%, rgba(18, 167, 200, .1) 100%);
+  transform-origin: 0 50%;
+}
+
+/* ---- Day names and entries --------------------------------------------- */
+.ph__dows {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  padding-bottom: .3em;
+}
+.ph__dows span {
+  font-family: var(--font-body);
+  font-weight: 700;
+  font-size: clamp(6px, .58vw, 10px);
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  color: rgb(var(--pen-soft) / .8);
+  padding-left: .5em;
+}
+
+.ph__grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  grid-template-rows: repeat(5, 1fr);
+}
+
+.ph__cell {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: start;
+  gap: .12em;
+  padding: .35em .5em 0;
+  min-width: 0;
+}
+.ph__cell--blank { visibility: hidden; }
+
+.ph__date {
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+  font-size: clamp(8px, .82vw, 15px);
+  line-height: 1;
+  color: rgb(var(--pen));
+}
+
+/* The job. Underlined in the accent: a hairline under 12px type is the one place a
+   written entry can carry brand colour without competing with the masthead. */
+.ph__job {
+  max-width: 100%;
+  font-family: var(--font-body);
+  font-weight: 600;
+  font-size: clamp(6.5px, .66vw, 12px);
+  line-height: 1.15;
+  color: rgb(var(--pen));
+  /* One line, clipped rather than wrapped: a wrapped entry would push the row, and
+     the rows are printed on the paper and cannot move. */
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  border-bottom: 1px solid #d09b00;
+}
+
+/* The free day. Ringed by hand round the numeral, deliberately not a circle: 52/48
+   radii and a few degrees off square is what a pen does. align-items:start on the
+   cell is what keeps this a ring on the number instead of an ellipse across the
+   whole box. */
+.ph__cell--open .ph__date { position: relative; }
+.ph__cell--open .ph__date::after {
+  content: '';
+  position: absolute;
+  inset: -38% -42%;
+  border: max(1.2px, .11vw) solid #0d7f9c;
+  border-radius: 52% 48% 49% 51%;
+  rotate: -7deg;
+}
+
+/* What the ring is for. The mark keeps one slot open and so does the diary. */
+.ph__free {
+  font-family: var(--font-body);
+  font-weight: 700;
+  font-size: clamp(5.5px, .54vw, 9.5px);
+  letter-spacing: .16em;
+  text-transform: uppercase;
+  color: #0d7f9c;
+  margin-top: .34em;
+}
+
+/* ---- The load reveal ---------------------------------------------------- */
+/* Only the sheet that is on the pad at load inks itself in. The other two arrive by
+   being uncovered, which is what actually happens to a sheet underneath — its
+   printing was already on it. Without JavaScript the poster is the hero and the
+   printing is simply all there, which is what .ph:not(.ph--live) settles. */
+.ph__rule { transform: scaleX(1); }
+
+.ph--live .ph__page[data-first] .ph__mark {
+  animation: ph-face .42s var(--ease-enter) var(--t-mark) both;
+}
+/* The colours following the mark in: the booked slots filling in sequence, then the
+   free one. The brand's own story, told in the logo. */
+.ph--live .ph__page[data-first] .ph__mark .mark__slot {
+  animation: ph-fill .3s var(--ease-enter) both;
+  animation-delay: calc(var(--t-slot) + var(--slot-i, 0) * 62ms);
+  transform-box: fill-box;
+  transform-origin: 50% 50%;
+}
+/* Slot order read off the mark's own data attributes rather than nth-child, because
+   the free slot is the last element and has to stay last. */
+.ph__mark [data-slot="0"] { --slot-i: 0; }
+.ph__mark [data-slot="1"] { --slot-i: 1; }
+.ph__mark [data-slot="2"] { --slot-i: 2; }
+.ph__mark [data-slot="3"] { --slot-i: 3; }
+.ph__mark [data-slot="4"] { --slot-i: 4; }
+.ph__mark [data-slot="5"] { --slot-i: 5.6; }
+
+.ph--live .ph__page[data-first] .ph__word {
+  animation: ph-sweep var(--d-ink) var(--ease-enter) var(--t-ink) both;
+}
+.ph--live .ph__page[data-first] .ph__rule {
+  animation: ph-draw .46s var(--ease-enter) var(--t-rule) both;
+}
+/* The entries write themselves in, once, on the sheet that is already on the pad. */
+.ph__page[data-first] .ph__date,
+.ph__page[data-first] .ph__job,
+.ph__page[data-first] .ph__free {
+  animation: ph-write .34s var(--ease-enter) both;
+}
+.ph__page[data-first] .ph__date { animation-delay: calc(.16s + var(--i, 0) * 9ms); }
+.ph__page[data-first] .ph__job  { animation-delay: calc(.22s + var(--i, 0) * 9ms); }
+.ph__page[data-first] .ph__free { animation-delay: calc(.34s + var(--i, 0) * 9ms); }
+/* The ring is drawn last, after the day it goes round has arrived. */
+.ph__page[data-first] .ph__cell--open .ph__date::after {
+  animation: ph-ring .42s var(--ease-enter) calc(.4s + var(--i, 0) * 9ms) both;
+}
+
+@keyframes ph-sweep { from { background-position: 100% 0; } to { background-position: 0 0; } }
+@keyframes ph-draw  { from { transform: scaleX(0); } to { transform: scaleX(1); } }
+@keyframes ph-face  { from { opacity: 0; transform: translate3d(-70%, 0, 0); } to { opacity: 1; transform: none; } }
+@keyframes ph-fill  { from { opacity: 0; transform: scale(.34); }              to { opacity: 1; transform: none; } }
+@keyframes ph-write { from { opacity: 0; transform: translate3d(0, .34em, 0); } to { opacity: 1; transform: none; } }
+@keyframes ph-ring  { from { opacity: 0; transform: scale(.6) rotate(-11deg); } to { opacity: 1; transform: none; } }
+
+/* ---- Phone -------------------------------------------------------------- */
+@media (max-width: 720px) {
+  .ph {
+    /* 21:9 at 390px is 167px tall and stops reading as a calendar at all. Crop to a
+       portrait-ish window taken from just below the top, so the binding and the head
+       of the grid are what survive the crop. */
+    --film-ar: 5 / 4;
+    --mast-h: 30px;
+  }
+  .ph__film { object-position: 50% 26%; }
+  /* Same four numbers, re-measured for that crop. */
+  .ph__diary { left: 9%; right: 7%; top: 33%; bottom: 12%; }
+  .ph__word { font-size: clamp(17px, 5.6vw, 30px); }
+  .ph__mark { width: clamp(17px, 5.2vw, 28px); }
+  .ph__month-n { font-size: clamp(14px, 4.6vw, 26px); }
+  .ph__dows span { font-size: 5.5px; letter-spacing: .06em; }
+  /* No room for words at 41px a cell: an ellipsised "Board sw..." is noise. The
+     entry becomes the stroke it was underlined with, so a booked day still reads as
+     booked and the ringed free day still reads as the exception. */
+  .ph__job {
+    width: 64%;
+    height: 0;
+    margin-top: .2em;
+    color: transparent;
+    border-bottom-width: 1.5px;
+  }
+  .ph__free { display: none; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  /* The script never adds ph--live under reduced motion, so most of this is a guard
+     rather than a repair. The fold and the writing are not gated by that class,
+     though, so they have to be turned off here. */
+  .ph__word { animation: none; background-position: 0 0; }
+  .ph__page[data-out], .ph__page[data-in] { animation: none; }
+  .ph__mark, .ph__mark .mark__slot, .ph__rule,
+  .ph__date, .ph__job, .ph__free,
+  .ph__cell--open .ph__date::after { animation: none; }
+}
+
+/* ---- Off screen --------------------------------------------------------- */
+/* Not hidden: it is the only description of the picture. */
+.ph__sr {
+  position: absolute;
+  width: 1px; height: 1px;
+  margin: -1px; padding: 0;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+/* ---- The way in when the film cannot start itself ----------------------- */
+/* Bottom right of the stage, over the darkest part of the photograph, so it does
+   not sit on the masthead or on the lit paper. Hidden in the markup and revealed
+   only by script, so a visitor whose film autoplays never sees it. */
+.ph__play {
+  position: absolute;
+  right: clamp(12px, 1.6vw, 26px);
+  bottom: clamp(12px, 1.6vw, 26px);
+  z-index: 3;
+  display: inline-flex; align-items: center; gap: 8px;
+  min-height: 44px; padding: 11px 18px;
+  font-family: var(--font-body); font-weight: 700; font-size: var(--t-label);
+  color: var(--ground); background: var(--action);
+  border: 1px solid transparent; border-radius: var(--r-chip);
+  cursor: pointer;
+  transition: background-color 160ms var(--ease-ui), transform 160ms var(--ease-ui);
+}
+.ph__play:hover { background: var(--action-deep); }
+.ph__play:active { transform: scale(.97); }
+.ph__play[hidden] { display: none; }
