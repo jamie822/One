@@ -9,7 +9,10 @@ Nothing here is optional; skips are declared in chat before any work shows.
 Binding context read before Phase 1: `research/founder-taste.md` (all 13
 hard rules — depth is the standard, live-hero floor, unmissable CTAs),
 all six files in `research/doctrine/`, `research/direction-ledger.md`,
-`MASTER_PROMPT.md` Part 10.
+`MASTER_PROMPT.md` Part 10, and `kit/SKILL_ROSTER.md` — the per-skill
+task assignments and audits this checklist's phases execute. Every
+installed skill has a row there; unavailable skills (e.g. Higgsfield
+offline) get their fallback named in chat and in DELIVERY.md.
 
 ---
 
