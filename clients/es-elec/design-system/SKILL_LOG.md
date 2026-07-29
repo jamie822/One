@@ -40,3 +40,6 @@ Status: Phases 0-4 logged. Phases 5-9 rows fill as those phases run.
 - Rows fill as the build/verification phases execute. Higgsfield family:
   offline this session; fallback = built scenes + HTML mock frames, video
   loops queued for when the MCP reconnects.
+
+## Hero lab (founder commission, 2026-07-29)
+- frontend-design + design-engineering + css-animations principles: INVOKED (loaded governing rules this session) — original "Street Comes On" hero built as recipe 17: seeded-PRNG street generation, SMIL pulse choreography, 3-layer parallax, WCAG pause + designed still; verified 4 states + mobile, zero console errors.
