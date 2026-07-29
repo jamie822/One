@@ -187,58 +187,78 @@ seed n/a: direction pinned by founder brief, not rolled. -->
         </p>
       </div>
     </section>
+    <section class="section svc" aria-labelledby="svc-h" style="padding-top: 0;">
+      <div class="wrap">
+        <h2 id="svc-h" class="rise">The work, with honest from-prices</h2>
+        <div class="svc__leads">
+          <a class="svc__lead rise" style="--i:0" href="/services/#rewires">
+            <h3>Full and partial rewires</h3>
+            <p>
+              Two sockets a room and an extension lead behind every sofa?
+              That's a house running on 1960s wiring.
+            </p>
+            <p class="svc__anchor">
+              <strong>from {fmt(svc.rewires.from)}</strong>
+              <span>Priced room by room in writing</span>
+            </p>
+            <span class="svc__go">See what a rewire involves</span>
+          </a>
+          <a class="svc__lead rise" style="--i:1" href="/services/#solar">
+            <h3>Solar and battery</h3>
+            <p>
+              Your last bill made you wince. Panels sized on a year of your
+              actual usage, with the payback maths shown.
+            </p>
+            <p class="svc__anchor">
+              <strong>from {fmt(svc.solar.from)}</strong>
+              <span>10-year workmanship guarantee <!-- TEMP --></span>
+            </p>
+            <span class="svc__go">See the solar maths</span>
+          </a>
+        </div>
+        <ul class="svc__rows">
+          <li class="rise" style="--i:2">
+            <a href="/services/#ev">
+              <span class="svc__row-name">EV charger installation</span>
+              <span class="svc__row-line">Off the three-pin, onto a 7kW point that charges overnight on the cheap rate.</span>
+              <span class="svc__row-from">From {fmt(svc.ev.from)}</span>
+            </a>
+          </li>
+          <li class="rise" style="--i:3">
+            <a href="/services/#boards">
+              <span class="svc__row-name">Fuse boards and consumer units</span>
+              <span class="svc__row-line">Swapped in a day, every circuit tested, certificate in your hand.</span>
+              <span class="svc__row-from">From {fmt(svc.boards.from)}</span>
+            </a>
+          </li>
+          <li class="rise" style="--i:4">
+            <a href="/services/#eicr">
+              <span class="svc__row-name">EICR and landlord certificates</span>
+              <span class="svc__row-line">Booked this week, report in plain English.</span>
+              <span class="svc__row-from">From {fmt(svc.eicr.from)}</span>
+            </a>
+          </li>
+          <li class="rise" style="--i:5">
+            <a href="/services/#fault">
+              <span class="svc__row-name">Fault finding and repairs</span>
+              <span class="svc__row-line">Traced with test gear, fixed the same visit where parts allow.</span>
+              <span class="svc__row-from">From {fmt(svc.fault.from)}</span>
+            </a>
+          </li>
+          <li class="rise" style="--i:6">
+            <a href="/services/#lighting">
+              <span class="svc__row-name">Lighting design and fitting</span>
+              <span class="svc__row-line">Indoors, outdoors, and the kitchen you can finally see in.</span>
+              <span class="svc__row-from">From {fmt(svc.lighting.from)}</span>
+            </a>
+          </li>
+        </ul>
+      </div>
+    </section>
   </div>
 
   <div style="position: relative;">
     <div class="conductor" aria-hidden="true"></div>
-
-    <section class="section work" aria-labelledby="work-h">
-      <div class="wrap">
-        <h2 id="work-h" class="rise">What I can sort for you</h2>
-        <div class="work__grid">
-          <a class="work__cell work__cell--lead rise" style="--i:0" href="/services/#solar">
-            <span class="work__img">
-              <img src="/img/solar-dusk-1100.webp" alt="" width="800" height="450" loading="lazy" />
-            </span>
-            <span class="work__body">
-              <h3>Solar and battery</h3>
-              <p>Sized on a year of your bills, with the payback maths in writing.</p>
-              <span class="from">From {fmt(svc.solar.from)}</span>
-            </span>
-          </a>
-          <a class="work__cell rise" style="--i:1" href="/services/#ev">
-            <h3>EV chargers</h3>
-            <p>Fitted, certified, grant paperwork handled.</p>
-            <span class="from">From {fmt(svc.ev.from)}</span>
-          </a>
-          <a class="work__cell rise" style="--i:2" href="/services/#rewires">
-            <h3>Rewires</h3>
-            <p>Priced room by room before a floorboard lifts.</p>
-            <span class="from">From {fmt(svc.rewires.from)}</span>
-          </a>
-          <a class="work__cell rise" style="--i:3" href="/services/#boards">
-            <h3>Fuse boards</h3>
-            <p>Swapped in a day, certificate in your hand.</p>
-            <span class="from">From {fmt(svc.boards.from)}</span>
-          </a>
-          <a class="work__cell rise" style="--i:4" href="/services/#eicr">
-            <h3>EICRs</h3>
-            <p>Booked this week, report in plain English.</p>
-            <span class="from">From {fmt(svc.eicr.from)}</span>
-          </a>
-          <a class="work__cell work__cell--wide rise" style="--i:5" href="/services/#fault">
-            <h3>Fault finding</h3>
-            <p>Traced with test gear, fixed the same visit where parts allow.</p>
-            <span class="from">From {fmt(svc.fault.from)}</span>
-          </a>
-          <a class="work__cell work__cell--wide rise" style="--i:6" href="/services/#lighting">
-            <h3>Lighting</h3>
-            <p>Design and fitting, indoors and out.</p>
-            <span class="from">From {fmt(svc.lighting.from)}</span>
-          </a>
-        </div>
-      </div>
-    </section>
 
     <div class="paper">
       <section class="section" aria-labelledby="proof-h">

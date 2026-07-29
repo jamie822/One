@@ -779,3 +779,68 @@
 .spread__cta { margin-top: var(--s-3); display: flex; flex-wrap: wrap; align-items: baseline; gap: 14px; }
 .spread__cta a { font-weight: 700; color: var(--accent); text-underline-offset: 4px; }
 .spread__cta span { font-size: var(--t-small); color: var(--ink-soft); }
+
+/* ============================================================
+   v3 §4 — services: two symptom-led lead tiles + five tight rows */
+.svc__leads { display: grid; gap: 18px; margin-top: var(--s-4); }
+@media (min-width: 880px) { .svc__leads { grid-template-columns: 1fr 1fr; gap: 22px; } }
+.svc__lead {
+  display: grid; gap: 10px; align-content: start;
+  background: var(--surface);
+  border: 1px solid var(--edge);
+  border-radius: 12px;
+  padding: clamp(22px, 3vw, 34px);
+  text-decoration: none; color: inherit;
+  transition: transform 220ms var(--ease-out), box-shadow 220ms var(--ease-out), border-color 220ms var(--ease-out);
+}
+.svc__lead:hover, .svc__lead:focus-visible {
+  transform: translateY(-3px);
+  border-color: color-mix(in srgb, var(--accent) 55%, var(--edge));
+  box-shadow: 0 18px 44px -24px rgba(60, 44, 18, .45);
+}
+.svc__lead h3 { font: 600 clamp(1.25rem, 2vw, 1.55rem) var(--font-display); letter-spacing: -.01em; }
+.svc__lead > p:not(.svc__anchor) { color: var(--ink-soft); max-width: 44ch; }
+.svc__anchor {
+  display: flex; flex-wrap: wrap; align-items: baseline; gap: 12px;
+  margin-top: 6px;
+}
+.svc__anchor strong {
+  font: 700 1.25rem var(--font-display); letter-spacing: 0;
+  font-variant-numeric: tabular-nums;
+}
+.svc__anchor span { font-size: var(--t-small); color: var(--ink-soft); }
+.svc__go {
+  margin-top: 2px;
+  font-weight: 700; color: var(--accent);
+  text-decoration: underline; text-underline-offset: 4px;
+}
+.svc__lead:hover .svc__go { text-decoration-thickness: 2px; }
+.svc__rows { list-style: none; padding: 0; margin: 26px 0 0; }
+.svc__rows li { border-top: 1px solid var(--edge); }
+.svc__rows li:last-child { border-bottom: 1px solid var(--edge); }
+.svc__rows a {
+  display: grid;
+  grid-template-columns: minmax(150px, 15rem) 1fr auto auto;
+  gap: 8px 20px; align-items: baseline;
+  padding: 15px 6px;
+  text-decoration: none; color: inherit;
+  transition: background 160ms var(--ease-ui);
+}
+.svc__rows a::after {
+  content: "→";
+  color: var(--accent);
+  transition: transform 200ms var(--ease-out);
+}
+.svc__rows a:hover, .svc__rows a:focus-visible { background: color-mix(in srgb, var(--surface) 72%, transparent); }
+.svc__rows a:hover::after { transform: translateX(4px); }
+.svc__row-name { font-weight: 700; }
+.svc__row-line { color: var(--ink-soft); font-size: .95rem; }
+.svc__row-from {
+  font: 700 1rem var(--font-display); letter-spacing: 0;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+@media (max-width: 720px) {
+  .svc__rows a { grid-template-columns: 1fr auto; }
+  .svc__row-line { grid-column: 1 / -1; order: 3; }
+}
