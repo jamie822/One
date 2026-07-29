@@ -5,7 +5,7 @@ session resumes the build from THIS file with zero re-derivation. Read
 CLAUDE.md first (THE PROCESS MANDATE binds this build), then this file,
 then act on NEXT ACTION. Delete this file at Phase 9 hand-off.
 
-Last updated: 2026-07-29, HOME PAGE COMPLETE (all 13 sections) and pushed.
+Last updated: 2026-07-29, home complete + SERVICES PAGE v3 complete (7 services x 7 blocks) and pushed.
 
 ## Where the build stands
 
@@ -58,9 +58,9 @@ design-system/reference-frames-home.html:
 13. DONE — contact: v3 H2, canonical 6-field form (select jobtype, optional
     detail/email, demo mailto updated), footer demo-reviews note added
 
-HOME IS DONE. Next: services.astro (7 services × 7 blocks from COPY.md, price digest
-intro), about.astro (7 blocks), blog: refresh rewire-cost-leeds (occupied
-note), NEW eicr-landlords-leeds + fuse-board-upgrade-signs, branded 404.
+HOME AND SERVICES ARE DONE. Next: about.astro (7 blocks from COPY.md),
+blog: refresh rewire-cost-leeds (occupied note), NEW eicr-landlords-leeds
++ fuse-board-upgrade-signs, branded 404.
 Commit + push after every page. Keep this file's "Last updated" current.
 
 ## Then Phases 6-9 (per kit/BUILD_CHECKLIST.md)
@@ -87,9 +87,16 @@ Commit + push after every page. Keep this file's "Last updated" current.
   never open another PR)
 - Skills are INVOKED via the Skill tool per kit/SKILL_ROSTER.md; log every
   one in design-system/SKILL_LOG.md (process mandate, CLAUDE.md)
-- MCP status at resume: GitHub OK · Claude Code Remote OK · Higgsfield
-  OFFLINE (flag to founder; video loops are its first job when back) ·
-  magic DEAD (no API key; founder to decide keep/remove)
+- MCP status at resume: GitHub OK · Claude Code Remote OK · magic DEAD
+  (no API key; founder to decide keep/remove) · Higgsfield: CLI INSTALLED
+  (npm @higgsfield/cli, binary /opt/node22/bin/higgsfield — reinstall via
+  `npm i -g @higgsfield/cli` after restarts) but api/cloud/higgsfield.ai
+  are BLOCKED by the environment network policy (curl 000). Fix is
+  founder-side: EITHER start the session with the Higgsfield connector
+  ticked (org-level auth already connected) OR allow higgsfield.ai +
+  api.higgsfield.ai + cloud.higgsfield.ai in the environment's network
+  policy, then run `higgsfield auth login` (PKCE; founder opens the URL
+  and pastes the 127.0.0.1 callback URL back). Video loops = first job.
 - H1 stays LCP, never animated; amber-500 is conversion-only; no em
   dashes in customer copy; TEMP reviews never go live (DMCC 2025)
 - Container restarts: `git fetch origin claude/electrician-website-template-a3751a

@@ -1,6 +1,9 @@
 ---
-// SERVICES: the hub. Seven anchored sections, each carrying its own keyword
-// H2, price, duration and the path that fits the job. Copy from COPY.md.
+// SERVICES: the hub, v3. Seven services, each with all seven blocks
+// (symptom intro, what happens, price + movers, duration, credentials,
+// FAQ x3, intent CTA). Copy VERBATIM from COPY.md. The rewires price
+// table renders the ONE shared model (client.reckoner) — same numbers
+// as the home Reckoner and the blog table.
 import Base from '../layouts/Base.astro';
 import QuoteForm from '../components/QuoteForm.astro';
 import { client } from '../data/client.js';
@@ -8,6 +11,17 @@ import { client } from '../data/client.js';
 const tel = client.phone.replace(/\s/g, '');
 const fmt = (n) => '£' + n.toLocaleString('en-GB');
 const svc = Object.fromEntries(client.services.map((s) => [s.id, s]));
+const beds = Object.entries(client.reckoner.beds);
+
+const anchors = [
+  ['solar', 'Solar and battery'],
+  ['ev', 'EV chargers'],
+  ['rewires', 'Rewires'],
+  ['boards', 'Fuse boards'],
+  ['eicr', 'EICR'],
+  ['fault', 'Fault finding'],
+  ['lighting', 'Lighting'],
+];
 
 const breadcrumbs = {
   '@context': 'https://schema.org',
@@ -30,175 +44,494 @@ const catalog = {
 };
 ---
 <Base
-  title="Electrical Services Leeds | EICR, Rewires, EV, Solar"
-  description="Fixed and from-prices for electrical work in Leeds: EICRs from £140, fuse boards from £520, rewires, EV chargers, solar. Written quotes before work starts."
+  title="Electrical Services Leeds | Prices & What Happens | ES Elec"
+  description="Rewires, fuse boards, EICRs, EV chargers, solar and fault finding in Leeds. What each job involves, what it costs in 2026, and how long it takes. Priced in writing first."
   current="/services/"
   schema={[breadcrumbs, catalog]}
 >
-  <section class="section" style="padding-bottom: var(--s-4);">
+  <section class="section jobs-head">
     <div class="wrap">
-      <h1>Electrical services in Leeds</h1>
-      <p class="hero__sub" style="margin-top: var(--s-2);">
-        The from-prices below come from jobs quoted this year. The written
-        quote you get before work starts is the number you pay.
+      <h1>Electrical services in Leeds, priced and explained</h1>
+      <p class="jobs-head__lead">
+        In Leeds in 2026, fault finding starts at {fmt(svc.fault.from)}, an
+        EICR at {fmt(svc.eicr.from)}, lighting work at {fmt(svc.lighting.from)},
+        a consumer unit swap at {fmt(svc.boards.from)}, an EV charger at
+        {fmt(svc.ev.from)}, a full rewire at {fmt(svc.rewires.from)} and solar
+        at {fmt(svc.solar.from)}. <!-- TEMP prices, client.js -->
+        Seven jobs cover almost everything I get rung about. Each one below
+        tells you what happens on the day, what moves the price, and how long
+        you'll have me in the house. Every price lands in writing before any
+        work starts.
       </p>
+      <nav class="jobs-head__nav" aria-label="Jump to a service">
+        {anchors.map(([id, label]) => <a href={`#${id}`}>{label}</a>)}
+      </nav>
     </div>
   </section>
 
   <div class="paper">
-    <section id="solar" class="section svc" aria-labelledby="solar-h">
-      <div class="wrap svc__grid">
-        <div class="rise">
-          <h2 id="solar-h">Solar panels and battery storage in Leeds</h2>
-          <p>
-            Panels, batteries, and the paperwork that makes them pay: MCS
-            certification for export payments and DNO notification included.
-            Systems sized on your last year of bills rather than a national
-            average. Typical 10-panel install: £6,000 to £8,000. Payback
-            conversation up front, in writing, including export income at
-            current SEG rates. If your roof faces the wrong way, I will say so
-            before you spend anything. <!-- TEMP: MCS status + figures -->
+
+    <section id="solar" class="section job" aria-labelledby="solar-h">
+      <div class="wrap">
+        <header class="job__head rise">
+          <h2 id="solar-h">Solar and battery</h2>
+          <p class="job__rail">
+            <span>from {fmt(svc.solar.from)} <!-- TEMP --></span>
+            <span>two days on site</span>
+            <span>about three weeks end to end</span>
           </p>
-          <p class="svc__meta">From {fmt(svc.solar.from)} · 1 to 2 days on the roof, paperwork inside a fortnight</p>
+        </header>
+        <p class="job__intro rise" style="--i:1">
+          Your electricity bill has doubled in five years and the roof just
+          sits there. Panels are the one home improvement that sends money
+          back the other way, if the maths is done on your usage rather than
+          a salesman's spreadsheet.
+        </p>
+        <div class="job__grid">
+          <div class="job__block rise" style="--i:1">
+            <h3>What happens on the job</h3>
+            <p>
+              I size the system from a year of your bills and a look at your
+              roof on satellite first, so the first conversation costs you
+              nothing. Then a survey visit: roof pitch, shading, loft access,
+              fuse board capacity. You get a written design with panel count,
+              generation estimate and payback year. Install is two days:
+              scaffold and panels on day one, inverter, wiring and
+              commissioning on day two. You finish with an app showing live
+              generation, the MCS certificate and the DNO paperwork done.
+            </p>
+          </div>
+          <div class="job__block rise" style="--i:2">
+            <h3>Price, and what moves it</h3>
+            <p>
+              From {fmt(svc.solar.from)} for a 10-panel system. <!-- TEMP -->
+              A battery adds £2,400 to £3,900 depending on size. <!-- TEMP -->
+              Scaffold complexity, a three-phase supply or a tired fuse board
+              move it up; a straightforward semi keeps it at the from-price.
+            </p>
+          </div>
+          <div class="job__block job__block--fact rise" style="--i:2">
+            <h3>Credentials that apply</h3>
+            <p>
+              MCS-certified installation, which is what makes export payments
+              claimable. 10-year workmanship guarantee, 25-year panel output
+              warranty. <!-- TEMP: MCS + guarantee --> DNO notification
+              handled.
+            </p>
+          </div>
+        </div>
+        <div class="job__faq rise">
+          <h3>Asked every week</h3>
+          <details><summary>Do panels make sense in Leeds weather?<span class="faq__chev" aria-hidden="true">+</span></summary>
+            <p>Yes. Panels run on light, not heat. The {client.solarModel.genKwh.toLocaleString('en-GB')} kWh estimate on my home page IS a Leeds figure, clouds included. <!-- TEMP model --></p></details>
+          <details><summary>Do I need planning permission?<span class="faq__chev" aria-hidden="true">+</span></summary>
+            <p>Almost never on a house. Listed buildings and flats are the exceptions, and I'll tell you before we go near a design.</p></details>
+          <details><summary>What are export payments worth?<span class="faq__chev" aria-hidden="true">+</span></summary>
+            <p>Every unit you don't use gets sold back at your supplier's export rate. Typically £{client.solarModel.exportLow} to £{client.solarModel.exportHigh} a year of the £{client.solarModel.valuePerYear} figure <!-- TEMP -->, and it lands automatically once the MCS paperwork is in.</p></details>
+        </div>
+        <p class="job__cta rise">
           <a class="btn btn--quote" href="#quote">Get a quote</a>
-        </div>
-        <figure class="svc__photo rise" style="--i:1">
-          <img src="/img/solar-dusk-1100.webp" alt="Solar panels catching low sun on a Leeds semi" width="1600" height="900" loading="lazy" />
-        </figure>
+          <span>Send me two electricity bills and the first pass needs no visit. A written price before any work. Always.</span>
+        </p>
       </div>
     </section>
 
-    <section id="ev" class="section svc" aria-labelledby="ev-h">
-      <div class="wrap svc__grid svc__grid--card">
-        <div class="rise">
-          <h2 id="ev-h">EV charger installation, from {fmt(svc.ev.from)}</h2>
-          <p>
-            Supply and fit of a 7kW home charger, certified and notified. I
-            check your fuse board can take it before quoting, so the price
-            covers the whole job instead of growing on the day. Grant paperwork
-            handled where you qualify. <!-- TEMP price -->
+    <section id="ev" class="section job" aria-labelledby="ev-h">
+      <div class="wrap">
+        <header class="job__head rise">
+          <h2 id="ev-h">EV charger installation</h2>
+          <p class="job__rail">
+            <span>from {fmt(svc.ev.from)} fitted <!-- TEMP --></span>
+            <span>a morning for a standard fit</span>
           </p>
+        </header>
+        <p class="job__intro rise" style="--i:1">
+          The car came with a three-pin "granny" cable and now there's an
+          extension lead trapped in the letterbox every night. A 7kW point
+          charges four times faster and unlocks the overnight tariffs the car
+          apps are built around.
+        </p>
+        <div class="job__grid">
+          <div class="job__block rise" style="--i:1">
+            <h3>What happens on the job</h3>
+            <p>
+              Survey first: fuse board capacity, earthing arrangement, cable
+              route from board to parking spot. You pick tethered or
+              untethered and I'll give you an honest steer on chargers I'd
+              put on my own wall. Fitting is a morning: charger mounted,
+              dedicated circuit run, protective device fitted, DNO notified,
+              app set up before I leave.
+            </p>
+          </div>
+          <div class="job__block rise" style="--i:2">
+            <h3>Price, and what moves it</h3>
+            <p>
+              From {fmt(svc.ev.from)} fitted. <!-- TEMP --> A long cable run,
+              groundworks to a detached garage, or a board that needs work
+              first are the three things that move it. Each is priced in the
+              written quote, not discovered on the day.
+            </p>
+          </div>
+          <div class="job__block job__block--fact rise" style="--i:2">
+            <h3>Credentials that apply</h3>
+            <p>
+              Part P notification, BS 7671 dedicated circuit with the right
+              RCD type, manufacturer-approved installer on the main charger
+              brands. <!-- TEMP -->
+            </p>
+          </div>
         </div>
-        <aside class="svc__card rise" style="--i:1" aria-label="EV charger price and booking">
-          <span class="svc__card-label">From</span>
-          <strong class="svc__card-price">{fmt(svc.ev.from)}</strong>
-          <span class="svc__card-time">Half a day, certified before I leave</span>
-          <a class="btn btn--call" href={`tel:${tel}`}>Call Eddie</a>
-        </aside>
-      </div>
-    </section>
-
-    <section id="rewires" class="section svc" aria-labelledby="rw-h">
-      <div class="wrap svc__grid svc__grid--card">
-        <div class="rise">
-          <h2 id="rw-h">House rewires in Leeds, priced room by room</h2>
-          <p>
-            A rewire is the biggest electrical job a house ever gets, and it is
-            the one where quotes grow. Mine is priced room by room before a
-            floorboard lifts, so you can see what each part costs and cut cloth
-            accordingly. Living through it? I put the rooms back together at
-            the end of each day. <!-- TEMP -->
-          </p>
-          <p class="svc__meta">
-            Wondering what yours would cost?
-            <a href="/blog/rewire-cost-leeds/">Real 2026 rewire prices for Leeds houses</a>
-          </p>
+        <div class="job__faq rise">
+          <h3>Asked every week</h3>
+          <details><summary>Can my fuse board take it?<span class="faq__chev" aria-hidden="true">+</span></summary>
+            <p>Usually, sometimes with a small upgrade. The survey answers it for certain, and if the board needs work you get that price separately so you can see both numbers.</p></details>
+          <details><summary>Tethered or untethered?<span class="faq__chev" aria-hidden="true">+</span></summary>
+            <p>Tethered (cable attached) wins for daily convenience. Untethered looks tidier and takes any cable. I fit more tethered ones.</p></details>
+          <details><summary>Will it charge on the cheap overnight rate?<span class="faq__chev" aria-hidden="true">+</span></summary>
+            <p>Yes. That's scheduling, and I set the app up with you before I leave so the car only drinks when the rate drops.</p></details>
         </div>
-        <aside class="svc__card rise" style="--i:1" aria-label="Rewire price and booking">
-          <span class="svc__card-label">Typical 3-bed, from</span>
-          <strong class="svc__card-price">{fmt(svc.rewires.from)}</strong>
-          <span class="svc__card-time">Five to eight working days, lived-in houses welcome</span>
+        <p class="job__cta rise">
           <a class="btn btn--quote" href="#quote">Get a quote</a>
-        </aside>
+          <span>A written price before any work. Always.</span>
+        </p>
       </div>
     </section>
 
-    <section id="boards" class="section svc" aria-labelledby="bd-h">
-      <div class="wrap svc__grid">
-        <figure class="svc__photo rise">
-          <img src="/img/board-hands.webp" alt="Wiring a modern consumer unit, neat parallel cables" width="1200" height="900" loading="lazy" />
-        </figure>
-        <div class="rise" style="--i:1">
-          <h2 id="bd-h">Fuse board replacement, from {fmt(svc.boards.from)}</h2>
-          <p>
-            Old board out, new board in with RCBOs, so one fault trips one
-            circuit instead of the whole house. Tested circuit by circuit,
-            certificate issued and Building Control notified. Done in a day,
-            power back on by teatime. <!-- TEMP price -->
+    <section id="rewires" class="section job" aria-labelledby="rw-h">
+      <div class="wrap">
+        <header class="job__head rise">
+          <h2 id="rw-h">Full and partial rewires</h2>
+          <p class="job__rail">
+            <span>from {fmt(svc.rewires.from)} <!-- TEMP --></span>
+            <span>5 to 12 days by house size</span>
           </p>
-          <a class="btn btn--call" href={`tel:${tel}`}>Call Eddie</a>
+        </header>
+        <p class="job__intro rise" style="--i:1">
+          Two sockets a room, warm switch plates, and a fuse box with actual
+          fuse wire in it. Houses wired before the eighties were built for a
+          kettle and a telly, and they're now running a dozen chargers, a
+          dishwasher and an induction hob.
+        </p>
+        <div class="job__grid">
+          <div class="job__block rise" style="--i:1">
+            <h3>What happens on the job</h3>
+            <p>
+              Survey visit, then the itemised written price: every room,
+              every circuit, every accessory, line by line. First fix is the
+              noisy week: chasing, cabling, back boxes. Second fix is faces
+              on: sockets, switches, lights, the new board. Then every
+              circuit gets dead-tested and live-tested, and you get the
+              Electrical Installation Certificate before the invoice. If
+              you're living in the house, power is back on every single
+              night.
+            </p>
+          </div>
+          <div class="job__block rise" style="--i:2">
+            <h3>Price, and what moves it</h3>
+            <div class="job__scroll" tabindex="0">
+              <table>
+                <caption>2026 rewire prices in Leeds by house size <!-- TEMP figures --></caption>
+                <thead>
+                  <tr><th scope="col">House</th><th scope="col">Empty house</th><th scope="col">Days on site</th></tr>
+                </thead>
+                <tbody>
+                  {beds.map(([n, m]) => (
+                    <tr>
+                      <td><strong>{n}-bed</strong></td>
+                      <td>{fmt(m.low)} to {fmt(m.high)}</td>
+                      <td>{m.daysLow} to {m.daysHigh}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+            <p class="job__note">
+              Living there through it adds about {fmt(client.reckoner.occupied.price)} and
+              a couple of days: the same modifier the Reckoner on the home
+              page uses. <!-- TEMP model --> Movers: solid stone walls,
+              high-spec accessories, and each kitchen. Partial rewires
+              {fmt(client.reckoner.partial.low)} to {fmt(client.reckoner.partial.high)}. <!-- TEMP -->
+            </p>
+          </div>
+          <div class="job__block job__block--fact rise" style="--i:2">
+            <h3>Credentials that apply</h3>
+            <p>
+              Part P self-certification, BS 7671 testing on every circuit,
+              NICEIC annual assessment, 12-month workmanship guarantee.
+              <!-- TEMP: assessment + guarantee -->
+            </p>
+          </div>
         </div>
-      </div>
-    </section>
-
-    <section id="eicr" class="section svc" aria-labelledby="ei-h">
-      <div class="wrap svc__grid svc__grid--card">
-        <div class="rise">
-          <h2 id="ei-h">EICRs in Leeds, from {fmt(svc.eicr.from)}</h2>
-          <p>
-            Legally required for rented homes in England every five years. You
-            get the report in plain English with photos of anything that failed
-            and a fixed price to put it right, not a scare list. Landlords with
-            more than one property: ask about batch pricing. <!-- TEMP price -->
-          </p>
+        <div class="job__faq rise">
+          <h3>Asked every week</h3>
+          <details><summary>Can we live here while it happens?<span class="faq__chev" aria-hidden="true">+</span></summary>
+            <p>Yes, most of my rewires are lived-in. It adds about £350 and a couple of days, and I work room by room so you're never without a kettle and the wifi. <!-- TEMP --></p></details>
+          <details><summary>Does every wall get chased?<span class="faq__chev" aria-hidden="true">+</span></summary>
+            <p>No. Cables drop from above or rise from below where the construction allows. Where I do chase, the quote says who makes good and what it costs.</p></details>
+          <details><summary>Our survey says "partial rewire". What does that mean?<span class="faq__chev" aria-hidden="true">+</span></summary>
+            <p>Usually the sockets are fine and the lighting circuits or the board are not. An EICR ({fmt(svc.eicr.from)}, half a morning <!-- TEMP -->) tells us exactly which half.</p></details>
         </div>
-        <aside class="svc__card rise" style="--i:1" aria-label="EICR price and booking">
-          <span class="svc__card-label">From</span>
-          <strong class="svc__card-price">{fmt(svc.eicr.from)}</strong>
-          <span class="svc__card-time">2 to 4 hours depending on circuits, report same week</span>
-          <a class="btn btn--call" href={`tel:${tel}`}>Call Eddie</a>
-        </aside>
-      </div>
-    </section>
-
-    <section id="fault" class="section svc" aria-labelledby="ff-h">
-      <div class="wrap svc__grid svc__grid--card">
-        <div class="rise">
-          <h2 id="ff-h">Electrical fault finding, from {fmt(svc.fault.from)}</h2>
-          <p>
-            Tripping RCDs, dead sockets, lights that flicker when the shower
-            runs. I trace faults with test gear and method, so you pay for the
-            finding and the fix instead of a pile of parts you never needed.
-            The invoice tells you which was which. <!-- TEMP price -->
-          </p>
-        </div>
-        <aside class="svc__card rise" style="--i:1" aria-label="Fault finding price and booking">
-          <span class="svc__card-label">From</span>
-          <strong class="svc__card-price">{fmt(svc.fault.from)}</strong>
-          <span class="svc__card-time">Most faults found the same visit. Emergencies jump the queue. <!-- TEMP promise --></span>
-          <a class="btn btn--call" href={`tel:${tel}`}>Call Eddie</a>
-        </aside>
-      </div>
-    </section>
-
-    <section id="lighting" class="section svc" aria-labelledby="lt-h">
-      <div class="wrap svc__grid svc__grid--card">
-        <div class="rise">
-          <h2 id="lt-h">Lighting, indoors and out, from {fmt(svc.lighting.from)}</h2>
-          <p>
-            Kitchen downlights that do not dazzle, garden lighting that
-            survives a Leeds winter, dimming that works with LEDs instead of
-            buzzing at them. <!-- TEMP price -->
-          </p>
-        </div>
-        <aside class="svc__card rise" style="--i:1" aria-label="Lighting price and booking">
-          <span class="svc__card-label">From</span>
-          <strong class="svc__card-price">{fmt(svc.lighting.from)}</strong>
-          <span class="svc__card-time">Priced per room or per garden, in writing</span>
+        <p class="job__cta rise">
           <a class="btn btn--quote" href="#quote">Get a quote</a>
-        </aside>
+          <span>Send the EICR or the survey page across if you have one. It makes the first price sharper.</span>
+        </p>
+      </div>
+    </section>
+
+    <section id="boards" class="section job" aria-labelledby="bd-h">
+      <div class="wrap">
+        <header class="job__head rise">
+          <h2 id="bd-h">Fuse boards and consumer units</h2>
+          <p class="job__rail">
+            <span>from {fmt(svc.boards.from)} <!-- TEMP --></span>
+            <span>a day, power off about six hours</span>
+          </p>
+        </header>
+        <p class="job__intro rise" style="--i:1">
+          The kettle and the toaster can't run at the same time, the trip
+          switch is a nightly ritual, or there's a wooden-backed box under
+          the stairs with fuse wire in a drawer beside it.
+        </p>
+        <div class="job__grid">
+          <div class="job__block rise" style="--i:1">
+            <h3>What happens on the job</h3>
+            <p>
+              Send me a photo of the board and I'll tell you on the phone
+              whether it's a straight swap. On the day: power off
+              mid-morning, old unit out, new board in with RCBO protection
+              per circuit, every circuit tested as it reconnects, labels that
+              name what runs on each way, certificate before I leave.
+            </p>
+          </div>
+          <div class="job__block rise" style="--i:2">
+            <h3>Price, and what moves it</h3>
+            <p>
+              From {fmt(svc.boards.from)} for a straight swap; £650 to £850
+              with surge protection and more ways. <!-- TEMP --> What moves
+              it: the number of circuits, bonding upgrades if the gas and
+              water pipes were never done, and anything the testing turns up
+              in the circuits themselves, which gets priced separately, never
+              smuggled in.
+            </p>
+          </div>
+          <div class="job__block job__block--fact rise" style="--i:2">
+            <h3>Credentials that apply</h3>
+            <p>
+              BS 7671 current-edition board, Part P notification, calibrated
+              test instruments with the readings on your certificate.
+            </p>
+          </div>
+        </div>
+        <div class="job__faq rise">
+          <h3>Asked every week</h3>
+          <details><summary>Will you find problems I then have to fix?<span class="faq__chev" aria-hidden="true">+</span></summary>
+            <p>Sometimes the testing turns something up, and you'll see the readings, the risk in plain English, and a separate price. Nothing gets fixed without a yes.</p></details>
+          <details><summary>Is my plastic board illegal?<span class="faq__chev" aria-hidden="true">+</span></summary>
+            <p>No. Plenty of plastic boards are fine. The real question is whether every circuit has RCD protection, and the photo usually answers it.</p></details>
+          <details><summary>Do I lose power all day?<span class="faq__chev" aria-hidden="true">+</span></summary>
+            <p>About six hours. Fridge stays shut, wifi goes on a battery bank if you're working from home, and I tell you the off-time the day before.</p></details>
+        </div>
+        <p class="job__cta rise">
+          <a class="btn btn--call" href={`tel:${tel}`}>Call Eddie</a>
+          <span>A photo of the board gets you a price range on the same call. Answered Monday to Saturday, 7.30 to 6.</span>
+        </p>
+      </div>
+    </section>
+
+    <section id="eicr" class="section job" aria-labelledby="ei-h">
+      <div class="wrap">
+        <header class="job__head rise">
+          <h2 id="ei-h">EICR and landlord certificates</h2>
+          <p class="job__rail">
+            <span>from {fmt(svc.eicr.from)} <!-- TEMP --></span>
+            <span>half a morning for a 3-bed</span>
+          </p>
+        </header>
+        <p class="job__intro rise" style="--i:1">
+          The renewal date is coming, the agent is chasing, or you're buying
+          a house and the survey said "electrics not tested". An EICR is the
+          electrical MOT: legally required every five years on rentals,
+          sensible before any purchase.
+        </p>
+        <div class="job__grid">
+          <div class="job__block rise" style="--i:1">
+            <h3>What happens on the job</h3>
+            <p>
+              Circuit-by-circuit testing, dead and live: insulation
+              resistance, earth continuity, RCD trip times. Every observation
+              gets a code and a photo. You get the report the same evening with a plain-English cover note saying what, if
+              anything, needs doing, and what it would cost.
+            </p>
+          </div>
+          <div class="job__block rise" style="--i:2">
+            <h3>Price, and what moves it</h3>
+            <p>
+              From {fmt(svc.eicr.from)} for a typical 2-bed, £160 to £240 as
+              bedrooms and circuits climb. <!-- TEMP --> Movers: circuit
+              count, access (a loft full of boxes slows testing), and
+              multiple boards.
+            </p>
+          </div>
+          <div class="job__block job__block--fact rise" style="--i:2">
+            <h3>Credentials that apply</h3>
+            <p>
+              2391 inspection and testing qualified, NICEIC registered, reports
+              <!-- TEMP: quals --> on the standard BS 7671 model
+              form your insurer and the council recognise.
+            </p>
+          </div>
+        </div>
+        <div class="job__faq rise">
+          <h3>Asked every week</h3>
+          <details><summary>What if it fails?<span class="faq__chev" aria-hidden="true">+</span></summary>
+            <p>It doesn't fail like an MOT. C1 and C2 observations make it unsatisfactory, and on a rental you've got 28 days to fix them. You get the remedial price with the report, and you're free to use anyone.</p></details>
+          <details><summary>What do the codes mean?<span class="faq__chev" aria-hidden="true">+</span></summary>
+            <p>C1: danger now, I make it safe before I leave. C2: potentially dangerous, fix within 28 days on a rental. C3: improvement recommended, still a pass. Don't let anyone panic you over a C3.</p></details>
+          <details><summary>How fast is the report?<span class="faq__chev" aria-hidden="true">+</span></summary>
+            <p>Same evening. <!-- TEMP --> Agents get it CC'd if you want.</p></details>
+        </div>
+        <p class="job__cta rise">
+          <a class="btn btn--call" href={`tel:${tel}`}>Call Eddie</a>
+          <span>Two or more properties? Booked together, priced together. Answered Monday to Saturday, 7.30 to 6.</span>
+        </p>
+      </div>
+    </section>
+
+    <section id="fault" class="section job" aria-labelledby="ff-h">
+      <div class="wrap">
+        <header class="job__head rise">
+          <h2 id="ff-h">Fault finding and repairs</h2>
+          <p class="job__rail">
+            <span>{fmt(svc.fault.from)} first hour <!-- TEMP --></span>
+            <span>most visits done inside two hours</span>
+          </p>
+        </header>
+        <p class="job__intro rise" style="--i:1">
+          The RCD trips at 11pm and won't reset. Half the sockets upstairs
+          are dead. There's a smell near a socket that wasn't there last
+          week. Faults don't fix themselves, and the guessing game of
+          unplugging everything one by one wastes your evening.
+        </p>
+        <div class="job__grid">
+          <div class="job__block rise" style="--i:1">
+            <h3>What happens on the job</h3>
+            <p>
+              This is test-gear work, not trial and error. Insulation
+              resistance and continuity testing splits the installation until
+              the fault has nowhere left to hide: a nail through a cable,
+              water in an outside light, a cooked connection in a junction
+              box. Most faults are found inside the first hour and fixed on
+              the same visit where parts allow.
+            </p>
+          </div>
+          <div class="job__block rise" style="--i:2">
+            <h3>Price, and what moves it</h3>
+            <p>
+              {fmt(svc.fault.from)} covers the first hour including the find
+              in most cases. <!-- TEMP --> Parts and any chasing to reach a
+              buried joint are the movers, and you get the number before I
+              open anything up.
+            </p>
+          </div>
+          <div class="job__block job__block--fact rise" style="--i:2">
+            <h3>Credentials that apply</h3>
+            <p>
+              Calibrated test instruments, NICEIC registered, and any repair
+              <!-- TEMP: registration --> certified where the work is notifiable.
+            </p>
+          </div>
+        </div>
+        <div class="job__faq rise">
+          <h3>Asked every week</h3>
+          <details><summary>Is a tripping RCD dangerous?<span class="faq__chev" aria-hidden="true">+</span></summary>
+            <p>The trip itself means the protection is working. What's making it trip might be water, damage or a failing appliance, so treat a repeat tripper as a message, not a nuisance.</p></details>
+          <details><summary>Can you come tonight?<span class="faq__chev" aria-hidden="true">+</span></summary>
+            <p>If it's no-power or burning smells, yes, emergencies jump the queue (evening rate quoted on the phone <!-- TEMP -->). If it can safely wait for morning, I'll say so and you save money.</p></details>
+          <details><summary>Do you charge to look?<span class="faq__chev" aria-hidden="true">+</span></summary>
+            <p>The {fmt(svc.fault.from)} first hour IS the looking, done with a £700 tester rather than a torch and a hunch. No separate call-out fee on top. <!-- TEMP --></p></details>
+        </div>
+        <p class="job__cta rise">
+          <a class="btn btn--call" href={`tel:${tel}`}>Call Eddie</a>
+          <span>You'll hear back within the working hour. <!-- TEMP promise --></span>
+        </p>
+      </div>
+    </section>
+
+    <section id="lighting" class="section job" aria-labelledby="lt-h">
+      <div class="wrap">
+        <header class="job__head rise">
+          <h2 id="lt-h">Lighting design and fitting</h2>
+          <p class="job__rail">
+            <span>from {fmt(svc.lighting.from)} <!-- TEMP --></span>
+            <span>a room in a morning, a kitchen in a day</span>
+          </p>
+        </header>
+        <p class="job__intro rise" style="--i:1">
+          The kitchen has one pendant in the middle of the ceiling and you
+          chop vegetables in your own shadow. The garden vanishes at 4pm from
+          November to February. Lighting is the cheapest renovation per
+          square metre of difference it makes.
+        </p>
+        <div class="job__grid">
+          <div class="job__block rise" style="--i:1">
+            <h3>What happens on the job</h3>
+            <p>
+              A walk round at dusk if we can manage it, because that's when
+              the house tells the truth. Then a simple plan: layers (task,
+              ambient, accent), positions, switching and dimming. Fitting
+              day: downlights, under-cabinet runs, outdoor points on their
+              own circuit, smart switching set up before I go.
+            </p>
+          </div>
+          <div class="job__block rise" style="--i:2">
+            <h3>Price, and what moves it</h3>
+            <p>
+              From {fmt(svc.lighting.from)} for a room refresh; kitchens with
+              under-cabinet and dimming typically £450 to £800; gardens from
+              £380 with proper outdoor-rated cable and fittings. <!-- TEMP -->
+              Movers: fitting count, ceiling access from above, and outdoor
+              trenching.
+            </p>
+          </div>
+          <div class="job__block job__block--fact rise" style="--i:2">
+            <h3>Credentials that apply</h3>
+            <p>
+              Part P applies in bathrooms and outdoors, and both get
+              certified. IP-rated fittings outside, the right zones in wet
+              rooms.
+            </p>
+          </div>
+        </div>
+        <div class="job__faq rise">
+          <h3>Asked every week</h3>
+          <details><summary>Warm or cool bulbs?<span class="faq__chev" aria-hidden="true">+</span></summary>
+            <p>Warm (2700K) for living spaces, neutral (4000K) over kitchen worktops. Mixing them in one room by accident is the most common lighting mistake in Leeds, and it's free to avoid.</p></details>
+          <details><summary>Can you add garden sockets at the same time?<span class="faq__chev" aria-hidden="true">+</span></summary>
+            <p>Yes, same trench, same circuit where the load allows, and it's much cheaper as one job than two.</p></details>
+          <details><summary>Smart switches or smart bulbs?<span class="faq__chev" aria-hidden="true">+</span></summary>
+            <p>Switches. The wall control always works, guests don't need an app, and the bulbs can be ordinary.</p></details>
+        </div>
+        <p class="job__cta rise">
+          <a class="btn btn--quote" href="#quote">Get a quote</a>
+          <span>A written price before any work. Always.</span>
+        </p>
       </div>
     </section>
   </div>
 
   <section class="section contact" id="quote" aria-labelledby="cl-h">
     <div class="wrap">
-      <h2 id="cl-h" class="rise">Not listed? Ring anyway.</h2>
+      <h2 id="cl-h" class="rise">Not sure which of those you need?</h2>
+      <p class="rise" style="--i:1; margin-top: var(--s-2); color: var(--ink-soft); max-width: 58ch;">
+        Describe the symptom, not the solution. That's my job. Ring, or send
+        it through the form and I'll come back with the honest version.
+      </p>
       <div class="contact__grid">
         <div class="rise contact__info">
           <a class="contact__tel" href={`tel:${tel}`}>{client.phone}</a>
           <p class="contact__hours">
-            If it is wires, I have probably done it. {client.hours}.
+            Answered Monday to Saturday, 7.30 to 6. You'll hear back within
+            the working hour. <!-- TEMP promise -->
           </p>
           <ul class="contact__facts">
             <li>Prefer email? <a href={`mailto:${client.email}`}>{client.email}</a></li>
@@ -213,35 +546,73 @@ const catalog = {
 </Base>
 
 <style>
-  .svc { padding-block: clamp(2.6rem, 5vw, 4.4rem); }
-  .svc + .svc { border-top: 1px solid var(--edge); }
-  .svc__grid { display: grid; gap: var(--s-4); align-items: center; }
-  @media (min-width: 900px) { .svc__grid { grid-template-columns: 1fr 1fr; } }
-  .svc__photo { border-radius: var(--r-box); overflow: hidden; border: 1px solid var(--edge); margin: 0; }
-  .svc__photo img { width: 100%; height: 100%; object-fit: cover; }
-  .svc__meta { font-size: var(--t-small); color: var(--ink-soft); margin-block: 12px 18px; }
-  .svc h2 { max-width: 22ch; }
-  .svc p { margin-top: var(--s-2); }
+  .jobs-head { padding-bottom: var(--s-4); }
+  .jobs-head__lead { margin-top: var(--s-3); color: var(--ink-soft); max-width: 68ch; }
+  .jobs-head__nav { margin-top: var(--s-4); display: flex; flex-wrap: wrap; gap: 10px; }
+  .jobs-head__nav a {
+    border: 1px solid var(--edge);
+    border-radius: 999px;
+    padding: 8px 16px;
+    font: 600 .92rem var(--font-body);
+    color: var(--ink-soft);
+    text-decoration: none;
+    transition: color 160ms var(--ease-ui), border-color 160ms var(--ease-ui);
+  }
+  .jobs-head__nav a:hover, .jobs-head__nav a:focus-visible { color: var(--amber-300); border-color: var(--amber-300); }
 
-  /* Image-less services carry a job card instead: price, time, one action. */
-  .svc__grid--card { align-items: start; }
-  @media (min-width: 900px) { .svc__grid--card { grid-template-columns: 7fr 4fr; } }
-  .svc__card {
+  .job + .job { border-top: 1px solid var(--edge); }
+  .job__head { display: flex; flex-wrap: wrap; align-items: baseline; gap: 10px 26px; }
+  .job__head h2 { max-width: 20ch; }
+  .job__rail { display: flex; flex-wrap: wrap; gap: 6px 18px; font-size: var(--t-small); color: var(--ink-soft); }
+  .job__rail span { display: inline-flex; align-items: baseline; gap: 6px; }
+  .job__rail span::before { content: ""; width: 10px; height: 2px; background: var(--accent); align-self: center; }
+  .job__rail span:first-child { font: 700 1rem var(--font-display); color: var(--ink); letter-spacing: 0; }
+  .job__intro { margin-top: var(--s-3); max-width: 62ch; font-size: 1.08rem; }
+  .job__grid { display: grid; gap: 22px; margin-top: var(--s-4); }
+  @media (min-width: 940px) { .job__grid { grid-template-columns: 5fr 4fr 3fr; align-items: start; } }
+  .job__block h3 {
+    font: 700 var(--t-label) var(--font-body);
+    letter-spacing: .12em; text-transform: uppercase;
+    color: var(--ink-soft);
+    margin-bottom: 10px;
+  }
+  .job__block p { color: var(--ink); }
+  .job__block--fact {
     background: var(--surface);
     border: 1px solid var(--edge);
-    border-radius: var(--r-box);
-    padding: 26px;
-    display: grid; gap: 5px; justify-items: start;
+    border-radius: 10px;
+    padding: 18px 20px;
   }
-  .svc__card-label {
+  .job__scroll { overflow-x: auto; }
+  .job__scroll table { width: 100%; border-collapse: collapse; font-size: .95rem; }
+  .job__scroll caption {
+    text-align: left; caption-side: top;
+    font-size: var(--t-small); color: var(--ink-soft);
+    padding-bottom: 8px;
+  }
+  .job__scroll th, .job__scroll td { text-align: left; padding: 8px 12px 8px 0; border-bottom: 1px dashed var(--edge); }
+  .job__scroll th { font: 700 var(--t-label) var(--font-body); letter-spacing: .1em; text-transform: uppercase; color: var(--ink-soft); }
+  .job__scroll td { font-variant-numeric: tabular-nums; }
+  .job__note { margin-top: 12px; font-size: var(--t-small); color: var(--ink-soft); }
+  .job__faq { margin-top: var(--s-4); max-width: 72ch; }
+  .job__faq h3 {
     font: 700 var(--t-label) var(--font-body);
-    letter-spacing: .1em; text-transform: uppercase;
+    letter-spacing: .12em; text-transform: uppercase;
     color: var(--ink-soft);
+    margin-bottom: 6px;
   }
-  .svc__card-price {
-    font: 700 2.5rem var(--font-display);
-    letter-spacing: -.02em; line-height: 1;
+  .job__faq details { border-top: 1px solid var(--edge); }
+  .job__faq details:last-child { border-bottom: 1px solid var(--edge); }
+  .job__faq summary {
+    display: flex; justify-content: space-between; align-items: baseline; gap: 16px;
+    padding: 13px 2px;
+    cursor: pointer;
+    font: 600 1rem var(--font-display); letter-spacing: -.01em;
+    list-style: none;
   }
-  .svc__card-time { font-size: var(--t-small); color: var(--ink-soft); }
-  .svc__card .btn { margin-top: 14px; }
+  .job__faq summary::-webkit-details-marker { display: none; }
+  .job__faq summary:hover, .job__faq summary:focus-visible { color: var(--accent); }
+  .job__faq details > p { padding: 0 2px 15px; color: var(--ink-soft); }
+  .job__cta { margin-top: var(--s-4); display: flex; flex-wrap: wrap; align-items: center; gap: 14px; }
+  .job__cta span { font-size: var(--t-small); color: var(--ink-soft); max-width: 46ch; }
 </style>
