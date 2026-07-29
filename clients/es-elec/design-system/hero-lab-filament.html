@@ -127,10 +127,10 @@ function build(){
   LOOPS = W/DPR < 720 ? 6 : 9;
   pts = [];
   var narrow = W/DPR < 720;
-  var x0 = narrow ? W*.06 : W*.30;
-  var x1 = W*.94;
-  var cy = narrow ? H*.66 : H*.56;
-  var R  = narrow ? H*.13 : H*.19;
+  var x0 = narrow ? W*.04 : W*.27;
+  var x1 = narrow ? W*.97 : W*.955;
+  var cy = narrow ? H*.64 : H*.54;
+  var R  = narrow ? H*.17 : H*.265;
   var n  = LOOPS*SEG;
   for (var i=0;i<=n;i++){
     var t=i/n, a=t*LOOPS*2*Math.PI;
