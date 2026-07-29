@@ -5,7 +5,7 @@ session resumes the build from THIS file with zero re-derivation. Read
 CLAUDE.md first (THE PROCESS MANDATE binds this build), then this file,
 then act on NEXT ACTION. Delete this file at Phase 9 hand-off.
 
-Last updated: 2026-07-29, hero + section 2 (trust shelf) done and pushed.
+Last updated: 2026-07-29, hero + sections 2-3 done and pushed.
 
 ## Where the build stands
 
@@ -40,8 +40,8 @@ design-system/reference-frames-home.html:
 
 2.  DONE — trust shelf live (4 counts, count-up formatter now handles
     thousands separators), verified desktop + mobile
-3.  Written-price spread (first paper section) — includes list, line-item
-    strip from client.lineItems, bold promise line, quiet Get-a-quote link
+3.  DONE — written-price spread live (paper section, quote-fragment card,
+    includes list, promise line, quiet CTA), verified desktop
 4.  Services — 2 lead tiles + 5 rows (replaces v2 7-cell grid)
 5.  Rewire Reckoner — stepper + occupied toggle reading client.reckoner;
     £ via toLocaleString('en-GB'); CTA under result (dataviz skill:

@@ -723,3 +723,59 @@
   .hero__cycle span { animation: none; }
   .hero__cycle span:first-child { opacity: 1; }
 }
+
+/* ============================================================
+   v3 §3 — the written-price spread (first paper section) */
+.spread__grid { display: grid; gap: clamp(28px, 4.5vw, 70px); }
+@media (min-width: 920px) { .spread__grid { grid-template-columns: 7fr 5fr; align-items: start; } }
+.spread__body { margin-top: var(--s-3); color: var(--ink-soft); max-width: 58ch; }
+.spread__incl {
+  margin-top: var(--s-3);
+  padding: 0; list-style: none;
+  display: grid; gap: 11px;
+  max-width: 56ch;
+}
+.spread__incl li { position: relative; padding-left: 28px; }
+.spread__incl li::before {
+  content: "";
+  position: absolute; left: 0; top: .52em;
+  width: 16px; height: 2px;
+  background: var(--accent);
+}
+.spread__quote {
+  margin: 0;
+  background: var(--surface);
+  border: 1px solid var(--edge);
+  border-radius: 10px;
+  padding: 22px 24px 18px;
+  box-shadow: 0 16px 40px -22px rgba(60, 44, 18, .35);
+  transform: rotate(-.6deg);
+}
+.spread__quote figcaption {
+  font: 700 var(--t-label) var(--font-body);
+  letter-spacing: .12em; text-transform: uppercase;
+  color: var(--ink-soft);
+  margin-bottom: 14px;
+}
+.spread__line {
+  display: flex; justify-content: space-between; gap: 18px;
+  align-items: baseline;
+  padding: 9px 0;
+  border-bottom: 1px dashed var(--edge);
+  font-size: .95rem;
+}
+.spread__line strong {
+  font-variant-numeric: tabular-nums;
+  font-family: var(--font-display);
+  letter-spacing: 0;
+}
+.spread__foot { padding-top: 12px; font-size: var(--t-small); color: var(--ink-soft); font-style: italic; }
+.spread__promise {
+  margin-top: clamp(26px, 4vw, 44px);
+  font: 500 clamp(1.15rem, 2vw, 1.5rem)/1.4 var(--font-display);
+  letter-spacing: -.01em;
+  max-width: 34ch;
+}
+.spread__cta { margin-top: var(--s-3); display: flex; flex-wrap: wrap; align-items: baseline; gap: 14px; }
+.spread__cta a { font-weight: 700; color: var(--accent); text-underline-offset: 4px; }
+.spread__cta span { font-size: var(--t-small); color: var(--ink-soft); }

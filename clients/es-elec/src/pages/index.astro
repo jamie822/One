@@ -146,6 +146,49 @@ seed n/a: direction pinned by founder brief, not rolled. -->
     </div>
   </section>
 
+  {/* v3 section 3: the written-price spread. The market-gap claim, what the
+      written price includes, and a fragment of a real quote on raised paper. */}
+  <div class="paper">
+    <section class="section spread" aria-labelledby="spread-h">
+      <div class="wrap">
+        <div class="spread__grid">
+          <div>
+            <h2 id="spread-h" class="rise">An itemised price in writing, before a floorboard lifts.</h2>
+            <p class="spread__body rise" style="--i:1">
+              When homeowners get surveyed about quotes, barely one in three
+              has ever been handed an itemised one. <!-- TEMP: verify stat source at go-live -->
+              The rest got a number on a text message and a shrug when it
+              grew. I work the other way round. You get every line of the job
+              priced on paper before I start, and the paper is what you pay.
+            </p>
+            <ul class="spread__incl rise" style="--i:2">
+              <li>Every room and every circuit, line by line</li>
+              <li>Materials named, not "sundries"</li>
+              <li>Making good: who patches the plaster and what it costs</li>
+              <li>The certificate and the building-control notification</li>
+              <li>Anything that could move the price, flagged in advance, with the number it moves by</li>
+            </ul>
+          </div>
+          <figure class="spread__quote rise" style="--i:1">
+            <figcaption>From a written price, as it lands <!-- TEMP figures --></figcaption>
+            {client.lineItems.map(([label, n]) => (
+              <p class="spread__line"><span>{label}</span><strong>£{n}</strong></p>
+            ))}
+            <p class="spread__foot">…and every other line of the job, the same way.</p>
+          </figure>
+        </div>
+        <p class="spread__promise rise">
+          If the invoice says more than the quote and I didn't clear it with
+          you first, <strong>you pay the quote.</strong>
+        </p>
+        <p class="spread__cta rise">
+          <a href="#quote">Get a quote</a>
+          <span>A written price before any work. Always.</span>
+        </p>
+      </div>
+    </section>
+  </div>
+
   <div style="position: relative;">
     <div class="conductor" aria-hidden="true"></div>
 
