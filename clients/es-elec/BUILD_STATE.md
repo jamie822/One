@@ -5,7 +5,7 @@ session resumes the build from THIS file with zero re-derivation. Read
 CLAUDE.md first (THE PROCESS MANDATE binds this build), then this file,
 then act on NEXT ACTION. Delete this file at Phase 9 hand-off.
 
-Last updated: 2026-07-29, hero + sections 2-4 done and pushed (restart #4 recovered).
+Last updated: 2026-07-29, hero + sections 2-5 done and pushed.
 
 ## Where the build stands
 
@@ -44,9 +44,8 @@ design-system/reference-frames-home.html:
     includes list, promise line, quiet CTA), verified desktop
 4.  DONE — services live (2 lead tiles + 5 rows on paper), verified
     desktop. NOTE: old .work CSS now unused; strip in the simplify pass
-5.  Rewire Reckoner — stepper + occupied toggle reading client.reckoner;
-    £ via toLocaleString('en-GB'); CTA under result (dataviz skill:
-    honest scale, mono figures)
+5.  DONE — Reckoner live; maths click-tested against the model (5 cases
+    ALL PASS, clamps verified, zero console errors), desktop verified
 6.  CTA band #1 (build as a reusable fragment; band #2 reuses it)
 7.  How a job goes — 4-step counter rail, draw-in on scroll
 8.  Proof — lead pull-quote + 2 side reviews from client.reviews,

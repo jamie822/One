@@ -260,6 +260,57 @@ seed n/a: direction pinned by founder brief, not rolled. -->
   <div style="position: relative;">
     <div class="conductor" aria-hidden="true"></div>
 
+    {/* v3 section 5: the Rewire Reckoner. ONE shared model — client.reckoner
+        feeds this instrument, the blog cost table and the services page. */}
+    <section class="section reck" aria-labelledby="reck-h">
+      <div class="wrap">
+        <h2 id="reck-h" class="rise">What would a rewire cost in your house?</h2>
+        <p class="reck__sub rise" style="--i:1">
+          These are the same numbers I quote from. Set the bedrooms, tell it
+          whether you're living there, read the range.
+        </p>
+        <div class="reck__panel rise" style="--i:1" data-reckoner data-model={JSON.stringify(client.reckoner)}>
+          <div class="reck__left">
+            <div class="reck__ctl">
+              <span class="reck__lbl" id="reck-beds-l">Bedrooms</span>
+              <div class="reck__step" role="group" aria-labelledby="reck-beds-l">
+                <button type="button" data-beds-down aria-label="Fewer bedrooms">&minus;</button>
+                <output data-beds-out aria-live="off">3</output>
+                <button type="button" data-beds-up aria-label="More bedrooms">+</button>
+              </div>
+            </div>
+            <div class="reck__ctl">
+              <span class="reck__lbl" id="reck-occ-l">While the work happens</span>
+              <div class="reck__tog" role="group" aria-labelledby="reck-occ-l">
+                <button type="button" data-occ="1" aria-pressed="true">We're living in it</button>
+                <button type="button" data-occ="0" aria-pressed="false">It'll be empty</button>
+              </div>
+            </div>
+            <ul class="reck__moves">
+              <li>Solid walls chase slower than plasterboard. Stone-built Headingley terraces sit at the top of the range.</li>
+              <li>Accessory spec. Brushed steel and dimmers everywhere adds real money; white plastic keeps it at the bottom.</li>
+              <li>Kitchens. Each one is a day of second fix on its own.</li>
+            </ul>
+          </div>
+          <div class="reck__right">
+            <div class="reck__result" aria-live="polite">
+              <p class="reck__price" data-price>£4,350 to £5,850</p>
+              <p class="reck__days" data-days>8 to 10 days on site</p>
+              <p class="reck__note" data-occ-note>
+                Living there adds about £350 and a couple of days. Dust
+                sheets, furniture moved room to room, and power kept on
+                every night.
+              </p>
+            </div>
+            <div class="reck__cta">
+              <a class="btn btn--quote" href="#quote">Get a quote</a>
+              <span>A proper price takes a look round. This gets you in the right street.</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
     <div class="paper">
       <section class="section" aria-labelledby="proof-h">
         <div class="wrap">
@@ -481,6 +532,50 @@ seed n/a: direction pinned by founder brief, not rolled. -->
         b.setAttribute('aria-pressed', on ? 'true' : 'false');
         b.setAttribute('aria-label', on ? 'Play the animation' : 'Pause the animation');
       });
+    })();
+
+    // The Rewire Reckoner. Reads the ONE shared model off its own data
+    // attribute; the blog table renders the same numbers server-side.
+    (function () {
+      var root = document.querySelector('[data-reckoner]');
+      if (!root) return;
+      var model = JSON.parse(root.dataset.model);
+      var beds = 3, occupied = true;
+      var out = root.querySelector('[data-beds-out]');
+      var price = root.querySelector('[data-price]');
+      var days = root.querySelector('[data-days]');
+      var note = root.querySelector('[data-occ-note]');
+      var down = root.querySelector('[data-beds-down]');
+      var up = root.querySelector('[data-beds-up]');
+      var gbp = function (n) { return '£' + n.toLocaleString('en-GB'); };
+      function render() {
+        var m = model.beds[beds];
+        var addP = occupied ? model.occupied.price : 0;
+        var addD = occupied ? model.occupied.days : 0;
+        out.textContent = beds;
+        price.textContent = gbp(m.low + addP) + ' to ' + gbp(m.high + addP);
+        days.textContent = (m.daysLow + addD) + ' to ' + (m.daysHigh + addD) + ' days on site';
+        note.hidden = !occupied;
+        down.disabled = beds <= 2;
+        up.disabled = beds >= 5;
+        [price, days].forEach(function (el) {
+          el.classList.remove('is-tick');
+          void el.offsetWidth;
+          el.classList.add('is-tick');
+        });
+      }
+      down.addEventListener('click', function () { if (beds > 2) { beds--; render(); } });
+      up.addEventListener('click', function () { if (beds < 5) { beds++; render(); } });
+      root.querySelectorAll('[data-occ]').forEach(function (b) {
+        b.addEventListener('click', function () {
+          occupied = b.dataset.occ === '1';
+          root.querySelectorAll('[data-occ]').forEach(function (o) {
+            o.setAttribute('aria-pressed', o === b ? 'true' : 'false');
+          });
+          render();
+        });
+      });
+      render();
     })();
   </script>
 </Base>
