@@ -95,3 +95,15 @@ sign-off). Record their verdict here, dated, win or lose.
       rounds on fundamentals are a process failure, not a normal loop.
       kit/BUILD_CHECKLIST.md exists to make each mistake above impossible
       to repeat silently.
+
+- 2026-07-29 — PROCESS VERDICT after the full skills/MCP accounting was
+  laid out ("that sounds very good"): the full-roster process is now the
+  saved, standing process for every build. New hard rule:
+  14. **THE PROCESS MANDATE.** "We do not skip any section, we do not
+      substitute any aspect, if the skill/agent doesn't work, we find a
+      way for it to work and do not move on until it has been completed
+      fully by its assigned skill." Encoded in CLAUDE.md (operational
+      form), kit/BUILD_CHECKLIST.md (phase gate) and kit/SKILL_ROSTER.md
+      (usage mandate). Reuse of a previous cycle's output requires
+      founder approval in chat; a dead tool is the founder's decision to
+      wait on or to fall back from, never the lead's silent call.

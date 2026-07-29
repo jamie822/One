@@ -13,6 +13,12 @@ choice. Every build ships `design-system/SKILL_LOG.md` — one line per
 skill: invoked (what it contributed) or not invoked (the stated reason).
 An empty reason is a checklist failure at Audit 9.
 
+**Hardened 2026-07-29 (THE PROCESS MANDATE, see CLAUDE.md):** no skips, no
+substitutions. Reusing a prior cycle's skill output counts as a skip
+unless the founder approves the reuse in chat. A skill that will not run
+is a blocker to fix; only a founder-approved named fallback closes the
+phase without it, and the skill re-runs the moment it works.
+
 The full audit of the toolkit. Every skill is either assigned a specific
 task inside the build pipeline (phase-numbered per BUILD_CHECKLIST.md),
 held in reserve with a stated trigger, or explicitly out of the standard

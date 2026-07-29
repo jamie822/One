@@ -6,6 +6,14 @@ the exact OUTPUT, and the AUDIT the lead runs before the phase may close.
 A failed audit loops inside the phase — work never moves forward broken.
 Nothing here is optional; skips are declared in chat before any work shows.
 
+**THE PROCESS MANDATE (founder, 2026-07-29):** no section skipped, no
+aspect substituted. A phase closes only when its assigned skills have RUN
+and their contribution is in SKILL_LOG.md. A broken skill gets fixed, not
+routed around; if the blocker is outside the session's power, the founder
+decides (wait or approve a named fallback in chat) — and the skill re-runs
+the moment it is back. MCP status check (GitHub, Claude Code Remote,
+Higgsfield, magic) is part of Phase 0, every build.
+
 Binding context read before Phase 1: `research/founder-taste.md` (all 13
 hard rules — depth is the standard, live-hero floor, unmissable CTAs),
 all six files in `research/doctrine/`, `research/direction-ledger.md`,

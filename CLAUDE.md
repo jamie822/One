@@ -15,10 +15,35 @@ invoking `impeccable`, `design-taste`, `cro`, or any of the four copy skills.
 The result was flat, generic, and the client rejected it. Every criticism made
 was something the skipped skills would have caught.
 
-### If you skip a skill
+### THE PROCESS MANDATE (founder, 2026-07-29 — every build, verbatim)
 
-Say so explicitly, in the message, before showing any work. "I did not run X
-because Y." Silent omission is the failure mode being prevented here.
+"We do not skip any section, we do not substitute any aspect, if the
+skill/agent doesn't work, we find a way for it to work and do not move on
+until it has been completed fully by its assigned skill."
+
+Operationally:
+1. Every phase of `kit/BUILD_CHECKLIST.md` runs in full on every build. No
+   phase closes until its assigned skills have RUN (Skill tool invocation,
+   real output, contribution logged in the build's
+   `design-system/SKILL_LOG.md`).
+2. No substitution: the lead never does by hand what a roster skill exists
+   to do. Carrying a previous cycle's output forward counts as a skip
+   unless the skill is re-run or the founder approves the reuse in chat.
+3. A broken or blocked skill is a blocker to FIX (reinstall, re-auth,
+   re-route, retry), not to route around. Only when the blocker is outside
+   the session's power (e.g. a dead connector like Higgsfield today) is it
+   surfaced to the founder immediately, and only a founder-approved, named
+   fallback in chat lets the phase close — recorded in SKILL_LOG.md and
+   DELIVERY.md, with the skill queued to re-run the moment it works.
+4. MCP status check at the start of every build: GitHub, Claude Code
+   Remote, Higgsfield, magic (21st.dev). Anything down gets flagged in
+   chat before Phase 0 closes, every build, until it is back.
+
+### If a skill cannot run
+
+Say so explicitly, in the message, before showing any work, with the fix
+attempted and the founder decision needed. Silent omission is the failure
+mode being prevented here.
 
 ---
 
