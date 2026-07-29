@@ -47,20 +47,17 @@ fetches were proxy-blocked this session). Nothing unverified is included.
 
 ## C. INP and the main thread
 
-12. Break any main-thread task longer than 50 ms — that is Google's definition
-    of a long task, and long tasks are the primary cause of input delay
-    (web.dev, Optimize long tasks).
+12. Break any main-thread task longer than 50 ms — Google's definition of a
+    long task, the primary cause of input delay (web.dev, Optimize long tasks).
 13. Yield to the main thread inside heavy work (scheduler.yield/setTimeout
-    chunks) so event handlers can run between chunks; keep per-chunk work
-    around 50 ms (web.dev, Optimize long tasks / Optimize INP).
-14. Budget every interaction's three phases — input delay, event processing,
-    presentation delay — because INP is their sum; do rendering-heavy follow-up
-    work after the next paint, not inside the handler (web.dev, INP /
-    Optimize INP).
-15. Run hero animations off the main thread: prefer compositor-friendly CSS
-    transforms/opacity, and keep per-frame JS (canvas rAF loops) small enough
-    that a tap during the animation still paints inside 200 ms (web.dev,
-    optimize long tasks; INP threshold from web.dev, INP).
+    chunks, ~50 ms per chunk) so event handlers can run between chunks
+    (web.dev, Optimize long tasks / Optimize INP).
+14. Budget all three interaction phases — input delay, processing, presentation
+    delay — INP is their sum; defer rendering-heavy follow-up work until after
+    the next paint (web.dev, INP / Optimize INP).
+15. Run hero animation on the compositor: prefer CSS transforms/opacity, and
+    keep per-frame canvas JS small enough that a tap mid-animation still paints
+    inside 200 ms (web.dev, Optimize long tasks; INP threshold, web.dev).
 
 ## D. CLS
 
@@ -92,21 +89,20 @@ fetches were proxy-blocked this session). Nothing unverified is included.
 
 ## F. Page experience, mobile, HTTPS, interstitials
 
-24. Treat page experience as a cluster of signals, not one score: Google's core
-    ranking systems reward good CWV, HTTPS, mobile usability, and absence of
-    intrusive interstitials individually — there is no single "page experience
-    ranking signal" (Google Search Central, page experience doc, 2023 update).
+24. Treat page experience as a cluster of signals, not one score: core ranking
+    systems reward good CWV, HTTPS, mobile usability, and no intrusive
+    interstitials individually — there is no single "page experience signal"
+    (Google Search Central, page experience doc, 2023 update).
 25. Serve everything over HTTPS — it is an explicit component of Google's page
     experience guidance (Google Search Central, page experience).
 26. Build mobile-first as a hard constraint: since 31 October 2023 Google
     crawls and indexes ONLY with the smartphone Googlebot, and desktop crawling
     was reduced — content absent on mobile effectively does not exist (Google
     Search Central blog, Oct 2023).
-27. Never cover content with pop-ups on entry. Allowed interstitials are
-    legally required ones (cookie/age), logins for genuinely private content,
-    and easily-dismissed banners using "a reasonable amount of screen space" —
-    Google publishes no exact percentage, so keep banners thin (Google Search
-    Central blog, intrusive interstitials).
+27. Never cover content with pop-ups on entry; allowed are legally required
+    interstitials (cookie/age), logins for private content, and dismissible
+    banners using "a reasonable amount of screen space" — Google gives no exact
+    size, so keep banners thin (Google Search Central blog, interstitials).
 
 ## G. Content — helpful, E-E-A-T, AI-generated
 
@@ -122,13 +118,13 @@ fetches were proxy-blocked this session). Nothing unverified is included.
     (including whether AI was used and why), and why it exists — Google's own
     self-assessment framing (Google Search Central, helpful content doc).
 31. Use AI drafting freely but never as the reason a page exists: Google
-    rewards quality "however it is produced", and using AI primarily to
+    rewards quality "however it is produced", while using AI primarily to
     manipulate rankings violates spam policy (Google Search Central blog,
-    Feb 2023, AI-generated content guidance).
+    Feb 2023).
 32. Have a human with real trade experience add specifics AI cannot know —
-    Google's generative-AI-content guidance asks whether AI use is self-evident
-    and whether the content shows genuine experience (Google Search Central,
-    using generative AI content doc).
+    Google's generative-AI guidance asks whether AI use is self-evident and
+    whether content shows genuine experience (Google Search Central, using
+    generative AI content doc).
 
 ## H. Spam lines never to cross
 

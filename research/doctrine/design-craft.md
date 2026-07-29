@@ -15,7 +15,7 @@ section F on production sites. Rules are numbered continuously for citation.
 2. Treat the hero as a drawn world, not a decorated page. The 2025 Awwwards
    Sites of the Year (Lando Norris by OFF+BRAND; Messenger's "tiny WebGL
    planet in your browser") are handcrafted scenes users sit inside — the
-   scene IS the brand. This matches the founder's floor: the moving thing
+   scene IS the brand. Matches the founder's floor: the moving thing
    occupies the majority of the hero (founder-taste.md rule 1).
 3. Use the award-stack pattern: custom canvas/WebGL scene + GSAP-class
    choreography + a fast framework (Astro/Next). Three.js is "the dominant 3D
@@ -50,9 +50,8 @@ section F on production sites. Rules are numbered continuously for citation.
     than 400ms (Kowalski). Ambient scene motion is exempt — it is weather,
     not feedback — but every user-triggered response obeys the budget.
 11. Never animate keyboard-initiated or high-frequency actions; animation
-    frequency budget scales inversely with usage frequency (Kowalski; echoed
-    by Apple HIG Motion: "avoid adding motion to interactions that occur
-    frequently").
+    budget scales inversely with usage frequency (Kowalski; Apple HIG Motion:
+    "avoid adding motion to interactions that occur frequently").
 12. Built-in CSS `ease`/`ease-in-out` keywords are too weak for hero-grade
     work; author custom cubic-beziers (Kowalski). Reference curves: Material
     3 emphasized `cubic-bezier(0.2, 0, 0, 1)`, emphasized-decelerate
@@ -250,10 +249,9 @@ The direction ledger applies: no two clients ship the same recipe.
 4. **Circuit Bloom** — a giant schematic draws itself: copper traces grow
    across the hero, junction nodes bloom into soft light as current reaches
    them, then pulses circulate forever. Motion: stroke-dashoffset trace
-   growth, staggered node blooms (rule 14 follow-through), travelling pulse
-   dots. Palette axis: near-black blue-green ground, copper traces, teal
-   pulses. Tech: pure SVG + WAAPI (fully compositor-friendly, rule 20);
-   reduced-motion serves the completed lit schematic (rule 46).
+   growth, staggered node blooms (rule 14), travelling pulse dots. Palette
+   axis: near-black blue-green ground, copper traces, teal pulses. Tech:
+   pure SVG + WAAPI (rule 20); reduced motion serves the lit schematic.
 
 5. **Day Cycle Roof** — an isometric drawn house with a solar roof inside a
    little world (garden, fence, EV on the drive); the sun arcs overhead as
