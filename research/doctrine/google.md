@@ -37,11 +37,10 @@ fetches were proxy-blocked this session). Nothing unverified is included.
 9. Attack all four LCP subparts: TTFB, resource load delay, resource load
    duration, element render delay — the load-delay and render-delay slices
    should be close to zero on a well-built page (web.dev, Optimize LCP).
-10. On our canvas/animated heroes, ensure a qualifying LCP candidate paints
-    fast: LCP only considers `<img>`, `<image>` in SVG, `<video>`, CSS
-    `background-image: url()`, and block-level text elements (web.dev, LCP).
-    A JS scene that delays the headline text delays LCP; paint the H1 and any
-    poster/backdrop image before the scene boots.
+10. On our canvas/animated heroes, paint a qualifying LCP candidate fast: LCP
+    only considers `<img>`, `<image>` in SVG, `<video>`, CSS `background-image:
+    url()`, and block-level text (web.dev, LCP). Render the H1 and any backdrop
+    image before the JS scene boots.
 11. Do not lazy-load anything above the fold; lazy-load everything below it.
     Lazy-loading in-viewport images measurably worsens LCP (web.dev, top
     ways to improve CWV).
@@ -160,13 +159,11 @@ fetches were proxy-blocked this session). Nothing unverified is included.
     the entity controls its own reviews ("self-serving reviews"), including
     embedded Google/Facebook review widgets (Google Search Central blog,
     Sept 2019; review snippet doc).
-39. Do not build for dead rich results: FAQ rich results are limited to
-    well-known government and health sites and HowTo is fully deprecated
-    (Aug–Sept 2023); sitelinks search box retired Nov 2024; Book Actions,
-    Course Info, Claim Review, Estimated Salary, Learning Video, Special
-    Announcement and Vehicle Listing dropped June 2025 (Google Search Central
-    blog). FAQ markup may stay for machine-readability but promise no stars or
-    dropdowns to clients.
+39. Do not build for dead rich results: FAQ is limited to well-known government
+    and health sites and HowTo is fully deprecated (Aug–Sept 2023); sitelinks
+    search box retired Nov 2024; seven more types (Course Info, Claim Review,
+    Estimated Salary, etc.) dropped June 2025 (Google Search Central blog).
+    Never promise clients stars or FAQ dropdowns.
 40. Keep markup identical to visible page content — Google's structured data
     policies require the markup to describe content users can see, or the site
     risks a manual action (Google Search Central, structured data policies).
@@ -218,11 +215,11 @@ fetches were proxy-blocked this session). Nothing unverified is included.
 51. Know that blocking Google-Extended does NOT remove a site from AI Overviews
     — those features read the normal Googlebot index; Google-Extended only
     governs Gemini model training (Google Search Central, AI features doc).
-52. Do not rely on rankings alone for citations: Ahrefs' 2026 study found only
-    ~38% of AI Overview citations rank in the organic top 10 (down from 76% in
-    2025), with the rest drawn from positions 11–100 and beyond — unique,
-    expert, first-hand content is what earns retrieval (Ahrefs, 2026; Google's
-    own guide says unique value matters more than any tactic).
+52. Do not rely on rankings alone for citations: only ~38% of AI Overview
+    citations rank in the organic top 10 (down from 76% in 2025), the rest
+    drawn from positions 11–100 and beyond — unique first-hand content earns
+    retrieval (Ahrefs study, 2026; Google's guide says unique value beats any
+    tactic).
 53. Expect zero query-level attribution: fan-out sub-queries never appear in
     Search Console, so judge GEO by branded demand, direct traffic, and leads —
     and say so in client reporting (Google Search Central, AI optimization
@@ -231,13 +228,13 @@ fetches were proxy-blocked this session). Nothing unverified is included.
 ## L. Single-tradesperson local-service sites (our client profile)
 
 54. Build one strong page per real service, and location pages ONLY for areas
-    genuinely served with something unique to say (local jobs done, local
+    genuinely served with something unique to say (jobs done there, local
     photos, area-specific regs) — thin town-name variants are the exact doorway
     pattern Google's spam policy names (Google Search Central, spam policies).
 55. Put Electrician/LocalBusiness JSON-LD on the homepage or contact page with
-    name, address, phone, hours, `geo`, and `areaServed` exactly matching the
-    Google Business Profile — complete, consistent info is what Google says
-    feeds local relevance (Google Search Central, LocalBusiness doc; GBP Help).
+    name, address, phone, hours, and `geo` exactly matching the Google Business
+    Profile — complete, consistent info feeds local relevance (Google Search
+    Central, LocalBusiness doc; GBP Help).
 56. Treat the website as a local-ranking input, not a parallel channel: local
     results rank on relevance, distance, and prominence, and prominence draws
     on links to the business and review count/score — so the site's SEO and
@@ -247,12 +244,11 @@ fetches were proxy-blocked this session). Nothing unverified is included.
     the site as plain content only — self-serving review markup earns no stars
     (rule 38) while GBP reviews directly feed prominence (Google Search
     Central; GBP Help).
-58. Lead with verifiable first-hand proof: the named electrician, photos of
-    their real installs, registration numbers (e.g. NICEIC/NAPIT, MCS for
-    solar) — this is the "experience" and "trust" evidence Google's E-E-A-T
-    guidance says its systems try to reward, and it is exactly what a
-    one-person trade site can show that aggregators cannot (Google Search
-    Central, helpful content doc).
+58. Lead with verifiable first-hand proof — the named electrician, photos of
+    real installs, registration numbers (NICEIC/NAPIT, MCS for solar): this is
+    the "experience" and "trust" evidence E-E-A-T rewards, and exactly what a
+    one-person trade site has that aggregators lack (Google Search Central,
+    helpful content doc).
 59. Make the phone number a tap-to-call text link in the header, never an
     image: mobile-only Googlebot indexes what mobile users get (rule 26), and
     text NAP is machine-readable for local matching (Google Search Central,

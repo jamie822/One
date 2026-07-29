@@ -63,21 +63,19 @@ section F on production sites. Rules are numbered continuously for citation.
     secondary elements 100–200ms delays after the primary transition.
 14. Apply follow-through and overlapping action: parts of a scene stop at
     different times, never all at once (Freiberg, applying Disney's
-    principles). A pulse arriving at a node should bloom after the pulse,
-    not with it.
+    principles). A node blooms after the pulse arrives, not with it.
 15. All interactive motion must be interruptible and retargetable mid-flight.
     Prefer CSS transitions (naturally interruptible) or springs; M3 Expressive
     moved wholesale to physics springs because "a spring can be re-targeted at
     any point" without jarring (m3.material.io). Kowalski's baseline spring
     for cursor-tracking: stiffness 300, damping 30.
 16. Reserve bounce/overshoot for hero moments only. M3 Expressive's bouncy
-    scheme is for "hero moments and key interactions"; its Standard
-    higher-damping scheme is for everything utilitarian. Buttons and nav
-    never wobble.
+    scheme is for "hero moments and key interactions"; its higher-damping
+    Standard scheme is for everything utilitarian. Buttons never wobble.
 17. Micro-interaction defaults (Kowalski): press-scale `scale(0.97)`; never
     enter from `scale(0)` — start at `scale(0.9)` or larger; origin-aware
-    transforms (menus grow from their trigger, not from centre); a touch of
-    `filter: blur()` can mask crossfade imperfections.
+    transforms (menus grow from their trigger, not centre); a touch of
+    `filter: blur()` masks crossfade imperfections.
 18. Motion must communicate — status, feedback, orientation — and must never
     be the ONLY channel carrying information (Apple HIG, Motion +
     Accessibility). The hero scene sells feeling; the headline carries the
@@ -108,13 +106,13 @@ section F on production sites. Rules are numbered continuously for citation.
     the viewport (IntersectionObserver) and when `document.hidden`. An
     off-screen hero burning CPU is a silent INP/battery tax.
 24. A `<canvas>` is not an LCP candidate — LCP measures the largest image or
-    text block (w3c/largest-contentful-paint spec; web.dev LCP). Therefore
-    the hero HEADLINE is our LCP element: real text, self-hosted font,
-    rendered immediately, never blocked behind scene init or JS hydration.
+    text block (w3c/largest-contentful-paint spec; web.dev LCP). So the hero
+    HEADLINE is our LCP element: real text, self-hosted font, rendered
+    immediately, never blocked behind scene init or hydration.
 25. Never attach scene work to scroll events. Scroll-linked effects use CSS
     scroll-driven animations (compositor-threaded for transform/opacity —
-    Chrome scroll-animation-performance case study) or a passive,
-    rAF-throttled observer at worst.
+    Chrome scroll-animation-performance case study) or, at worst, a passive
+    rAF-throttled observer.
 26. Manage layer count: blanket `will-change` costs memory and can slow the
     page; promote few layers, deliberately, and remove `will-change` after
     the animation (web.dev, compositor-only properties article).
@@ -139,12 +137,12 @@ section F on production sites. Rules are numbered continuously for citation.
     The crossover is roughly two static weights — above that the variable
     file wins on bytes and requests (webcarbon.io; fontself.app: Inter's
     ~330KB variable build replaces six static files).
-32. Exploit the axes we pay for: weight for hierarchy without extra files,
-    and `font-optical-sizing` where the font has an `opsz` axis — thicker
-    small text, more elegant display cuts (MDN Variable fonts guide).
-33. Hero headline: `preload` the WOFF2, `font-display: swap` or `optional`,
-    metrics-compatible fallback stack — the headline is the LCP element
-    (rule 24) and must paint on first frame.
+32. Exploit the axes we pay for: weight for hierarchy without extra files;
+    `font-optical-sizing` where an `opsz` axis exists — thicker small text,
+    more elegant display cuts (MDN Variable fonts guide).
+33. Hero headline: `preload` the WOFF2, `font-display: swap`/`optional`,
+    metrics-compatible fallback stack — it is the LCP element (rule 24) and
+    must paint on first frame.
 34. Oversized confident type is the 2026 award norm (rule 6), but it obeys
     the founder's integration law: display type over a live scene must sit IN
     the scene — scrim slots, glow interaction, z-layering — never float
@@ -197,10 +195,9 @@ section F on production sites. Rules are numbered continuously for citation.
     Understanding 2.3.3). Parallax, cursor-reactive and scroll-driven motion
     all sit behind the reduced-motion check.
 45. Implement via W3C Technique C39: wrap motion in
-    `@media (prefers-reduced-motion: no-preference)` so the no-motion state
-    is the default and motion is the enhancement (w3.org/WAI Technique C39).
-    In JS, gate rAF loops on `matchMedia('(prefers-reduced-motion: reduce)')`
-    and re-check on change.
+    `@media (prefers-reduced-motion: no-preference)` so no-motion is the
+    default and motion the enhancement; in JS, gate rAF loops on
+    `matchMedia('(prefers-reduced-motion: reduce)')` and re-check on change.
 46. Reduced-motion is a REDESIGN, not a blank page: serve the scene's best
     single frame (static gradient/SVG composition of the same world), keep
     opacity crossfades, kill translation/scale/parallax. Vestibular triggers
