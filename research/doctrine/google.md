@@ -7,9 +7,9 @@ fetches were proxy-blocked this session). Nothing unverified is included.
 
 ## A. Core Web Vitals — budgets and how Google scores them
 
-1. Hit LCP <= 2.5 s, INP <= 200 ms, CLS <= 0.1 on every page — these are the
-   "good" thresholds. They are the only budgets Google publishes; "poor" begins
-   at LCP > 4 s, INP > 500 ms, CLS > 0.25 (web.dev, Web Vitals).
+1. Hit LCP <= 2.5 s, INP <= 200 ms, CLS <= 0.1 on every page — the only "good"
+   budgets Google publishes; "poor" begins at LCP > 4 s, INP > 500 ms,
+   CLS > 0.25 (web.dev, Web Vitals).
 2. Optimise for the 75th percentile of real visits, not your own laptop: a page
    is "good" only when at least 75% of real page views meet the threshold, per
    metric, segmented mobile vs desktop (web.dev, Web Vitals).
@@ -28,12 +28,11 @@ fetches were proxy-blocked this session). Nothing unverified is included.
 ## B. LCP delivery
 
 7. Make the LCP resource discoverable in the initial HTML — a real `<img>` with
-   `src`/`srcset`, never injected by JavaScript. JS-rendered LCP elements
-   sidestep the browser preload scanner and add resource-load delay (web.dev,
-   Optimize LCP).
-8. Put `fetchpriority="high"` on the LCP image and never `loading="lazy"` on
-   it. Google names this the clearest instruction to start the fetch
-   immediately (web.dev, Fetch Priority API / Optimize LCP).
+   `src`/`srcset`, never injected by JavaScript, which sidesteps the preload
+   scanner and adds resource-load delay (web.dev, Optimize LCP).
+8. Put `fetchpriority="high"` on the LCP image and never `loading="lazy"` on it
+   — Google's clearest instruction to start the fetch immediately (web.dev,
+   Fetch Priority API / Optimize LCP).
 9. Attack all four LCP subparts: TTFB, resource load delay, resource load
    duration, element render delay — the load-delay and render-delay slices
    should be close to zero on a well-built page (web.dev, Optimize LCP).
@@ -74,13 +73,12 @@ fetches were proxy-blocked this session). Nothing unverified is included.
 
 ## E. Images and media weight
 
-20. Serve AVIF or WebP, never plain JPEG/PNG: WebP is typically 25–35% smaller
-    than equivalent JPEG, AVIF around 50% smaller than JPEG and ~35% smaller
-    than WebP — direct LCP savings (web.dev, serve images in modern formats /
-    AVIF articles).
-21. Serve images at their displayed size via `srcset`/`sizes`; oversized
-    images are wasted bytes Lighthouse flags and LCP pays for (web.dev,
-    serve images with correct dimensions).
+20. Serve AVIF or WebP, never plain JPEG/PNG: WebP runs 25–35% smaller than
+    equivalent JPEG, AVIF around 50% smaller than JPEG and ~35% smaller than
+    WebP — direct LCP savings (web.dev, modern image formats / AVIF articles).
+21. Serve images at their displayed size via `srcset`/`sizes`; oversized images
+    are wasted bytes Lighthouse flags and LCP pays for (web.dev, serve images
+    with correct dimensions).
 22. Use real `<img>` elements for any image that should be indexed — Google
     does not index CSS background images (Google Search Central, Image SEO).
 23. Write descriptive alt text on every meaningful image; for linked images
@@ -106,14 +104,13 @@ fetches were proxy-blocked this session). Nothing unverified is included.
 
 ## G. Content — helpful, E-E-A-T, AI-generated
 
-28. Write for a defined audience with first-hand knowledge — Google's ranking
-    systems are built to reward "helpful, reliable, people-first content" and
-    demote content made primarily to rank (Google Search Central, helpful
-    content doc).
+28. Write for a defined audience with first-hand knowledge — ranking systems
+    reward "helpful, reliable, people-first content" and demote content made
+    primarily to rank (Google Search Central, helpful content doc).
 29. Prioritise trust above the other E-E-A-T letters: Google states trust is
-    the most important member of experience/expertise/authoritativeness/trust,
-    and content need not demonstrate all four (Google Search Central, helpful
-    content doc).
+    the most important of experience/expertise/authoritativeness/trust, and
+    content need not show all four (Google Search Central, helpful content
+    doc).
 30. Run the Who/How/Why test on every page: who made it, how it was made
     (including whether AI was used and why), and why it exists — Google's own
     self-assessment framing (Google Search Central, helpful content doc).
@@ -128,33 +125,30 @@ fetches were proxy-blocked this session). Nothing unverified is included.
 
 ## H. Spam lines never to cross
 
-33. Never mass-produce near-identical town pages that funnel to one contact
-    form — Google's doorway policy names "multiple pages targeted at specific
-    regions or cities that funnel users to one page" as spam (Google Search
-    Central, spam policies).
-34. Never generate many pages of unoriginal content at scale, by AI or human —
-    the March 2024 scaled content abuse policy covers it regardless of
-    production method (Google Search Central blog, March 2024).
+33. Never mass-produce near-identical town pages funneling to one contact form
+    — the doorway policy names "multiple pages targeted at specific regions or
+    cities that funnel users to one page" as spam (Google Search Central, spam
+    policies).
+34. Never generate unoriginal pages at scale, by AI or human — scaled content
+    abuse applies regardless of production method (Google Search Central blog,
+    March 2024).
 35. Never publish third-party content to borrow a site's authority (site
     reputation abuse), never cloak, never buy or trade links for ranking
     (Google Search Central, spam policies).
 36. Never manipulate browser history so Back returns users to your pages —
-    "back button hijacking" became a named spam policy in April 2026 (Google
-    Search Central blog, Apr 2026).
+    "back button hijacking" is a named spam policy (Search Central, Apr 2026).
 
 ## I. Structured data and rich results in 2026
 
 37. Use JSON-LD `LocalBusiness` markup with the most specific subtype —
-    schema.org defines `Electrician` (under HomeAndConstructionBusiness); solar
-    installers use `HomeAndConstructionBusiness` or `Electrician` as fits.
-    Required properties: `name` and `address`; recommended: `url`, `telephone`,
-    `geo`, `openingHoursSpecification`, `priceRange`, `image` (Google Search
-    Central, LocalBusiness structured data).
-38. Never mark up reviews of the business on the business's own site: Google
-    does not show star rich results for LocalBusiness/Organization types when
-    the entity controls its own reviews ("self-serving reviews"), including
-    embedded Google/Facebook review widgets (Google Search Central blog,
-    Sept 2019; review snippet doc).
+    schema.org defines `Electrician` under HomeAndConstructionBusiness; solar
+    installers fit either. Required: `name`, `address`; recommended: `url`,
+    `telephone`, `geo`, `openingHoursSpecification`, `priceRange`, `image`
+    (Google Search Central, LocalBusiness structured data).
+38. Never mark up reviews of the business on its own site: Google shows no star
+    rich results for LocalBusiness/Organization when the entity controls the
+    reviews ("self-serving"), including embedded Google/Facebook widgets
+    (Google Search Central blog, Sept 2019; review snippet doc).
 39. Do not build for dead rich results: FAQ is limited to well-known government
     and health sites and HowTo is fully deprecated (Aug–Sept 2023); sitelinks
     search box retired Nov 2024; seven more types (Course Info, Claim Review,
@@ -168,26 +162,23 @@ fetches were proxy-blocked this session). Nothing unverified is included.
 
 ## J. Titles, snippets, headings
 
-42. Give every page a unique, clear, concise `<title>` that describes that page
-    — Google's stated recipe for keeping your own title link instead of a
-    rewrite (Google Search Central, title links doc; rewriting system announced
-    Aug 2021).
-43. Keep titles under roughly 580–600 px (about 50–60 characters) so they
-    display untruncated on desktop — Google sets no official limit; the pixel
-    figure is industry measurement, not Google doctrine (third-party SERP
-    studies, 2024–2026).
-44. Front-load the service and area, avoid "Home"/"Welcome", boilerplate
-    repetition, and keyword stuffing — all explicitly discouraged in Google's
-    title-link best practices (Google Search Central, title links doc).
+42. Give every page a unique, clear, concise `<title>` describing that page —
+    Google's stated recipe for keeping your title link instead of a rewrite
+    (Google Search Central, title links doc; rewriting announced Aug 2021).
+43. Keep titles under roughly 580–600 px (about 50–60 characters) to display
+    untruncated on desktop — Google sets no official limit; the pixel figure is
+    industry measurement (third-party SERP studies, 2024–2026).
+44. Front-load the service and area; avoid "Home"/"Welcome", boilerplate
+    repetition, and keyword stuffing — all explicitly discouraged (Google
+    Search Central, title links doc).
 45. Write a unique meta description per page but expect Google to ignore it:
     snippets are "primarily created from the page content itself", the meta
-    description is used only when it describes the page better, and there is no
-    official length limit — display truncates to device width (Google Search
-    Central, snippet doc).
+    used only when it describes the page better; no official length limit —
+    display truncates to device width (Google Search Central, snippet doc).
 46. Use meaningful, hierarchical headings to structure content for users;
     heading levels are context signals, not ranking multipliers, and multiple
-    H1s cause Google no problem — use one H1 anyway for clarity (Google Search
-    Central, SEO starter guide; Google statements via Search Central).
+    H1s cause Google no problem — use one anyway for clarity (Google Search
+    Central, SEO starter guide and public statements).
 
 ## K. AI Overviews / AI Mode (GEO)
 
@@ -196,11 +187,10 @@ fetches were proxy-blocked this session). Nothing unverified is included.
     "chunking", llms.txt files, and manufactured brand mentions (Google Search
     Central, AI features doc + generative-AI optimization guide, 2026).
 48. Write pages that answer the fan-out, not just the head query: AI features
-    use retrieval-augmented generation over the normal Search index, issuing
-    concurrent sub-queries ("query fan-out") — a page on "EV charger
-    installation Wakefield" should also answer cost, timescales, and
-    regulations, because those are the fan-out queries (Google Search Central,
-    AI optimization guide, 2026).
+    use retrieval-augmented generation over the normal Search index via
+    concurrent sub-queries ("query fan-out") — an EV-charger page should also
+    answer cost, timescales, and regulations, because those are the fan-out
+    queries (Google Search Central, AI optimization guide, 2026).
 49. Do NOT spin up a page per imagined fan-out query — that is scaled content
     abuse; answer related sub-questions in depth on one strong page (Google
     Search Central, AI optimization guide + spam policies).
@@ -217,9 +207,8 @@ fetches were proxy-blocked this session). Nothing unverified is included.
     retrieval (Ahrefs study, 2026; Google's guide says unique value beats any
     tactic).
 53. Expect zero query-level attribution: fan-out sub-queries never appear in
-    Search Console, so judge GEO by branded demand, direct traffic, and leads —
-    and say so in client reporting (Google Search Central, AI optimization
-    guide, 2026).
+    Search Console, so judge GEO by branded demand, direct traffic, and leads
+    (Google Search Central, AI optimization guide, 2026).
 
 ## L. Single-tradesperson local-service sites (our client profile)
 
@@ -231,15 +220,14 @@ fetches were proxy-blocked this session). Nothing unverified is included.
     name, address, phone, hours, and `geo` exactly matching the Google Business
     Profile — complete, consistent info feeds local relevance (Google Search
     Central, LocalBusiness doc; GBP Help).
-56. Treat the website as a local-ranking input, not a parallel channel: local
-    results rank on relevance, distance, and prominence, and prominence draws
-    on links to the business and review count/score — so the site's SEO and
-    earned links lift map-pack position (Google Business Profile Help, "Improve
-    your local ranking").
-57. Push reviews to the Google Business Profile, and publish testimonials on
-    the site as plain content only — self-serving review markup earns no stars
-    (rule 38) while GBP reviews directly feed prominence (Google Search
-    Central; GBP Help).
+56. Treat the website as a local-ranking input: local results rank on
+    relevance, distance, and prominence, and prominence draws on links to the
+    business and review count/score — the site's SEO and earned links lift
+    map-pack position (Google Business Profile Help, "Improve your local
+    ranking").
+57. Push reviews to the Google Business Profile and publish site testimonials
+    as plain content only — self-serving markup earns no stars (rule 38) while
+    GBP reviews feed prominence (Google Search Central; GBP Help).
 58. Lead with verifiable first-hand proof — the named electrician, photos of
     real installs, registration numbers (NICEIC/NAPIT, MCS for solar): this is
     the "experience" and "trust" evidence E-E-A-T rewards, and exactly what a
@@ -250,12 +238,12 @@ fetches were proxy-blocked this session). Nothing unverified is included.
     text NAP is machine-readable for local matching (Google Search Central,
     mobile-first indexing best practices).
 60. Answer money questions plainly on service pages (price ranges, timescales,
-    certificates issued) — people-first content guidance rewards pages that
-    leave a searcher satisfied, and these are the fan-out queries AI features
-    ask (Google Search Central, helpful content + AI optimization guides).
+    certificates issued) — people-first guidance rewards pages that leave a
+    searcher satisfied, and these are the fan-out queries AI features ask
+    (Google Search Central, helpful content + AI optimization guides).
 61. Keep hours, prices, and service claims identical across site, schema, and
-    GBP; conflicting data undermines the "complete and accurate info" Google
-    says local ranking depends on (Google Business Profile Help).
+    GBP — local ranking depends on "complete and accurate info" (Google
+    Business Profile Help).
 62. For solar installers, refresh content when regulations and incentives
     change: Google's AI guide flags freshness as a retrieval factor on evolving
     topics, and stale grant/tariff info fails the trust test (Google Search

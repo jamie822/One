@@ -3,8 +3,8 @@
 Permanent operating rules for a studio whose signature is LIVE, immersive,
 animated heroes (built code scenes, never stock photos) for UK electricians
 and solar installers. Researched against the open web, July 2026.
-`founder-taste.md` outranks this file on taste calls; nothing outranks
-section F on production sites. Rules are numbered continuously for citation.
+`founder-taste.md` outranks this file on taste; nothing outranks section F
+on production sites. Rules are numbered continuously for citation.
 
 ## A. Hero scenes — what award-level looks like
 
@@ -18,9 +18,9 @@ section F on production sites. Rules are numbered continuously for citation.
    scene IS the brand. Matches the founder's floor: the moving thing
    occupies the majority of the hero (founder-taste.md rule 1).
 3. Use the award-stack pattern: custom canvas/WebGL scene + GSAP-class
-   choreography + a fast framework (Astro/Next). Three.js is "the dominant 3D
-   library behind recent Awwwards and FWA winners" (hontran.dev); our Canvas
-   2D/SVG scenes are the lighter expression of the same pattern.
+   choreography + a fast framework. Three.js is "the dominant 3D library
+   behind recent Awwwards and FWA winners" (hontran.dev); our Canvas 2D/SVG
+   scenes are the lighter expression of the same pattern.
 4. Treat performance as a design constraint from day one, never a launch-week
    optimisation pass — the documented habit of studios that win repeatedly
    (utsubo.com judging-criteria analysis). Budget the scene (section C) first.
@@ -36,10 +36,10 @@ section F on production sites. Rules are numbered continuously for citation.
 7. Iterate focal objects toward organic softness: dense, soft, blended detail
    (soft corona), never sparse geometric spikes (founder-taste.md rule 5,
    proven across four Loxley sun rounds).
-8. Composited elements must share the motion, lighting and perspective of the
+8. Composited elements share the motion, lighting and perspective of the
    scene they sit in; anything that "looks stuck on" fails on sight
-   (founder-taste.md rule 7). Overlay UI (chips, marquees, counters) inherits
-   the scene's light: glows, reflections, parallax offsets.
+   (founder-taste.md rule 7). Overlay UI (chips, marquees, counters)
+   inherits the scene's light: glows, reflections, parallax offsets.
 
 ## B. Motion physics
 
@@ -76,49 +76,44 @@ section F on production sites. Rules are numbered continuously for citation.
     transforms (menus grow from their trigger, not centre); a touch of
     `filter: blur()` masks crossfade imperfections.
 18. Motion must communicate — status, feedback, orientation — and must never
-    be the ONLY channel carrying information (Apple HIG, Motion +
-    Accessibility). The hero scene sells feeling; the headline carries the
-    facts.
+    be the ONLY channel carrying information (Apple HIG, Motion). The hero
+    scene sells feeling; the headline carries the facts.
 
 ## C. Performance budgets
 
-19. Animate only compositor properties — `transform` and `opacity` — for
-    everything outside the canvas. Layout/paint properties (width, margin,
-    top, box-shadow spread) are banned in animations (web.dev, "Stick to
-    Compositor-Only Properties and Manage Layer Count").
+19. Animate only compositor properties — `transform` and `opacity` — outside
+    the canvas. Layout/paint properties (width, margin, top, box-shadow) are
+    banned in animations (web.dev, "Stick to Compositor-Only Properties and
+    Manage Layer Count").
 20. Prefer CSS/WAAPI over rAF-driven JS for DOM motion: compositor-thread
-    animations stay smooth when the main thread is busy;
-    requestAnimationFrame animation always runs on the main thread and janks
-    when anything blocks it (motion.dev performance guide; webperf.tips,
-    "Animate on the Compositor Thread").
+    animations stay smooth when the main thread is busy; rAF animation
+    always runs on the main thread and janks when anything blocks it
+    (motion.dev performance guide; webperf.tips).
 21. The canvas scene is main-thread work — budget it like JavaScript, because
     it is: heavy per-frame computation "can harm the app's real and perceived
-    performance" (web.dev, OffscreenCanvas). The scene's rAF tick must leave
-    interactions able to complete inside INP's "good" threshold of 200ms
-    (web.dev, INP).
+    performance" (web.dev, OffscreenCanvas). The rAF tick must leave
+    interactions able to finish inside INP's "good" 200ms (web.dev, INP).
 22. Escape hatch for heavy scenes: `transferControlToOffscreen()` +
-    OffscreenCanvas in a worker moves both computation and rendering off the
-    main thread (web.dev, OffscreenCanvas). Reach for it before cutting the
-    scene's ambition.
-23. Cap the scene's real cost: clamp devicePixelRatio (render at ≤2x), cap
-    particle counts by viewport area, pause the rAF loop when the hero leaves
-    the viewport (IntersectionObserver) and when `document.hidden`. An
-    off-screen hero burning CPU is a silent INP/battery tax.
+    OffscreenCanvas in a worker moves computation and rendering off the main
+    thread (web.dev). Reach for it before cutting the scene's ambition.
+23. Cap the scene's real cost: clamp devicePixelRatio (render ≤2x), cap
+    particle counts by viewport area, pause the rAF loop when the hero
+    leaves the viewport (IntersectionObserver) and when `document.hidden` —
+    an off-screen hero burning CPU is a silent INP/battery tax.
 24. A `<canvas>` is not an LCP candidate — LCP measures the largest image or
     text block (w3c/largest-contentful-paint spec; web.dev LCP). So the hero
     HEADLINE is our LCP element: real text, self-hosted font, rendered
     immediately, never blocked behind scene init or hydration.
-25. Never attach scene work to scroll events. Scroll-linked effects use CSS
-    scroll-driven animations (compositor-threaded for transform/opacity —
-    Chrome scroll-animation-performance case study) or, at worst, a passive
-    rAF-throttled observer.
+25. Never attach scene work to scroll events: scroll-linked effects use CSS
+    scroll-driven animations, compositor-threaded for transform/opacity
+    (Chrome scroll-performance case study), or a passive rAF observer.
 26. Manage layer count: blanket `will-change` costs memory and can slow the
     page; promote few layers, deliberately, and remove `will-change` after
     the animation (web.dev, compositor-only properties article).
 27. Test motion under throttled CPU (4x–6x) on a mid-range Android profile
     before sign-off — our trade audience browses on phones from vans; 60fps
-    on an M-series laptop proves nothing (Kowalski: profile in DevTools;
-    target minimum 60fps).
+    on an M-series laptop proves nothing (Kowalski: profile in DevTools,
+    target minimum 60fps everywhere).
 
 ## D. Typography
 
@@ -143,9 +138,8 @@ section F on production sites. Rules are numbered continuously for citation.
     metrics-compatible fallback stack — it is the LCP element (rule 24) and
     must paint on first frame.
 34. Oversized confident type is the 2026 award norm (rule 6), but it obeys
-    the founder's integration law: display type over a live scene must sit IN
-    the scene — scrim slots, glow interaction, z-layering — never float
-    stuck-on.
+    the integration law: display type over a live scene must sit IN the
+    scene — scrim slots, glow interaction, z-layering — never float stuck-on.
 
 ## E. Colour
 
@@ -155,26 +149,24 @@ section F on production sites. Rules are numbered continuously for citation.
     from RGB and HSL"). Supported in every major browser since 2023 (Chrome
     111, Safari 15.4, Firefox 113); Tailwind v4's tokens are OKLCH.
 36. Build each client's palette as a lightness ladder per hue: hold H and C,
-    step L. Theme flips then become custom-property swaps, no per-component
-    media queries (Evil Martians; LogRocket OKLCH guide).
+    step L. Theme flips become custom-property swaps, no per-component media
+    queries (Evil Martians; LogRocket OKLCH guide).
 37. Use OKLCH's P3 headroom (~30% more perceivable colours than sRGB —
     uxdesign.cc, "OKLCH explained for designers") for the glow accents that
-    carry our heroes — electric ambers, arc blues — with an sRGB-safe
-    fallback value.
+    carry our heroes — electric ambers, arc blues — with sRGB-safe fallbacks.
 38. Dark themes never use pure `#000`: it causes halation/"blooming" around
-    bright text. Base near Material's `#121212`-class dark grey
-    (atmos.style; Material Design dark theme guidance).
+    bright text. Base near Material's `#121212`-class dark grey (atmos.style;
+    Material dark theme guidance).
 39. Express dark-theme elevation with light, not shadow: nearer surfaces are
     lighter (Material's overlay scale: ~5% white at 1dp to 16% at 24dp);
     prefer subtle borders over drop shadows (colorarchive.org; halo-lab).
 40. Desaturate in the dark: fully saturated accents vibrate on dark grounds;
-    use lighter, lower-chroma versions of brand hues, and off-white text
-    (`rgba(255,255,255,0.87)`-class), never pure white body copy (Material
-    dark theme guidance; uxcel dark mode principles).
-41. Dark is our default axis for electricians (Tungsten precedent,
-    founder-taste.md approval log) but it must stay warm and alive — glow,
-    aurora, ember tones — "not as dark and moody... this is supposed to be a
-    positive thing" (founder-taste.md rule 6).
+    use lighter, lower-chroma versions of brand hues and off-white text
+    (`rgba(255,255,255,0.87)`-class), never pure white body copy (Material;
+    uxcel dark mode principles).
+41. Dark is our default axis for electricians (Tungsten precedent) but must
+    stay warm and alive — glow, aurora, ember tones — "not as dark and
+    moody... this is supposed to be a positive thing" (founder-taste.md).
 
 ## F. Accessibility of motion (non-negotiable on production)
 
@@ -204,10 +196,10 @@ section F on production sites. Rules are numbered continuously for citation.
 47. Never let motion carry sole meaning (Apple HIG; rule 18 as a compliance
     duty): with the scene paused or reduced, every claim, CTA and number on
     the page must still be present as text.
-48. Founder demo links may force motion on (founder-taste.md rule 3 — a still
-    page reads as broken); that override is for temp preview URLs only. The
-    compliance layer (rules 42–47) ships on every live client site, and the
-    paused state is designed with the same care as the moving one.
+48. Founder demo links may force motion on (founder-taste.md rule 3); that
+    override is for temp preview URLs only. The compliance layer (rules
+    42–47) ships on every live site, and the paused state is designed with
+    the same care as the moving one.
 49. Scroll-driven Animations API status (mid-2026): Chrome/Edge since 115
     (July 2023); Safari 26 (Sept 2025), threaded from 26.4; Firefox stable
     still behind `layout.css.scroll-driven-animations.enabled` as of Firefox
@@ -219,8 +211,8 @@ section F on production sites. Rules are numbered continuously for citation.
 ## Live hero recipes
 
 Eight distinct, buildable live-hero concepts — each a whole drawn world (rule
-2) with one signature moment (rule 1), floor-compliant per founder-taste.md.
-The direction ledger applies: no two clients ship the same recipe.
+2) with one signature moment (rule 1), floor-compliant per founder-taste.md;
+the direction ledger applies, so no two clients ship the same recipe.
 
 1. **The Grid Awakens** — night-time town skyline in layered silhouette;
    light pulses travel outward from a substation along drawn cable runs, and
