@@ -193,6 +193,10 @@ function ramp(k){
 function rgba(c,a){ return 'rgba('+(c[0]|0)+','+(c[1]|0)+','+(c[2]|0)+','+a+')'; }
 
 var sparks=[], motes=[];
+/* current pulses that crawl the coil forever — the idle motion you can
+   see from across the room */
+var pulses=[{p:0,v:.085,a:.4},{p:.37,v:.11,a:.34},{p:.72,v:.095,a:.37}];
+var surgeAt=3.2, clock=0;
 for (var i=0;i<42;i++) motes.push({x:Math.random(), y:Math.random(), s:.3+Math.random()*.9, p:Math.random()*6.28});
 
 var paused=false, last=0;
@@ -218,7 +222,7 @@ function frame(ts){
   [[0, pts[0]], [1, pts[pts.length-1]]].forEach(function(e){
     var p=e[1];
     ctx.lineWidth=5*DPR;
-    ctx.beginPath(); ctx.moveTo(p.x, H+10); ctx.lineTo(p.x, p.y+8*DPR); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(p.x, H+10); ctx.lineTo(p.x, p.y+6*DPR); ctx.stroke();
     ctx.fillStyle='#241a0e';
     ctx.beginPath(); ctx.arc(p.x, p.y, 4.5*DPR, 0, 6.29); ctx.fill();
   });
@@ -233,15 +237,32 @@ function frame(ts){
     ctx.fill();
   });
 
+  clock += dt;
+  if (clock > surgeAt){ surgeAt = clock + 6.5 + Math.random()*3;
+    pulses.push({p:0, v:.30, a:.85, once:1}); }
+  for (var pi2=pulses.length-1; pi2>=0; pi2--){
+    var pu=pulses[pi2]; pu.p += pu.v*dt*(.7+.6*base);
+    if (pu.p>1){ if (pu.once){ pulses.splice(pi2,1); continue; } pu.p-=1; }
+  }
+  /* heat shimmer: the coil itself writhes gently */
+  var wob=[];
+  for (var wi=0; wi<pts.length; wi++)
+    wob.push(Math.sin(ts*.0011 + wi*.33)*(1.1+2.4*base)*DPR);
+
   var seg=[];
   for (var i=0;i<pts.length;i++){
     var p=pts[i], local=0;
+    /* travelling current: gaussian heat around each pulse head */
+    for (var q=0;q<pulses.length;q++){
+      var d=Math.abs(p.t-pulses[q].p); if (d>.5) d=1-d;
+      local += Math.exp(-(d*d)/(2*.013*.013)) * pulses[q].a * (.55+.45*base);
+    }
     if (mx>-1e3){
       var dx=p.x-mx, dy=p.y-my, d2=dx*dx+dy*dy, s=140*DPR;
       local = Math.exp(-d2/(2*s*s)) * .5;
     }
     seg.push(Math.max(.05, Math.min(1.15, base + local)));
-    if (!reduce && local>.22 && Math.random()<dt*9*local && sparks.length<130){
+    if (!reduce && local>.30 && Math.random()<dt*7*local && sparks.length<130){
       sparks.push({x:p.x,y:p.y,vx:(Math.random()-.5)*70*DPR,vy:-(30+Math.random()*90)*DPR,
         life:.9+Math.random()*.7, age:0, k:seg[i]});
     }
@@ -263,7 +284,7 @@ function frame(ts){
         ctx.strokeStyle=rgba(c, pass[1]*(.35+.65*k)*depth);
         ctx.lineWidth=pass[0]*DPR*depth*(.55+.85*k);
         ctx.lineCap='round';
-        ctx.beginPath(); ctx.moveTo(a.x,a.y); ctx.lineTo(b.x,b.y); ctx.stroke();
+        ctx.beginPath(); ctx.moveTo(a.x, a.y+wob[i-1]); ctx.lineTo(b.x, b.y+wob[i]); ctx.stroke();
       }
     });
   }

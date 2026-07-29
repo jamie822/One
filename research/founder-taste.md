@@ -118,3 +118,7 @@ sign-off). Record their verdict here, dated, win or lose.
       energy in motion, and instruments you can grab (dimmer, toggle,
       stepper). The corona sun, the ignition orb and the filament are the
       reference class. Default every future hero concept to this class.
+  15b. **IDLE MUST TRAVEL.** A breathing/flickering idle is not motion to
+      the founder. Something must visibly MOVE THROUGH the scene at all
+      times (crawling pulses, sweeping surges). Test: two idle frames
+      1.5s apart must look obviously different.

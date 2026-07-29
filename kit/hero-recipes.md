@@ -96,6 +96,12 @@ to near-full on load then settles to a breathing ember. THE INSTRUMENT:
 a real dimmer slider drives one temperature model (colour, bloom radius,
 ambient pool, spark rate, motes all follow); cursor proximity flares the
 nearest turns and spits spark streaks. Support stems ground the coil.
+v2 (founder: "doesn't move very much"): IDLE MUST TRAVEL — three current
+pulses crawl the coil endlessly (gaussian heat heads), a white surge
+sweeps through every 6-9s, heat shimmer makes the coil writhe, pulse
+crests shed sparks continuously. Two idle frames 1.4s apart must look
+DIFFERENT — that's the test, and it's automated (pixel-diff in the shot
+script).
 Pause control; reduced-motion = steady warm filament still. ~97KB total,
 zero libraries. Source: clients/es-elec/design-system/hero-lab-filament.html
 Demo: https://claude.ai/code/artifact/37a82416-9b9e-4e40-86c7-28e77b4a4065
