@@ -311,65 +311,86 @@ seed n/a: direction pinned by founder brief, not rolled. -->
       </div>
     </section>
 
+    {/* v3 section 6: inline CTA band #1. The reusable band fragment. */}
+    <section class="band" aria-label="Book a job">
+      <div class="wrap band__in rise">
+        <p class="band__line">Know what you need? One call books it.</p>
+        <div class="band__act">
+          <a class="btn btn--call btn--lit" href={`tel:${tel}`}>Call Eddie</a>
+          <span class="band__risk">
+            Answered Monday to Saturday, 7.30 to 6. If it's not worth doing,
+            I'll tell you on the phone for nothing.
+          </span>
+        </div>
+      </div>
+    </section>
+
     <div class="paper">
-      <section class="section" aria-labelledby="proof-h">
+      {/* v3 section 7: how a job goes — four steps on the counter rail. */}
+      <section class="section steps" aria-labelledby="steps-h">
         <div class="wrap">
-          <h2 id="proof-h" class="rise">Priced before it starts. Certified when it's done.</h2>
-          <p class="rise" style="margin-top: var(--s-3); color: var(--ink-soft);">
-            Every job gets a written price before work begins. If I open a wall
-            and find a horror, we talk before anything changes. Every notifiable
-            job is registered with Building Control and you get the certificate.
-          </p>
-          <div class="proof__cols">
-            <div class="proof__point rise" style="--i:0">
-              <strong>Same person, start to finish</strong>
-              <p>The one who quotes is the one on the tools.</p>
-            </div>
-            <div class="proof__point rise" style="--i:1">
-              <strong>Written price first</strong>
-              <p>The number you agree is the number you pay.</p>
-            </div>
-            <div class="proof__point rise" style="--i:2">
-              <strong>Certificates, always</strong>
-              <p>NICEIC registered, Part P notified, tested to BS 7671.</p>
-            </div>
-            <div class="proof__point rise" style="--i:3">
-              <strong>Tidy</strong>
-              <p>Dust sheets down, rubbish gone, sockets wiped.</p>
-            </div>
-          </div>
+          <h2 id="steps-h" class="rise">From first ring to certificate, four steps</h2>
+          <ol class="steps__rail">
+            <li class="rise" style="--i:0">
+              <strong>You ring, I answer.</strong>
+              <p>Not a call centre, me. Tell me the symptom or the plan and I'll tell you if it's worth a visit.</p>
+            </li>
+            <li class="rise" style="--i:1">
+              <strong>I look, then you get the price in writing.</strong>
+              <p>Room by room, line by line, usually within 48 hours of the visit.</p>
+            </li>
+            <li class="rise" style="--i:2">
+              <strong>The work happens on the dates we agreed.</strong>
+              <p>Sheets down, radio low, power back on every evening if you're living there.</p>
+            </li>
+            <li class="rise" style="--i:3">
+              <strong>You get the paperwork before I get paid.</strong>
+              <p>Certificate, building control notification, and the guarantee in writing.</p>
+            </li>
+          </ol>
         </div>
       </section>
 
-      <section class="section" aria-labelledby="rev-h" style="padding-top: 0;">
-        <div class="wrap">
-          <h2 id="rev-h" class="rise">Word for word</h2>
-          <div class="reviews__grid">
-            <article class="review review--lead rise">
-              <p class="stars" role="img" aria-label="Five stars">
+    </div>
+
+    {/* v3 section 8: proof — one loud quote beats three equal cards. */}
+    <section class="section proof2" aria-labelledby="proof2-h">
+      <div class="wrap">
+        <h2 id="proof2-h" class="rise">{client.google.reviewCount} reviews, one theme: no surprises <!-- TEMP count --></h2>
+        <div class="proof2__grid">
+          {client.reviews.filter((r) => r.lead).map((r) => (
+            <article class="proof2__lead rise">
+              <p class="stars" role="img" aria-label="Five star review">
                 {stars.map(() => (
                   <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2l2.9 6.6 7.1.7-5.4 4.8 1.6 7L12 17.5 5.8 21l1.6-7L2 9.3l7.1-.7z"/></svg>
                 ))}
               </p>
-              <blockquote>Found the intermittent fault two other firms had guessed at. Charged the hour he quoted.</blockquote>
-              <footer>Dawn, Horsforth. Fault finding, June 2026 <!-- TEMP demo review --></footer>
+              <blockquote>{r.quote}</blockquote>
+              <footer>{r.name}, {r.area} · {r.job} · {r.date} <!-- TEMP demo review --></footer>
             </article>
-            <div class="reviews__side">
-              <article class="review rise" style="--i:1">
-                <blockquote>Rewire of our 3-bed while we were in it. Rooms back together each night, price never moved.</blockquote>
-                <footer>Marcus, Garforth. Full rewire, April 2026 <!-- TEMP demo review --></footer>
+          ))}
+          <div class="proof2__side">
+            {client.reviews.filter((r) => !r.lead).map((r, i) => (
+              <article class="proof2__item rise" style={`--i:${i + 1}`}>
+                <blockquote>{r.quote}</blockquote>
+                <footer>{r.name}, {r.area} · {r.job} · {r.date} <!-- TEMP demo review --></footer>
               </article>
-              <article class="review rise" style="--i:2">
-                <blockquote>Fitted the charger three days after I rang. Sorted the paperwork for the grant too.</blockquote>
-                <footer>Priya, Headingley. EV charger, May 2026 <!-- TEMP demo review --></footer>
-              </article>
-            </div>
+            ))}
           </div>
-          <a class="reviews__all" href="https://www.google.com/maps" rel="noopener">
-            Read all {client.google.reviewCount} reviews on Google
-          </a><!-- TEMP review link: swap for the client's real Google reviews URL -->
         </div>
-      </section>
+        <p class="proof2__reg rise">
+          I'm on the NICEIC register as {client.accreditationNumber}.<!-- TEMP number -->
+          Check it, and check anyone else who quotes you. Takes two minutes on
+          niceic.com.
+        </p>
+        <p class="proof2__cta rise">
+          <a href={`tel:${tel}`}>Call Eddie</a>
+          <span>You'll hear back within the working hour. <!-- TEMP promise --></span>
+        </p>
+      </div>
+    </section>
+
+    <div class="paper">
 
       <section class="section" aria-labelledby="area-h" style="padding-top: 0;">
         <div class="wrap">

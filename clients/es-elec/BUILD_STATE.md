@@ -5,7 +5,7 @@ session resumes the build from THIS file with zero re-derivation. Read
 CLAUDE.md first (THE PROCESS MANDATE binds this build), then this file,
 then act on NEXT ACTION. Delete this file at Phase 9 hand-off.
 
-Last updated: 2026-07-29, hero + sections 2-5 done and pushed.
+Last updated: 2026-07-29, hero + sections 2-8 done and pushed.
 
 ## Where the build stands
 
@@ -46,10 +46,10 @@ design-system/reference-frames-home.html:
     desktop. NOTE: old .work CSS now unused; strip in the simplify pass
 5.  DONE — Reckoner live; maths click-tested against the model (5 cases
     ALL PASS, clamps verified, zero console errors), desktop verified
-6.  CTA band #1 (build as a reusable fragment; band #2 reuses it)
-7.  How a job goes — 4-step counter rail, draw-in on scroll
-8.  Proof — lead pull-quote + 2 side reviews from client.reviews,
-    register line, R2 restated, quiet Call-Eddie link
+6.  DONE — CTA band #1 (.band fragment with filament pulse edge)
+7.  DONE — four-step counter rail on paper, numbers light on reveal
+8.  DONE — proof dark section (lead quote + 2 side, register line, CTA);
+    verified desktop, zero console errors
 9.  Solar band — client.solarModel figures, guarantee list, two-bills ask
 10. Areas — 3 clusters from client.areaClusters + overflow line
 11. Credentials explained — 5 definition rows; 11b CTA band #2

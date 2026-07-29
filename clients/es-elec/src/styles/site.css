@@ -920,3 +920,109 @@
 }
 .reck__cta { display: grid; gap: 8px; justify-items: start; }
 .reck__cta span { font-size: var(--t-small); color: var(--ink-soft); }
+
+/* ============================================================
+   v3 §6 — the inline CTA band (reused for band #2) */
+.band {
+  position: relative;
+  border-block: 1px solid color-mix(in srgb, var(--amber-300) 16%, transparent);
+  background: linear-gradient(100deg, var(--surface), color-mix(in srgb, var(--surface) 60%, var(--tungsten-950)));
+  overflow: hidden;
+}
+.band::before {
+  content: "";
+  position: absolute; top: 0; left: 0;
+  width: 34%; height: 1px;
+  background: linear-gradient(90deg, transparent, var(--amber-500), transparent);
+}
+@media (prefers-reduced-motion: no-preference) {
+  html.js .band::before { animation: band-pulse 5.5s var(--ease-out) infinite; }
+}
+@keyframes band-pulse {
+  0% { transform: translateX(-40vw); }
+  55%, 100% { transform: translateX(110vw); }
+}
+.band__in {
+  display: flex; flex-wrap: wrap; align-items: center;
+  justify-content: space-between; gap: 20px;
+  padding-block: clamp(26px, 4vw, 42px);
+}
+.band__line { font: 600 clamp(1.25rem, 2.4vw, 1.7rem) var(--font-display); letter-spacing: -.01em; max-width: 22ch; }
+.band__act { display: grid; gap: 8px; justify-items: start; }
+.band__risk { font-size: var(--t-small); color: var(--ink-soft); max-width: 44ch; }
+
+/* ============================================================
+   v3 §7 — how a job goes: four steps on the counter rail */
+.steps__rail {
+  counter-reset: step;
+  list-style: none;
+  margin: var(--s-4) 0 0; padding: 0;
+  display: grid; gap: 26px;
+  position: relative;
+}
+@media (min-width: 880px) {
+  .steps__rail { grid-template-columns: repeat(4, 1fr); gap: 30px; }
+  .steps__rail::before {
+    content: "";
+    position: absolute; top: 21px; left: 22px; right: 18%;
+    height: 1px; background: var(--edge);
+  }
+}
+.steps__rail li { counter-increment: step; position: relative; display: grid; gap: 10px; align-content: start; }
+.steps__rail li::before {
+  content: counter(step);
+  width: 42px; height: 42px;
+  display: grid; place-items: center;
+  border-radius: 50%;
+  border: 1px solid var(--edge);
+  background: var(--ground);
+  position: relative; z-index: 1;
+  font: 700 1.05rem var(--font-display);
+  color: var(--ink-soft);
+  transition: color 400ms var(--ease-out), border-color 400ms var(--ease-out), background 400ms var(--ease-out);
+}
+html.js .steps__rail li.is-in::before {
+  color: var(--on-action, #171001);
+  background: var(--amber-300);
+  border-color: var(--amber-300);
+}
+.steps__rail strong { font: 600 1.1rem var(--font-display); letter-spacing: -.01em; }
+.steps__rail p { color: var(--ink-soft); font-size: .95rem; max-width: 30ch; }
+
+/* ============================================================
+   v3 §8 — proof (dark): one loud quote, two beside it */
+.proof2__grid { display: grid; gap: 18px; margin-top: var(--s-4); }
+@media (min-width: 940px) { .proof2__grid { grid-template-columns: 7fr 5fr; gap: 22px; } }
+.proof2__lead {
+  background: var(--surface);
+  border: 1px solid var(--edge);
+  border-radius: 14px;
+  padding: clamp(24px, 3.4vw, 40px);
+  display: grid; gap: 16px; align-content: start;
+}
+.proof2__lead .stars { color: var(--accent); display: inline-flex; gap: 3px; }
+.proof2__lead blockquote {
+  margin: 0;
+  font: 500 clamp(1.15rem, 2vw, 1.5rem)/1.45 var(--font-display);
+  letter-spacing: -.01em;
+}
+.proof2__side { display: grid; gap: 18px; align-content: start; }
+.proof2__item {
+  background: color-mix(in srgb, var(--surface) 72%, transparent);
+  border: 1px solid var(--edge);
+  border-radius: 12px;
+  padding: 20px 22px;
+  display: grid; gap: 10px;
+}
+.proof2__item blockquote { margin: 0; }
+.proof2__lead footer, .proof2__item footer { font-size: var(--t-small); color: var(--ink-soft); }
+.proof2__reg {
+  margin-top: var(--s-4);
+  padding-top: 18px;
+  border-top: 1px dashed var(--edge);
+  color: var(--ink-soft);
+  max-width: 62ch;
+}
+.proof2__cta { margin-top: 14px; display: flex; flex-wrap: wrap; align-items: baseline; gap: 12px; }
+.proof2__cta a { font-weight: 700; color: var(--amber-300); text-underline-offset: 4px; }
+.proof2__cta span { font-size: var(--t-small); color: var(--ink-soft); }
