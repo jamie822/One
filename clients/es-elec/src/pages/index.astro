@@ -114,22 +114,35 @@ seed n/a: direction pinned by founder brief, not rolled. -->
     </div>
   </section>
 
-  <section class="trust" aria-label="Credentials">
-    <div class="wrap trust__row">
-      <p class="trust__item">
-        <strong>
-          <span class="trust__stars" aria-hidden="true">
-            {stars.map(() => (
-              <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2l2.9 6.6 7.1.7-5.4 4.8 1.6 7L12 17.5 5.8 21l1.6-7L2 9.3l7.1-.7z"/></svg>
-            ))}
-          </span>
-          <span data-count={client.google.rating}>{client.google.rating}</span>
-        </strong>
-        <span>from <span data-count={client.google.reviewCount}>{client.google.reviewCount}</span> Google reviews</span>
-      </p>
-      <p class="trust__item"><strong>NICEIC</strong><span>Approved Contractor</span></p>
-      <p class="trust__item"><strong>£2m</strong><span>public liability</span></p>
-      <p class="trust__item"><strong>Since {client.founded}</strong><span>trading in Leeds</span></p>
+  {/* v3 section 2: the trust shelf, pulled up over the hero's bottom edge.
+      Four counts that roll to their value once, on first sight. */}
+  <section class="trust" aria-label="Track record">
+    <div class="wrap">
+      <div class="trust__shelf">
+        <p class="trust__item">
+          <strong>
+            <span class="trust__stars" aria-hidden="true">
+              {stars.map(() => (
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2l2.9 6.6 7.1.7-5.4 4.8 1.6 7L12 17.5 5.8 21l1.6-7L2 9.3l7.1-.7z"/></svg>
+              ))}
+            </span>
+            <span data-count={client.google.rating}>{client.google.rating}</span>
+          </strong>
+          <span>Google rating <!-- TEMP --></span>
+        </p>
+        <p class="trust__item">
+          <strong><span data-count={client.google.reviewCount}>{client.google.reviewCount}</span></strong>
+          <span>reviews and counting <!-- TEMP --></span>
+        </p>
+        <p class="trust__item">
+          <strong><span data-count={client.jobsCertified}>{client.jobsCertified.toLocaleString('en-GB')}</span></strong>
+          <span>jobs certified since {client.founded} <!-- TEMP --></span>
+        </p>
+        <p class="trust__item">
+          <strong><span data-count={client.yearsTrading}>{client.yearsTrading}</span></strong>
+          <span>years on the tools in Leeds <!-- TEMP --></span>
+        </p>
+      </div>
     </div>
   </section>
 

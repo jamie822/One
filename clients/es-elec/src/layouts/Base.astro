@@ -138,13 +138,16 @@ const business = {
             var el = e.target;
             var end = parseFloat(el.dataset.count);
             var dp = (el.dataset.count.split('.')[1] || '').length;
-            if (reduce) { el.textContent = el.dataset.count; return; }
+            var fmt = function (n) {
+              return n.toLocaleString('en-GB', { minimumFractionDigits: dp, maximumFractionDigits: dp });
+            };
+            if (reduce) { el.textContent = fmt(end); return; }
             var t0 = null;
             function step(t) {
               if (!t0) t0 = t;
               var p = Math.min((t - t0) / 900, 1);
               var eased = 1 - Math.pow(1 - p, 3);
-              el.textContent = (end * eased).toFixed(dp);
+              el.textContent = fmt(end * eased);
               if (p < 1) requestAnimationFrame(step);
             }
             requestAnimationFrame(step);

@@ -5,7 +5,7 @@ session resumes the build from THIS file with zero re-derivation. Read
 CLAUDE.md first (THE PROCESS MANDATE binds this build), then this file,
 then act on NEXT ACTION. Delete this file at Phase 9 hand-off.
 
-Last updated: 2026-07-29, after commit 23ba3da (hero milestone pushed).
+Last updated: 2026-07-29, hero + section 2 (trust shelf) done and pushed.
 
 ## Where the build stands
 
@@ -38,8 +38,8 @@ Rebuild home sections 2-13 in src/pages/index.astro + src/styles/site.css,
 in this order, copy verbatim from COPY.md, layout per
 design-system/reference-frames-home.html:
 
-2.  Trust shelf — 4 counts (4.9 / 87 / 1,438 / 12), pulled over hero
-    edge; count-up via existing [data-count] observer in Base.astro
+2.  DONE — trust shelf live (4 counts, count-up formatter now handles
+    thousands separators), verified desktop + mobile
 3.  Written-price spread (first paper section) — includes list, line-item
     strip from client.lineItems, bold promise line, quiet Get-a-quote link
 4.  Services — 2 lead tiles + 5 rows (replaces v2 7-cell grid)

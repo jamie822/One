@@ -391,21 +391,29 @@
 @media (max-width: 979px) { .hero__photo { order: 2; } }
 
 /* ---- Trust bar ------------------------------------------------------------ */
-.trust {
-  border-block: 1px solid var(--tungsten-800);
-  background: var(--tungsten-900);
+.trust { position: relative; z-index: 2; }
+.trust__shelf {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: clamp(18px, 3vw, 44px);
+  margin-top: -30px;
+  padding: 24px clamp(20px, 3.5vw, 44px) 26px;
+  background: var(--surface);
+  border: 1px solid var(--edge);
+  border-radius: 16px;
+  box-shadow: 0 22px 55px -20px rgba(8, 5, 2, .6);
 }
-.trust__row {
-  display: grid; grid-template-columns: repeat(4, auto);
-  justify-content: space-between; gap: var(--s-3);
-  padding-block: 18px;
+.trust__item { display: grid; gap: 3px; align-content: start; }
+.trust__item > strong {
+  font: 700 clamp(1.45rem, 2.4vw, 1.9rem) var(--font-display);
+  letter-spacing: 0;
+  color: var(--ink);
+  display: flex; align-items: baseline; gap: 9px;
 }
-.trust__item { display: grid; gap: 2px; }
-.trust__item strong { font: 700 1.05rem var(--font-display); letter-spacing: 0; }
-.trust__item span { font-size: var(--t-small); color: var(--ink-soft); }
-.trust__stars { color: var(--accent); display: inline-flex; gap: 2px; }
+.trust__item > span { font-size: var(--t-small); color: var(--ink-soft); }
+.trust__stars { color: var(--accent); display: inline-flex; gap: 2px; transform: translateY(-2px); }
 @media (max-width: 860px) {
-  .trust__row { grid-template-columns: 1fr 1fr; row-gap: 16px; }
+  .trust__shelf { grid-template-columns: repeat(2, minmax(0, 1fr)); row-gap: 20px; margin-top: -18px; }
 }
 
 /* ---- The conductor -------------------------------------------------------- */
