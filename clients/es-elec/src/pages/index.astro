@@ -23,8 +23,11 @@ paper-lit middle sections between dark bookends.
 STORY: arrive at night needing help, see the promise and the price culture,
 read proof on paper in daylight, leave by phone or form.
 FIRST VIEWPORT: left, kinetic service line over a two-line H1 and 18-word sub,
-Call Eddie (lit) beside Get a quote; right, the van at dusk photograph.
-Trust bar closes the viewport.
+Call Eddie (lit) beside Get a quote; right, the Power Core scene booting up
+once on arrival (grid, aurora, orb ignition, rings spin-up, chips, marquee,
+~2.4s ease-out). Pause control bottom-right freezes the whole scene
+(WCAG 2.2.2); reduced motion gets the designed still. H1 stays the LCP and
+never animates. Trust marquee closes the frame.
 FORM: brief-pinned Tungsten (ledger 2026-07-28), kinetic-type masthead staging,
 seed n/a: direction pinned by founder brief, not rolled. -->
 <Base
@@ -88,6 +91,12 @@ seed n/a: direction pinned by founder brief, not rolled. -->
         </span>
       </div>
     </div>
+
+    <button class="hero__pause" type="button" aria-pressed="false"
+            aria-label="Pause the animation" data-hero-pause>
+      <svg class="i-pause" width="14" height="14" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M7 4h4v16H7zM13 4h4v16h-4z"/></svg>
+      <svg class="i-play" width="14" height="14" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg>
+    </button>
 
     <div class="hero__marquee" aria-hidden="true">
       <div class="hero__marquee-track">
@@ -312,7 +321,9 @@ seed n/a: direction pinned by founder brief, not rolled. -->
     // LCP; skips under reduced motion; pauses when the tab hides.
     (function () { var start = function () {
       var c = document.querySelector('[data-mesh]');
-      if (!c || matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+      if (!c) return;
+      var still = matchMedia('(prefers-reduced-motion: reduce)').matches;
+      var hero = c.closest('.hero--live');
       var x = c.getContext('2d');
       var dpr = Math.min(devicePixelRatio || 1, 2);
       var W, H;
@@ -336,15 +347,8 @@ seed n/a: direction pinned by founder brief, not rolled. -->
         running = !document.hidden;
         if (running) requestAnimationFrame(tick);
       });
-      function tick() {
-        if (!running) return;
+      function draw() {
         x.clearRect(0, 0, W, H);
-        for (var i = 0; i < N; i++) {
-          var p = ps[i];
-          p.x += p.vx; p.y += p.vy;
-          if (p.x < 0 || p.x > W) p.vx *= -1;
-          if (p.y < 0 || p.y > H) p.vy *= -1;
-        }
         x.strokeStyle = '#ffb24d';
         x.lineWidth = 1;
         for (var i = 0; i < N; i++) {
@@ -368,12 +372,39 @@ seed n/a: direction pinned by founder brief, not rolled. -->
           x.fill();
         }
         x.globalAlpha = 1;
+      }
+      function tick() {
+        if (!running) return;
+        if (hero && hero.hasAttribute('data-paused')) { requestAnimationFrame(tick); return; }
+        for (var i = 0; i < N; i++) {
+          var p = ps[i];
+          p.x += p.vx; p.y += p.vy;
+          if (p.x < 0 || p.x > W) p.vx *= -1;
+          if (p.y < 0 || p.y > H) p.vy *= -1;
+        }
+        draw();
         requestAnimationFrame(tick);
       }
+      // Reduced motion: the designed still. One composed frame of the
+      // constellation, no loop, nothing blank.
+      if (still) { draw(); return; }
       requestAnimationFrame(tick);
     };
     if (document.readyState === 'complete') setTimeout(start, 0);
     else window.addEventListener('load', start);
+    })();
+
+    // Pause control: one attribute freezes every hero animation (CSS
+    // pauses the keyframes, the mesh loop idles on the same flag).
+    (function () {
+      var hero = document.querySelector('.hero--live');
+      var b = document.querySelector('[data-hero-pause]');
+      if (!hero || !b) return;
+      b.addEventListener('click', function () {
+        var on = hero.toggleAttribute('data-paused');
+        b.setAttribute('aria-pressed', on ? 'true' : 'false');
+        b.setAttribute('aria-label', on ? 'Play the animation' : 'Pause the animation');
+      });
     })();
   </script>
 </Base>

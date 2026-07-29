@@ -640,3 +640,78 @@
   justify-items: start;
 }
 .band .acts { display: flex; flex-wrap: wrap; gap: 12px; }
+
+/* ============================================================
+   THE BOOT-UP (v3 signature moment, PLAN.md Phase 2)
+   The scene powers up once on arrival: grid and aurora in, the
+   orb ignites with a bloom, rings materialise and spin up, the
+   orbit dots wake, chips arrive, marquee last. ~2.4s, ease-out,
+   fill backwards so pre-boot state only exists during the delay.
+   H1 never animates: it is the LCP element. Reduced motion gets
+   the designed still (core lit, rings at composed angles) via
+   the media gate. Later rules override the earlier animation
+   shorthands above, so the running loops are restated here with
+   their post-boot delays. */
+@media (prefers-reduced-motion: no-preference) {
+  html.js .hero__scene { animation: boot-fade .9s var(--ease-out) backwards; }
+  html.js .hero__aurora span:nth-child(1) { animation: boot-fade .8s var(--ease-out) .25s backwards, aurora-a 21s ease-in-out .25s infinite alternate; }
+  html.js .hero__aurora span:nth-child(2) { animation: boot-fade .8s var(--ease-out) .35s backwards, aurora-b 26s ease-in-out .35s infinite alternate; }
+  html.js .hero__aurora span:nth-child(3) { animation: boot-fade .8s var(--ease-out) .45s backwards, aurora-c 31s ease-in-out .45s infinite alternate; }
+  html.js .core__orb { animation: orb-ignite .8s var(--ease-out) .85s backwards, orb-breathe 4.4s ease-in-out 3.2s infinite alternate; }
+  html.js .core__ring--1 { animation: boot-ring .5s var(--ease-out) 1.15s backwards; }
+  html.js .core__ring--2 { animation: boot-ring .5s var(--ease-out) 1.27s backwards, core-spin 36s linear 1.77s infinite; }
+  html.js .core__ring--3 { animation: boot-ring .5s var(--ease-out) 1.39s backwards; }
+  html.js .core__orbit--1 { animation: boot-fade .45s var(--ease-out) 1.55s backwards, core-spin 17s linear 1.55s infinite; }
+  html.js .core__orbit--2 { animation: boot-fade .45s var(--ease-out) 1.62s backwards, core-spin 12s linear 1.62s infinite reverse; }
+  html.js .core__orbit--3 { animation: boot-fade .45s var(--ease-out) 1.69s backwards, core-spin 23s linear 1.69s infinite; }
+  html.js .hero__chip--a { animation: boot-fade .5s var(--ease-out) 1.85s backwards, chip-float 7s ease-in-out 1.85s infinite alternate; }
+  html.js .hero__chip--b { animation: boot-fade .5s var(--ease-out) 1.95s backwards, chip-float 8.5s ease-in-out 1.95s infinite alternate-reverse; }
+  html.js .hero__chip--c { animation: boot-fade .5s var(--ease-out) 2.05s backwards, chip-float 9.5s ease-in-out 2.05s infinite alternate; }
+  html.js .hero__marquee { animation: boot-fade .7s var(--ease-out) 2.1s backwards; }
+  html.js .hero__cycle { animation: boot-fade .4s var(--ease-out) .05s backwards; }
+  html.js .hero__sub { animation: boot-rise .5s var(--ease-out) .12s backwards; }
+  html.js .hero__acts { animation: boot-rise .5s var(--ease-out) .2s backwards; }
+  html.js .hero__urgent { animation: boot-rise .5s var(--ease-out) .3s backwards; }
+}
+@keyframes boot-fade { from { opacity: 0; } }
+@keyframes boot-rise { from { opacity: 0; transform: translateY(10px); } }
+@keyframes boot-ring { from { opacity: 0; transform: scale(.72); } }
+@keyframes orb-ignite {
+  0%   { opacity: 0; transform: scale(.88); filter: brightness(2.1) saturate(1.15); }
+  55%  { opacity: 1; filter: brightness(1.5); }
+  100% { opacity: 1; transform: scale(1); filter: brightness(1); }
+}
+
+/* Pause control (WCAG 2.2.2). One button freezes every hero
+   animation; the mesh canvas reads the same attribute. */
+.hero__pause {
+  position: absolute;
+  right: 16px; bottom: 60px;
+  z-index: 4;
+  width: 42px; height: 42px;
+  border-radius: 50%;
+  border: 1px solid color-mix(in srgb, var(--amber-300) 30%, transparent);
+  background: color-mix(in srgb, var(--tungsten-950) 72%, transparent);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  color: var(--ink-soft);
+  display: grid; place-items: center;
+  cursor: pointer;
+  transition: color 160ms var(--ease-out), border-color 160ms var(--ease-out), transform 160ms var(--ease-out);
+}
+.hero__pause:hover, .hero__pause:focus-visible { color: var(--amber-300); border-color: var(--amber-300); }
+.hero__pause:active { transform: scale(.94); }
+.hero__pause .i-play { display: none; }
+.hero__pause[aria-pressed="true"] .i-pause { display: none; }
+.hero__pause[aria-pressed="true"] .i-play { display: block; }
+.hero--live[data-paused] *,
+.hero--live[data-paused] *::before,
+.hero--live[data-paused] *::after { animation-play-state: paused !important; }
+@media (prefers-reduced-motion: reduce) { .hero__pause { display: none; } }
+
+/* Reduced motion: the ticker holds its first word instead of vanishing —
+   the designed still keeps every element of the composition present. */
+@media (prefers-reduced-motion: reduce) {
+  .hero__cycle span { animation: none; }
+  .hero__cycle span:first-child { opacity: 1; }
+}
