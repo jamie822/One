@@ -1,5 +1,18 @@
 # SKILL ROSTER — every installed skill, its job, its audit
 
+**Coverage: 68/68 project skills** (enumerated from `.claude/skills/` by
+`ls`, 2026-07-28 — never from memory), plus the personal document skills
+and the session/harness bench. Re-run the enumeration and reconcile this
+file whenever a skill is installed or removed.
+
+**The usage mandate (founder, 2026-07-28): ALL skills are used on
+builds.** Concretely: every pipeline skill below RUNS on every flagship
+build; alternatives inside a bench (e.g. the four animation libraries)
+exist as options by design, so the manager picks per job and LOGS the
+choice. Every build ships `design-system/SKILL_LOG.md` — one line per
+skill: invoked (what it contributed) or not invoked (the stated reason).
+An empty reason is a checklist failure at Audit 9.
+
 The full audit of the toolkit. Every skill is either assigned a specific
 task inside the build pipeline (phase-numbered per BUILD_CHECKLIST.md),
 held in reserve with a stated trigger, or explicitly out of the standard
@@ -26,6 +39,8 @@ in chat. Lead = Claude, who audits every output before it moves forward.
 | `aesthetic-anchors` | Verify the direction is a committed anchor with token fidelity, not a hybrid | Anchor named; token drift = fail |
 | `design-system` | Three-layer token architecture (primitives → semantic → component) | Rebrand test: changing primitives restyles the site |
 | `brandkit` / `graphic-design` / `design` / `brand` | Only when the client lacks identity: brand board, logo, mark | Founder sees the board before it enters the build |
+| `imagegen-web` | Per-section design REFERENCE images before any code — one horizontal reference per planned section, palette-consistent (mandatory order #10). Generation-dependent: with Higgsfield offline, references are built as HTML mock frames instead — fallback declared | References exist for every PLAN.md section before Phase 5 opens |
+| `image-to-code` | Build each section AGAINST its reference (mandatory order #11): section-by-section fidelity, no lazy under-generation, hero clean and readable on a small laptop | Side-by-side check: built section vs reference |
 
 ## Phase 3 — IA and depth (lead + doctrine; no single skill owns depth)
 
@@ -104,12 +119,29 @@ offline this session, fallback = built scenes/SVG until back)
 site (craft lens + end-customer lens), /32 scoring, ≥28 both, zero P0.
 Lead relays verdicts honestly, fixes P1s, re-verifies.
 
-## Studio ops (not client-facing)
+## Session & harness bench (present in every session, ops roles)
 
-`update-config`, `fewer-permission-prompts`, `session-start-hook` (restart
-resilience), `skill-creator` (when we mint our own skills), artifact/
-preview tooling, `docx`/`pdf`/`xlsx`/`pptx` (client documents), `loop`,
-`review`/`code-review`/`security-review` (repo hygiene).
+| Skill | Task assignment |
+|---|---|
+| `css-animations` / `gsap` (HyperFrames adapters) | Only when composing video-preview/HyperFrames renders of motion work; not part of site runtime |
+| `dataviz` | Already in Phase 5: any chart/meter/instrument visual |
+| `artifact-design` / `artifact-capabilities` | Preview links: load before every publish; capabilities only when a page needs runtime behaviour |
+| `run` | Launch/drive the built site when confirming a change in the real app |
+| `init` | CLAUDE.md refresh when repo structure shifts |
+| `simplify` | Post-build code cleanup pass on heavily-iterated files |
+| `review` / `security-review` | PR review and security sweep before major merges |
+| `update-config` / `fewer-permission-prompts` / `keybindings-help` | Harness configuration on demand |
+| `session-start-hook` | Restart resilience: reinstall deps + restore servers on fresh containers (open task to implement) |
+| `loop` | Recurring checks (e.g. babysitting a PR or a long verification) |
+| `claude-api` | Any LLM-integration feature a client ever requests |
+
+## Personal document skills
+
+| Skill | Task assignment |
+|---|---|
+| `docx` / `pdf` / `xlsx` / `pptx` | Client-facing paperwork: proposals, delivery packs, price books, pitch decks (with `slides`/`banner-design` for the visual layer) |
+| `skill-creator` | Mint studio-owned skills from repeated patterns (candidate: a "live-hero" skill from the recipe library) |
+| `morning` | Founder's daily brief if requested; not build-related |
 
 ## Roster rule
 

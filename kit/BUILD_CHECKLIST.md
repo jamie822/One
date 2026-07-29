@@ -170,6 +170,9 @@ what was NOT fixed and why.
       stable artifact URL
 - [ ] `DELIVERY.md`: verification record, complete TEMP swap list, form
       wiring note, go-live local-SEO checklist, hosting notes
+- [ ] `design-system/SKILL_LOG.md` complete: one line per roster skill —
+      invoked (with its contribution) or the stated reason it was not.
+      Empty reasons fail this audit
 - [ ] Everything committed and pushed
 - [ ] Hand-off message to the founder: link, what to look at, known
       trade-offs, the TEMP list — then STOP and wait for design sign-off
