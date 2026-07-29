@@ -1026,3 +1026,57 @@ html.js .steps__rail li.is-in::before {
 .proof2__cta { margin-top: 14px; display: flex; flex-wrap: wrap; align-items: baseline; gap: 12px; }
 .proof2__cta a { font-weight: 700; color: var(--amber-300); text-underline-offset: 4px; }
 .proof2__cta span { font-size: var(--t-small); color: var(--ink-soft); }
+
+/* ============================================================
+   v3 §9 — solar band (dark, guarantee-led) */
+.solarband__grid { display: grid; gap: clamp(26px, 4vw, 60px); }
+@media (min-width: 940px) { .solarband__grid { grid-template-columns: 7fr 5fr; align-items: start; } }
+.solarband__body { margin-top: var(--s-3); color: var(--ink-soft); max-width: 58ch; }
+.solarband__ask {
+  margin-top: var(--s-3);
+  padding: 16px 18px;
+  border-left: 1px solid var(--amber-300);
+  background: color-mix(in srgb, var(--surface) 65%, transparent);
+  border-radius: 0 10px 10px 0;
+  max-width: 54ch;
+}
+.solarband__cta { margin-top: var(--s-3); display: flex; flex-wrap: wrap; align-items: center; gap: 14px; }
+.solarband__cta span { font-size: var(--t-small); color: var(--ink-soft); }
+.solarband__aside { display: grid; gap: 22px; align-content: start; }
+.solarband__gtees {
+  list-style: none; margin: 0; padding: 0;
+  display: grid; gap: 0;
+  border: 1px solid var(--edge); border-radius: 12px;
+  background: var(--surface);
+  overflow: hidden;
+}
+.solarband__gtees li { padding: 16px 20px; color: var(--ink-soft); }
+.solarband__gtees li + li { border-top: 1px solid var(--edge); }
+.solarband__gtees strong { color: var(--amber-300); font-family: var(--font-display); letter-spacing: 0; }
+
+/* ============================================================
+   v3 §10 — areas with substance */
+.areas__grid { display: grid; gap: 18px; margin-top: var(--s-4); }
+@media (min-width: 880px) { .areas__grid { grid-template-columns: repeat(3, 1fr); gap: 22px; } }
+.areas__cell {
+  border-top: 2px solid var(--accent);
+  padding-top: 14px;
+  display: grid; gap: 8px; align-content: start;
+}
+.areas__cell h3 { font: 600 1.15rem var(--font-display); letter-spacing: -.01em; }
+.areas__places { font-size: var(--t-small); color: var(--accent); font-weight: 700; letter-spacing: .02em; }
+.areas__cell p:last-child { color: var(--ink-soft); font-size: .95rem; }
+.areas__overflow { margin-top: var(--s-4); color: var(--ink-soft); max-width: 62ch; font-style: italic; }
+
+/* ============================================================
+   v3 §11 — credentials, explained (definition rows) */
+.creds__list { margin: var(--s-4) 0 0; display: grid; }
+.creds__list > div {
+  display: grid; gap: 6px 34px;
+  padding: 18px 0;
+  border-top: 1px solid var(--edge);
+}
+@media (min-width: 880px) { .creds__list > div { grid-template-columns: minmax(200px, 17rem) 1fr; } }
+.creds__list > div:last-child { border-bottom: 1px solid var(--edge); }
+.creds__list dt { font: 700 1.05rem var(--font-display); letter-spacing: -.01em; color: var(--accent); }
+.creds__list dd { margin: 0; color: var(--ink-soft); max-width: 62ch; }

@@ -390,52 +390,120 @@ seed n/a: direction pinned by founder brief, not rolled. -->
       </div>
     </section>
 
-    <div class="paper">
-
-      <section class="section" aria-labelledby="area-h" style="padding-top: 0;">
-        <div class="wrap">
-          <h2 id="area-h" class="rise">Leeds and the towns around it</h2>
-          <p class="rise" style="margin-top: var(--s-2); color: var(--ink-soft);">
-            Based in {client.town}, out daily across {client.areas.slice(1, -1).join(', ')} and
-            {' '}{client.areas.at(-1)}. If you are just outside that, ring anyway.
-            The answer is usually yes.
-          </p>
-        </div>
-      </section>
-
-      <section class="section" aria-labelledby="solar-h" style="padding-top: 0;">
-        <div class="wrap">
-          <h2 id="solar-h" class="rise">Thinking about solar? Do the maths first.</h2>
-          <div class="solar__grid">
-            <figure class="solar__photo rise">
-              <img src="/img/solar-dusk-1100.webp" alt="Solar panels on a red brick semi at golden hour" width="1600" height="900" loading="lazy" />
-            </figure>
-            <div class="rise" style="--i:1">
-              <p>
-                Most 10-panel systems on a Leeds semi come in between £6,000 and
-                £8,000 installed. Payback lives or dies on sizing the system to
-                how you use electricity. Send me two bills and I will tell you
-                straight whether your roof is worth it, including when the
-                answer is no. <!-- TEMP figures -->
-              </p>
-              <svg class="flow" viewBox="0 0 410 58" width="410" height="58" role="img"
-                   aria-label="Energy flows from the roof panels through the battery to the house">
-                <path d="M8 46 C 90 46, 120 12, 208 12 S 330 46, 402 46" />
-                <circle class="dot" r="3.5" />
-                <circle class="dot" r="3.5" />
-                <circle class="dot" r="3.5" />
-                <text x="4" y="34">PANELS</text>
-                <text x="182" y="30">BATTERY</text>
-                <text x="368" y="34">HOUSE</text>
-              </svg>
-              <div style="margin-top: var(--s-3);">
-                <a class="btn btn--quote" href="#quote">Get a quote</a>
-              </div>
+    {/* v3 section 9: the solar band — guarantee-led, precise saving against
+        a round install price, the two-bills ask. Model: client.solarModel. */}
+    <section class="section solarband" aria-labelledby="solar-h">
+      <div class="wrap">
+        <div class="solarband__grid">
+          <div>
+            <h2 id="solar-h" class="rise">Solar that pays you back, with the maths shown</h2>
+            <p class="solarband__body rise" style="--i:1">
+              A {client.solarModel.panels}-panel system on a south-ish Leeds
+              roof generates about {client.solarModel.genKwh.toLocaleString('en-GB')} kWh
+              a year. At today's rates, between what you stop buying and what
+              you export, that's worth £{client.solarModel.valuePerYear} a
+              year. Against a {fmt(svc.solar.from)} installed price, the
+              system clears its own cost in {client.solarModel.paybackLine},
+              and the panels are warrantied for {client.solarModel.panelWarrantyYears}. <!-- TEMP model -->
+            </p>
+            <p class="solarband__ask rise" style="--i:2">
+              Send me two electricity bills. You'll get back a panel count, a
+              generation estimate for your actual roof, and the year the
+              system pays for itself. No visit needed for the first pass.
+            </p>
+            <div class="solarband__cta rise" style="--i:2">
+              <a class="btn btn--quote" href="#quote">Get a quote</a>
+              <span>A written price before any work. Always.</span>
             </div>
           </div>
+          <div class="solarband__aside rise" style="--i:1">
+            <ul class="solarband__gtees">
+              <li><strong>{client.solarModel.workmanshipYears}-year</strong> workmanship guarantee on the installation, in writing <!-- TEMP --></li>
+              <li><strong>{client.solarModel.panelWarrantyYears}-year</strong> output warranty on the panels themselves</li>
+              <li><strong>MCS</strong> certified installation, so export payments actually get paid <!-- TEMP --></li>
+            </ul>
+            <svg class="flow" viewBox="0 0 410 58" width="410" height="58" role="img"
+                 aria-label="Energy flows from the roof panels through the battery to the house">
+              <path d="M8 46 C 90 46, 120 12, 208 12 S 330 46, 402 46" />
+              <circle class="dot" r="3.5" />
+              <circle class="dot" r="3.5" />
+              <circle class="dot" r="3.5" />
+              <text x="4" y="34">PANELS</text>
+              <text x="182" y="30">BATTERY</text>
+              <text x="368" y="34">HOUSE</text>
+            </svg>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <div class="paper">
+
+      {/* v3 section 10: areas with substance — coverage logic, no thin
+          town pages, real housing-stock sentences. */}
+      <section class="section areas" aria-labelledby="area-h">
+        <div class="wrap">
+          <h2 id="area-h" class="rise">Leeds, and the towns within a sensible van ride</h2>
+          <div class="areas__grid">
+            {client.areaClusters.map((c, i) => (
+              <div class="areas__cell rise" style={`--i:${i}`}>
+                <h3>{c.title}</h3>
+                {c.places && <p class="areas__places">{c.places}</p>}
+                <p>{c.line}</p>
+              </div>
+            ))}
+          </div>
+          <p class="areas__overflow rise">{client.areaOverflow}</p>
         </div>
       </section>
+
+      {/* v3 section 11: credentials, explained in homeowner English. */}
+      <section class="section creds" aria-labelledby="creds-h" style="padding-top: 0;">
+        <div class="wrap">
+          <h2 id="creds-h" class="rise">What NICEIC actually gets you</h2>
+          <dl class="creds__list">
+            <div class="rise" style="--i:0">
+              <dt>NICEIC Approved Contractor <!-- TEMP --></dt>
+              <dd>
+                They audit me every year: test gear, paperwork, and real jobs
+                pulled apart by an assessor. If my work fails their standard,
+                they make me put it right, and their Platinum Promise backs
+                the job if I couldn't. <!-- TEMP: confirm cover wording -->
+              </dd>
+            </div>
+            <div class="rise" style="--i:1">
+              <dt>£2m public liability <!-- TEMP --></dt>
+              <dd>If the worst happens in your house, the cover is real and the certificate is on the van.</dd>
+            </div>
+            <div class="rise" style="--i:2">
+              <dt>12-month workmanship guarantee <!-- TEMP --></dt>
+              <dd>Anything I fitted plays up inside a year, I come back and sort it. The terms live on the About page, in full, not in small print.</dd>
+            </div>
+            <div class="rise" style="--i:3">
+              <dt>Part P</dt>
+              <dd>The building regulation covering electrical work in homes. I self-certify, so building control gets notified without you filling in a single form.</dd>
+            </div>
+            <div class="rise" style="--i:4">
+              <dt>BS 7671</dt>
+              <dd>The wiring regulations. Every circuit I leave behind is tested against the current edition and the readings go on your certificate.</dd>
+            </div>
+          </dl>
+        </div>
+      </section>
+
     </div>
+
+    {/* v3 section 11b: inline CTA band #2 — keeps cadence through the
+        credential stretch. Same fragment as band #1, alternate line. */}
+    <section class="band" aria-label="Ring Eddie">
+      <div class="wrap band__in rise">
+        <p class="band__line">Credentials checked? The rest is one phone call.</p>
+        <div class="band__act">
+          <a class="btn btn--call btn--lit" href={`tel:${tel}`}>Call Eddie</a>
+          <span class="band__risk">You'll hear back within the working hour. <!-- TEMP promise --></span>
+        </div>
+      </div>
+    </section>
 
     <section class="section contact" id="quote" aria-labelledby="contact-h">
       <div class="wrap">

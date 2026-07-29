@@ -5,7 +5,7 @@ session resumes the build from THIS file with zero re-derivation. Read
 CLAUDE.md first (THE PROCESS MANDATE binds this build), then this file,
 then act on NEXT ACTION. Delete this file at Phase 9 hand-off.
 
-Last updated: 2026-07-29, hero + sections 2-8 done and pushed.
+Last updated: 2026-07-29, hero + sections 2-11b done and pushed.
 
 ## Where the build stands
 
@@ -50,9 +50,9 @@ design-system/reference-frames-home.html:
 7.  DONE — four-step counter rail on paper, numbers light on reveal
 8.  DONE — proof dark section (lead quote + 2 side, register line, CTA);
     verified desktop, zero console errors
-9.  Solar band — client.solarModel figures, guarantee list, two-bills ask
-10. Areas — 3 clusters from client.areaClusters + overflow line
-11. Credentials explained — 5 definition rows; 11b CTA band #2
+9.  DONE — solar band dark, guarantee-led, flow SVG kept alive
+10. DONE — areas clusters with housing-stock sentences + overflow line
+11. DONE — credentials definition rows; 11b band #2 in place; verified
 12. FAQ — 6 items from client.faqs, accordion (native details or
     button+region), FAQPage JSON-LD on home only
 13. Contact — phone-first block + QuoteForm (already endpoint-configurable)
