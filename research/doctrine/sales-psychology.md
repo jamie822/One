@@ -1,10 +1,9 @@
 # Sales psychology doctrine
 
 Operating rules for every site the studio builds for UK electricians and
-solar installers. Each rule is an imperative with its evidence and source
-inline. Where research is contested, the caveat is stated — build to the
-caveat, not the headline. Compiled 2026-07-29 from web research; nothing
-below is invented, and weakly-sourced vendor statistics were excluded.
+solar installers. Each rule: imperative + evidence + named source inline.
+Where research is contested, the caveat is stated — build to the caveat,
+not the headline. Compiled 2026-07-29; weak vendor statistics excluded.
 
 ## 1. First impressions and trust formation
 
@@ -27,12 +26,11 @@ below is invented, and weakly-sourced vendor statistics were excluded.
    and credibility. Ask for a postcode before a phone number, a phone
    number before a survey booking.
 4. **Perceived security is a feeling, not a certificate.** Baymard
-   Institute (4,000+ US adults): ~1 in 5 abandonments cite not trusting the
-   site; perceived security is a "gut feeling" driven by how secure the
-   page LOOKS, and familiar consumer brands (Norton, Google) outperform
-   technically identical seals. Translation for trades: NICEIC, MCS,
-   TrustMark, Which? Trusted Trader logos work because homeowners
-   recognise them — display real ones prominently, never obscure ones.
+   Institute (4,000+ US adults): ~1 in 5 abandonments cite distrust;
+   perceived security is a "gut feeling" driven by how the page LOOKS,
+   and familiar brands (Norton, Google) outperform technically identical
+   seals. For trades: NICEIC, MCS, TrustMark, Which? Trusted Trader work
+   because homeowners recognise them — show real ones prominently.
 
 ## 2. Cialdini's principles, applied to trade sites
 
@@ -90,11 +88,10 @@ below is invented, and weakly-sourced vendor statistics were excluded.
 
 14. **Always anchor before revealing a price.** Ariely's anchoring
     experiments (Predictably Irrational; the social-security-number
-    auction) show arbitrary anchors move willingness to pay. Practical
-    form: show the typical market range or flagship package before the
-    recommended one; state grant/0% VAT savings and 25-year output next to
-    the install price so £7,000 lands against a £20k+ lifetime-benefit
-    anchor, not against zero.
+    auction) show even arbitrary anchors move willingness to pay. Show
+    the typical market range or flagship package first; put 0% VAT
+    savings and 25-year output beside the install price so £7,000 lands
+    against a £20k+ lifetime-benefit anchor, not against zero.
 15. **Use a three-option structure with a deliberate middle.** Ariely's
     Economist experiment: with a decoy present, 84% chose the premium
     bundle; decoy removed, 68% chose the cheapest. Offer Good/Better/Best
@@ -140,10 +137,9 @@ below is invented, and weakly-sourced vendor statistics were excluded.
 ## 6. Urgency, choice architecture, and friction
 
 22. **Only use urgency that is true, and explain WHY it is true.** CXL
-    ("How to effectively create urgency"): urgency works when the deadline
-    is real (booking calendar full, seasonal install window, tariff or
-    grant deadline). Fake urgency is both a backfire (§8) and now illegal
-    (rule 30).
+    ("How to effectively create urgency"): urgency works when the
+    deadline is real (full booking calendar, seasonal install window,
+    tariff deadline). Fake urgency backfires (§8) and is illegal (30).
 23. **Cut options at the point of decision — but know the caveat.**
     Iyengar & Lepper 2000 (jam study): 24 options converted ~3% of
     stoppers, 6 options ~30%. Scheibehenne et al. 2010 meta-analysis (50
@@ -160,13 +156,12 @@ below is invented, and weakly-sourced vendor statistics were excluded.
     differentiator in a sector known for pressure selling.
 25. **Engineer for speed-to-lead; the website's job includes the first
     five minutes after submit.** Lead Response Management study (Oldroyd,
-    MIT/InsideSales.com 2007): contacting a lead within 5 minutes vs 30
-    yields ~21x qualification odds; HBR's 2011 audit of 2,241 firms found
-    a 42-hour average response and 23% never responding. Build: instant
-    auto-reply with a real human's name and a stated callback time,
-    calendar self-booking, and lead alerts to the owner's phone. Google's
-    "power of now" bias says stated response speed is itself persuasive —
-    put "We answer within X" on the page only if it is true.
+    MIT/InsideSales.com 2007): contact within 5 minutes vs 30 yields ~21x
+    qualification odds; HBR's 2011 audit of 2,241 firms found a 42-hour
+    average response and 23% never responding. Build: instant auto-reply
+    with a real name and stated callback time, calendar self-booking,
+    lead alerts to the owner's phone. Stated response speed is itself
+    persuasive (Google's "power of now") — claim it only if true.
 
 ## 7. The two buyers
 
@@ -217,14 +212,14 @@ they need guidance over time."
     reviews). Honest timers in the same literature earn ~8–14% lifts —
     the tactic isn't broken, lying is.
 30. **UK law now bans the classic dark patterns outright — DMCC Act 2024,
-    in force 6 April 2025.** Banned or actionable: submitting or
-    commissioning fake reviews; publishing reviews in a misleading way
-    (cherry-picking, hiding incentivised reviews, suppressing negatives);
-    false urgency such as fake countdown timers and untrue "limited
-    availability"; drip pricing. CMA fining powers: up to 10% of global
-    turnover or £300,000, and up to £150,000 for individuals (CMA208
-    guidance; Lewis Silkin, Browne Jacobson, CMS analyses). This binds
-    every review widget, "from" price, and urgency element we ship.
+    in force 6 April 2025.** Banned: submitting or commissioning fake
+    reviews; publishing reviews misleadingly (cherry-picking, hiding
+    incentivised reviews, suppressing negatives); false urgency such as
+    fake countdowns and untrue "limited availability"; drip pricing. CMA
+    can fine up to 10% of global turnover or £300,000 (£150,000 for
+    individuals) — CMA208 guidance; Lewis Silkin / Browne Jacobson / CMS
+    analyses. This binds every review widget, "from" price, and urgency
+    element we ship.
 31. **Perfect ratings and scrubbed review walls backfire.** Spiegel
     (rule 11): near-5.0 averages depress purchase likelihood; and
     negative-review suppression is now a DMCC compliance risk. Show the
