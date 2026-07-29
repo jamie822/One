@@ -11,7 +11,7 @@ Status: Phases 0-4 logged. Phases 5-9 rows fill as those phases run.
 - seo-maps: NOT INVOKED. Demo client, no real GBP to baseline; runs at first paying go-live.
 
 ## Phase 2 — Direction
-- impeccable: INVOKED (v2 cycle: context.mjs + playbook + craft-floor govern the Tungsten contract). Critique protocol reruns at Phase 8.
+- impeccable: RE-INVOKED for v3 at Phase 5 open (process mandate): context.mjs run fresh; its directives produced PRODUCT.md + DESIGN.md (incumbent world documented, not replaced); craft-floor loads at first UI edit; mechanical detector (detect.mjs) queued to run once over changed targets at build end; critique protocol reruns at Phase 8.
 - ui-ux-pro-max: INVOKED (v2 cycle, --design-system dials). v3 keeps the founder-approved Tungsten output; override log in direction-ledger.
 - design-taste: INVOKED. Second opinion recorded on the Tungsten lock.
 - taste: INVOKED. Anti-slop category-reflex check on the direction.
