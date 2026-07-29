@@ -94,7 +94,7 @@ a { color: inherit; text-decoration-thickness: 1px; text-underline-offset: 3px; 
 /* ---- Forms. Labels above, errors below, four fields, that's it. -------- */
 .field { display: grid; gap: 7px; }
 .field label { font: 700 var(--t-label) var(--font-body); letter-spacing: .01em; }
-.field input, .field textarea {
+.field input, .field textarea, .field select {
   font: 500 1rem var(--font-body);
   color: var(--ink);
   background: color-mix(in srgb, var(--surface) 72%, transparent);
@@ -105,7 +105,7 @@ a { color: inherit; text-decoration-thickness: 1px; text-underline-offset: 3px; 
   transition: border-color 150ms var(--ease-ui);
 }
 .field textarea { min-height: 96px; resize: vertical; }
-.field input:focus-visible, .field textarea:focus-visible {
+.field input:focus-visible, .field textarea:focus-visible, .field select:focus-visible {
   outline: none;
   border-color: var(--accent);
   box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent) 24%, transparent);
@@ -113,7 +113,7 @@ a { color: inherit; text-decoration-thickness: 1px; text-underline-offset: 3px; 
 .field input::placeholder, .field textarea::placeholder { color: var(--ink-soft); }
 .field .err { display: none; font-size: var(--t-small); color: #e4572e; font-weight: 500; }
 .field[data-bad] .err { display: block; }
-.field[data-bad] input, .field[data-bad] textarea { border-color: #e4572e; }
+.field[data-bad] input, .field[data-bad] textarea, .field[data-bad] select { border-color: #e4572e; }
 
 /* ---- Shared page furniture -------------------------------------------- */
 .wrap { width: min(100% - 2 * var(--s-3), 1200px); margin-inline: auto; }

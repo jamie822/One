@@ -505,9 +505,36 @@ seed n/a: direction pinned by founder brief, not rolled. -->
       </div>
     </section>
 
+    {/* v3 section 12: FAQ — six real phone questions, first one open.
+        FAQPage schema, genuine Q&A only. */}
+    <div class="paper">
+      <section class="section faq" aria-labelledby="faq-h">
+        <div class="wrap">
+          <h2 id="faq-h" class="rise">Straight answers to the usual questions</h2>
+          <div class="faq__list">
+            {client.faqs.map((f, i) => (
+              <details class="faq__item rise" style={`--i:${i % 3}`} open={i === 0}>
+                <summary>{f.q}<span class="faq__chev" aria-hidden="true">+</span></summary>
+                <p>{f.a} <!-- TEMP where figures --></p>
+              </details>
+            ))}
+          </div>
+        </div>
+      </section>
+    </div>
+    <script type="application/ld+json" set:html={JSON.stringify({
+      '@context': 'https://schema.org',
+      '@type': 'FAQPage',
+      mainEntity: client.faqs.map((f) => ({
+        '@type': 'Question',
+        name: f.q,
+        acceptedAnswer: { '@type': 'Answer', text: f.a },
+      })),
+    })} />
+
     <section class="section contact" id="quote" aria-labelledby="contact-h">
       <div class="wrap">
-        <h2 id="contact-h" class="rise">Ring now, or get a written price by tomorrow.</h2>
+        <h2 id="contact-h" class="rise">Ring now, or send the job across</h2>
         <div class="contact__grid">
           <div class="rise contact__info">
             <a class="contact__tel" href={`tel:${tel}`}>{client.phone}</a>

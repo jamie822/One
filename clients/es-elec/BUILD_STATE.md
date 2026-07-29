@@ -5,7 +5,7 @@ session resumes the build from THIS file with zero re-derivation. Read
 CLAUDE.md first (THE PROCESS MANDATE binds this build), then this file,
 then act on NEXT ACTION. Delete this file at Phase 9 hand-off.
 
-Last updated: 2026-07-29, hero + sections 2-11b done and pushed.
+Last updated: 2026-07-29, HOME PAGE COMPLETE (all 13 sections) and pushed.
 
 ## Where the build stands
 
@@ -53,12 +53,12 @@ design-system/reference-frames-home.html:
 9.  DONE — solar band dark, guarantee-led, flow SVG kept alive
 10. DONE — areas clusters with housing-stock sentences + overflow line
 11. DONE — credentials definition rows; 11b band #2 in place; verified
-12. FAQ — 6 items from client.faqs, accordion (native details or
-    button+region), FAQPage JSON-LD on home only
-13. Contact — phone-first block + QuoteForm (already endpoint-configurable)
-    + facts; footer gains "Reviews shown are illustrative demo content"
+12. DONE — FAQ accordion (native details, first open, chevron rotate),
+    FAQPage JSON-LD validated with 6 questions
+13. DONE — contact: v3 H2, canonical 6-field form (select jobtype, optional
+    detail/email, demo mailto updated), footer demo-reviews note added
 
-Then: services.astro (7 services × 7 blocks from COPY.md, price digest
+HOME IS DONE. Next: services.astro (7 services × 7 blocks from COPY.md, price digest
 intro), about.astro (7 blocks), blog: refresh rewire-cost-leeds (occupied
 note), NEW eicr-landlords-leeds + fuse-board-upgrade-signs, branded 404.
 Commit + push after every page. Keep this file's "Last updated" current.

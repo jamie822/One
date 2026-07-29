@@ -1080,3 +1080,27 @@ html.js .steps__rail li.is-in::before {
 .creds__list > div:last-child { border-bottom: 1px solid var(--edge); }
 .creds__list dt { font: 700 1.05rem var(--font-display); letter-spacing: -.01em; color: var(--accent); }
 .creds__list dd { margin: 0; color: var(--ink-soft); max-width: 62ch; }
+
+/* ============================================================
+   v3 §12 — FAQ accordion (native details, first open) */
+.faq__list { margin-top: var(--s-4); display: grid; }
+.faq__item { border-top: 1px solid var(--edge); }
+.faq__item:last-child { border-bottom: 1px solid var(--edge); }
+.faq__item summary {
+  display: flex; justify-content: space-between; align-items: baseline; gap: 18px;
+  padding: 16px 4px;
+  cursor: pointer;
+  font: 600 1.05rem var(--font-display); letter-spacing: -.01em;
+  list-style: none;
+}
+.faq__item summary::-webkit-details-marker { display: none; }
+.faq__item summary:hover, .faq__item summary:focus-visible { color: var(--accent); }
+.faq__chev {
+  flex: none;
+  font: 400 1.3rem/1 var(--font-body);
+  color: var(--accent);
+  transition: transform 240ms var(--ease-out);
+}
+.faq__item[open] .faq__chev { transform: rotate(45deg); }
+.faq__item > p { padding: 0 4px 18px; color: var(--ink-soft); max-width: 68ch; }
+.field__opt { font-weight: 400; color: var(--ink-soft); }
