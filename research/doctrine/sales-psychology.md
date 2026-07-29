@@ -21,12 +21,11 @@ below is invented, and weakly-sourced vendor statistics were excluded.
    test." A tradesperson's site that looks premium outranks a better
    tradesperson whose site looks 2009.
 3. **Match trust requests to trust earned — never ask above the visitor's
-   level.** Nielsen Norman Group's "pyramid of trust" (Hierarchy of Trust,
-   nngroup.com): five commitment levels; demands at a higher level than the
-   trust established shake the levels below. Concretely: no email-gated
-   content or long forms before the page has proven relevance and
-   credibility. Ask for a postcode before a phone number, a phone number
-   before a survey booking.
+   level.** Nielsen Norman Group's "pyramid of trust": five commitment
+   levels; demands above the trust established shake the levels below. No
+   email-gated content or long forms before the page has proven relevance
+   and credibility. Ask for a postcode before a phone number, a phone
+   number before a survey booking.
 4. **Perceived security is a feeling, not a certificate.** Baymard
    Institute (4,000+ US adults): ~1 in 5 abandonments cite not trusting the
    site; perceived security is a "gut feeling" driven by how secure the
@@ -37,11 +36,10 @@ below is invented, and weakly-sourced vendor statistics were excluded.
 
 ## 2. Cialdini's principles, applied to trade sites
 
-5. **Lead with authority — it is the cheapest verified lever.** Cialdini
-   (Influence, 1984; cxl.com/blog/cialdinis-principles-persuasion).
-   Google's "Decoding Decisions" (2020, 310,000 simulated purchase
-   journeys) ranked authority bias among the six most powerful shortcuts
-   shoppers use in the "messy middle". For our clients: registration
+5. **Lead with authority — the cheapest verified lever.** Cialdini
+   (Influence, 1984); Google's "Decoding Decisions" (2020, 310,000
+   simulated purchase journeys) ranked authority bias among the six most
+   powerful shortcuts in the "messy middle". For our clients: registration
    numbers (NICEIC/NAPIT, MCS), years trading, insurance, guarantees —
    named, numbered, and linked, not implied.
 6. **Use reciprocity by giving genuinely useful things first.** Free solar
@@ -56,12 +54,11 @@ below is invented, and weakly-sourced vendor statistics were excluded.
    more retrofit uptake in utility records. Structure solar funnels as:
    postcode check → rough estimate → free no-obligation assessment →
    quote. Never "Request a quote" as the only door.
-8. **Social proof, authority, and scarcity beat brand loyalty when applied
-   honestly and together.** Google's messy-middle experiments showed a
-   competitor supercharged with the six biases (category heuristics,
-   power of now, social proof, authority, scarcity, power of free) could
-   dislodge an established favourite. We control the site: stack the
-   honest versions of all six.
+8. **Stack the six messy-middle biases honestly.** Google's experiments
+   showed a competitor supercharged with category heuristics, power of
+   now, social proof, authority, scarcity, and power of free could
+   dislodge an established favourite. We control the site: apply the
+   honest version of all six.
 
 ## 3. Social proof formats that measurably convert
 
@@ -246,19 +243,15 @@ they need guidance over time."
     manufactured urgency as exploitation; the emergency page persuades by
     competence and speed signals only (rules 26, 28).
 
-## Sources (primary named above)
+## Sources (primary, named above)
 
-Lindgaard et al. 2006, Behaviour & Information Technology · Fogg /
-Stanford Web Credibility Project · Nielsen Norman Group (Pyramid of
-Trust) · Baymard Institute (perceived checkout security) · Cialdini,
-Influence / Pre-Suasion · CXL (Cialdini principles; social-proof and
-trust-seal original research; urgency; best-practices-fail) · Spiegel
-Research Center, Northwestern 2017 · Schottmuller CRAVENS (via CXL) ·
-Ariely, Predictably Irrational · Anderson & Simester (9-ending field
-studies) · Wadhwa & Zhang 2015, JCR · Kahneman & Tversky (prospect
-theory) · Gonzales, Aronson & Costanzo 1988, JASP · Iyengar & Lepper
-2000 · Scheibehenne et al. 2010, JCR · Carpenter 2013, Communication
-Studies · Oldroyd / Lead Response Management 2007 · HBR 2011 lead audit ·
-Google, Decoding Decisions 2020 · Google/Ipsos nearby-search data · CMA
-CMA208 fake-reviews guidance; DMCC Act 2024 analyses (Lewis Silkin,
-Browne Jacobson, CMS, Travers Smith).
+Lindgaard et al. 2006 · Fogg / Stanford Web Credibility Project · NN/g
+Pyramid of Trust · Baymard Institute · Cialdini, Influence / Pre-Suasion ·
+CXL (persuasion, social-proof and trust-seal original research, urgency,
+best-practices-fail) · Spiegel Research Center, Northwestern 2017 ·
+Schottmuller CRAVENS · Ariely, Predictably Irrational · Anderson &
+Simester · Wadhwa & Zhang 2015 JCR · Kahneman & Tversky · Gonzales,
+Aronson & Costanzo 1988 · Iyengar & Lepper 2000 · Scheibehenne et al.
+2010 · Carpenter 2013 · Oldroyd / Lead Response Management 2007 · HBR
+2011 lead audit · Google, Decoding Decisions 2020 · Google/Ipsos ·
+CMA208 guidance / DMCC Act 2024 (Lewis Silkin, Browne Jacobson, CMS).
