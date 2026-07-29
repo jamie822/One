@@ -43,3 +43,4 @@ Status: Phases 0-4 logged. Phases 5-9 rows fill as those phases run.
 
 ## Hero lab (founder commission, 2026-07-29)
 - frontend-design + design-engineering + css-animations principles: INVOKED (loaded governing rules this session) — original "Street Comes On" hero built as recipe 17: seeded-PRNG street generation, SMIL pulse choreography, 3-layer parallax, WCAG pause + designed still; verified 4 states + mobile, zero console errors.
+- Hero lab round 2 (taste rule 15 applied): recipe 18 "The Filament" built and shipped — canvas light-rendering, temperature model instrument, arrival surge; verified ember/blaze/low/mobile, zero console errors.

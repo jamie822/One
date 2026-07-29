@@ -107,3 +107,14 @@ sign-off). Record their verdict here, dated, win or lose.
       (usage mandate). Reuse of a previous cycle's output requires
       founder approval in chat; a dead tool is the founder's decision to
       wait on or to fall back from, never the lead's silent call.
+
+- 2026-07-29 — HERO LAB VERDICT on recipe 17 "The Street Comes On":
+  "whats with your obsession with a street? That is not stunning or
+  engaging." New hard rule:
+  15. **STUNNING = LIGHT AND ENERGY, NOT DIORAMAS.** Narrative
+      illustration scenes (streets, buildings, flat-shape compositions)
+      do not read as stunning to the founder no matter how choreographed.
+      What lands: light rendered richly (glow, bloom, heat, physicality),
+      energy in motion, and instruments you can grab (dimmer, toggle,
+      stepper). The corona sun, the ignition orb and the filament are the
+      reference class. Default every future hero concept to this class.

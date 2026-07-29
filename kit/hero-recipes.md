@@ -86,3 +86,18 @@ composition is art-directed, not random per load. Pause control (WCAG
 No photography, no libraries; one canvas; ~104KB total with three inline
 brand fonts. Source: clients/es-elec/design-system/hero-lab-street.html.
 Demo: https://claude.ai/code/artifact/37a82416-9b9e-4e40-86c7-28e77b4a4065
+
+## 18. The Filament — SHIPPED (hero lab, 2026-07-29)
+
+Tungsten's namesake as the hero: a giant filament coil drawn live with
+light on one canvas — four stroke passes (ultra-wide bloom to white-hot
+core) on the true colour ramp of heated tungsten. ARRIVAL SURGE: powers
+to near-full on load then settles to a breathing ember. THE INSTRUMENT:
+a real dimmer slider drives one temperature model (colour, bloom radius,
+ambient pool, spark rate, motes all follow); cursor proximity flares the
+nearest turns and spits spark streaks. Support stems ground the coil.
+Pause control; reduced-motion = steady warm filament still. ~97KB total,
+zero libraries. Source: clients/es-elec/design-system/hero-lab-filament.html
+Demo: https://claude.ai/code/artifact/37a82416-9b9e-4e40-86c7-28e77b4a4065
+NOTE: recipe 17 (street diorama) founder-rejected for hero use — taste
+rule 15. Keep for section illustrations only.
