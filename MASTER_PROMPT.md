@@ -201,3 +201,62 @@ A build is done when ALL of these pass, in this order:
 
 *Written 2026-07-28 from the founder's planning answers. Change it only when
 the founder changes the policy.*
+
+---
+
+## Part 10 — Doctrine bindings (added 2026-07-28, from the six-file research corpus)
+
+The studio textbook lives in `research/doctrine/`. These are the rules from
+it that CHANGE how builds are done; the files themselves carry the full
+evidence and sources.
+
+1. **The live-hero floor is also the performance play.** A built scene's
+   headline is the LCP element (canvas is not an LCP candidate — web.dev),
+   which is why code heroes hold 100 where photo heroes cost points. Keep
+   heroes built, keep the H1 the largest early paint.
+2. **Looping heroes MUST carry a pause control.** WCAG 2.2.2 (Level A):
+   any auto-playing motion lasting >5s needs pause/stop/hide. Our suns,
+   cores and marquees loop. Every production build ships a small, styled
+   pause affordance in the hero; verification gates check for it.
+   (Known gap in both flagships as of this note — fix on next touch.)
+3. **Reduced motion is a designed still frame,** never a blank or broken
+   scene (WCAG 2.3.3 / C39). Demo/preview links force motion on; live
+   sites honour the setting with a composed static hero.
+4. **Kill self-serving star markup.** Google never shows LocalBusiness
+   rich-result stars from reviews the business controls; aggregateRating
+   on our own sites is dead weight and against guidelines. Remove it from
+   the schema at go-live; reviews earn stars on the Google Business
+   Profile instead. (Both flagships carry TEMP aggregateRating — strip at
+   go-live, added to their swap lists by this rule.)
+5. **Location pages only where genuinely distinct.** Google's doorway
+   policy explicitly names per-town pages funnelling to one contact page.
+   One town, one genuinely local page (jobs done there, area specifics) or
+   no page.
+6. **The quote form is 7 fields, 5 required, phone explained inline**
+   (Baymard evidence, canonical spec in doctrine/ux-evidence.md). No
+   CAPTCHAs, no multi-column fields.
+7. **Ratings display in the 4.2–4.7 zone converts best; perfect 5.0
+   underperforms** (Spiegel). TEMP demo ratings follow this; real ratings
+   display as they are.
+8. **Round prices for installs, precise figures for savings** (Wadhwa &
+   Zhang): "£6,300 installed" but "£785 off your bills a year".
+9. **Speed-to-lead is the client's biggest off-site lever**: 5-minute
+   response is ~21x more effective than 30 minutes (Oldroyd/HBR). The
+   response promise on the site must match what the client can keep —
+   intake question 18 exists for this.
+10. **GEO needs no special markup** (Google's own generative-AI guidance):
+    AI Overviews draw from the normal index via query fan-out. Direct-
+    answer leads, quotable passages and real E-E-A-T are the levers; skip
+    llms.txt folklore.
+11. **CWV budgets are p75 field numbers**: LCP ≤2.5s, INP ≤200ms, CLS
+    ≤0.1. Canvas work is main-thread work and counts against INP — one
+    rAF loop per page, paused when hidden, OffscreenCanvas if it grows.
+12. **The market gap to claim in copy**: only 37% of homeowners get
+    itemised quotes (Checkatrade/Focaldata) — "priced before it starts,
+    itemised" is a differentiator with survey evidence behind it, and
+    guarantees are the #1 solar incentive (BEIS) — lead with them.
+
+Hero recipes: `kit/hero-recipes.md` holds the menu (2 shipped, 6 studio
+concepts) and `research/doctrine/design-craft.md` §"Live hero recipes"
+adds 8 more researched concepts — 16 total, one per client, ledger rules
+apply.

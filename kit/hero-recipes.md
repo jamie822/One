@@ -59,4 +59,13 @@ concrete enough to build from.
    liveried van's headlights sweeping on and pulling off-screen. Local,
    warm, story-led. Tech: layered SVG + CSS keyframes.
 
-<!-- design-craft doctrine agent: append recipes 9+ here, same format -->
+## From the design-craft doctrine (recipes 9-16)
+
+See `research/doctrine/design-craft.md` §"Live hero recipes" for the full
+paragraphs: **The Grid Awakens** (town skyline lighting up), **Filament**
+(macro tungsten coil), **Photon Field** (bright airy light-theme photon
+drift), **Circuit Bloom** (schematic drawing itself), **Day Cycle Roof**
+(isometric solar house through a day), **Live Wire** (one humming cable
+sweep), **Storage Cell** (monumental battery filling), **Substation
+Aurora** (pylons under living sky). Same rules: one client per recipe,
+mark here when claimed.
