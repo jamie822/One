@@ -20,6 +20,8 @@ const ROUTES = [
   { key: 'about', label: 'About', path: '/about/', file: 'about/index.html' },
   { key: 'blog', label: 'Blog', path: '/blog/', file: 'blog/index.html' },
   { key: 'post', label: 'Rewire costs', path: '/blog/rewire-cost-leeds/', file: 'blog/rewire-cost-leeds/index.html' },
+  { key: 'eicr', label: 'Landlord EICR', path: '/blog/eicr-landlords-leeds/', file: 'blog/eicr-landlords-leeds/index.html' },
+  { key: 'board', label: 'Fuse board signs', path: '/blog/fuse-board-upgrade-signs/', file: 'blog/fuse-board-upgrade-signs/index.html' },
   { key: 'notfound', label: '404', path: '/404.html', file: '404.html' },
 ];
 

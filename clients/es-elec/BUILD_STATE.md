@@ -5,7 +5,7 @@ session resumes the build from THIS file with zero re-derivation. Read
 CLAUDE.md first (THE PROCESS MANDATE binds this build), then this file,
 then act on NEXT ACTION. Delete this file at Phase 9 hand-off.
 
-Last updated: 2026-07-29, home + services + ABOUT v3 complete and pushed; preview republished to the ES artifact URL (v3-wip label).
+Last updated: 2026-07-29, ALL PAGES v3 COMPLETE (home, services, about, blog x3, 404) and pushed; preview republished.
 
 ## Where the build stands
 

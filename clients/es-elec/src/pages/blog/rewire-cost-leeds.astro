@@ -9,7 +9,7 @@ const article = {
   '@type': 'Article',
   headline: 'How much does a rewire cost in Leeds? 2026 prices',
   datePublished: '2026-07-28',
-  dateModified: '2026-07-28',
+  dateModified: '2026-07-29',
   author: { '@type': 'Person', name: client.owner, jobTitle: 'Electrician' },
   publisher: { '@id': 'https://eselec.co.uk/#business' },
 };
@@ -23,12 +23,14 @@ const breadcrumbs = {
   ],
 };
 
-const table = [
-  ['2-bed terrace', '£3,200 to £4,200', '5 to 6 days'],
-  ['3-bed semi', '£4,000 to £5,500', '6 to 8 days'],
-  ['4-bed detached', '£5,500 to £7,000', '8 to 10 days'],
-  ['5-bed detached', '£7,000 to £8,500', '10 to 12 days'],
-];
+// The ONE shared rewire model: same numbers as the home-page Reckoner
+// and the services table (client.reckoner).
+const HOUSE = { 2: '2-bed terrace', 3: '3-bed semi', 4: '4-bed detached', 5: '5-bed detached' };
+const table = Object.entries(client.reckoner.beds).map(([n, m]) => [
+  HOUSE[n],
+  `£${m.low.toLocaleString('en-GB')} to £${m.high.toLocaleString('en-GB')}`,
+  `${m.daysLow} to ${m.daysHigh} days`,
+]);
 ---
 <Base
   title="How Much Does a Rewire Cost in Leeds? 2026 Prices"
@@ -72,6 +74,14 @@ const table = [
           </tbody>
         </table>
 
+        <p>
+          Living in the house through the rewire? Add about
+          £{client.reckoner.occupied.price} and a couple of days across the
+          board. That covers sheeting, furniture moves and keeping your power
+          on every night, and it's the same modifier the Reckoner on my
+          <a href="/">home page</a> uses. <!-- TEMP model -->
+        </p>
+
         <h2>What moves the price</h2>
         <p>
           Walls and floors first: solid floors and lath-and-plaster walls slow
@@ -96,12 +106,12 @@ const table = [
 
         <h2>How to read a rewire quote</h2>
         <p>
-          A real quote names the number of circuits, says whether chasing and
-          making good are included, includes the certificate and Building
-          Control notification, and states what happens when something
-          unexpected turns up behind a wall. If any of those four is missing,
-          the price is not finished. The cheapest of three quotes is usually
-          the one that grows.
+          Four things to demand before you compare numbers. An itemised
+          room-by-room breakdown: if it's one number on a text, you're not
+          comparing quotes, you're comparing guesses. Who makes good the
+          plaster, in writing. Whether testing and certification are inside
+          the price. And the payment schedule. The cheapest of three quotes
+          is usually the one that's missing a line.
         </p>
 
         <h2>What happens on the job</h2>

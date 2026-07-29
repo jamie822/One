@@ -1,0 +1,125 @@
+---
+// NEW post (v3): fuse board warning signs. Direct answer first, the 7
+// signs, the honest bit about plastic boards, 2026 costs. Copy from COPY.md.
+import Base from '../../layouts/Base.astro';
+import { client } from '../../data/client.js';
+
+const tel = client.phone.replace(/\s/g, '');
+const article = {
+  '@context': 'https://schema.org',
+  '@type': 'Article',
+  headline: 'Fuse board upgrade: 7 signs yours is due, and 2026 costs',
+  datePublished: '2026-07-29',
+  dateModified: '2026-07-29',
+  author: { '@type': 'Person', name: client.owner, jobTitle: 'Electrician' },
+  publisher: { '@id': 'https://eselec.co.uk/#business' },
+};
+const breadcrumbs = {
+  '@context': 'https://schema.org',
+  '@type': 'BreadcrumbList',
+  itemListElement: [
+    { '@type': 'ListItem', position: 1, name: 'Home', item: 'https://eselec.co.uk/' },
+    { '@type': 'ListItem', position: 2, name: 'Blog', item: 'https://eselec.co.uk/blog/' },
+    { '@type': 'ListItem', position: 3, name: 'Fuse board upgrade signs', item: 'https://eselec.co.uk/blog/fuse-board-upgrade-signs/' },
+  ],
+};
+
+const SIGNS = [
+  ['Fuse wire', 'If blown fuses get mended with wire from a card, the board predates every protection standard your family currently relies on.'],
+  ['No test button anywhere', 'No RCD. On a fault, that’s the difference between milliseconds and a serious shock.'],
+  ['Scorch marks or a warm, fishy smell at the board', 'That’s a connection cooking itself. Ring someone this week, not this quarter.'],
+  ['One trip kills the whole house', 'A single shared RCD means one faulty kettle blacks out the freezer, the alarm and the wifi. Modern boards give every circuit its own.'],
+  ['Buzzing or crackling', 'Boards should be silent. Noise is arcing, and arcing is how board fires start.'],
+  ['No spare ways', 'Planning an EV charger, an extension or an electric shower? A full board can’t take the circuit.'],
+  ['A wooden backboard', 'Pre-1970s, and usually accompanied by rubber or fabric-insulated cable somewhere in the house. Budget for an EICR before the board swap, because the board might be the good news.'],
+];
+---
+<Base
+  title="Fuse Board Upgrade: 7 Signs and 2026 Costs"
+  description="A fuse board replacement costs £520 to £850 in Leeds in 2026. A working electrician lists the 7 signs yours is due, and the honest truth about plastic boards."
+  current="/blog/"
+  schema={[article, breadcrumbs]}
+>
+  <article class="paper">
+    <div class="wrap article">
+      <header class="article__head">
+        <h1>Fuse board upgrade: 7 signs yours is due, and 2026 costs</h1>
+        <p class="article__meta">
+          By {client.owner}, electrician, ES Elec · July 2026 <!-- TEMP author -->
+        </p>
+      </header>
+
+      <div class="article__body">
+        <p>
+          A fuse board (consumer unit) replacement costs £520 to £850 fitted
+          in Leeds in 2026 <!-- TEMP -->, takes a day, and the power is off
+          for about six hours of it. Here are the seven signs the box on
+          your wall has had its time, from a bloke who swaps one most weeks.
+        </p>
+
+        <h2>The 7 signs</h2>
+        <ol class="signs">
+          {SIGNS.map(([sign, detail]) => (
+            <li>
+              <strong>{sign}:</strong> {detail}
+            </li>
+          ))}
+        </ol>
+
+        <h2>The honest bit about plastic boards</h2>
+        <p>
+          Plastic consumer units are not illegal and yours might be fine.
+          The question that matters is whether every circuit has RCD
+          protection and whether the connections are sound. A photo answers
+          half of that on the phone, free.
+        </p>
+
+        <h2>What a swap costs in 2026</h2>
+        <p>
+          Straight swap, 6 ways: £520 to £650. 10 ways with surge
+          protection: £650 to £850. Bonding upgrades where gas and water
+          were never done: add £120 to £250. <!-- TEMP figures --> Every
+          price includes testing each circuit as it reconnects, and the
+          certificate.
+        </p>
+
+        <h2>What happens on the day</h2>
+        <p>
+          Power goes off mid-morning and stays off for about six hours: keep
+          the fridge shut and it holds. The old unit comes out, the new
+          board goes in with RCBO protection per circuit, every circuit gets
+          tested as it reconnects, the ways get labels that name what
+          actually runs on them, and the certificate is in your hand before
+          the van leaves. You get the off-time the day before, so the
+          wifi-and-laptop question is sorted in advance.
+        </p>
+
+        <div class="band">
+          <h2 style="font-size: 1.4rem;">Recognise your board above?</h2>
+          <p style="color: var(--ink-soft); font-size: var(--t-small);">
+            A photo of your board gets you a price range on the same call.
+          </p>
+          <div class="acts">
+            <a class="btn btn--call" href={`tel:${tel}`}>Call Eddie</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </article>
+</Base>
+
+<style>
+  .signs { padding-left: 0; list-style: none; counter-reset: sign; display: grid; gap: 14px; }
+  .signs li { counter-increment: sign; display: grid; grid-template-columns: 34px 1fr; gap: 12px; color: var(--ink-soft); }
+  .signs li::before {
+    content: counter(sign);
+    font: 700 1rem var(--font-display);
+    color: var(--accent);
+    border: 1.5px solid var(--edge);
+    border-radius: 50%;
+    width: 30px; height: 30px;
+    display: grid; place-items: center;
+    margin-top: 2px;
+  }
+  .signs strong { color: var(--ink); }
+</style>

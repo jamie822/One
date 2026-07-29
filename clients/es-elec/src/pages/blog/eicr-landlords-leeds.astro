@@ -1,0 +1,111 @@
+---
+// NEW post (v3): landlord EICR rules. Direct answer first, the five rules
+// that bite, Leeds costs, code-reading without panic. Copy from COPY.md.
+import Base from '../../layouts/Base.astro';
+import { client } from '../../data/client.js';
+
+const tel = client.phone.replace(/\s/g, '');
+const article = {
+  '@context': 'https://schema.org',
+  '@type': 'Article',
+  headline: 'EICR for Leeds landlords: the 2026 rules, costs and fines',
+  datePublished: '2026-07-29',
+  dateModified: '2026-07-29',
+  author: { '@type': 'Person', name: client.owner, jobTitle: 'Electrician' },
+  publisher: { '@id': 'https://eselec.co.uk/#business' },
+};
+const breadcrumbs = {
+  '@context': 'https://schema.org',
+  '@type': 'BreadcrumbList',
+  itemListElement: [
+    { '@type': 'ListItem', position: 1, name: 'Home', item: 'https://eselec.co.uk/' },
+    { '@type': 'ListItem', position: 2, name: 'Blog', item: 'https://eselec.co.uk/blog/' },
+    { '@type': 'ListItem', position: 3, name: 'EICR for Leeds landlords', item: 'https://eselec.co.uk/blog/eicr-landlords-leeds/' },
+  ],
+};
+---
+<Base
+  title="EICR for Leeds Landlords: 2026 Rules, Costs, Fines"
+  description="Landlords in England need an EICR every 5 years, with fines up to £30,000 for skipping it. A Leeds electrician explains the 2026 rules, real costs, and what the codes on the report mean."
+  current="/blog/"
+  schema={[article, breadcrumbs]}
+>
+  <article class="paper">
+    <div class="wrap article">
+      <header class="article__head">
+        <h1>EICR for Leeds landlords: the 2026 rules, costs and fines</h1>
+        <p class="article__meta">
+          By {client.owner}, electrician, ES Elec · July 2026 <!-- TEMP author -->
+        </p>
+      </header>
+
+      <div class="article__body">
+        <p>
+          Every rented home in England must have a satisfactory EICR renewed
+          at least every five years, under the Electrical Safety Standards in
+          the Private Rented Sector (England) Regulations 2020. In Leeds in
+          2026 the inspection costs £140 to £240 for a typical house, and
+          the council can fine up to £30,000 per breach for not having
+          one. <!-- TEMP prices -->
+        </p>
+
+        <h2>The five rules that bite</h2>
+        <p>
+          One: renew at least every five years, or sooner if the last report
+          says so. Two: new tenants get a copy before they move in, existing
+          tenants within 28 days of the inspection. Three: the council gets a
+          copy within 7 days if they ask for one. Four: C1 and C2 fixes done
+          within 28 days, or faster if the report says, with written
+          confirmation to tenant and council. Five: keep the paper trail. The
+          fine is per breach, and "I emailed the agent" is not a paper trail.
+        </p>
+
+        <h2>What it costs in Leeds in 2026</h2>
+        <table class="costs">
+          <caption>
+            Typical EICR prices, Leeds, 2026. Movers: circuit count, access,
+            multiple boards. <!-- TEMP figures -->
+          </caption>
+          <thead>
+            <tr><th scope="col">Property</th><th scope="col">Price</th></tr>
+          </thead>
+          <tbody>
+            <tr><td><strong>1-2 bed flat</strong></td><td>£140</td></tr>
+            <tr><td><strong>3-bed semi</strong></td><td>£160 to £190</td></tr>
+            <tr><td><strong>4-bed and up</strong></td><td>£200 to £240</td></tr>
+            <tr><td><strong>HMOs</strong></td><td>priced on circuits</td></tr>
+          </tbody>
+        </table>
+
+        <h2>Reading the report without panicking</h2>
+        <p>
+          C1 means danger now, and it gets made safe before the electrician
+          leaves. C2 means potentially dangerous, 28 days to fix on a rental.
+          C3 means improvement recommended and it is STILL A PASS. FI means
+          further investigation, and the report stays unsatisfactory until
+          it's resolved. The bit agents miss: a C3-only report needs nothing
+          doing. Don't be upsold on a pass.
+        </p>
+
+        <h2>The Leeds-specific bit</h2>
+        <p>
+          Student HMOs in Headingley and Hyde Park carry more circuits and
+          more wear than the same house owner-occupied. Book the EICR for
+          daytime between tenancies if you can: empty house, full access,
+          faster test, lower price.
+        </p>
+
+        <div class="band">
+          <h2 style="font-size: 1.4rem;">Renewal date coming up?</h2>
+          <p style="color: var(--ink-soft); font-size: var(--t-small);">
+            Two or more properties booked together get priced together.
+            Report back the same evening, plain English. <!-- TEMP promise -->
+          </p>
+          <div class="acts">
+            <a class="btn btn--call" href={`tel:${tel}`}>Call Eddie</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </article>
+</Base>
