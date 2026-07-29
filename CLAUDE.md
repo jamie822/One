@@ -174,6 +174,10 @@ AI detection.**
   standing shared axis is the live-hero floor itself).
 - `kit/` — the starter kit: intake questionnaire, hero recipes, shared
   tools, and the new-client checklist. Start every build from here.
+- `clients/<name>/BUILD_STATE.md` — if present, a build was cut mid-flight
+  (usage window, restart). Read it FIRST when resuming that client: it
+  holds the exact next action. Keep it updated at every stop point;
+  delete it at Phase 9 hand-off.
 
 ## Reference docs
 
