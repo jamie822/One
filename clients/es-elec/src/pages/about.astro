@@ -1,6 +1,8 @@
 ---
-// ABOUT: the accountability page. E-E-A-T lives here: named person, checkable
-// register, quals, insurance, how a job actually goes.
+// ABOUT, v3: the accountability page. Seven blocks per COPY.md: story,
+// quals explained, how-a-job-goes long version, guarantee in full, the
+// van, FAQ x3, CTA band. E-E-A-T lives here: named person, checkable
+// register, insurance, terms in the open.
 import Base from '../layouts/Base.astro';
 import { client } from '../data/client.js';
 
@@ -23,93 +25,187 @@ const person = {
 ---
 <Base
   title="About ES Elec | NICEIC Electrician in Leeds"
-  description={`ES Elec is run by ${client.owner}: NICEIC registered, insured to £2m, trading since ${client.founded}. The person who answers the phone is the person on the tools.`}
+  description={`ES Elec is ${client.owner}: one NICEIC registered electrician in Leeds, ${client.yearsTrading} years on the tools, every job priced in writing and certified. The person who quotes is the person who turns up.`}
   current="/about/"
   schema={[breadcrumbs, person]}
 >
   <section class="section" style="padding-bottom: var(--s-4);">
     <div class="wrap">
       <h1 style="max-width: 18ch;">The one who answers the phone is the one on the tools.</h1>
-      <p class="hero__sub" style="margin-top: var(--s-3);">
-        ES Elec is one electrician, on purpose. The person who quotes your job
-        is the person who turns up to do it, and the phone gets answered by him
-        too.
-      </p>
     </div>
   </section>
 
   <div class="paper">
-    <section class="section" aria-labelledby="short-h">
+    {/* Block 1 — the story, with the checkable facts rail beside it. */}
+    <section class="section" aria-labelledby="story-h">
       <div class="wrap about__grid">
         <div class="rise">
-          <h2 id="short-h">The short version</h2>
-          <ul class="about__facts">
-            <li><strong>{client.owner}</strong> electrician and solar installer <!-- TEMP name --></li>
-            <li><strong>Since {client.founded}</strong> trading in Leeds <!-- TEMP --></li>
-            <li><strong>{client.accreditation}</strong> number {client.accreditationNumber} <!-- TEMP --></li>
-            <li><strong>Qualified</strong> 18th Edition, City &amp; Guilds 2391 inspection and testing <!-- TEMP --></li>
-            <li><strong>{client.liabilityCover}</strong> insurance behind every job <!-- TEMP --></li>
-            <li><strong>{client.guarantee}</strong> on everything I fit <!-- TEMP --></li>
-          </ul>
+          <h2 id="story-h">Small on purpose</h2>
+          <p class="about__story">
+            I'm {client.owner}. ES Elec is me, a van, and twelve years of
+            Leeds houses. <!-- TEMP name/years --> I served my time on
+            commercial sites, got sick of being the fourth sub-contractor on
+            jobs where nobody owned the outcome, and set up on my own in
+            {client.founded} <!-- TEMP --> with one rule: the person who
+            prices the job does the job. When you ring, you get me. When the
+            quote arrives, I wrote it. When something's tricky on site, the
+            bloke deciding what to do about it is the same one who'll sign
+            the certificate. That's the whole pitch.
+          </p>
         </div>
-        <figure class="about__photo rise" style="--i:1">
-          <img src="/img/board-hands.webp" alt="Hands wiring a consumer unit under warm workshop light" width="1200" height="900" loading="lazy" />
-          <figcaption>On the tools. <!-- TEMP image: generated placeholder, swap for a real photo of the owner --></figcaption>
-        </figure>
+        <ul class="about__facts rise" style="--i:1">
+          <li><strong>{client.owner}</strong> electrician and solar installer <!-- TEMP name --></li>
+          <li><strong>Since {client.founded}</strong> trading in Leeds <!-- TEMP --></li>
+          <li><strong>{client.accreditation}</strong> number {client.accreditationNumber} <!-- TEMP --></li>
+          <li><strong>{client.liabilityCover}</strong> behind every job <!-- TEMP --></li>
+          <li><strong>{client.guarantee}</strong> on everything I fit <!-- TEMP --></li>
+        </ul>
       </div>
     </section>
 
+    {/* Block 2 — the tickets on the wall, in plain English. */}
+    <section class="section" aria-labelledby="quals-h" style="padding-top: 0;">
+      <div class="wrap">
+        <h2 id="quals-h" class="rise">The tickets on the wall, in plain English</h2>
+        <dl class="about__quals">
+          <div class="rise" style="--i:0">
+            <dt>18th Edition, BS 7671 <!-- TEMP --></dt>
+            <dd>The current wiring regulations exam. It's the minimum ticket for touching your house, not a selling point, but you'd be surprised who hasn't sat the update.</dd>
+          </div>
+          <div class="rise" style="--i:1">
+            <dt>2391 Inspection and Testing <!-- TEMP --></dt>
+            <dd>The qualification behind every EICR I sign. Testing is its own trade, and this is its licence.</dd>
+          </div>
+          <div class="rise" style="--i:2">
+            <dt>NVQ Level 3 and AM2 <!-- TEMP --></dt>
+            <dd>The apprenticeship route: assessed on real installations, not multiple choice.</dd>
+          </div>
+          <div class="rise" style="--i:3">
+            <dt>NICEIC Approved Contractor, {client.accreditationNumber} <!-- TEMP --></dt>
+            <dd>Assessed every year on real jobs. Check the number on niceic.com, mine or anyone's.</dd>
+          </div>
+        </dl>
+      </div>
+    </section>
+
+    {/* Block 3 — how a job goes, the long version. */}
     <section class="section" aria-labelledby="how-h" style="padding-top: 0;">
       <div class="wrap">
-        <h2 id="how-h" class="rise">How a job goes</h2>
+        <h2 id="how-h" class="rise">From first ring to certificate</h2>
         <ol class="steps">
           <li class="rise" style="--i:0">
             <div>
-              <strong>You ring, I answer.</strong>
-              We talk through what you need and I ask the awkward questions early.
+              <strong>The phone call.</strong>
+              I'll ask the age of the house, the symptom, and for photos if
+              they help. You'll get told straight away: a rough range,
+              whether it's worth a visit, and whether you even need an
+              electrician. Plenty of calls end with me talking someone out
+              of spending money.
             </div>
           </li>
           <li class="rise" style="--i:1">
             <div>
-              <strong>Written price.</strong>
-              Usually same day for small work, within 48 hours after a look at bigger jobs.
+              <strong>The look, then the price in writing.</strong>
+              The survey visit walks every room the job touches. The quote
+              lands within 48 hours <!-- TEMP -->, itemised line by line,
+              and the paper is what you pay. If a line looks odd, ring me
+              and I'll explain it or strike it.
             </div>
           </li>
           <li class="rise" style="--i:2">
             <div>
               <strong>The work.</strong>
-              On the day we agreed, tidy, tested as I go.
+              Start dates get honoured, sheets go down before tools come
+              out, power comes back on every night, and the house gets a
+              tidy-up daily. If something unexpected turns up inside a wall,
+              you get the finding, the options and the prices, and nothing
+              proceeds without a yes.
             </div>
           </li>
           <li class="rise" style="--i:3">
             <div>
-              <strong>Paperwork.</strong>
-              Certificate, Building Control notification where needed, and the invoice matching the quote.
+              <strong>The paperwork.</strong>
+              Certificate before invoice, building control notified, the
+              guarantee terms attached, and the test readings kept on file
+              for when you sell the house.
             </div>
           </li>
         </ol>
       </div>
     </section>
 
+    {/* Block 4 — the guarantee, in full. */}
     <section class="section" aria-labelledby="gt-h" style="padding-top: 0;">
       <div class="wrap">
-        <h2 id="gt-h" class="rise">The guarantee</h2>
-        <p class="rise" style="margin-top: var(--s-2); color: var(--ink-soft);">
-          Twelve months on workmanship. If something I fitted plays up, I come
-          back and put it right. Insurance sits behind that at £2m, and NICEIC
-          stands behind the lot: their register entry is public and you should
-          check it before hiring anyone, me included. <!-- TEMP figures -->
+        <h2 id="gt-h" class="rise">The 12-month guarantee, with no small print <!-- TEMP --></h2>
+        <div class="about__gtee rise">
+          <p>
+            <strong>What it covers:</strong> anything I fitted or altered
+            that stops working properly inside 12 months, put right at no
+            cost, including parts.
+          </p>
+          <p>
+            <strong>How to claim:</strong> ring or email, same response
+            promise as any job.
+          </p>
+          <p>
+            <strong>What it doesn't cover:</strong> your appliances, damage
+            by other trades, and pre-existing circuits I didn't touch. Those
+            get the honest version instead: I'll tell you what I found, not
+            invoice you for it.
+          </p>
+          <p>
+            <strong>Beyond me:</strong> NICEIC's Platinum Promise backs
+            notifiable work if I couldn't put it right myself. <!-- TEMP: confirm cover wording -->
+          </p>
+        </div>
+      </div>
+    </section>
+
+    {/* Block 5 — the van and the kit. */}
+    <section class="section" aria-labelledby="van-h" style="padding-top: 0;">
+      <div class="wrap">
+        <h2 id="van-h" class="rise">Why the van matters</h2>
+        <p class="about__van rise">
+          The van carries a calibrated Megger multifunction tester (the
+          readings on your certificate come from it), a stocked board of the
+          parts that kill most faults (RCBOs, pendants, accessories), and
+          enough cable to finish the day the wall opened late. Boring
+          paragraph, real point: jobs finish on the visit they started far
+          more often when the part is already outside your house.
         </p>
+      </div>
+    </section>
+
+    {/* Block 6 — FAQ x3. */}
+    <section class="section" aria-labelledby="afaq-h" style="padding-top: 0;">
+      <div class="wrap">
+        <h2 id="afaq-h" class="rise">Asked before hiring</h2>
+        <div class="faq__list" style="max-width: 72ch;">
+          <details class="faq__item rise" open>
+            <summary>Do you subcontract?<span class="faq__chev" aria-hidden="true">+</span></summary>
+            <p>No. If a job needs two pairs of hands (scaffold days, board swaps in big houses), the second pair is a spark I've worked with for years, on my insurance, under my name, and I'm on site.</p>
+          </details>
+          <details class="faq__item rise" style="--i:1">
+            <summary>Do you do commercial work?<span class="faq__chev" aria-hidden="true">+</span></summary>
+            <p>Light commercial, yes: shops, offices, small units. Factories and three-phase industrial, no, and I'll point you at someone good.</p>
+          </details>
+          <details class="faq__item rise" style="--i:2">
+            <summary>How far ahead are you booked?<span class="faq__chev" aria-hidden="true">+</span></summary>
+            <p>Certificates and faults, usually inside the week. Rewires and solar, two to four weeks out. <!-- TEMP --> Emergencies jump everything.</p>
+          </details>
+        </div>
       </div>
     </section>
   </div>
 
-  <section class="section contact" aria-labelledby="cta-h">
-    <div class="wrap">
-      <h2 id="cta-h" class="rise">Want a price on something?</h2>
-      <div class="hero__acts rise" style="--i:1">
-        <a class="btn btn--call" href={`tel:${tel}`}>Call Eddie</a>
-        <a class="btn btn--quote" href="/#quote">Get a quote</a>
+  {/* Block 7 — CTA band. */}
+  <section class="band" aria-label="Get in touch">
+    <div class="wrap band__in rise">
+      <p class="band__line">That's the pitch. One bloke, priced in writing, certified.</p>
+      <div class="band__act">
+        <a class="btn btn--call btn--lit" href={`tel:${tel}`}>Call Eddie</a>
+        <span class="band__risk">Answered Monday to Saturday, 7.30 to 6. Or <a href="/#quote" style="color: var(--amber-300);">Get a quote</a> in writing.</span>
       </div>
     </div>
   </section>
@@ -117,22 +213,31 @@ const person = {
 
 <style>
   .about__grid { display: grid; gap: var(--s-4); align-items: start; }
-  @media (min-width: 900px) { .about__grid { grid-template-columns: 6fr 5fr; } }
-  .about__facts { list-style: none; padding: 0; margin-top: var(--s-3); display: grid; gap: 0; }
+  @media (min-width: 900px) { .about__grid { grid-template-columns: 7fr 4fr; } }
+  .about__story { margin-top: var(--s-3); max-width: 58ch; font-size: 1.08rem; }
+  .about__facts { list-style: none; padding: 0; margin: 0; display: grid; }
   .about__facts li {
-    padding-block: 14px;
+    padding-block: 13px;
     border-top: 1px solid var(--edge);
     font-size: var(--t-small); color: var(--ink-soft);
   }
+  .about__facts li:last-child { border-bottom: 1px solid var(--edge); }
   .about__facts strong {
     display: block;
-    font: 700 1.05rem var(--font-display);
+    font: 700 1.02rem var(--font-display);
     color: var(--ink);
   }
-  .about__photo { margin: 0; border-radius: var(--r-box); overflow: hidden; border: 1px solid var(--edge); }
-  .about__photo img { width: 100%; object-fit: cover; }
-  .about__photo figcaption { font-size: var(--t-small); color: var(--ink-soft); padding: 10px 2px; }
-  .steps { list-style: none; padding: 0; counter-reset: step; display: grid; gap: var(--s-3); margin-top: var(--s-4); max-width: 620px; }
+  .about__quals { margin: var(--s-4) 0 0; display: grid; }
+  .about__quals > div {
+    display: grid; gap: 6px 34px;
+    padding: 16px 0;
+    border-top: 1px solid var(--edge);
+  }
+  @media (min-width: 880px) { .about__quals > div { grid-template-columns: minmax(220px, 20rem) 1fr; } }
+  .about__quals > div:last-child { border-bottom: 1px solid var(--edge); }
+  .about__quals dt { font: 700 1.02rem var(--font-display); letter-spacing: -.01em; color: var(--accent); }
+  .about__quals dd { margin: 0; color: var(--ink-soft); max-width: 62ch; }
+  .steps { list-style: none; padding: 0; counter-reset: step; display: grid; gap: var(--s-3); margin-top: var(--s-4); max-width: 680px; }
   .steps li { counter-increment: step; display: grid; grid-template-columns: 44px 1fr; gap: 14px; color: var(--ink-soft); }
   .steps li::before {
     content: counter(step);
@@ -144,4 +249,8 @@ const person = {
     display: grid; place-items: center;
   }
   .steps strong { display: block; color: var(--ink); font-family: var(--font-display); font-size: 1.1rem; }
+  .about__gtee { margin-top: var(--s-3); display: grid; gap: 12px; max-width: 62ch; }
+  .about__gtee p { color: var(--ink-soft); }
+  .about__gtee strong { color: var(--ink); }
+  .about__van { margin-top: var(--s-3); max-width: 62ch; color: var(--ink-soft); }
 </style>

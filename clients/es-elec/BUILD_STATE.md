@@ -5,7 +5,7 @@ session resumes the build from THIS file with zero re-derivation. Read
 CLAUDE.md first (THE PROCESS MANDATE binds this build), then this file,
 then act on NEXT ACTION. Delete this file at Phase 9 hand-off.
 
-Last updated: 2026-07-29, home complete + SERVICES PAGE v3 complete (7 services x 7 blocks) and pushed.
+Last updated: 2026-07-29, home + services + ABOUT v3 complete and pushed; preview republished to the ES artifact URL (v3-wip label).
 
 ## Where the build stands
 
@@ -58,7 +58,7 @@ design-system/reference-frames-home.html:
 13. DONE — contact: v3 H2, canonical 6-field form (select jobtype, optional
     detail/email, demo mailto updated), footer demo-reviews note added
 
-HOME AND SERVICES ARE DONE. Next: about.astro (7 blocks from COPY.md),
+X
 blog: refresh rewire-cost-leeds (occupied note), NEW eicr-landlords-leeds
 + fuse-board-upgrade-signs, branded 404.
 Commit + push after every page. Keep this file's "Last updated" current.
