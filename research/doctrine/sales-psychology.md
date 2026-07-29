@@ -13,12 +13,11 @@ not the headline. Compiled 2026-07-29; weak vendor statistics excluded.
    50ms correlate strongly with judgments at 500ms and persist via halo
    effect into credibility and usability judgments. Craft budget goes to
    the above-the-fold render first.
-2. **Design IS the credibility argument.** Stanford Web Credibility Project
-   (B.J. Fogg, 4,500+ participants): 46.1% of consumers assessed site
+2. **Design IS the credibility argument.** Stanford Web Credibility
+   Project (B.J. Fogg, 4,500+ participants): 46.1% of consumers assessed
    credibility primarily on overall visual design — layout, typography,
    colour. Fogg: "if it doesn't look credible... it doesn't get a second
-   test." A tradesperson's site that looks premium outranks a better
-   tradesperson whose site looks 2009.
+   test." A premium-looking site beats a better tradesperson's 2009 one.
 3. **Match trust requests to trust earned — never ask above the visitor's
    level.** Nielsen Norman Group's "pyramid of trust": five commitment
    levels; demands above the trust established shake the levels below. No

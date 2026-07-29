@@ -27,11 +27,10 @@ section F on production sites. Rules are numbered continuously for citation.
 5. Pair the maximal scene with editorial restraint everywhere else. By-Kin
    (Awwwards SOTD + Developer Award + FWA + CSSDA WOTD) is "a masterclass in
    restraint — confident editorial typography, weighted smooth scroll,
-   transitions that never call attention to themselves." One loud layer;
-   everything else quiet.
+   transitions that never call attention to themselves." One loud layer.
 6. Texture beats flatness in 2026 galleries: grain/noise overlays, glow,
    layered light, oversized type over gradients (reallygooddesigns.com,
-   topcssgallery.com 2026 trend surveys). This independently confirms the
+   topcssgallery.com trend surveys). This independently confirms the
    founder's "light-and-flat reads as 1990s" verdict — light themes need
    depth, glow and scene-building, not whitespace alone.
 7. Iterate focal objects toward organic softness: dense, soft, blended detail
@@ -54,11 +53,10 @@ section F on production sites. Rules are numbered continuously for citation.
     frequency budget scales inversely with usage frequency (Kowalski; echoed
     by Apple HIG Motion: "avoid adding motion to interactions that occur
     frequently").
-12. Do not use the built-in CSS `ease`/`ease-in-out` keywords for hero-grade
-    work — they are too weak; author custom cubic-beziers (Kowalski). Known
-    good reference curves: Material 3 emphasized `cubic-bezier(0.2, 0, 0, 1)`,
-    emphasized-decelerate `cubic-bezier(0.05, 0.7, 0.1, 1)` (m3.material.io
-    easing & duration tokens).
+12. Built-in CSS `ease`/`ease-in-out` keywords are too weak for hero-grade
+    work; author custom cubic-beziers (Kowalski). Reference curves: Material
+    3 emphasized `cubic-bezier(0.2, 0, 0, 1)`, emphasized-decelerate
+    `cubic-bezier(0.05, 0.7, 0.1, 1)` (m3.material.io motion tokens).
 13. Sequence, don't synchronise. "Human eyes detect simultaneous motion as
     mechanical, sequential as organic" (Rauno Freiberg, Invisible Details of
     Interaction Design, rauno.me). Stagger hero-element entrances; give
@@ -130,11 +128,11 @@ section F on production sites. Rules are numbered continuously for citation.
 28. Display-led sites get a fluid type scale built on `clamp(min, preferred,
     max)` — no font-size media queries (Aleksandr Hovhannisyan, "Creating a
     Fluid Type Scale with CSS Clamp"; fluid-type-scale.com). Use a modular
-    ratio, and a steeper ratio for display sizes than for body.
+    ratio, steeper for display sizes than for body.
 29. Include `rem` in the preferred value (e.g. `clamp(2rem, 1rem + 4vw,
     4.5rem)`), never a bare viewport unit: viewport units ignore user zoom,
-    and pure-vw type breaks zoom accessibility (robertcelt95, "Beyond
-    font-size: clamp()"; WCAG 1.4.4 resize-text obligation).
+    so pure-vw type breaks zoom accessibility (robertcelt95, "Beyond
+    font-size: clamp()"; WCAG 1.4.4 resize text).
 30. Body text measures 60–75 characters; enforce with `ch`-based max-widths
     (CSS typography consensus, thecrit.co / Hovhannisyan).
 31. Use one variable font per site as a single self-hosted, subset WOFF2.
@@ -155,11 +153,10 @@ section F on production sites. Rules are numbered continuously for citation.
 ## E. Colour
 
 35. Author all palettes in OKLCH. It is perceptually uniform — equal
-    lightness numbers look equally light across hues — which makes derived
-    scales and contrast reasoning honest (Evil Martians, "OKLCH in CSS: why
-    we moved from RGB and HSL"). Supported in every major browser since 2023
-    (Chrome 111, Safari 15.4, Firefox 113); Tailwind v4 moved its whole token
-    set to OKLCH.
+    lightness numbers look equally light across hues — making derived scales
+    and contrast reasoning honest (Evil Martians, "OKLCH in CSS: why we moved
+    from RGB and HSL"). Supported in every major browser since 2023 (Chrome
+    111, Safari 15.4, Firefox 113); Tailwind v4's tokens are OKLCH.
 36. Build each client's palette as a lightness ladder per hue: hold H and C,
     step L. Theme flips then become custom-property swaps, no per-component
     media queries (Evil Martians; LogRocket OKLCH guide).
