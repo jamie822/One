@@ -60,18 +60,17 @@ not the headline. Compiled 2026-07-29; weak vendor statistics excluded.
 
 ## 3. Social proof formats that measurably convert
 
-9. **Get the first five reviews on the page — that is the single largest
-   social-proof jump.** Spiegel Research Center, Northwestern (How Online
-   Reviews Influence Sales, 2017): displaying five reviews vs zero raised
-   purchase likelihood ~270%.
+9. **Get the first five reviews on the page — the single largest
+   social-proof jump.** Spiegel Research Center, Northwestern (2017):
+   five reviews vs zero raised purchase likelihood ~270%.
 10. **Social proof matters MORE for expensive services, not less.** Same
-    Spiegel study: reviews lifted conversion 190% for cheaper products but
-    380% for higher-priced ones. A £6k solar quote page needs reviews more
-    than a £90 fuse-board quote page does.
-11. **Do not chase (or fake) a perfect 5.0.** Spiegel: purchase likelihood
-    peaks around 4.2–4.7 stars and FALLS approaching 5.0 — perfect scores
-    read as too good to be true. Show real aggregate ratings with review
-    counts; never trim the imperfect ones (also illegal — see §8).
+    Spiegel study: reviews lifted conversion 190% for cheaper products,
+    380% for higher-priced ones. The £6k solar page needs reviews more
+    than the £90 call-out page does.
+11. **Do not chase (or fake) a perfect 5.0.** Spiegel: purchase
+    likelihood peaks around 4.2–4.7 stars and FALLS approaching 5.0.
+    Show real aggregate ratings with counts; never trim the imperfect
+    ones (also illegal — §8).
 12. **Testimonials must be specific, attributed, and visual.** CXL's
     original eye-tracking research on social proof and Angie Schottmuller's
     CRAVENS model (via CXL): credible, relevant, attractive, visual,

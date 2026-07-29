@@ -184,17 +184,17 @@ section F on production sites. Rules are numbered continuously for citation.
 
 ## F. Accessibility of motion (non-negotiable on production)
 
-42. WCAG 2.3.1 Three Flashes (Level A): nothing may flash more than three
-    times in any one-second period unless below the general and red flash
-    thresholds — combined flash area under 0.006 steradians (~25% of any 10°
-    visual field) (W3C Understanding 2.3.1). Consequence for us: arc-flash,
-    spark and lightning effects are choreographed as glows and travels, never
-    as full-area strobes; cap any luminance pulse at ≤3 per second.
-43. WCAG 2.2.2 Pause, Stop, Hide (Level A): moving content that starts
-    automatically, lasts more than 5 seconds, and sits alongside other
-    content MUST have a pause/stop/hide mechanism (W3C Understanding 2.2.2).
-    Our heroes loop forever by design, so every production hero ships a
-    small, findable pause control that freezes the scene to a composed still.
+42. WCAG 2.3.1 Three Flashes (Level A): nothing flashes more than three times
+    in any one-second period unless below the general/red flash thresholds —
+    combined flash area under 0.006 steradians (~25% of any 10° visual field)
+    (W3C Understanding 2.3.1). For us: arc-flash, spark and lightning effects
+    are choreographed as glows and travels, never full-area strobes; cap any
+    luminance pulse at ≤3 per second.
+43. WCAG 2.2.2 Pause, Stop, Hide (Level A): auto-starting moving content
+    lasting over 5 seconds alongside other content MUST have a
+    pause/stop/hide mechanism (W3C Understanding 2.2.2). Our heroes loop
+    forever by design, so every production hero ships a small, findable pause
+    control that freezes the scene to a composed still.
 44. WCAG 2.3.3 Animation from Interactions (AAA, our target): motion
     triggered by interaction can be disabled unless essential (W3C
     Understanding 2.3.3). Parallax, cursor-reactive and scroll-driven motion
@@ -204,25 +204,23 @@ section F on production sites. Rules are numbered continuously for citation.
     is the default and motion is the enhancement (w3.org/WAI Technique C39).
     In JS, gate rAF loops on `matchMedia('(prefers-reduced-motion: reduce)')`
     and re-check on change.
-46. Reduced-motion is a REDESIGN, not a blank page: replace the live scene
-    with its best single frame (static gradient/SVG composition of the same
-    world), keep opacity crossfades, kill translation/scale/parallax. Vestibular
-    triggers are motion, not change (C39 rationale; Apple HIG Reduce Motion).
-47. Never let motion carry sole meaning (Apple HIG, rule 18 restated as a
-    compliance duty): with the scene paused or reduced, every claim, CTA and
-    number on the page must still be present as text.
-48. Founder demo links may force motion on (founder-taste.md rule 3 — the
-    founder reads a still page as broken); that override is for temp preview
-    URLs only. The compliance layer (rules 42–47) ships on every live client
-    site without exception, and the paused state gets designed with the same
-    care as the moving one so honouring it never looks broken.
+46. Reduced-motion is a REDESIGN, not a blank page: serve the scene's best
+    single frame (static gradient/SVG composition of the same world), keep
+    opacity crossfades, kill translation/scale/parallax. Vestibular triggers
+    are motion, not change (C39 rationale; Apple HIG Reduce Motion).
+47. Never let motion carry sole meaning (Apple HIG; rule 18 as a compliance
+    duty): with the scene paused or reduced, every claim, CTA and number on
+    the page must still be present as text.
+48. Founder demo links may force motion on (founder-taste.md rule 3 — a still
+    page reads as broken); that override is for temp preview URLs only. The
+    compliance layer (rules 42–47) ships on every live client site, and the
+    paused state is designed with the same care as the moving one.
 49. Scroll-driven Animations API status (mid-2026): Chrome/Edge since 115
-    (July 2023); Safari shipped in 26 (Sept 2025) with threaded scroll
-    animations from 26.4; Firefox stable still behind
-    `layout.css.scroll-driven-animations.enabled` as of Firefox 152; ~84%
-    global support (MDN; frontendhorizon.com; cssawwwards.com 2026 guide).
-    Therefore: use `@supports (animation-timeline: scroll())` as progressive
-    enhancement; the page must be complete without it; keep a JS fallback
+    (July 2023); Safari 26 (Sept 2025), threaded from 26.4; Firefox stable
+    still behind `layout.css.scroll-driven-animations.enabled` as of Firefox
+    152; ~84% global support (MDN; frontendhorizon.com; cssawwwards.com).
+    Use `@supports (animation-timeline: scroll())` as progressive
+    enhancement; the page must be complete without it; add a JS fallback
     only where the scroll effect is load-bearing.
 
 ## Live hero recipes
@@ -239,14 +237,13 @@ The direction ledger applies: no two clients ship the same recipe.
    glow. Tech: Canvas 2D polyline particles + CSS parallax layers; window
    lights as batched rects; pauses off-screen (rule 23).
 
-2. **Filament** — macro close-up of a tungsten filament coil filling the hero,
-   breathing between ember-orange and white-hot; a slow camera drift and a
-   gentle brightness swell on scroll (never a strobe — rule 42). Motion:
-   luminance breathing at ~0.2Hz, coil shimmer via animated dash on the coil
-   path. Palette axis: charcoal ground, incandescent orange→white core. Tech:
-   SVG coil path + stroke-dashoffset shimmer, bloom from stacked blurred
-   copies (compositor-only), scroll swell via scroll-driven animation with
-   @supports guard (rule 49).
+2. **Filament** — macro close-up of a tungsten filament coil filling the
+   hero, breathing between ember-orange and white-hot under a slow camera
+   drift, with a gentle brightness swell on scroll (never a strobe — rule
+   42). Motion: luminance breathing at ~0.2Hz, shimmer via animated dash on
+   the coil path. Palette axis: charcoal ground, incandescent orange→white
+   core. Tech: SVG coil + stroke-dashoffset, bloom from stacked blurred
+   copies, scroll swell via scroll-driven animation behind @supports.
 
 3. **Photon Field** — a bright, airy sky (light theme with depth, rule 6):
    thousands of photon motes stream diagonally down onto a stylised panel
