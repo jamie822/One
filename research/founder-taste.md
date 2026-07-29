@@ -75,3 +75,23 @@ Before any new client's direction is chosen: read the hard rules, design
 the hero as a BUILT, MOVING scene at floor level or above, unique per the
 ledger, then show the founder a temp link for sign-off (they own design
 sign-off). Record their verdict here, dated, win or lose.
+
+- 2026-07-28 (evening) — VERDICT ON ALL BUILDS TO DATE: "not looked good
+  enough, not had the depth of information required, not the correct copy,
+  not the correct pattern of information to follow, not good enough heroes,
+  not good enough CTAs, no depth at all... looked like ai generated slop."
+  New hard rules from this:
+  11. **DEPTH IS THE STANDARD.** Sparse-minimal pages read as AI slop to
+      the founder regardless of craft scores. Every page carries real
+      information density: full service detail, process, FAQs, pricing
+      tables, credentials explained, areas with substance, reviews with
+      context. The information PATTERN follows the canonical orders in
+      doctrine/trade-market.md, fully populated — never a thin sketch of
+      them.
+  12. **CTAs must be unmissable** — visually highlighted, intent-matched,
+      repeated every 1.5-2 viewports, with risk-reducing microcopy at the
+      point of action. A quiet pill button is not a CTA by this standard.
+  13. **First time right is the bar.** The founder reviews once; iteration
+      rounds on fundamentals are a process failure, not a normal loop.
+      kit/BUILD_CHECKLIST.md exists to make each mistake above impossible
+      to repeat silently.
