@@ -222,17 +222,17 @@ section F on production sites. Rules are numbered continuously for citation.
 
 ## Live hero recipes
 
-Eight distinct, buildable live-hero concepts. Each is a whole drawn world
-(rule 2), one signature moment (rule 1), floor-compliant per founder-taste.md.
+Eight distinct, buildable live-hero concepts — each a whole drawn world (rule
+2) with one signature moment (rule 1), floor-compliant per founder-taste.md.
 The direction ledger applies: no two clients ship the same recipe.
 
-1. **The Grid Awakens** — night-time town skyline in layered silhouette; light
-   pulses travel outward from a substation along drawn cable runs, and windows
-   warm up street by street until the whole town glows. Motion: pulse travel +
-   staggered window ignition (rule 13 sequencing), slow parallax drift between
-   silhouette layers. Palette axis: deep navy `oklch` ladder to sodium-amber
-   glow. Tech: Canvas 2D polyline particles + CSS parallax layers; window
-   lights as batched rects; pauses off-screen (rule 23).
+1. **The Grid Awakens** — night-time town skyline in layered silhouette;
+   light pulses travel outward from a substation along drawn cable runs, and
+   windows warm up street by street until the whole town glows. Motion:
+   pulse travel + staggered window ignition (rule 13), slow parallax drift
+   between silhouette layers. Palette axis: deep navy OKLCH ladder to
+   sodium-amber glow. Tech: Canvas 2D polyline particles + CSS parallax
+   layers; window lights as batched rects; pauses off-screen (rule 23).
 
 2. **Filament** — macro close-up of a tungsten filament coil filling the
    hero, breathing between ember-orange and white-hot under a slow camera
@@ -243,13 +243,12 @@ The direction ledger applies: no two clients ship the same recipe.
    copies, scroll swell via scroll-driven animation behind @supports.
 
 3. **Photon Field** — a bright, airy sky (light theme with depth, rule 6):
-   thousands of photon motes stream diagonally down onto a stylised panel
-   plane; each impact blooms softly and a battery/savings meter ticks upward —
-   the interactive-instrument signature (founder-taste.md rule 8). Motion:
-   directional particle field with soft impact blooms; meter counts on a
-   spring. Palette axis: warm white→sky cyan with gold photon accents. Tech:
-   Canvas 2D particle field (count capped by viewport, rule 23), DOM meter
-   driven by the same clock.
+   thousands of photon motes stream diagonally onto a stylised panel plane;
+   each impact blooms softly and a battery/savings meter ticks upward — the
+   interactive-instrument signature (founder-taste.md rule 8). Motion:
+   directional particle field, soft impact blooms, spring-eased meter.
+   Palette axis: warm white→sky cyan with gold photon accents. Tech: Canvas
+   2D particles (count capped by viewport), DOM meter on the same clock.
 
 4. **Circuit Bloom** — a giant schematic draws itself: copper traces grow
    across the hero, junction nodes bloom into soft light as current reaches
@@ -264,32 +263,31 @@ The direction ledger applies: no two clients ship the same recipe.
    the sky morphs dawn→noon→dusk, panel cells shimmer as they catch light,
    and a generation counter follows the sun's height. Motion: scroll-linked
    time-of-day scrub with a slow idle cycle when untouched. Palette axis:
-   full sky gradient sweep (rose→azure→amber) over a fixed warm-neutral
-   house. Tech: layered SVG scene, CSS custom-property sky interpolation in
-   OKLCH (rule 36), scroll-driven animation + JS fallback (rule 49).
+   full sky sweep (rose→azure→amber) over a warm-neutral house. Tech:
+   layered SVG, OKLCH custom-property sky interpolation (rule 36),
+   scroll-driven animation + JS fallback (rule 49).
 
-6. **Live Wire** — one thick cable sweeps across the hero and hums with
-   travelling light; it sags and sways on spring physics and flexes away from
-   the cursor; soft corona sparks sit at each terminal (dense and soft, rule
-   7). Motion: verlet rope simulation, cursor-proximity repulsion on a
-   stiffness-300/damping-30-class spring (rule 15). Palette axis: graphite
-   ground, electric blue→violet core glow. Tech: Canvas 2D rope + glow
-   sprites; cursor reactivity disabled under reduced motion (rule 44).
+6. **Live Wire** — one thick cable sweeps across the hero, humming with
+   travelling light; it sags and sways on spring physics and flexes away
+   from the cursor; soft corona sparks at each terminal (rule 7). Motion:
+   verlet rope simulation, cursor repulsion on a stiffness-300/damping-30
+   spring (rule 15). Palette axis: graphite ground, electric blue→violet
+   glow. Tech: Canvas 2D rope + glow sprites; cursor reactivity off under
+   reduced motion (rule 44).
 
 7. **Storage Cell** — a monumental translucent battery cell dominates the
-   hero, filling with luminous liquid energy; the surface has a live meniscus
-   wave, bubbles of light rise, and the charge percentage climbs — for
-   battery/EV-charger specialists. Motion: layered sine-wave liquid surface,
-   rising light motes, spring-eased counter. Palette axis: deep slate ground,
-   lime→cyan energy liquid (P3 headroom accents, rule 37). Tech: Canvas 2D
-   wave layers clipped to an SVG cell silhouette; counter is real DOM text.
+   hero, filling with luminous liquid energy: live meniscus wave, rising
+   bubbles of light, climbing charge percentage — for battery/EV-charger
+   specialists. Motion: layered sine-wave liquid surface, rising motes,
+   spring-eased counter. Palette axis: deep slate ground, lime→cyan energy
+   liquid (P3 headroom, rule 37). Tech: Canvas 2D wave layers clipped to an
+   SVG cell silhouette; counter is real DOM text.
 
 8. **Substation Aurora** — pylon and substation silhouettes under a living
-   aurora: slow ribbons of light fold across a star field, and a faint hum of
-   light travels the pylon lines toward the horizon. Motion: three drifting
-   ribbon layers at different speeds (sequential, organic — rule 13), star
-   twinkle capped well under flash thresholds (rule 42). Palette axis:
-   midnight indigo ground, green→teal aurora with a magenta fringe. Tech:
-   layered animated gradients on transform/opacity only (rule 19), or a
-   single lightweight shader canvas where the budget allows; static aurora
-   frame under reduced motion.
+   aurora: slow ribbons of light fold across a star field while a faint hum
+   of light travels the pylon lines to the horizon. Motion: three drifting
+   ribbon layers at different speeds (rule 13), star twinkle capped well
+   under flash thresholds (rule 42). Palette axis: midnight indigo ground,
+   green→teal aurora with a magenta fringe. Tech: layered animated gradients
+   on transform/opacity only (rule 19), or one lightweight shader canvas
+   where budget allows; static aurora frame under reduced motion.
