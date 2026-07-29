@@ -1,0 +1,181 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ES Elec v3 — home reference frames (imagegen-web fallback, Higgsfield offline)</title>
+<style>
+  :root{
+    --ground:#16130f; --surface:#211d17; --edge:#2d2820;
+    --ink:#f4efe6; --soft:#b5aa97; --amber:#ffb24d; --fil:#ff9e1f;
+    --paper:#f7f2e9; --paper-ink:#221c12; --amber-deep:#a05f00;
+  }
+  *{box-sizing:border-box;margin:0}
+  body{background:#0d0b08;color:var(--ink);font:14px/1.5 system-ui;padding:40px}
+  h1{font-size:20px;margin-bottom:6px}
+  p.note{color:var(--soft);max-width:70ch;margin-bottom:28px}
+  .sheet{display:grid;grid-template-columns:repeat(auto-fill,minmax(420px,1fr));gap:26px}
+  figure{background:var(--ground);border:1px solid var(--edge);border-radius:10px;overflow:hidden}
+  figcaption{padding:10px 14px;border-top:1px solid var(--edge);color:var(--soft);font-size:12.5px}
+  figcaption b{color:var(--amber);display:block;font-size:13px}
+  .fr{height:240px;padding:18px;position:relative;overflow:hidden}
+  .paper{background:var(--paper);color:var(--paper-ink)}
+  .box{border:1px dashed #6b5f4b;border-radius:6px;position:absolute}
+  .paper .box{border-color:#c9b globalThis;border-color:#c9bb9d}
+  .lab{font-size:10.5px;letter-spacing:.04em;color:var(--soft);position:absolute;padding:4px 6px}
+  .paper .lab{color:#7a6a4f}
+  .cta{position:absolute;background:var(--fil);color:#171001;font-weight:700;font-size:11px;
+       border-radius:999px;padding:6px 14px;box-shadow:0 0 18px rgba(255,158,31,.55)}
+  .ghost{position:absolute;border:1.5px solid var(--amber);color:var(--amber);font-size:11px;
+       border-radius:999px;padding:6px 14px}
+  .orb{position:absolute;width:110px;height:110px;border-radius:50%;
+       background:radial-gradient(circle at 38% 32%, #ffd9a1, var(--fil) 45%, #7a4b00 78%, transparent 79%);
+       box-shadow:0 0 60px 18px rgba(255,158,31,.35)}
+  .ring{position:absolute;border:1px solid rgba(255,178,77,.4);border-radius:50%}
+  .chip{position:absolute;background:rgba(33,29,23,.8);border:1px solid var(--edge);
+       border-radius:8px;padding:5px 9px;font-size:10px;color:var(--soft);backdrop-filter:blur(4px)}
+  .count{font-size:26px;font-weight:800;color:var(--amber)}
+  .bar{position:absolute;height:8px;border-radius:4px;background:var(--edge)}
+  .rowline{position:absolute;height:1px;background:var(--edge);left:18px;right:18px}
+</style>
+</head>
+<body>
+<h1>ES Elec v3 — home page reference frames</h1>
+<p class="note">imagegen-web deliverable, Higgsfield-offline fallback (HTML mock
+frames instead of generated stills). One frame per PLAN.md home section.
+Each frame commits layout, palette use and the motion note BEFORE code;
+image-to-code builds each section against its frame and the Audit 5 LOOK
+pass compares them side by side. Tungsten tokens only.</p>
+
+<div class="sheet">
+
+<figure><div class="fr">
+  <div class="orb" style="right:30px;top:52px"></div>
+  <div class="ring" style="right:6px;top:28px;width:158px;height:158px"></div>
+  <div class="ring" style="right:-8px;top:14px;width:186px;height:186px"></div>
+  <div class="chip" style="right:150px;top:40px">NICEIC D123456</div>
+  <div class="chip" style="right:34px;bottom:44px">4.9 ★ 87 reviews</div>
+  <div class="lab" style="left:18px;top:14px">ticker: Rewires · Fuse boards · EICRs …</div>
+  <div class="box" style="left:18px;top:44px;width:52%;height:64px"><span class="lab">H1: prices the job before it starts</span></div>
+  <div class="box" style="left:18px;top:118px;width:44%;height:30px"><span class="lab">18-word sub</span></div>
+  <div class="cta" style="left:18px;bottom:52px">CALL EDDIE</div>
+  <div class="ghost" style="left:118px;bottom:52px">GET A QUOTE</div>
+  <div class="lab" style="left:18px;bottom:22px">R1 + R2 risk lines · urgent line · pause control bottom-right</div>
+</div><figcaption><b>1 · Hero — Power Core, evolved</b>Boot-up choreography once on arrival (grid → pulse → orb ignition → rings → chips), ≥88svh, H1 is LCP. Core scene right, copy left.</figcaption></figure>
+
+<figure><div class="fr">
+  <div class="box" style="left:18px;top:-24px;right:18px;height:56px"><span class="lab">hero bottom edge</span></div>
+  <div class="box" style="left:18px;top:60px;right:18px;height:110px;background:var(--surface);border-style:solid">
+    <span class="count" style="position:absolute;left:26px;top:26px">4.9</span>
+    <span class="count" style="position:absolute;left:130px;top:26px">87</span>
+    <span class="count" style="position:absolute;left:220px;top:26px">1,438</span>
+    <span class="count" style="position:absolute;left:330px;top:26px">12</span>
+    <span class="lab" style="left:24px;bottom:8px">count-up on reveal · labels beneath each figure</span>
+  </div>
+</div><figcaption><b>2 · Trust shelf</b>Card pulled up over the hero edge, 4 animated counts, single row desktop / 2×2 mobile.</figcaption></figure>
+
+<figure><div class="fr paper">
+  <div class="box" style="left:18px;top:16px;width:55%;height:44px"><span class="lab">H2: itemised price in writing</span></div>
+  <div class="box" style="left:18px;top:74px;width:46%;height:120px"><span class="lab">body + includes list (5 items)</span></div>
+  <div class="box" style="right:18px;top:74px;width:38%;height:96px;background:#fff;border-style:solid"><span class="lab">quote-fragment strip: 3 line items, mono figures</span></div>
+  <div class="lab" style="left:18px;bottom:30px">bold promise line full width</div>
+  <div class="lab" style="right:18px;bottom:30px">quiet text CTA: Get a quote</div>
+</div><figcaption><b>3 · Written-price spread</b>First paper section. The market-gap claim; line-item strip styled like a real quote fragment, draw-in on reveal.</figcaption></figure>
+
+<figure><div class="fr paper">
+  <div class="box" style="left:18px;top:16px;width:44%;height:88px;border-style:solid;background:#fff"><span class="lab">lead tile: Rewires (symptom + from £3,200)</span></div>
+  <div class="box" style="right:18px;top:16px;width:44%;height:88px;border-style:solid;background:#fff"><span class="lab">lead tile: Solar (symptom + from £5,400)</span></div>
+  <div class="rowline" style="top:130px"></div><div class="lab" style="left:18px;top:134px">EV · from £950 →</div>
+  <div class="rowline" style="top:160px"></div><div class="lab" style="left:18px;top:164px">Boards · from £520 →</div>
+  <div class="rowline" style="top:190px"></div><div class="lab" style="left:18px;top:194px">EICR £140 · Fault £85 · Lighting £220 →</div>
+</div><figcaption><b>4 · Services</b>Two symptom-led lead tiles + five tight rows, every row carries from-price and an arrow to its hub anchor.</figcaption></figure>
+
+<figure><div class="fr">
+  <div class="box" style="left:18px;top:16px;width:50%;height:40px"><span class="lab">H2: what would a rewire cost?</span></div>
+  <div class="box" style="left:18px;top:70px;width:34%;height:120px;background:var(--surface);border-style:solid"><span class="lab">stepper: bedrooms 2-5<br>toggle: living in it / empty</span></div>
+  <div class="box" style="left:41%;top:70px;width:38%;height:120px;background:var(--surface);border-style:solid">
+    <span class="count" style="position:absolute;left:18px;top:20px">£4,000–£5,500</span>
+    <span class="lab" style="left:18px;top:62px">6 to 8 days on site · occupied note</span></div>
+  <div class="cta" style="left:41%;bottom:16px">GET A QUOTE</div>
+  <div class="lab" style="right:18px;top:80px;width:84px">what moves it ×3</div>
+</div><figcaption><b>5 · Rewire Reckoner</b>The instrument. Same model as the blog table, values flip with an amber tick animation, figures in mono.</figcaption></figure>
+
+<figure><div class="fr">
+  <div class="box" style="left:18px;top:70px;right:18px;height:96px;background:linear-gradient(90deg,var(--surface),#2b241a);border-style:solid">
+    <span class="lab" style="left:24px;top:14px">Know what you need? One call books it.</span>
+    <span class="cta" style="left:24px;bottom:18px">CALL EDDIE</span>
+    <span class="lab" style="left:150px;bottom:20px">R4 line</span>
+  </div>
+</div><figcaption><b>6 · Inline CTA band #1</b>Filament glow edge on the band, subtle current-pulse along the top border, loudest element on screen.</figcaption></figure>
+
+<figure><div class="fr paper">
+  <div class="rowline" style="top:120px;background:#c9bb9d"></div>
+  <div class="lab" style="left:30px;top:96px">① ring</div>
+  <div class="lab" style="left:130px;top:96px">② price</div>
+  <div class="lab" style="left:230px;top:96px">③ work</div>
+  <div class="lab" style="left:330px;top:96px">④ paperwork</div>
+  <div class="box" style="left:18px;top:140px;right:18px;height:64px"><span class="lab">two sentences per step, counter rail draws in as you scroll</span></div>
+</div><figcaption><b>7 · How a job goes</b>Drawn counter rail, steps light amber as they enter, numbers in Clash Display.</figcaption></figure>
+
+<figure><div class="fr">
+  <div class="box" style="left:18px;top:20px;width:58%;height:130px;background:var(--surface);border-style:solid"><span class="lab">lead pull-quote, big type + name/area/job/date</span></div>
+  <div class="box" style="right:18px;top:20px;width:32%;height:60px"><span class="lab">review 2</span></div>
+  <div class="box" style="right:18px;top:90px;width:32%;height:60px"><span class="lab">review 3</span></div>
+  <div class="lab" style="left:18px;bottom:40px">register line: check D123456 on niceic.com</div>
+  <div class="lab" style="left:18px;bottom:16px">R2 restated · quiet text CTA: Call Eddie</div>
+</div><figcaption><b>8 · Proof</b>One loud quote beats three equal cards. TEMP demo reviews, swap-listed. Demo-content note lives in the footer.</figcaption></figure>
+
+<figure><div class="fr">
+  <div class="orb" style="right:40px;top:30px;width:70px;height:70px;opacity:.7"></div>
+  <div class="box" style="left:18px;top:16px;width:52%;height:44px"><span class="lab">H2: solar that pays you back</span></div>
+  <div class="box" style="left:18px;top:70px;width:46%;height:80px"><span class="lab">£683/yr precise vs £5,400 round · payback under 8 yrs</span></div>
+  <div class="box" style="left:18px;bottom:46px;width:46%;height:40px"><span class="lab">guarantee list ×3 (10yr / 25yr / MCS)</span></div>
+  <div class="chip" style="right:30px;bottom:70px">send two bills, get the maths</div>
+  <div class="ghost" style="right:30px;bottom:20px">GET A QUOTE</div>
+</div><figcaption><b>9 · Solar band</b>Dark band, small ember orb echo of the hero core, payback figures count up on reveal.</figcaption></figure>
+
+<figure><div class="fr paper">
+  <div class="box" style="left:18px;top:16px;width:30%;height:170px"><span class="lab">North Leeds cluster + sentence</span></div>
+  <div class="box" style="left:35%;top:16px;width:30%;height:170px"><span class="lab">South/east cluster + sentence</span></div>
+  <div class="box" style="right:18px;top:16px;width:30%;height:170px"><span class="lab">Wetherby cluster + sentence</span></div>
+  <div class="lab" style="left:18px;bottom:16px">overflow line: not on the list? ring anyway…</div>
+</div><figcaption><b>10 · Areas with substance</b>Three coverage-logic clusters with real housing-stock sentences. No map widget, no thin town links.</figcaption></figure>
+
+<figure><div class="fr paper">
+  <div class="rowline" style="top:56px;background:#c9bb9d"></div>
+  <div class="rowline" style="top:96px;background:#c9bb9d"></div>
+  <div class="rowline" style="top:136px;background:#c9bb9d"></div>
+  <div class="rowline" style="top:176px;background:#c9bb9d"></div>
+  <div class="lab" style="left:18px;top:30px">NICEIC, explained + Platinum Promise</div>
+  <div class="lab" style="left:18px;top:70px">£2m liability</div>
+  <div class="lab" style="left:18px;top:110px">12-month guarantee → full terms on About</div>
+  <div class="lab" style="left:18px;top:150px">Part P · one homeowner sentence</div>
+  <div class="lab" style="left:18px;top:186px">BS 7671 · one homeowner sentence</div>
+</div><figcaption><b>11 · Credentials, explained</b>Definition-list rhythm, amber-deep keywords (AA on paper), no badge-wall imagery.</figcaption></figure>
+
+<figure><div class="fr">
+  <div class="box" style="left:18px;top:76px;right:18px;height:88px;background:linear-gradient(90deg,var(--surface),#2b241a);border-style:solid">
+    <span class="lab" style="left:24px;top:14px">Credentials checked? The rest is one phone call.</span>
+    <span class="cta" style="left:24px;bottom:16px">CALL EDDIE</span>
+    <span class="lab" style="left:150px;bottom:18px">R2 line</span>
+  </div>
+</div><figcaption><b>11b · Inline CTA band #2</b>Same band component, alternate line. Keeps CTA cadence under two viewports through the credential stretch.</figcaption></figure>
+
+<figure><div class="fr paper">
+  <div class="rowline" style="top:50px;background:#c9bb9d"></div>
+  <div class="rowline" style="top:82px;background:#c9bb9d"></div>
+  <div class="rowline" style="top:114px;background:#c9bb9d"></div>
+  <div class="rowline" style="top:146px;background:#c9bb9d"></div>
+  <div class="lab" style="left:18px;top:24px">6 questions, accordion, first one open</div>
+  <div class="lab" style="left:18px;top:158px">FAQPage schema on genuine Q&A only</div>
+</div><figcaption><b>12 · FAQ</b>Six real phone questions. Accordion chevrons rotate, reduced-motion gets instant open.</figcaption></figure>
+
+<figure><div class="fr">
+  <div class="box" style="left:18px;top:16px;width:44%;height:150px"><span class="lab">huge phone number<br>R1 + R2 lines<br>facts list (NAP, hours)</span></div>
+  <div class="box" style="right:18px;top:16px;width:46%;height:170px;background:var(--surface);border-style:solid"><span class="lab">6-field form, 4 required<br>submit: Get a quote<br>microcopy: R2 + privacy line</span></div>
+  <div class="lab" style="left:18px;bottom:16px">footer beneath: full NAP · demo-reviews note</div>
+</div><figcaption><b>13 · Contact</b>Phone-first block outweighs the form visually. Form is the canonical component, demo mailto mode until an endpoint exists.</figcaption></figure>
+
+</div>
+</body>
+</html>
